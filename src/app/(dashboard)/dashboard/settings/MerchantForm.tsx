@@ -14,7 +14,7 @@ const schema = z.object({
     .regex(/^[a-z0-9-]+$/, 'Uniquement des lettres minuscules, chiffres et tirets'),
   primary_color: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Couleur invalide'),
   loyalty_rule: z.string().min(5, 'Décrivez votre règle de fidélité'),
-  stamps_required: z.coerce.number().int().min(1).max(50),
+  stamps_required: z.number().int().min(1).max(50),
 })
 
 type FormData = z.infer<typeof schema>
@@ -254,7 +254,7 @@ export default function MerchantForm({ merchant }: Props) {
           </label>
           <div className="mt-1 flex items-center gap-3">
             <input
-              {...register('stamps_required')}
+              {...register('stamps_required', { valueAsNumber: true })}
               type="number"
               id="stamps_required"
               min={1}

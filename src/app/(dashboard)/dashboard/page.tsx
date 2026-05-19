@@ -73,6 +73,18 @@ export default async function DashboardPage() {
         </Link>
       </div>
 
+      {/* Primary action */}
+      <Link
+        href="/dashboard/stamp"
+        className="flex items-center justify-between bg-indigo-600 hover:bg-indigo-700 text-white shadow rounded-lg p-6 transition-colors"
+      >
+        <div>
+          <p className="text-lg font-bold">Donner un tampon</p>
+          <p className="text-indigo-200 text-sm mt-0.5">Recherchez un client par téléphone</p>
+        </div>
+        <span className="text-4xl">🪙</span>
+      </Link>
+
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
         <div className="bg-white overflow-hidden shadow rounded-lg p-5">
           <p className="text-sm font-medium text-gray-500">Cartes actives</p>

@@ -32,6 +32,7 @@ export async function GET(request: Request) {
   }
 
   const cardId = searchParams.get('id')
+  const phone = searchParams.get('phone')
 
   if (cardId) {
     const { data, error } = await supabase
@@ -44,6 +45,31 @@ export async function GET(request: Request) {
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
+    return NextResponse.json(data)
+  }
+
+  if (phone) {
+    const { data: customer } = await supabase
+      .from('customers')
+      .select('id')
+      .eq('phone', phone)
+      .single()
+
+    if (!customer) {
+      return NextResponse.json({ error: 'Aucun client avec ce numéro' }, { status: 404 })
+    }
+
+    const { data, error } = await supabase
+      .from('loyalty_cards')
+      .select('*, customers(*)')
+      .eq('merchant_id', merchant.id)
+      .eq('customer_id', customer.id)
+      .single()
+
+    if (error || !data) {
+      return NextResponse.json({ error: 'Ce client n\'a pas encore de carte chez vous' }, { status: 404 })
+    }
+
     return NextResponse.json(data)
   }
 

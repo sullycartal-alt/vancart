@@ -18,6 +18,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <Link href="/dashboard/settings" className="text-sm text-gray-600 hover:text-gray-900">
                   Mon commerce
                 </Link>
+                <Link
+                  href="/dashboard/stamp"
+                  className="px-4 py-1.5 text-sm font-medium text-white bg-indigo-600 rounded-full hover:bg-indigo-700"
+                >
+                  Tamponner
+                </Link>
               </div>
             </div>
             <LogoutButton />

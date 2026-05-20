@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
+import { isConfigured, updateWalletPass } from '@/lib/google-wallet'
 
 const stampSchema = z.object({
   loyalty_card_id: z.string().uuid(),
@@ -84,6 +85,11 @@ export async function POST(request: Request) {
 
   if (updateError) {
     return NextResponse.json({ error: updateError.message }, { status: 500 })
+  }
+
+  // Push updated stamp count to Google Wallet (best-effort, never blocks the response)
+  if (isConfigured()) {
+    await updateWalletPass(card.id, finalStampsCount, merchant.stamps_required).catch(() => {})
   }
 
   return NextResponse.json({

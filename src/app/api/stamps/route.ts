@@ -79,7 +79,7 @@ export async function POST(request: Request) {
       rewards_unlocked: newRewardsUnlocked,
     })
     .eq('id', card.id)
-    .select()
+    .select('*, customers(first_name, phone)')
     .single()
 
   if (updateError) {

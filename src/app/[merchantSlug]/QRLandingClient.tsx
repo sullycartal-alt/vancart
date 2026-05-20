@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -26,6 +26,28 @@ interface Props {
   merchant: Merchant
 }
 
+function LoyaltyQRCode({ cardId, color }: { cardId: string; color: string }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+
+  useEffect(() => {
+    import('qrcode').then((QRCode) => {
+      if (canvasRef.current) {
+        QRCode.toCanvas(canvasRef.current, cardId, {
+          width: 220,
+          margin: 2,
+          color: { dark: '#111827', light: '#ffffff' },
+        })
+      }
+    })
+  }, [cardId, color])
+
+  return (
+    <div className="flex justify-center">
+      <canvas ref={canvasRef} className="rounded-lg" />
+    </div>
+  )
+}
+
 export default function QRLandingClient({ merchant }: Props) {
   const [submitted, setSubmitted] = useState(false)
   const [cardId, setCardId] = useState<string | null>(null)
@@ -41,7 +63,6 @@ export default function QRLandingClient({ merchant }: Props) {
 
   async function onSubmit(data: CustomerFormData) {
     try {
-      // Create or find customer
       const customerRes = await fetch('/api/customers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -56,7 +77,6 @@ export default function QRLandingClient({ merchant }: Props) {
 
       const customer = await customerRes.json()
 
-      // Create loyalty card
       const cardRes = await fetch('/api/loyalty-cards', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -77,38 +97,48 @@ export default function QRLandingClient({ merchant }: Props) {
     }
   }
 
-  if (submitted) {
+  if (submitted && cardId) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-        <div className="bg-white shadow rounded-lg p-8 max-w-md w-full text-center">
-          <div
-            className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
-            style={{ backgroundColor: merchant.primary_color }}
-          >
-            <span className="text-white text-2xl">✓</span>
+        <div className="bg-white shadow rounded-lg p-8 max-w-md w-full text-center space-y-6">
+          <div>
+            <div
+              className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3"
+              style={{ backgroundColor: merchant.primary_color }}
+            >
+              <span className="text-white text-xl">✓</span>
+            </div>
+            <h1 className="text-xl font-bold text-gray-900">Carte créée !</h1>
+            <p className="text-gray-600 text-sm mt-1">
+              Votre carte de fidélité chez <strong>{merchant.business_name}</strong>
+            </p>
+            <p className="text-xs text-gray-400 mt-1">{merchant.loyalty_rule}</p>
           </div>
-          <h1 className="text-xl font-bold text-gray-900 mb-2">
-            Carte créée !
-          </h1>
-          <p className="text-gray-600 mb-4">
-            Votre carte de fidélité chez{' '}
-            <strong>{merchant.business_name}</strong> est prête.
-          </p>
-          <p className="text-sm text-gray-500 mb-6">{merchant.loyalty_rule}</p>
 
-          <div className="flex gap-3 justify-center">
-            <a
-              href={`/api/wallet/apple?card_id=${cardId}`}
-              className="inline-flex items-center px-4 py-2 rounded-lg bg-black text-white text-sm font-medium"
-            >
-              Apple Wallet
-            </a>
-            <a
-              href={`/api/wallet/google?card_id=${cardId}`}
-              className="inline-flex items-center px-4 py-2 rounded-lg bg-white border border-gray-300 text-gray-800 text-sm font-medium"
-            >
-              Google Wallet
-            </a>
+          <div className="space-y-2">
+            <p className="text-sm font-medium text-gray-700">
+              Présentez ce QR code au commerçant pour recevoir vos tampons
+            </p>
+            <LoyaltyQRCode cardId={cardId} color={merchant.primary_color} />
+            <p className="text-xs text-gray-400">0 / {merchant.stamps_required} tampons</p>
+          </div>
+
+          <div className="border-t pt-4">
+            <p className="text-xs text-gray-500 mb-3">Sauvegardez votre carte</p>
+            <div className="flex gap-3 justify-center">
+              <a
+                href={`/api/wallet/apple?card_id=${cardId}`}
+                className="inline-flex items-center px-4 py-2 rounded-lg bg-black text-white text-sm font-medium"
+              >
+                Apple Wallet
+              </a>
+              <a
+                href={`/api/wallet/google?card_id=${cardId}`}
+                className="inline-flex items-center px-4 py-2 rounded-lg bg-white border border-gray-300 text-gray-800 text-sm font-medium"
+              >
+                Google Wallet
+              </a>
+            </div>
           </div>
         </div>
       </div>

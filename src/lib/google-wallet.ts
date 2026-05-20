@@ -1,10 +1,20 @@
 import { createSign } from 'crypto'
 
 function cfg() {
+  const rawKey = process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY ?? ''
+  // Vercel can store the key with literal \n or \r\n sequences instead of real
+  // newline characters. Handle every common variant so the PEM parser never
+  // receives a single-line blob that OpenSSL's decoder rejects.
+  const key = rawKey
+    .replace(/\\r\\n/g, '\n') // literal \r\n  (Windows, double-escaped)
+    .replace(/\\n/g, '\n')    // literal \n    (most common Vercel format)
+    .replace(/\r\n/g, '\n')   // real CRLF
+    .replace(/\r/g, '\n')     // real CR
+    .trim()
   return {
     issuerId: process.env.GOOGLE_WALLET_ISSUER_ID ?? '',
     email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL ?? '',
-    key: (process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY ?? '').replace(/\\n/g, '\n'),
+    key,
   }
 }
 

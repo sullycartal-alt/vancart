@@ -5,6 +5,7 @@ import { z } from 'zod'
 const merchantSchema = z.object({
   business_name: z.string().min(2),
   slug: z.string().min(2).regex(/^[a-z0-9-]+$/, 'Slug must be lowercase alphanumeric with hyphens'),
+  logo_url: z.string().url().nullable().optional(),
   primary_color: z.string().optional(),
   loyalty_rule: z.string().optional(),
   stamps_required: z.number().int().min(1).max(50).optional(),

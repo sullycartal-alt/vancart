@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/service'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 
@@ -8,35 +8,30 @@ const customerSchema = z.object({
 })
 
 export async function POST(request: Request) {
-  const supabase = await createClient()
+  // Use service role to bypass RLS — this is a public endpoint (QR scan flow)
+  const service = createServiceClient()
 
   const body = await request.json()
   const parsed = customerSchema.safeParse(body)
-
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
   }
 
-  // Check if customer with this phone already exists
-  const { data: existing } = await supabase
+  const { data: existing } = await service
     .from('customers')
     .select('id, phone, first_name')
     .eq('phone', parsed.data.phone)
     .single()
 
-  if (existing) {
-    return NextResponse.json(existing)
-  }
+  if (existing) return NextResponse.json(existing)
 
-  const { data, error } = await supabase
+  const { data, error } = await service
     .from('customers')
     .insert(parsed.data)
     .select()
     .single()
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
-  }
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
   return NextResponse.json(data, { status: 201 })
 }

@@ -87,7 +87,9 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const supabase = await createClient()
+  // Use service role for public QR scan flow — no user session available
+  const { createServiceClient } = await import('@/lib/supabase/service')
+  const service = createServiceClient()
 
   const body = await request.json()
   const parsed = loyaltyCardSchema.safeParse(body)
@@ -96,27 +98,22 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
   }
 
-  // Check if card already exists
-  const { data: existing } = await supabase
+  const { data: existing } = await service
     .from('loyalty_cards')
-    .select('id')
+    .select('id, stamps_count, rewards_unlocked')
     .eq('merchant_id', parsed.data.merchant_id)
     .eq('customer_id', parsed.data.customer_id)
     .single()
 
-  if (existing) {
-    return NextResponse.json(existing)
-  }
+  if (existing) return NextResponse.json(existing)
 
-  const { data, error } = await supabase
+  const { data, error } = await service
     .from('loyalty_cards')
     .insert(parsed.data)
     .select()
     .single()
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
-  }
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
   return NextResponse.json(data, { status: 201 })
 }

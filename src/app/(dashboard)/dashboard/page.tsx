@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import DashboardQR from './DashboardQR'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -74,44 +75,41 @@ export default async function DashboardPage() {
       </div>
 
       {/* Primary action */}
+      {/* Primary action */}
       <Link
         href="/dashboard/stamp"
-        className="flex items-center justify-between bg-indigo-600 hover:bg-indigo-700 text-white shadow rounded-lg p-6 transition-colors"
+        className="flex items-center justify-between text-white shadow rounded-lg p-6 transition-opacity hover:opacity-90"
+        style={{ backgroundColor: merchant.primary_color }}
       >
         <div>
           <p className="text-lg font-bold">Donner un tampon</p>
-          <p className="text-indigo-200 text-sm mt-0.5">Recherchez un client par téléphone</p>
+          <p className="text-sm mt-0.5 opacity-75">Scanner le QR code du client ou rechercher par téléphone</p>
         </div>
         <span className="text-4xl">🪙</span>
       </Link>
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+      {/* Stats row */}
+      <div className="grid grid-cols-3 gap-4">
         <div className="bg-white overflow-hidden shadow rounded-lg p-5">
-          <p className="text-sm font-medium text-gray-500">Cartes actives</p>
+          <p className="text-xs font-medium text-gray-500">Cartes actives</p>
           <p className="mt-1 text-3xl font-semibold text-gray-900">{activeCards ?? 0}</p>
         </div>
         <div className="bg-white overflow-hidden shadow rounded-lg p-5">
-          <p className="text-sm font-medium text-gray-500">Tampons aujourd'hui</p>
+          <p className="text-xs font-medium text-gray-500">Tampons aujourd&apos;hui</p>
           <p className="mt-1 text-3xl font-semibold text-gray-900">{stampsToday ?? 0}</p>
         </div>
         <div className="bg-white overflow-hidden shadow rounded-lg p-5">
-          <p className="text-sm font-medium text-gray-500">Récompenses débloquées</p>
+          <p className="text-xs font-medium text-gray-500">Récompenses</p>
           <p className="mt-1 text-3xl font-semibold text-gray-900">{totalRewards}</p>
         </div>
       </div>
 
-      <div className="bg-white shadow rounded-lg p-6">
-        <h2 className="text-lg font-medium text-gray-900 mb-1">Votre lien QR</h2>
-        <p className="text-sm text-gray-500 mb-3">
-          Partagez ce lien ou imprimez le QR code depuis{' '}
-          <Link href="/dashboard/settings" className="text-indigo-600 hover:underline">
-            Mon commerce
-          </Link>.
-        </p>
-        <code className="block text-sm bg-gray-100 rounded px-3 py-2 text-gray-800 break-all">
-          {qrUrl}
-        </code>
-      </div>
+      {/* QR code widget */}
+      <DashboardQR
+        url={qrUrl}
+        businessName={merchant.business_name}
+        color={merchant.primary_color}
+      />
     </div>
   )
 }

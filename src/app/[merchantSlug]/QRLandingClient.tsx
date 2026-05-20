@@ -98,6 +98,7 @@ export default function QRLandingClient({ merchant }: Props) {
   }
 
   if (submitted && cardId) {
+    const cardUrl = `/carte/${cardId}`
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
         <div className="bg-white shadow rounded-lg p-8 max-w-md w-full text-center space-y-6">
@@ -110,31 +111,39 @@ export default function QRLandingClient({ merchant }: Props) {
             </div>
             <h1 className="text-xl font-bold text-gray-900">Carte créée !</h1>
             <p className="text-gray-600 text-sm mt-1">
-              Votre carte de fidélité chez <strong>{merchant.business_name}</strong>
+              Votre carte de fidélité chez <strong>{merchant.business_name}</strong> est prête.
             </p>
-            <p className="text-xs text-gray-400 mt-1">{merchant.loyalty_rule}</p>
           </div>
 
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-gray-700">
-              Présentez ce QR code au commerçant pour recevoir vos tampons
+          {/* Bookmarkable link — primary CTA */}
+          <div className="bg-indigo-50 rounded-xl p-5 space-y-3">
+            <p className="text-sm font-semibold text-indigo-900">
+              Enregistrez votre carte en favori
             </p>
-            <LoyaltyQRCode cardId={cardId} color={merchant.primary_color} />
-            <p className="text-xs text-gray-400">0 / {merchant.stamps_required} tampons</p>
+            <p className="text-xs text-indigo-700">
+              Ce lien est votre carte permanente — accédez-y depuis votre navigateur à tout moment pour présenter votre QR code.
+            </p>
+            <a
+              href={cardUrl}
+              className="block w-full py-3 px-4 rounded-lg text-white text-sm font-semibold hover:opacity-90 transition-opacity"
+              style={{ backgroundColor: merchant.primary_color }}
+            >
+              Voir ma carte →
+            </a>
+            <p className="text-xs text-indigo-500 break-all font-mono">
+              {typeof window !== 'undefined' ? window.location.origin : ''}{cardUrl}
+            </p>
           </div>
 
           <div className="border-t pt-4">
-            <p className="text-xs text-gray-500 mb-3">Sauvegardez votre carte</p>
+            <p className="text-xs text-gray-500 mb-3">Ou sauvegardez dans votre Wallet</p>
             <div className="flex gap-3 justify-center">
-              <a
-                href={`/api/wallet/apple?card_id=${cardId}`}
-                className="inline-flex items-center px-4 py-2 rounded-lg bg-black text-white text-sm font-medium"
-              >
-                Apple Wallet
-              </a>
+              <div className="flex-1 flex items-center justify-center px-3 py-2 rounded-lg bg-gray-100 text-xs font-medium text-gray-400 cursor-not-allowed">
+                Apple Wallet (bientôt)
+              </div>
               <a
                 href={`/api/wallet/google?card_id=${cardId}`}
-                className="inline-flex items-center px-4 py-2 rounded-lg bg-white border border-gray-300 text-gray-800 text-sm font-medium"
+                className="flex-1 flex items-center justify-center px-3 py-2 rounded-lg bg-white border border-gray-300 text-gray-800 text-xs font-medium hover:bg-gray-50"
               >
                 Google Wallet
               </a>

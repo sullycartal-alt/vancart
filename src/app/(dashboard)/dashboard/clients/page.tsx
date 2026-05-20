@@ -1,0 +1,60 @@
+import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
+import ClientsTable from './ClientsTable'
+
+export default async function ClientsPage() {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+
+  const { data: merchant } = await supabase
+    .from('merchants')
+    .select('id, stamps_required, primary_color')
+    .eq('user_id', user.id)
+    .single()
+
+  if (!merchant) redirect('/dashboard/settings')
+
+  const [{ data: cards }, { data: lastStamps }] = await Promise.all([
+    supabase
+      .from('loyalty_cards')
+      .select('id, stamps_count, rewards_unlocked, customers(first_name, phone)')
+      .eq('merchant_id', merchant.id)
+      .order('created_at', { ascending: false }),
+    supabase
+      .from('stamps')
+      .select('loyalty_card_id, given_at')
+      .eq('merchant_id', merchant.id)
+      .order('given_at', { ascending: false }),
+  ])
+
+  // Map last stamp per card (stamps are ordered desc so first match = latest)
+  const lastStampMap = new Map<string, string>()
+  for (const s of lastStamps ?? []) {
+    if (!lastStampMap.has(s.loyalty_card_id)) {
+      lastStampMap.set(s.loyalty_card_id, s.given_at)
+    }
+  }
+
+  const clients = (cards ?? []).map((card) => ({
+    ...card,
+    customers: Array.isArray(card.customers) ? card.customers[0] : card.customers,
+    last_stamp_at: lastStampMap.get(card.id) ?? null,
+    stampsRequired: merchant.stamps_required,
+    primaryColor: merchant.primary_color,
+  })) as Parameters<typeof ClientsTable>[0]['clients']
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">Mes clients</h1>
+        <p className="mt-1 text-sm text-gray-500">
+          {clients.length} client{clients.length !== 1 ? 's' : ''} avec une carte de fidélité
+        </p>
+      </div>
+      <ClientsTable clients={clients} />
+    </div>
+  )
+}

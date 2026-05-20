@@ -13,7 +13,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </Link>
               <div className="hidden sm:flex items-center gap-6">
                 <Link href="/dashboard" className="text-sm text-gray-600 hover:text-gray-900">
-                  Tableau de bord
+                  Accueil
+                </Link>
+                <Link href="/dashboard/clients" className="text-sm text-gray-600 hover:text-gray-900">
+                  Mes clients
                 </Link>
                 <Link href="/dashboard/settings" className="text-sm text-gray-600 hover:text-gray-900">
                   Mon commerce

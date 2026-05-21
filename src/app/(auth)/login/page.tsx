@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { loginSchema, type LoginFormData } from '@/lib/validations/auth'
@@ -9,35 +10,53 @@ import Link from 'next/link'
 
 function Spinner() {
   return (
-    <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+    <svg
+      className="animate-spin h-4 w-4 text-white shrink-0"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
     </svg>
   )
 }
 
+const MIN_LOADING_MS = 500
+
 export default function LoginPage() {
   const router = useRouter()
   const supabase = createClient()
+  const [loading, setLoading] = useState(false)
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
     setError,
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   })
 
   async function onSubmit(data: LoginFormData) {
+    setLoading(true)
+    const start = Date.now()
+
     const { error } = await supabase.auth.signInWithPassword({
       email: data.email,
       password: data.password,
     })
 
     if (error) {
+      setLoading(false)
       setError('root', { message: error.message })
       return
+    }
+
+    const elapsed = Date.now() - start
+    if (elapsed < MIN_LOADING_MS) {
+      await new Promise(r => setTimeout(r, MIN_LOADING_MS - elapsed))
     }
 
     router.push('/dashboard')
@@ -91,11 +110,12 @@ export default function LoginPage() {
 
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={loading}
           className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] transition-all shadow-sm disabled:opacity-60 disabled:cursor-not-allowed disabled:active:scale-100"
+          style={{ transition: 'opacity 0ms, transform 150ms' }}
         >
-          {isSubmitting && <Spinner />}
-          {isSubmitting ? 'Connexion…' : 'Se connecter'}
+          {loading && <Spinner />}
+          {loading ? 'Connexion…' : 'Se connecter'}
         </button>
       </form>
 

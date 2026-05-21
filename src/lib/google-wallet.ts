@@ -69,8 +69,8 @@ async function getAccessToken(): Promise<string> {
 
 const API = 'https://walletobjects.googleapis.com/walletobjects/v1'
 
-function classId(merchantId: string): string {
-  return `${cfg().issuerId}.m_${merchantId.replace(/-/g, '_')}`
+function classId(): string {
+  return `${cfg().issuerId}.vancart_loyalty`
 }
 
 function objectId(cardId: string): string {
@@ -174,7 +174,6 @@ async function upsertObject(
  */
 export async function buildGoogleWalletURL(params: {
   cardId: string
-  merchantId: string
   merchantName: string
   loyaltyRule: string
   primaryColor: string
@@ -183,7 +182,7 @@ export async function buildGoogleWalletURL(params: {
   stampsRequired: number
 }): Promise<string> {
   const token = await getAccessToken()
-  const cId = classId(params.merchantId)
+  const cId = classId()
   const oId = objectId(params.cardId)
 
   await ensureClass(token, cId, params)

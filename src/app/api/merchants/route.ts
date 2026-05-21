@@ -14,6 +14,7 @@ const merchantSchema = z.object({
   points_required: z.number().int().min(1).nullable().optional(),
   description: z.string().max(200).nullable().optional(),
   instagram_handle: z.string().max(30).nullable().optional(),
+  city: z.string().max(60).nullable().optional(),
 })
 
 export async function GET() {

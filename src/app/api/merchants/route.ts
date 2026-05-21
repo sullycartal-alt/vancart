@@ -9,6 +9,9 @@ const merchantSchema = z.object({
   primary_color: z.string().optional(),
   loyalty_rule: z.string().optional(),
   stamps_required: z.number().int().min(1).max(50).optional(),
+  loyalty_type: z.enum(['stamps', 'points']).optional(),
+  points_per_euro: z.number().int().min(1).nullable().optional(),
+  points_required: z.number().int().min(1).nullable().optional(),
   description: z.string().max(200).nullable().optional(),
   instagram_handle: z.string().max(30).nullable().optional(),
 })

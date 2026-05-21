@@ -11,6 +11,9 @@ CREATE TABLE merchants (
   primary_color TEXT NOT NULL DEFAULT '#000000',
   loyalty_rule TEXT NOT NULL DEFAULT 'Achetez 10, le suivant est offert',
   stamps_required INTEGER NOT NULL DEFAULT 10,
+  loyalty_type TEXT NOT NULL DEFAULT 'stamps',
+  points_per_euro INTEGER DEFAULT 1,
+  points_required INTEGER DEFAULT 100,
   description TEXT,
   instagram_handle TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -20,6 +23,9 @@ CREATE TABLE merchants (
 -- Migration for existing installations:
 -- ALTER TABLE merchants ADD COLUMN IF NOT EXISTS description TEXT;
 -- ALTER TABLE merchants ADD COLUMN IF NOT EXISTS instagram_handle TEXT;
+-- ALTER TABLE merchants ADD COLUMN IF NOT EXISTS loyalty_type TEXT NOT NULL DEFAULT 'stamps';
+-- ALTER TABLE merchants ADD COLUMN IF NOT EXISTS points_per_euro INTEGER DEFAULT 1;
+-- ALTER TABLE merchants ADD COLUMN IF NOT EXISTS points_required INTEGER DEFAULT 100;
 
 -- Customers table
 CREATE TABLE customers (
@@ -35,6 +41,7 @@ CREATE TABLE loyalty_cards (
   merchant_id UUID NOT NULL REFERENCES merchants(id) ON DELETE CASCADE,
   customer_id UUID NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
   stamps_count INTEGER NOT NULL DEFAULT 0,
+  points INTEGER NOT NULL DEFAULT 0,
   total_stamps_earned INTEGER NOT NULL DEFAULT 0,
   rewards_unlocked INTEGER NOT NULL DEFAULT 0,
   apple_pass_serial TEXT UNIQUE,

@@ -43,6 +43,12 @@ export default function RegisterPage() {
       return
     }
 
+    fetch('/api/welcome-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: data.email, businessName: data.businessName }),
+    }).catch(() => {})
+
     router.push('/dashboard')
     router.refresh()
   }

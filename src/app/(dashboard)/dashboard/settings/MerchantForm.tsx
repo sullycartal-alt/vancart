@@ -14,7 +14,10 @@ const schema = z.object({
     .regex(/^[a-z0-9-]+$/, 'Uniquement des lettres minuscules, chiffres et tirets'),
   primary_color: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Couleur invalide'),
   loyalty_rule: z.string().min(5, 'Décrivez votre règle de fidélité'),
+  loyalty_type: z.enum(['stamps', 'points']),
   stamps_required: z.number().int().min(1).max(50),
+  points_per_euro: z.number().int().min(1).optional(),
+  points_required: z.number().int().min(1).optional(),
   description: z.string().max(200).optional(),
   instagram_handle: z.string().max(30).optional(),
 })
@@ -29,6 +32,9 @@ interface Merchant {
   primary_color: string
   loyalty_rule: string
   stamps_required: number
+  loyalty_type?: string
+  points_per_euro?: number | null
+  points_required?: number | null
   description?: string | null
   instagram_handle?: string | null
 }
@@ -77,17 +83,22 @@ interface PreviewProps {
   logoUrl: string | null
   description?: string
   instagramHandle?: string
+  loyaltyType?: string
+  pointsPerEuro?: number
+  pointsRequired?: number
 }
 
-function CardPreview({ businessName, primaryColor, loyaltyRule, stampsRequired, logoUrl, description, instagramHandle }: PreviewProps) {
+function CardPreview({ businessName, primaryColor, loyaltyRule, stampsRequired, logoUrl, description, instagramHandle, loyaltyType, pointsPerEuro, pointsRequired }: PreviewProps) {
   const color = /^#[0-9a-f]{6}$/i.test(primaryColor) ? primaryColor : '#6366f1'
   const tc = textColorFor(color)
   const name = businessName.trim() || 'Mon commerce'
   const [imgErr, setImgErr] = useState(false)
   useEffect(() => { setImgErr(false) }, [logoUrl])
 
+  const isPoints = loyaltyType === 'points'
   const total = Math.min(Math.max(stampsRequired || 10, 1), 12)
   const filled = Math.floor(total * 0.4)
+  const previewPoints = Math.round((pointsRequired || 100) * 0.4)
 
   return (
     <div className="rounded-2xl overflow-hidden shadow-lg border border-gray-100 max-w-xs mx-auto select-none">
@@ -103,27 +114,40 @@ function CardPreview({ businessName, primaryColor, loyaltyRule, stampsRequired, 
         <p className="text-sm font-bold" style={{ color: tc }}>{name}</p>
         {description && <p className="text-xs mt-0.5 opacity-80 leading-snug" style={{ color: tc }}>{description}</p>}
         <div className="inline-flex items-center gap-1 mt-2 px-2.5 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: `${tc}22`, color: tc }}>
-          🎴 {stampsRequired || 10} tampons = 1 récompense
+          {isPoints ? `🏆 ${pointsRequired || 100} pts = 1 récompense` : `🎴 ${stampsRequired || 10} tampons = 1 récompense`}
         </div>
       </div>
 
       <div className="bg-white px-5 py-4 space-y-2.5">
         <p className="text-xs font-medium text-gray-500 text-center line-clamp-2">{loyaltyRule || 'Votre règle de fidélité'}</p>
-        <div className="flex flex-wrap justify-center gap-1.5">
-          {Array.from({ length: total }).map((_, i) => (
-            <div
-              key={i}
-              className="w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs"
-              style={i < filled
-                ? { backgroundColor: color, borderColor: color, color: tc }
-                : { borderColor: '#e5e7eb', color: 'transparent' }
-              }
-            >
-              {i < filled ? '✓' : '·'}
+        {isPoints ? (
+          <>
+            <div className="space-y-1">
+              <div className="h-2.5 rounded-full bg-gray-100 overflow-hidden">
+                <div className="h-full rounded-full transition-all" style={{ width: `${Math.round(previewPoints / (pointsRequired || 100) * 100)}%`, backgroundColor: color }} />
+              </div>
             </div>
-          ))}
-        </div>
-        <p className="text-xs text-center text-gray-400">{filled}/{stampsRequired || 10} tampons</p>
+            <p className="text-xs text-center text-gray-400">{previewPoints}/{pointsRequired || 100} pts · {pointsPerEuro || 1} pt / €</p>
+          </>
+        ) : (
+          <>
+            <div className="flex flex-wrap justify-center gap-1.5">
+              {Array.from({ length: total }).map((_, i) => (
+                <div
+                  key={i}
+                  className="w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs"
+                  style={i < filled
+                    ? { backgroundColor: color, borderColor: color, color: tc }
+                    : { borderColor: '#e5e7eb', color: 'transparent' }
+                  }
+                >
+                  {i < filled ? '✓' : '·'}
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-center text-gray-400">{filled}/{stampsRequired || 10} tampons</p>
+          </>
+        )}
         {instagramHandle && (
           <div className="flex items-center justify-center gap-1.5 pt-2 border-t border-gray-100">
             <span className="text-gray-400 text-xs">📸</span>
@@ -155,7 +179,10 @@ export default function MerchantForm({ merchant }: Props) {
       slug: merchant?.slug ?? '',
       primary_color: merchant?.primary_color ?? '#6366f1',
       loyalty_rule: merchant?.loyalty_rule ?? '',
+      loyalty_type: (merchant?.loyalty_type ?? 'stamps') as 'stamps' | 'points',
       stamps_required: merchant?.stamps_required ?? 10,
+      points_per_euro: merchant?.points_per_euro ?? 1,
+      points_required: merchant?.points_required ?? 100,
       description: merchant?.description ?? '',
       instagram_handle: merchant?.instagram_handle ?? '',
     },
@@ -164,7 +191,10 @@ export default function MerchantForm({ merchant }: Props) {
   const businessName = watch('business_name')
   const primaryColor = watch('primary_color')
   const loyaltyRule = watch('loyalty_rule')
+  const loyaltyType = watch('loyalty_type')
   const stampsRequired = watch('stamps_required')
+  const pointsPerEuro = watch('points_per_euro')
+  const pointsRequired = watch('points_required')
   const description = watch('description')
   const instagramHandle = watch('instagram_handle')
   const slugTouched = useRef(!!merchant)
@@ -300,15 +330,63 @@ export default function MerchantForm({ merchant }: Props) {
             {errors.loyalty_rule && <p className="mt-1 text-sm text-red-600">{errors.loyalty_rule.message}</p>}
           </div>
 
-          {/* Tampons */}
+          {/* Mode fidélité */}
           <div>
-            <label htmlFor="stamps_required" className="block text-sm font-medium text-gray-700">Nombre de tampons pour la récompense</label>
-            <div className="mt-1 flex items-center gap-3">
-              <input {...register('stamps_required', { valueAsNumber: true })} type="number" id="stamps_required" min={1} max={50} className="w-24 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
-              <span className="text-sm text-gray-500">tampons</span>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Mode de fidélité</label>
+            <div className="inline-flex rounded-lg border border-gray-200 bg-gray-50 p-1 gap-1">
+              {(['stamps', 'points'] as const).map((type) => (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => setValue('loyalty_type', type, { shouldValidate: true })}
+                  className="px-4 py-1.5 rounded-md text-sm font-medium transition-all"
+                  style={loyaltyType === type
+                    ? { backgroundColor: primaryColor, color: textColorFor(primaryColor) }
+                    : { backgroundColor: 'transparent', color: '#6b7280' }
+                  }
+                >
+                  {type === 'stamps' ? '🎴 Tampons' : '🏆 Points'}
+                </button>
+              ))}
             </div>
-            {errors.stamps_required && <p className="mt-1 text-sm text-red-600">{errors.stamps_required.message}</p>}
+            <input type="hidden" {...register('loyalty_type')} />
+            <p className="mt-1.5 text-xs text-gray-400">
+              {loyaltyType === 'points'
+                ? 'Le client accumule des points selon son montant d\'achat. Ex : 1€ = 1 pt, récompense à 100 pts.'
+                : 'Le commerçant tamponne la carte à chaque visite. Ex : 10 tampons = 1 café offert.'}
+            </p>
           </div>
+
+          {/* Tampons ou Points */}
+          {loyaltyType === 'points' ? (
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="points_per_euro" className="block text-sm font-medium text-gray-700">Points par euro dépensé</label>
+                <div className="mt-1 flex items-center gap-3">
+                  <input {...register('points_per_euro', { valueAsNumber: true })} type="number" id="points_per_euro" min={1} className="w-24 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
+                  <span className="text-sm text-gray-500">pt / €</span>
+                </div>
+                {errors.points_per_euro && <p className="mt-1 text-sm text-red-600">{errors.points_per_euro.message}</p>}
+              </div>
+              <div>
+                <label htmlFor="points_required" className="block text-sm font-medium text-gray-700">Points requis pour la récompense</label>
+                <div className="mt-1 flex items-center gap-3">
+                  <input {...register('points_required', { valueAsNumber: true })} type="number" id="points_required" min={1} className="w-24 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
+                  <span className="text-sm text-gray-500">points</span>
+                </div>
+                {errors.points_required && <p className="mt-1 text-sm text-red-600">{errors.points_required.message}</p>}
+              </div>
+            </div>
+          ) : (
+            <div>
+              <label htmlFor="stamps_required" className="block text-sm font-medium text-gray-700">Nombre de tampons pour la récompense</label>
+              <div className="mt-1 flex items-center gap-3">
+                <input {...register('stamps_required', { valueAsNumber: true })} type="number" id="stamps_required" min={1} max={50} className="w-24 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
+                <span className="text-sm text-gray-500">tampons</span>
+              </div>
+              {errors.stamps_required && <p className="mt-1 text-sm text-red-600">{errors.stamps_required.message}</p>}
+            </div>
+          )}
 
           {/* Instagram */}
           <div>
@@ -353,6 +431,9 @@ export default function MerchantForm({ merchant }: Props) {
             logoUrl={logoUrl}
             description={description}
             instagramHandle={instagramHandle}
+            loyaltyType={loyaltyType}
+            pointsPerEuro={pointsPerEuro || 1}
+            pointsRequired={pointsRequired || 100}
           />
           <p className="text-xs text-gray-400 text-center">Ce que vos clients verront sur leur carte</p>
         </div>

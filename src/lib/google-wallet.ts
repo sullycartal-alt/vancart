@@ -96,6 +96,7 @@ function classBody(cId: string, p: { merchantName: string; loyaltyRule: string; 
 
 function objectBody(oId: string, cId: string, p: {
   cardId: string
+  customerName: string
   stampsCount: number
   stampsRequired: number
 }) {
@@ -103,6 +104,8 @@ function objectBody(oId: string, cId: string, p: {
     id: oId,
     classId: cId,
     state: 'ACTIVE',
+    accountId: p.cardId,
+    accountName: p.customerName,
     loyaltyPoints: {
       balance: { string: `${p.stampsCount}/${p.stampsRequired}` },
       label: 'Tampons',
@@ -151,20 +154,43 @@ async function upsertObject(
   token: string,
   oId: string,
   cId: string,
-  p: { cardId: string; stampsCount: number; stampsRequired: number },
+  p: { cardId: string; customerName: string; stampsCount: number; stampsRequired: number },
 ) {
   const body = objectBody(oId, cId, p)
-  const putRes = await fetch(`${API}/loyaltyObject/${encodeURIComponent(oId)}`, {
-    method: 'PUT',
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
+  console.log('[google-wallet] upsertObject:', oId, 'state:', body.state)
+
+  // Try GET first to decide between POST (create) and PUT (update)
+  const getRes = await fetch(`${API}/loyaltyObject/${encodeURIComponent(oId)}`, {
+    headers: { Authorization: `Bearer ${token}` },
   })
-  if (!putRes.ok) {
-    await fetch(`${API}/loyaltyObject`, {
+  console.log('[google-wallet] loyaltyObject GET status:', getRes.status)
+
+  if (getRes.ok) {
+    // Object exists — update it
+    const putRes = await fetch(`${API}/loyaltyObject/${encodeURIComponent(oId)}`, {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+    if (!putRes.ok) {
+      const detail = await putRes.text()
+      console.error('[google-wallet] loyaltyObject PUT failed:', putRes.status, detail)
+      throw new Error(`Failed to update LoyaltyObject (${putRes.status}): ${detail}`)
+    }
+    console.log('[google-wallet] loyaltyObject updated, status:', putRes.status)
+  } else {
+    // Object does not exist — create it
+    const postRes = await fetch(`${API}/loyaltyObject`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     })
+    if (!postRes.ok) {
+      const detail = await postRes.text()
+      console.error('[google-wallet] loyaltyObject POST failed:', postRes.status, detail)
+      throw new Error(`Failed to create LoyaltyObject (${postRes.status}): ${detail}`)
+    }
+    console.log('[google-wallet] loyaltyObject created, status:', postRes.status)
   }
 }
 
@@ -174,6 +200,7 @@ async function upsertObject(
  */
 export async function buildGoogleWalletURL(params: {
   cardId: string
+  customerName: string
   merchantName: string
   loyaltyRule: string
   primaryColor: string

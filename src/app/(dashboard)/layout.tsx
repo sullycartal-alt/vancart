@@ -18,6 +18,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <Link href="/dashboard/clients" className="text-sm text-gray-600 hover:text-gray-900">
                   Mes clients
                 </Link>
+                <Link href="/dashboard/stats" className="text-sm text-gray-600 hover:text-gray-900">
+                  Stats
+                </Link>
                 <Link href="/dashboard/settings" className="text-sm text-gray-600 hover:text-gray-900">
                   Mon commerce
                 </Link>

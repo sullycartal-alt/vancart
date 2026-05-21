@@ -11,12 +11,28 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
-  /* Custom animation */
   --animate-fade-in: fade-in 0.3s ease-out both;
+  --animate-slide-up: slide-up 0.4s cubic-bezier(0.16,1,0.3,1) both;
+  --animate-stamp-pop: stamp-pop 0.45s cubic-bezier(0.16,1,0.3,1) both;
+  --animate-celebrate: celebrate 0.5s cubic-bezier(0.16,1,0.3,1) both;
 
   @keyframes fade-in {
     from { opacity: 0; transform: translateY(8px); }
     to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(24px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes stamp-pop {
+    0%   { transform: scale(0.5); opacity: 0; }
+    60%  { transform: scale(1.25); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes celebrate {
+    0%   { transform: scale(0.8) rotate(-8deg); opacity: 0; }
+    60%  { transform: scale(1.1) rotate(2deg); }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
   }
 }
 
@@ -27,21 +43,18 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Smooth page transitions for all navigable elements */
 a, button {
   transition-property: color, background-color, border-color, opacity, box-shadow, transform;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
 }
 
-/* Better focus rings throughout */
 :focus-visible {
   outline: 2px solid #6366f1;
   outline-offset: 2px;
   border-radius: 6px;
 }
 
-/* Prevent dark mode from inverting form inputs */
 input, textarea, select {
   color-scheme: light;
 }

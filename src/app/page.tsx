@@ -179,8 +179,11 @@ export default function Home() {
       </section>
 
       {/* ── Footer ─────────────────────────────────────────────────────────── */}
-      <footer className="border-t border-gray-100 px-6 py-8 text-center text-xs text-gray-400">
-        © 2025 VanCart · Cartes de fidélité dématérialisées
+      <footer className="border-t border-gray-100 px-6 py-8 text-center text-xs text-gray-400 space-x-4">
+        <span>© 2025 VanCart · Cartes de fidélité dématérialisées</span>
+        <Link href="/politique-confidentialite" className="hover:text-gray-600 underline underline-offset-2">
+          Politique de confidentialité
+        </Link>
       </footer>
     </div>
   )

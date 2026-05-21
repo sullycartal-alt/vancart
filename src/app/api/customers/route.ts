@@ -1,4 +1,5 @@
 import { createServiceClient } from '@/lib/supabase/service'
+import { checkRateLimit, getClientIp } from '@/lib/rate-limit'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 
@@ -8,6 +9,15 @@ const customerSchema = z.object({
 })
 
 export async function POST(request: Request) {
+  const ip = getClientIp(request)
+  const { allowed, retryAfter } = checkRateLimit(ip)
+  if (!allowed) {
+    return NextResponse.json(
+      { error: 'Too many requests, please try again later.' },
+      { status: 429, headers: { 'Retry-After': String(retryAfter) } },
+    )
+  }
+
   // Use service role to bypass RLS — this is a public endpoint (QR scan flow)
   const service = createServiceClient()
 

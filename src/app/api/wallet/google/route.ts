@@ -62,7 +62,7 @@ export async function GET(request: Request) {
   const service = createServiceClient()
   const { data: card, error: cardError } = await service
     .from('loyalty_cards')
-    .select('id, stamps_count, merchants(id, business_name, primary_color, loyalty_rule, stamps_required), customers(first_name)')
+    .select('id, stamps_count, merchants(id, business_name, primary_color, loyalty_rule, stamps_required, logo_url), customers(first_name)')
     .eq('id', cardId)
     .single()
 
@@ -76,7 +76,7 @@ export async function GET(request: Request) {
   console.log('[wallet/google] card found, stamps_count:', card.stamps_count)
 
   const merchant = Array.isArray(card.merchants) ? card.merchants[0] : card.merchants as {
-    id: string; business_name: string; primary_color: string; loyalty_rule: string; stamps_required: number
+    id: string; business_name: string; primary_color: string; loyalty_rule: string; stamps_required: number; logo_url: string | null
   }
 
   if (!merchant) {
@@ -93,6 +93,7 @@ export async function GET(request: Request) {
       merchantName: merchant.business_name,
       loyaltyRule: merchant.loyalty_rule,
       primaryColor: merchant.primary_color,
+      logoUrl: merchant.logo_url,
       stampsCount: card.stamps_count,
       stampsRequired: merchant.stamps_required,
     })

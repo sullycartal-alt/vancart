@@ -69,22 +69,29 @@ async function getAccessToken(): Promise<string> {
 
 const API = 'https://walletobjects.googleapis.com/walletobjects/v1'
 
-function classId(merchantId: string): string {
-  return `${cfg().issuerId}.m_${merchantId.replace(/-/g, '_')}`
+function classId(): string {
+  return `${cfg().issuerId}.vancart_loyalty`
 }
 
 function objectId(cardId: string): string {
   return `${cfg().issuerId}.c_${cardId.replace(/-/g, '_')}`
 }
 
-function classBody(cId: string, p: { merchantName: string; loyaltyRule: string; primaryColor: string }) {
-  return {
+function classBody(cId: string, p: { merchantName: string; loyaltyRule: string; primaryColor: string; logoUrl?: string | null }) {
+  const body: Record<string, unknown> = {
     id: cId,
     issuerName: p.merchantName,
     programName: p.loyaltyRule || 'Carte de fidélité',
     reviewStatus: 'UNDER_REVIEW',
     hexBackgroundColor: /^#[0-9a-f]{6}$/i.test(p.primaryColor) ? p.primaryColor : '#4f46e5',
   }
+  if (p.logoUrl) {
+    body.programLogo = {
+      sourceUri: { uri: p.logoUrl },
+      contentDescription: { defaultValue: { language: 'fr', value: p.merchantName } },
+    }
+  }
+  return body
 }
 
 function objectBody(oId: string, cId: string, p: {
@@ -116,17 +123,28 @@ function objectBody(oId: string, cId: string, p: {
 async function ensureClass(
   token: string,
   cId: string,
-  p: { merchantName: string; loyaltyRule: string; primaryColor: string },
+  p: { merchantName: string; loyaltyRule: string; primaryColor: string; logoUrl?: string | null },
 ) {
-  const res = await fetch(`${API}/loyaltyClass/${encodeURIComponent(cId)}`, {
+  const getRes = await fetch(`${API}/loyaltyClass/${encodeURIComponent(cId)}`, {
     headers: { Authorization: `Bearer ${token}` },
   })
-  if (res.ok) return
-  await fetch(`${API}/loyaltyClass`, {
+  console.log('[google-wallet] ensureClass GET status:', getRes.status)
+  if (getRes.ok) return
+
+  // Class not found — create it
+  const body = classBody(cId, p)
+  console.log('[google-wallet] creating loyaltyClass…', JSON.stringify({ id: cId, issuerName: p.merchantName }))
+  const postRes = await fetch(`${API}/loyaltyClass`, {
     method: 'POST',
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify(classBody(cId, p)),
+    body: JSON.stringify(body),
   })
+  if (!postRes.ok) {
+    const detail = await postRes.text()
+    console.error('[google-wallet] loyaltyClass POST failed:', postRes.status, detail)
+    throw new Error(`Failed to create LoyaltyClass (${postRes.status}): ${detail}`)
+  }
+  console.log('[google-wallet] loyaltyClass created, status:', postRes.status)
 }
 
 async function upsertObject(
@@ -156,15 +174,15 @@ async function upsertObject(
  */
 export async function buildGoogleWalletURL(params: {
   cardId: string
-  merchantId: string
   merchantName: string
   loyaltyRule: string
   primaryColor: string
+  logoUrl?: string | null
   stampsCount: number
   stampsRequired: number
 }): Promise<string> {
   const token = await getAccessToken()
-  const cId = classId(params.merchantId)
+  const cId = classId()
   const oId = objectId(params.cardId)
 
   await ensureClass(token, cId, params)

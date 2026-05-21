@@ -1,6 +1,8 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+const ADMIN_EMAIL = 'sullycartal@gmail.com'
+
 export async function proxy(request: NextRequest) {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return NextResponse.next()
@@ -26,13 +28,19 @@ export async function proxy(request: NextRequest) {
       return NextResponse.redirect(url)
     }
 
+    if (request.nextUrl.pathname.startsWith('/admin') && user.email !== ADMIN_EMAIL) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/dashboard'
+      return NextResponse.redirect(url)
+    }
+
     return NextResponse.next()
   } catch {
     return NextResponse.next()
   }
 }
 
-// Only run on /dashboard routes — keeps proxy off /, /login, /register, QR pages
+// Run on /dashboard and /admin routes
 export const config = {
-  matcher: ['/dashboard/:path*'],
+  matcher: ['/dashboard/:path*', '/admin/:path*'],
 }

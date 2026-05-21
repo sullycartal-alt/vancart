@@ -1,0 +1,36 @@
+import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
+import Link from 'next/link'
+
+const ADMIN_EMAIL = 'sullycartal@gmail.com'
+
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) redirect('/login')
+  if (user.email !== ADMIN_EMAIL) redirect('/dashboard')
+
+  return (
+    <div className="min-h-screen bg-gray-100">
+      <nav className="bg-gray-900 text-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-14 items-center">
+            <div className="flex items-center gap-6">
+              <span className="text-sm font-bold text-red-400">⚙ Admin VanCart</span>
+              <Link href="/admin" className="text-sm text-gray-300 hover:text-white transition-colors">
+                Dashboard
+              </Link>
+            </div>
+            <Link href="/dashboard" className="text-sm text-gray-400 hover:text-white transition-colors">
+              ← Retour app
+            </Link>
+          </div>
+        </div>
+      </nav>
+      <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        {children}
+      </main>
+    </div>
+  )
+}

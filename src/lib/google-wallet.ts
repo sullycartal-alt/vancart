@@ -1,21 +1,28 @@
 import { createSign } from 'crypto'
 
 function cfg() {
-  const rawKey = process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY ?? ''
-  // Vercel can store the key with literal \n or \r\n sequences instead of real
-  // newline characters. Handle every common variant so the PEM parser never
-  // receives a single-line blob that OpenSSL's decoder rejects.
-  const key = rawKey
-    .replace(/\\r\\n/g, '\n') // literal \r\n  (Windows, double-escaped)
-    .replace(/\\n/g, '\n')    // literal \n    (most common Vercel format)
-    .replace(/\r\n/g, '\n')   // real CRLF
-    .replace(/\r/g, '\n')     // real CR
-    .trim()
-  return {
-    issuerId: process.env.GOOGLE_WALLET_ISSUER_ID ?? '',
-    email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL ?? '',
-    key,
+  const issuerId = process.env.GOOGLE_WALLET_ISSUER_ID ?? ''
+  const email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL ?? ''
+
+  // Approach 1 (preferred): key stored as base64 in GOOGLE_PRIVATE_KEY_BASE64
+  // → avoids all \n-escaping issues entirely.
+  // To generate: in a terminal run:
+  //   node -e "process.stdout.write(Buffer.from(require('fs').readFileSync('key.pem','utf8')).toString('base64'))"
+  // Then paste the result as the Vercel env var value.
+  let key: string
+  const b64 = process.env.GOOGLE_PRIVATE_KEY_BASE64
+  if (b64) {
+    key = Buffer.from(b64, 'base64').toString('utf-8').trim()
+  } else {
+    // Approach 2 (fallback): raw PEM with literal \n sequences from Vercel
+    const rawKey = process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY ?? ''
+    key = rawKey
+      .replace(/\\n/g, '\n') // literal \n → real newline (most common Vercel format)
+      .replace(/\\r/g, '')   // strip any literal \r so they don't corrupt the PEM
+      .trim()
   }
+
+  return { issuerId, email, key }
 }
 
 export function isConfigured(): boolean {

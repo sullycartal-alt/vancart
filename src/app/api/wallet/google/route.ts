@@ -7,15 +7,29 @@ export async function GET(request: Request) {
   const cardId = searchParams.get('card_id')
 
   // ── Step 0: env vars ────────────────────────────────────────────────────────
+  // Show processed key shape (never log secret bytes)
+  const rawKey = process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY ?? ''
+  const b64Key = process.env.GOOGLE_PRIVATE_KEY_BASE64 ?? ''
+  const processedKey = b64Key
+    ? Buffer.from(b64Key, 'base64').toString('utf-8').trim()
+    : rawKey.replace(/\\n/g, '\n').replace(/\\r/g, '').trim()
+  const lines = processedKey.split('\n')
+
   const envCheck = {
     GOOGLE_WALLET_ISSUER_ID: !!process.env.GOOGLE_WALLET_ISSUER_ID,
     GOOGLE_SERVICE_ACCOUNT_EMAIL: !!process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-    GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY: !!process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY,
-    // Key diagnostics (no secret values)
-    key_length: process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY?.length ?? 0,
-    key_starts_with: process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY?.slice(0, 30) ?? '',
-    key_has_literal_backslash_n: (process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY ?? '').includes('\\n'),
-    key_has_real_newline: (process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY ?? '').includes('\n'),
+    GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY: !!rawKey,
+    GOOGLE_PRIVATE_KEY_BASE64: !!b64Key,
+    key_source: b64Key ? 'base64' : 'raw',
+    // Raw key diagnostics
+    raw_length: rawKey.length,
+    raw_has_literal_backslash_n: rawKey.includes('\\n'),
+    raw_has_real_newline: rawKey.includes('\n'),
+    // Processed key diagnostics (safe: only structural info)
+    processed_length: processedKey.length,
+    processed_line_count: lines.length,
+    processed_first_line: lines[0] ?? '',
+    processed_last_line: lines[lines.length - 1] ?? '',
   }
   console.log('[wallet/google] env check:', JSON.stringify(envCheck))
 

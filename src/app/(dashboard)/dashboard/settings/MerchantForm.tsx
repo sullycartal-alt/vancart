@@ -267,18 +267,20 @@ export default function MerchantForm({ merchant }: Props) {
           {/* Couleur */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Couleur principale</label>
-            <div className="flex flex-wrap gap-2 mb-3">
+            <div className="flex flex-wrap gap-3 mb-3">
               {PRESET_COLORS.map(({ hex, label }) => (
                 <button
                   key={hex}
                   type="button"
                   title={label}
                   onClick={() => setValue('primary_color', hex, { shouldValidate: true })}
-                  className="w-8 h-8 rounded-full transition-transform hover:scale-110 focus:outline-none"
+                  className="w-8 h-8 rounded-full transition-transform hover:scale-105 focus:outline-none"
                   style={{
                     backgroundColor: hex,
-                    transform: primaryColor === hex ? 'scale(1.2)' : undefined,
-                    boxShadow: primaryColor === hex ? `0 0 0 2px white, 0 0 0 4px ${hex}` : '0 0 0 1px #e5e7eb',
+                    transform: primaryColor === hex ? 'scale(1.1)' : undefined,
+                    outline: primaryColor === hex ? `2px solid ${hex}` : 'none',
+                    outlineOffset: '2px',
+                    boxShadow: primaryColor === hex ? undefined : '0 0 0 1px #e5e7eb',
                   }}
                 />
               ))}

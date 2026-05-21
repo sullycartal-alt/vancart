@@ -92,6 +92,7 @@ export async function GET(request: Request) {
 
     const url = await buildGoogleWalletURL({
       cardId: card.id,
+      merchantId: merchant.id,
       customerName,
       merchantName: merchant.business_name,
       loyaltyRule: merchant.loyalty_rule,

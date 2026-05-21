@@ -39,6 +39,7 @@ function textColorFor(hex: string): string {
 export default function QRLandingClient({ merchant }: Props) {
   const [submitted, setSubmitted] = useState(false)
   const [cardId, setCardId] = useState<string | null>(null)
+  const [logoError, setLogoError] = useState(false)
 
   const color = /^#[0-9a-f]{6}$/i.test(merchant.primary_color)
     ? merchant.primary_color
@@ -96,13 +97,15 @@ export default function QRLandingClient({ merchant }: Props) {
       <div className="min-h-screen flex flex-col" style={{ backgroundColor: `${color}10` }}>
         {/* Colored top band */}
         <div className="px-4 pt-10 pb-8 text-center" style={{ backgroundColor: color }}>
-          {merchant.logo_url ? (
+          {merchant.logo_url && !logoError ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={merchant.logo_url}
               alt={merchant.business_name}
+              width={128}
+              height={56}
               className="h-14 w-auto mx-auto mb-3 object-contain"
-              style={{ filter: textColor === '#ffffff' ? 'brightness(0) invert(1)' : 'none' }}
+              onError={() => setLogoError(true)}
             />
           ) : (
             <div
@@ -172,13 +175,15 @@ export default function QRLandingClient({ merchant }: Props) {
         className="px-6 pt-14 pb-10 text-center"
         style={{ backgroundColor: color }}
       >
-        {merchant.logo_url ? (
+        {merchant.logo_url && !logoError ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={merchant.logo_url}
             alt={merchant.business_name}
+            width={160}
+            height={64}
             className="h-16 w-auto mx-auto mb-4 object-contain"
-            style={{ filter: textColor === '#ffffff' ? 'brightness(0) invert(1)' : 'none' }}
+            onError={() => setLogoError(true)}
           />
         ) : (
           <div
@@ -224,7 +229,8 @@ export default function QRLandingClient({ merchant }: Props) {
                 id="first_name"
                 placeholder="Jean-Baptiste"
                 autoComplete="given-name"
-                className="block w-full rounded-xl border border-gray-200 px-4 py-3 text-sm shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 transition-colors"
+                className="block w-full rounded-xl border border-gray-200 px-4 py-3 text-sm text-gray-900 bg-white shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 transition-colors"
+                style={{ color: '#111827', backgroundColor: '#ffffff' }}
               />
               {errors.first_name && (
                 <p className="mt-1 text-xs text-red-500">{errors.first_name.message}</p>
@@ -241,7 +247,8 @@ export default function QRLandingClient({ merchant }: Props) {
                 id="phone"
                 placeholder="+33 6 12 34 56 78"
                 autoComplete="tel"
-                className="block w-full rounded-xl border border-gray-200 px-4 py-3 text-sm shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 transition-colors"
+                className="block w-full rounded-xl border border-gray-200 px-4 py-3 text-sm text-gray-900 bg-white shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 transition-colors"
+                style={{ color: '#111827', backgroundColor: '#ffffff' }}
               />
               {errors.phone && (
                 <p className="mt-1 text-xs text-red-500">{errors.phone.message}</p>

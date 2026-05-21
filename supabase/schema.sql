@@ -11,9 +11,15 @@ CREATE TABLE merchants (
   primary_color TEXT NOT NULL DEFAULT '#000000',
   loyalty_rule TEXT NOT NULL DEFAULT 'Achetez 10, le suivant est offert',
   stamps_required INTEGER NOT NULL DEFAULT 10,
+  description TEXT,
+  instagram_handle TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- Migration for existing installations:
+-- ALTER TABLE merchants ADD COLUMN IF NOT EXISTS description TEXT;
+-- ALTER TABLE merchants ADD COLUMN IF NOT EXISTS instagram_handle TEXT;
 
 -- Customers table
 CREATE TABLE customers (

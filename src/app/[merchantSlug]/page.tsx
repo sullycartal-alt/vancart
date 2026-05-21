@@ -13,7 +13,7 @@ export default async function MerchantLandingPage({ params }: Props) {
 
   const { data: merchant, error } = await service
     .from('merchants')
-    .select('id, business_name, slug, logo_url, primary_color, loyalty_rule, stamps_required')
+    .select('id, business_name, slug, logo_url, primary_color, loyalty_rule, stamps_required, description, instagram_handle')
     .eq('slug', merchantSlug)
     .single()
 

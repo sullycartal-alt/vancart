@@ -20,6 +20,7 @@ const schema = z.object({
   points_required: z.number().int().min(1).optional(),
   description: z.string().max(200).optional(),
   instagram_handle: z.string().max(30).optional(),
+  city: z.string().max(60).optional(),
 })
 
 type FormData = z.infer<typeof schema>
@@ -37,6 +38,7 @@ interface Merchant {
   points_required?: number | null
   description?: string | null
   instagram_handle?: string | null
+  city?: string | null
 }
 
 interface Props {
@@ -185,6 +187,7 @@ export default function MerchantForm({ merchant }: Props) {
       points_required: merchant?.points_required ?? 100,
       description: merchant?.description ?? '',
       instagram_handle: merchant?.instagram_handle ?? '',
+      city: merchant?.city ?? '',
     },
   })
 
@@ -197,6 +200,7 @@ export default function MerchantForm({ merchant }: Props) {
   const pointsRequired = watch('points_required')
   const description = watch('description')
   const instagramHandle = watch('instagram_handle')
+  const city = watch('city')
   const slugTouched = useRef(!!merchant)
 
   useEffect(() => {
@@ -223,7 +227,7 @@ export default function MerchantForm({ merchant }: Props) {
     const res = await fetch('/api/merchants', {
       method: savedMerchant ? 'PATCH' : 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...data, logo_url: logoUrl, description: data.description || null, instagram_handle: data.instagram_handle || null }),
+      body: JSON.stringify({ ...data, logo_url: logoUrl, description: data.description || null, instagram_handle: data.instagram_handle || null, city: data.city || null }),
     })
     const result = await res.json()
     if (!res.ok) {
@@ -399,6 +403,16 @@ export default function MerchantForm({ merchant }: Props) {
             </div>
             <p className="mt-1 text-xs text-gray-400">Affiché sur la page client avec un lien vers votre profil.</p>
             {errors.instagram_handle && <p className="mt-1 text-sm text-red-600">{errors.instagram_handle.message}</p>}
+          </div>
+
+          {/* Ville */}
+          <div>
+            <label htmlFor="city" className="block text-sm font-medium text-gray-700">
+              Ville <span className="text-gray-400 font-normal">(optionnelle)</span>
+            </label>
+            <input {...register('city')} type="text" id="city" placeholder="Ex : Paris, Lyon, Marseille…" maxLength={60} className={inputClass} />
+            <p className="mt-1 text-xs text-gray-400">Utilisée pour la carte de présence dans le dashboard admin.</p>
+            {errors.city && <p className="mt-1 text-sm text-red-600">{errors.city.message}</p>}
           </div>
 
           {errors.root && <div className="rounded-md bg-red-50 p-3"><p className="text-sm text-red-700">{errors.root.message}</p></div>}

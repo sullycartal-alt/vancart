@@ -272,7 +272,10 @@ export default function QRLandingClient({ merchant }: Props) {
           </form>
 
           <p className="text-xs text-center text-gray-400">
-            En continuant, vous acceptez de recevoir des communications de {merchant.business_name}.
+            En continuant, vous acceptez que vos données soient utilisées pour ce programme de fidélité.{' '}
+            <a href="/politique-confidentialite" target="_blank" rel="noopener noreferrer" className="underline hover:text-gray-600">
+              Politique de confidentialité
+            </a>
           </p>
         </div>
       </div>

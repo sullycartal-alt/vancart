@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { checkRateLimit, getClientIp } from '@/lib/rate-limit'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { isConfigured, updateWalletPass } from '@/lib/google-wallet'
@@ -8,6 +9,15 @@ const stampSchema = z.object({
 })
 
 export async function POST(request: Request) {
+  const ip = getClientIp(request)
+  const { allowed, retryAfter } = checkRateLimit(ip)
+  if (!allowed) {
+    return NextResponse.json(
+      { error: 'Too many requests, please try again later.' },
+      { status: 429, headers: { 'Retry-After': String(retryAfter) } },
+    )
+  }
+
   const supabase = await createClient()
 
   const {
@@ -37,7 +47,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
   }
 
-  // Verify the loyalty card belongs to this merchant
+  // Ownership check: only fetch the card if it belongs to the authenticated merchant.
+  // The .eq('merchant_id', merchant.id) filter ensures a merchant cannot stamp
+  // another merchant's customers — the query returns nothing if IDs don't match.
   const { data: card, error: cardError } = await supabase
     .from('loyalty_cards')
     .select('id, stamps_count, total_stamps_earned, rewards_unlocked')
@@ -46,7 +58,7 @@ export async function POST(request: Request) {
     .single()
 
   if (cardError || !card) {
-    return NextResponse.json({ error: 'Loyalty card not found' }, { status: 404 })
+    return NextResponse.json({ error: 'Loyalty card not found or access denied' }, { status: 403 })
   }
 
   // Insert stamp record

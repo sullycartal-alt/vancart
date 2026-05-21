@@ -1,8 +1,18 @@
 import { createServiceClient } from '@/lib/supabase/service'
 import { buildGoogleWalletURL, isConfigured } from '@/lib/google-wallet'
+import { checkRateLimit, getClientIp } from '@/lib/rate-limit'
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
+  const ip = getClientIp(request)
+  const { allowed, retryAfter } = checkRateLimit(ip)
+  if (!allowed) {
+    return NextResponse.json(
+      { error: 'Too many requests, please try again later.' },
+      { status: 429, headers: { 'Retry-After': String(retryAfter) } },
+    )
+  }
+
   const { searchParams } = new URL(request.url)
   const cardId = searchParams.get('card_id')
 

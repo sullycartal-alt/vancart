@@ -20,6 +20,8 @@ interface Merchant {
   primary_color: string
   loyalty_rule: string
   stamps_required: number
+  description?: string | null
+  instagram_handle?: string | null
 }
 
 interface Props {
@@ -199,9 +201,23 @@ export default function QRLandingClient({ merchant }: Props) {
         <h1 className="text-2xl font-bold tracking-tight" style={{ color: textColor }}>
           {merchant.business_name}
         </h1>
+        {merchant.description && (
+          <p className="text-sm mt-1 opacity-75" style={{ color: textColor }}>{merchant.description}</p>
+        )}
         <p className="text-sm mt-2 opacity-80" style={{ color: textColor }}>
           {merchant.loyalty_rule}
         </p>
+        {merchant.instagram_handle && (
+          <a
+            href={`https://instagram.com/${merchant.instagram_handle.replace(/^@/, '')}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 mt-2 text-xs opacity-70 hover:opacity-100 transition-opacity"
+            style={{ color: textColor }}
+          >
+            📸 @{merchant.instagram_handle.replace(/^@/, '')}
+          </a>
+        )}
         <div
           className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-full text-xs font-semibold"
           style={{ backgroundColor: `${textColor}20`, color: textColor }}

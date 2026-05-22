@@ -99,12 +99,9 @@ export default function UpgradeGate({ plan, feature, requiredPlan, children }: P
         {children}
       </div>
 
-      {/* Gradient overlay fading to background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#F7F6F3]/10 via-[#F7F6F3]/50 to-[#F7F6F3]" />
-
-      {/* Lock card */}
-      <div className="absolute inset-0 flex items-center justify-center px-4 pt-6">
-        <div className="bg-white border border-[#E8E8E3] rounded-2xl p-8 text-center space-y-5 w-full max-w-md shadow-xl">
+      {/* Fixed overlay centered */}
+      <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/20 backdrop-blur-[2px]">
+        <div className="bg-white border border-[#E8E8E3] rounded-2xl p-8 text-center space-y-5 w-full max-w-md shadow-2xl">
           <div className="w-14 h-14 bg-[#6C47FF]/10 rounded-2xl flex items-center justify-center mx-auto">
             <svg className="w-7 h-7 text-[#6C47FF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -144,7 +141,7 @@ export default function UpgradeGate({ plan, feature, requiredPlan, children }: P
               Passer au plan {planLabel} — {price} →
             </Link>
             <Link
-              href="/#tarifs"
+              href="/dashboard/upgrade"
               className="block text-xs text-[#6B6B6B] hover:text-[#6C47FF] transition-colors"
             >
               En savoir plus sur les tarifs

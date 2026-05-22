@@ -12,8 +12,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (user.email !== ADMIN_EMAIL) redirect('/dashboard')
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <nav className="bg-gray-900 text-white shadow-sm">
+    <div className="min-h-screen bg-[#F7F6F3]">
+      <nav className="bg-[#1A1A1A] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-14 items-center">
             <div className="flex items-center gap-6">

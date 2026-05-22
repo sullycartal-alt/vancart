@@ -16,6 +16,8 @@ function Spinner() {
   )
 }
 
+const inputClass = 'block w-full rounded-xl border border-[#E8E8E3] px-4 py-3 text-sm text-[#1A1A1A] bg-[#F7F6F3] focus:border-[#6C47FF] focus:outline-none focus:ring-2 focus:ring-[#6C47FF]/15 transition-all'
+
 export default function RegisterPage() {
   const router = useRouter()
   const supabase = createClient()
@@ -53,20 +55,17 @@ export default function RegisterPage() {
     router.refresh()
   }
 
-  const inputClass = "block w-full rounded-xl border border-gray-200 px-4 py-3 text-sm text-gray-900 bg-white shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 transition-colors"
-  const inputStyle = { color: '#111827', backgroundColor: '#ffffff' }
-
   return (
-    <div className="bg-white shadow-lg rounded-2xl p-8">
+    <div className="bg-white border border-[#E8E8E3] shadow-sm rounded-2xl p-8">
       <div className="text-center mb-8">
-        <Link href="/" className="text-2xl font-bold text-indigo-600">VanCart</Link>
-        <h1 className="text-xl font-bold text-gray-900 mt-3">Créer un compte</h1>
-        <p className="text-sm text-gray-500 mt-1">Gratuit · Aucune carte bancaire</p>
+        <Link href="/" className="text-2xl font-bold text-[#6C47FF]">VanCart</Link>
+        <h1 className="text-xl font-bold text-[#1A1A1A] mt-3">Créer un compte</h1>
+        <p className="text-sm text-[#6B6B6B] mt-1">Gratuit · Aucune carte bancaire</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
-          <label htmlFor="businessName" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="businessName" className="block text-sm font-medium text-[#1A1A1A] mb-1.5">
             Nom du commerce
           </label>
           <input
@@ -76,13 +75,12 @@ export default function RegisterPage() {
             placeholder="Le Café du Coin"
             autoComplete="organization"
             className={inputClass}
-            style={inputStyle}
           />
-          {errors.businessName && <p className="mt-1 text-xs text-red-500">{errors.businessName.message}</p>}
+          {errors.businessName && <p className="mt-1.5 text-xs text-red-500">{errors.businessName.message}</p>}
         </div>
 
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="email" className="block text-sm font-medium text-[#1A1A1A] mb-1.5">
             Email
           </label>
           <input
@@ -91,13 +89,12 @@ export default function RegisterPage() {
             id="email"
             autoComplete="email"
             className={inputClass}
-            style={inputStyle}
           />
-          {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>}
+          {errors.email && <p className="mt-1.5 text-xs text-red-500">{errors.email.message}</p>}
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="password" className="block text-sm font-medium text-[#1A1A1A] mb-1.5">
             Mot de passe
           </label>
           <input
@@ -106,13 +103,12 @@ export default function RegisterPage() {
             id="password"
             autoComplete="new-password"
             className={inputClass}
-            style={inputStyle}
           />
-          {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>}
+          {errors.password && <p className="mt-1.5 text-xs text-red-500">{errors.password.message}</p>}
         </div>
 
         <div>
-          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="confirmPassword" className="block text-sm font-medium text-[#1A1A1A] mb-1.5">
             Confirmer le mot de passe
           </label>
           <input
@@ -121,13 +117,12 @@ export default function RegisterPage() {
             id="confirmPassword"
             autoComplete="new-password"
             className={inputClass}
-            style={inputStyle}
           />
-          {errors.confirmPassword && <p className="mt-1 text-xs text-red-500">{errors.confirmPassword.message}</p>}
+          {errors.confirmPassword && <p className="mt-1.5 text-xs text-red-500">{errors.confirmPassword.message}</p>}
         </div>
 
         {errors.root && (
-          <div className="rounded-xl bg-red-50 px-4 py-3">
+          <div className="rounded-xl bg-red-50 border border-red-100 px-4 py-3">
             <p className="text-sm text-red-600">{errors.root.message}</p>
           </div>
         )}
@@ -135,16 +130,16 @@ export default function RegisterPage() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] transition-all shadow-sm disabled:opacity-60 disabled:cursor-not-allowed disabled:active:scale-100"
+          className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-semibold text-white bg-[#6C47FF] hover:bg-[#5835e0] active:scale-[0.98] transition-all shadow-sm disabled:opacity-60 disabled:cursor-not-allowed disabled:active:scale-100"
         >
           {isSubmitting && <Spinner />}
           {isSubmitting ? 'Création du compte…' : 'Créer mon compte gratuit'}
         </button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-gray-500">
+      <p className="mt-6 text-center text-sm text-[#6B6B6B]">
         Déjà un compte ?{' '}
-        <Link href="/login" className="text-indigo-600 font-medium hover:text-indigo-500">
+        <Link href="/login" className="text-[#6C47FF] font-medium hover:text-[#5835e0]">
           Se connecter
         </Link>
       </p>

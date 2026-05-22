@@ -2,14 +2,14 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #1A1A1A;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-jakarta, Arial, Helvetica, sans-serif);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   --animate-fade-in: fade-in 0.3s ease-out both;
   --animate-slide-up: slide-up 0.4s cubic-bezier(0.16,1,0.3,1) both;
@@ -39,8 +39,14 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans, Arial, Helvetica, sans-serif);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  letter-spacing: -0.02em;
+  line-height: 1.25;
 }
 
 a, button {
@@ -50,9 +56,9 @@ a, button {
 }
 
 :focus-visible {
-  outline: 2px solid #6366f1;
+  outline: 2px solid #6C47FF;
   outline-offset: 2px;
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
 input, textarea, select {

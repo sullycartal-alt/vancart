@@ -38,10 +38,10 @@ function StampDots({ count, total, color }: { count: number; total: number; colo
         <div key={i} className="w-9 h-9 rounded-full border-2 transition-colors"
           style={i < count
             ? { backgroundColor: color, borderColor: color }
-            : { backgroundColor: 'white', borderColor: '#d1d5db' }}
+            : { backgroundColor: '#F7F6F3', borderColor: '#E8E8E3' }}
         />
       ))}
-      {total > 20 && <span className="text-sm text-gray-500 self-center">+{total - 20}</span>}
+      {total > 20 && <span className="text-sm text-[#6B6B6B] self-center">+{total - 20}</span>}
     </div>
   )
 }
@@ -52,14 +52,16 @@ function PointsBar({ points, required, color }: { points: number; required: numb
     <div className="space-y-2">
       <div className="flex justify-between text-sm">
         <span className="font-semibold" style={{ color }}>{points} pts</span>
-        <span className="text-gray-400">/{required} pts</span>
+        <span className="text-[#6B6B6B]">/{required} pts</span>
       </div>
-      <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+      <div className="w-full bg-[#F7F6F3] rounded-full h-3 overflow-hidden">
         <div className="h-3 rounded-full transition-all" style={{ width: `${pct}%`, backgroundColor: color }} />
       </div>
     </div>
   )
 }
+
+const inputClass = 'block w-full rounded-xl border border-[#E8E8E3] px-4 py-3 text-[#1A1A1A] bg-[#F7F6F3] focus:border-[#6C47FF] focus:outline-none focus:ring-2 focus:ring-[#6C47FF]/15 transition-all'
 
 export default function StampClient({ merchant }: Props) {
   const isPoints = merchant.loyalty_type === 'points'
@@ -70,7 +72,6 @@ export default function StampClient({ merchant }: Props) {
   const [scanError, setScanError] = useState<string | null>(null)
   const [processing, setProcessing] = useState(false)
 
-  // For points mode QR: card identified but waiting for amount
   const [pendingCardId, setPendingCardId] = useState<string | null>(null)
   const [purchaseAmount, setPurchaseAmount] = useState('')
 
@@ -144,23 +145,22 @@ export default function StampClient({ merchant }: Props) {
     setScanError(null); setScanning(false); setPendingCardId(null); setPurchaseAmount('')
   }
 
-  // Result screen
   if (result) {
     const { card: c, reward_unlocked, mode, points_added } = result
     const displayCount = mode === 'points' ? (c.points ?? 0) : c.stamps_count
     const displayTotal = mode === 'points' ? pointsRequired : merchant.stamps_required
     const unit = mode === 'points' ? 'pts' : 'tampon(s)'
     return (
-      <div className="bg-white shadow rounded-lg p-8 text-center space-y-6">
+      <div className="bg-white border border-[#E8E8E3] rounded-2xl p-8 text-center space-y-6">
         <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto text-3xl"
           style={{ backgroundColor: reward_unlocked ? '#10b981' : merchant.primary_color, color: 'white' }}>
           {reward_unlocked ? '🎉' : '✓'}
         </div>
         {reward_unlocked ? (
           <div>
-            <h2 className="text-xl font-bold text-gray-900">Récompense débloquée !</h2>
-            <p className="text-gray-600 mt-1">{c.customers.first_name} a obtenu sa récompense.</p>
-            <div className="bg-green-50 rounded-lg p-4 mt-4">
+            <h2 className="text-xl font-bold text-[#1A1A1A]">Récompense débloquée !</h2>
+            <p className="text-[#6B6B6B] mt-1">{c.customers.first_name} a obtenu sa récompense.</p>
+            <div className="bg-green-50 border border-green-200 rounded-xl p-4 mt-4">
               <p className="text-sm text-green-800 font-medium">
                 Sa carte repart à zéro — {displayCount} {unit} sur {displayTotal}
               </p>
@@ -168,7 +168,7 @@ export default function StampClient({ merchant }: Props) {
           </div>
         ) : (
           <div className="space-y-4">
-            <h2 className="text-xl font-bold text-gray-900">
+            <h2 className="text-xl font-bold text-[#1A1A1A]">
               {mode === 'points'
                 ? `+${points_added} pts ! ${c.customers.first_name} : ${c.points}/${pointsRequired} pts`
                 : `Tampon ajouté ! ${c.customers.first_name} : ${c.stamps_count}/${merchant.stamps_required}`
@@ -179,41 +179,40 @@ export default function StampClient({ merchant }: Props) {
               : <div className="flex justify-center"><StampDots count={c.stamps_count} total={merchant.stamps_required} color={merchant.primary_color} /></div>
             }
             {mode !== 'points' && merchant.stamps_required - c.stamps_count === 1 && (
-              <p className="text-sm text-amber-600 font-medium">Plus qu'1 tampon avant la récompense !</p>
+              <p className="text-sm text-amber-600 font-medium">Plus qu&apos;1 tampon avant la récompense !</p>
             )}
             {mode === 'points' && pointsRequired - (c.points ?? 0) <= Math.round(pointsRequired * 0.1) && (
               <p className="text-sm text-amber-600 font-medium">Presque ! Plus que {pointsRequired - (c.points ?? 0)} pts !</p>
             )}
           </div>
         )}
-        <button onClick={handleReset} className="w-full py-2 px-4 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
+        <button onClick={handleReset} className="w-full py-2.5 px-4 border border-[#E8E8E3] rounded-xl text-sm font-medium text-[#1A1A1A] hover:bg-[#F7F6F3] transition-colors">
           Nouveau client
         </button>
       </div>
     )
   }
 
-  // Points mode: QR scanned, waiting for amount
   if (isPoints && pendingCardId) {
     const pts = purchaseAmount ? Math.round(parseFloat(purchaseAmount) * pointsPerEuro) : 0
     return (
-      <div className="bg-white shadow rounded-lg p-6 space-y-5">
+      <div className="bg-white border border-[#E8E8E3] rounded-2xl p-6 space-y-5">
         <div>
-          <h2 className="text-sm font-semibold text-gray-900">QR scanné ✓</h2>
-          <p className="text-xs text-gray-500 mt-0.5">Entrez le montant de l'achat pour calculer les points.</p>
+          <h2 className="text-sm font-semibold text-[#1A1A1A]">QR scanné ✓</h2>
+          <p className="text-xs text-[#6B6B6B] mt-0.5">Entrez le montant de l&apos;achat pour calculer les points.</p>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Montant de l'achat (€)</label>
+          <label className="block text-sm font-medium text-[#1A1A1A] mb-1.5">Montant de l&apos;achat (€)</label>
           <input
             type="number" min="0" step="0.01" value={purchaseAmount}
             onChange={e => setPurchaseAmount(e.target.value)}
             placeholder="Ex : 25.50"
-            className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 text-lg font-mono"
+            className={`${inputClass} text-lg font-mono`}
             autoFocus
           />
         </div>
         {pts > 0 && (
-          <div className="rounded-lg p-3 text-center" style={{ backgroundColor: `${merchant.primary_color}15` }}>
+          <div className="rounded-xl p-3 text-center" style={{ backgroundColor: `${merchant.primary_color}12` }}>
             <p className="text-sm font-semibold" style={{ color: merchant.primary_color }}>
               +{pts} points ({pointsPerEuro} pt/€)
             </p>
@@ -221,14 +220,14 @@ export default function StampClient({ merchant }: Props) {
         )}
         <div className="flex gap-3">
           <button onClick={() => { setPendingCardId(null); setPurchaseAmount('') }}
-            className="flex-1 py-2 px-4 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
+            className="flex-1 py-2.5 px-4 border border-[#E8E8E3] rounded-xl text-sm font-medium text-[#1A1A1A] hover:bg-[#F7F6F3] transition-colors">
             Annuler
           </button>
           <button
             onClick={async () => { setProcessing(true); await submitStamp(pendingCardId, parseFloat(purchaseAmount)); setPendingCardId(null); setProcessing(false) }}
             disabled={!purchaseAmount || parseFloat(purchaseAmount) <= 0 || processing}
             style={{ backgroundColor: merchant.primary_color }}
-            className="flex-1 py-2 px-4 rounded-md text-white text-sm font-semibold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed">
+            className="flex-1 py-2.5 px-4 rounded-xl text-white text-sm font-semibold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity">
             {processing ? 'Enregistrement...' : `Valider (+${pts} pts)`}
           </button>
         </div>
@@ -239,19 +238,19 @@ export default function StampClient({ merchant }: Props) {
   return (
     <div className="space-y-4">
       {/* QR Scanner */}
-      <div className="bg-white shadow rounded-lg p-6 space-y-4">
-        <h2 className="text-sm font-medium text-gray-700">Scanner la carte du client</h2>
+      <div className="bg-white border border-[#E8E8E3] rounded-2xl p-6 space-y-4">
+        <h2 className="text-sm font-semibold text-[#1A1A1A]">Scanner la carte du client</h2>
         {scanning ? (
           <div className="space-y-3">
             <QRScanner onScan={handleQRScan} onError={handleQRError} />
-            <button onClick={() => setScanning(false)} className="w-full py-2 text-sm text-gray-500 hover:text-gray-700">Annuler</button>
+            <button onClick={() => setScanning(false)} className="w-full py-2 text-sm text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors">Annuler</button>
           </div>
         ) : (
           <button
             onClick={() => { setScanError(null); setScanning(true) }}
             disabled={processing}
             style={{ backgroundColor: merchant.primary_color }}
-            className="w-full py-3 px-4 rounded-md text-white font-semibold text-sm hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full py-3 px-4 rounded-xl text-white font-semibold text-sm hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {processing ? 'Enregistrement...' : (
               <>
@@ -263,52 +262,52 @@ export default function StampClient({ merchant }: Props) {
             )}
           </button>
         )}
-        {scanError && <p className="text-sm text-red-600 text-center">{scanError}</p>}
+        {scanError && <p className="text-sm text-red-500 text-center">{scanError}</p>}
       </div>
 
       <div className="flex items-center gap-3">
-        <div className="flex-1 border-t border-gray-200" />
-        <span className="text-xs text-gray-400">ou rechercher par téléphone</span>
-        <div className="flex-1 border-t border-gray-200" />
+        <div className="flex-1 border-t border-[#E8E8E3]" />
+        <span className="text-xs text-[#6B6B6B]">ou rechercher par téléphone</span>
+        <div className="flex-1 border-t border-[#E8E8E3]" />
       </div>
 
       {/* Phone search */}
-      <form onSubmit={handlePhoneSearch} className="bg-white shadow rounded-lg p-6">
-        <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">Numéro de téléphone</label>
+      <form onSubmit={handlePhoneSearch} className="bg-white border border-[#E8E8E3] rounded-2xl p-6">
+        <label htmlFor="phone" className="block text-sm font-semibold text-[#1A1A1A] mb-2">Numéro de téléphone</label>
         <div className="flex gap-3">
           <input id="phone" type="tel" value={phone}
             onChange={e => { setPhone(e.target.value); setCard(null); setSearchError(null) }}
             placeholder="+33 6 12 34 56 78"
-            className="flex-1 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            className={inputClass}
           />
           <button type="submit" disabled={searching || phone.length < 6}
-            className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed">
+            className="px-4 py-2.5 bg-[#6C47FF] text-white text-sm font-semibold rounded-xl hover:bg-[#5835e0] disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
             {searching ? '...' : 'Rechercher'}
           </button>
         </div>
-        {searchError && <p className="mt-2 text-sm text-red-600">{searchError}</p>}
+        {searchError && <p className="mt-2 text-sm text-red-500">{searchError}</p>}
       </form>
 
       {/* Card preview */}
       {card && (
-        <div className="bg-white shadow rounded-lg p-6 space-y-5">
+        <div className="bg-white border border-[#E8E8E3] rounded-2xl p-6 space-y-5">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-lg font-semibold text-gray-900">{card.customers.first_name}</p>
-              <p className="text-sm text-gray-500">{card.customers.phone}</p>
+              <p className="text-lg font-bold text-[#1A1A1A]">{card.customers.first_name}</p>
+              <p className="text-sm text-[#6B6B6B]">{card.customers.phone}</p>
             </div>
             <div className="text-right">
               {isPoints ? (
                 <>
                   <span className="text-2xl font-bold" style={{ color: merchant.primary_color }}>{card.points ?? 0}</span>
-                  <span className="text-gray-400 text-lg"> / {pointsRequired}</span>
-                  <p className="text-xs text-gray-500">points</p>
+                  <span className="text-[#6B6B6B] text-lg"> / {pointsRequired}</span>
+                  <p className="text-xs text-[#6B6B6B]">points</p>
                 </>
               ) : (
                 <>
                   <span className="text-2xl font-bold" style={{ color: merchant.primary_color }}>{card.stamps_count}</span>
-                  <span className="text-gray-400 text-lg"> / {merchant.stamps_required}</span>
-                  <p className="text-xs text-gray-500">tampons</p>
+                  <span className="text-[#6B6B6B] text-lg"> / {merchant.stamps_required}</span>
+                  <p className="text-xs text-[#6B6B6B]">tampons</p>
                 </>
               )}
             </div>
@@ -322,29 +321,29 @@ export default function StampClient({ merchant }: Props) {
           {isPoints ? (
             <div className="space-y-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Montant de l'achat (€)</label>
+                <label className="block text-sm font-medium text-[#1A1A1A] mb-1.5">Montant de l&apos;achat (€)</label>
                 <input type="number" min="0" step="0.01" value={purchaseAmount}
                   onChange={e => setPurchaseAmount(e.target.value)}
                   placeholder="Ex : 25.50"
-                  className="block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 font-mono"
+                  className={`${inputClass} font-mono`}
                 />
               </div>
               {purchaseAmount && parseFloat(purchaseAmount) > 0 && (
-                <div className="rounded-lg p-2 text-center text-sm font-medium" style={{ backgroundColor: `${merchant.primary_color}15`, color: merchant.primary_color }}>
+                <div className="rounded-xl p-2.5 text-center text-sm font-semibold" style={{ backgroundColor: `${merchant.primary_color}12`, color: merchant.primary_color }}>
                   +{Math.round(parseFloat(purchaseAmount) * pointsPerEuro)} points
                 </div>
               )}
               <button onClick={() => handleStamp(parseFloat(purchaseAmount))}
                 disabled={stamping || !purchaseAmount || parseFloat(purchaseAmount) <= 0}
                 style={{ backgroundColor: merchant.primary_color }}
-                className="w-full py-3 px-4 rounded-md text-white font-semibold text-sm hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed">
+                className="w-full py-3 px-4 rounded-xl text-white font-semibold text-sm hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity">
                 {stamping ? 'Enregistrement...' : `Valider l'achat de ${card.customers.first_name}`}
               </button>
             </div>
           ) : (
             <button onClick={() => handleStamp()} disabled={stamping}
               style={{ backgroundColor: merchant.primary_color }}
-              className="w-full py-3 px-4 rounded-md text-white font-semibold text-sm hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed">
+              className="w-full py-3 px-4 rounded-xl text-white font-semibold text-sm hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity">
               {stamping ? 'Enregistrement...' : `Tamponner la carte de ${card.customers.first_name}`}
             </button>
           )}

@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import StatsClient from './StatsClient'
+import UpgradeGate from '@/components/UpgradeGate'
+import { effectivePlan, type Plan } from '@/lib/plan-features'
 
 export default async function StatsPage() {
   const supabase = await createClient()
@@ -11,11 +13,13 @@ export default async function StatsPage() {
 
   const { data: merchant } = await supabase
     .from('merchants')
-    .select('id, primary_color, stamps_required')
+    .select('id, primary_color, stamps_required, plan')
     .eq('user_id', user.id)
     .single()
 
   if (!merchant) redirect('/dashboard/settings')
+
+  const plan = effectivePlan((merchant.plan ?? 'free') as Plan, user.email)
 
   const now = new Date()
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
@@ -141,13 +145,15 @@ export default async function StatsPage() {
   }))
 
   return (
-    <StatsClient
-      primaryColor={merchant.primary_color}
-      kpis={{ totalClients, stampsMonthCount, rewardsThisMonth, returnRate }}
-      weeklyNewClients={weeklyNewClients}
-      dailyStamps={dailyStamps}
-      byDayOfWeek={byDayOfWeek}
-      top5={top5}
-    />
+    <UpgradeGate plan={plan} feature="advancedStats" requiredPlan="essential">
+      <StatsClient
+        primaryColor={merchant.primary_color}
+        kpis={{ totalClients, stampsMonthCount, rewardsThisMonth, returnRate }}
+        weeklyNewClients={weeklyNewClients}
+        dailyStamps={dailyStamps}
+        byDayOfWeek={byDayOfWeek}
+        top5={top5}
+      />
+    </UpgradeGate>
   )
 }

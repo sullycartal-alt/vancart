@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import ChatClient from './ChatClient'
+import UpgradeGate from '@/components/UpgradeGate'
+import { effectivePlan, type Plan } from '@/lib/plan-features'
 
 export default async function AccompagnementPage() {
   const supabase = await createClient()
@@ -9,9 +11,11 @@ export default async function AccompagnementPage() {
 
   const { data: merchant } = await supabase
     .from('merchants')
-    .select('business_name, loyalty_rule, stamps_required, loyalty_type')
+    .select('business_name, loyalty_rule, stamps_required, loyalty_type, plan')
     .eq('user_id', user.id)
     .single()
+
+  const plan = effectivePlan((merchant?.plan ?? 'free') as Plan, user.email)
 
   const merchantContext = merchant
     ? {
@@ -35,16 +39,17 @@ export default async function AccompagnementPage() {
         </div>
       </div>
 
-      {merchant && (
-        <div className="bg-[#6C47FF]/8 border border-[#6C47FF]/20 rounded-xl px-4 py-3 flex items-center gap-3">
-          <span className="text-[#6C47FF] text-lg">✨</span>
-          <p className="text-sm text-[#6C47FF] font-medium">
-            L&apos;IA connaît déjà votre commerce <strong>{merchant.business_name}</strong> et votre programme actuel.
-          </p>
-        </div>
-      )}
-
-      <ChatClient merchantContext={merchantContext} />
+      <UpgradeGate plan={plan} feature="aiAdvisor" requiredPlan="essential">
+        {merchant && (
+          <div className="bg-[#6C47FF]/8 border border-[#6C47FF]/20 rounded-xl px-4 py-3 flex items-center gap-3">
+            <span className="text-[#6C47FF] text-lg">✨</span>
+            <p className="text-sm text-[#6C47FF] font-medium">
+              L&apos;IA connaît déjà votre commerce <strong>{merchant.business_name}</strong> et votre programme actuel.
+            </p>
+          </div>
+        )}
+        <ChatClient merchantContext={merchantContext} />
+      </UpgradeGate>
     </div>
   )
 }

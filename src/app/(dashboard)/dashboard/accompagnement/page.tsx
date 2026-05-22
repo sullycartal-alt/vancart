@@ -29,6 +29,10 @@ export default async function AccompagnementPage() {
         <p className="mt-1 text-sm text-[#6B6B6B]">
           Obtenez des recommandations personnalisées pour votre programme de fidélité
         </p>
+        <div className="flex items-center gap-2 text-sm text-green-700 bg-green-50 border border-green-200 rounded-xl px-4 py-2 w-fit mt-3">
+          <span>🇫🇷</span>
+          <span>Conseils générés par une IA française — vos données restent en Europe</span>
+        </div>
       </div>
 
       {merchant && (

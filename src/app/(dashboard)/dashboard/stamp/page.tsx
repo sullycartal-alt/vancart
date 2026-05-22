@@ -20,10 +20,10 @@ export default async function StampPage() {
   return (
     <div className="max-w-lg space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-2xl font-bold text-[#1A1A1A]">
           {isPoints ? 'Valider un achat' : 'Donner un tampon'}
         </h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <p className="mt-1 text-sm text-[#6B6B6B]">
           {isPoints
             ? "Scannez la carte du client et entrez le montant de l'achat."
             : 'Scannez le QR code du client ou recherchez par téléphone.'}

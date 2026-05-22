@@ -46,7 +46,7 @@ interface Props {
 }
 
 const PRESET_COLORS = [
-  { hex: '#6366f1', label: 'Violet' },
+  { hex: '#6C47FF', label: 'Violet' },
   { hex: '#2563eb', label: 'Bleu' },
   { hex: '#1e3a5f', label: 'Marine' },
   { hex: '#0891b2', label: 'Cyan' },
@@ -103,7 +103,7 @@ function CardPreview({ businessName, primaryColor, loyaltyRule, stampsRequired, 
   const previewPoints = Math.round((pointsRequired || 100) * 0.4)
 
   return (
-    <div className="rounded-2xl overflow-hidden shadow-lg border border-gray-100 max-w-xs mx-auto select-none">
+    <div className="rounded-2xl overflow-hidden shadow-lg border border-[#E8E8E3] max-w-xs mx-auto select-none">
       <div className="px-5 pt-6 pb-5 text-center" style={{ backgroundColor: color }}>
         {logoUrl && !imgErr ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -121,15 +121,15 @@ function CardPreview({ businessName, primaryColor, loyaltyRule, stampsRequired, 
       </div>
 
       <div className="bg-white px-5 py-4 space-y-2.5">
-        <p className="text-xs font-medium text-gray-500 text-center line-clamp-2">{loyaltyRule || 'Votre règle de fidélité'}</p>
+        <p className="text-xs font-medium text-[#6B6B6B] text-center line-clamp-2">{loyaltyRule || 'Votre règle de fidélité'}</p>
         {isPoints ? (
           <>
             <div className="space-y-1">
-              <div className="h-2.5 rounded-full bg-gray-100 overflow-hidden">
+              <div className="h-2.5 rounded-full bg-[#F7F6F3] overflow-hidden">
                 <div className="h-full rounded-full transition-all" style={{ width: `${Math.round(previewPoints / (pointsRequired || 100) * 100)}%`, backgroundColor: color }} />
               </div>
             </div>
-            <p className="text-xs text-center text-gray-400">{previewPoints}/{pointsRequired || 100} pts · {pointsPerEuro || 1} pt / €</p>
+            <p className="text-xs text-center text-[#6B6B6B]">{previewPoints}/{pointsRequired || 100} pts · {pointsPerEuro || 1} pt / €</p>
           </>
         ) : (
           <>
@@ -147,18 +147,18 @@ function CardPreview({ businessName, primaryColor, loyaltyRule, stampsRequired, 
                 </div>
               ))}
             </div>
-            <p className="text-xs text-center text-gray-400">{filled}/{stampsRequired || 10} tampons</p>
+            <p className="text-xs text-center text-[#6B6B6B]">{filled}/{stampsRequired || 10} tampons</p>
           </>
         )}
         {instagramHandle && (
-          <div className="flex items-center justify-center gap-1.5 pt-2 border-t border-gray-100">
-            <span className="text-gray-400 text-xs">📸</span>
-            <span className="text-xs text-gray-500">@{instagramHandle.replace(/^@/, '')}</span>
+          <div className="flex items-center justify-center gap-1.5 pt-2 border-t border-[#E8E8E3]">
+            <span className="text-[#6B6B6B] text-xs">📸</span>
+            <span className="text-xs text-[#6B6B6B]">@{instagramHandle.replace(/^@/, '')}</span>
           </div>
         )}
       </div>
 
-      <div className="bg-gray-50 px-5 py-1.5 text-center">
+      <div className="bg-[#F7F6F3] px-5 py-1.5 text-center">
         <span className="text-xs text-gray-300">Aperçu · carte client</span>
       </div>
     </div>
@@ -179,7 +179,7 @@ export default function MerchantForm({ merchant }: Props) {
     defaultValues: {
       business_name: merchant?.business_name ?? '',
       slug: merchant?.slug ?? '',
-      primary_color: merchant?.primary_color ?? '#6366f1',
+      primary_color: merchant?.primary_color ?? '#6C47FF',
       loyalty_rule: merchant?.loyalty_rule ?? '',
       loyalty_type: (merchant?.loyalty_type ?? 'stamps') as 'stamps' | 'points',
       stamps_required: merchant?.stamps_required ?? 10,
@@ -239,31 +239,31 @@ export default function MerchantForm({ merchant }: Props) {
   }
 
   const qrUrl = savedMerchant ? `${appUrl}/${savedMerchant.slug}` : null
-  const inputClass = 'mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500'
+  const inputClass = 'mt-1 block w-full rounded-xl border border-[#E8E8E3] px-4 py-3 text-[#1A1A1A] bg-[#F7F6F3] text-sm focus:border-[#6C47FF] focus:outline-none focus:ring-2 focus:ring-[#6C47FF]/15 transition-all'
 
   return (
     <div className="space-y-8">
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-8 items-start">
 
         {/* Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="bg-white shadow rounded-lg p-6 space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="bg-white border border-[#E8E8E3] rounded-2xl p-6 space-y-6">
 
           {/* Logo */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Logo du commerce</label>
+            <label className="block text-sm font-medium text-[#1A1A1A] mb-2">Logo du commerce</label>
             <div className="flex items-center gap-4">
-              <div className="w-20 h-20 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden bg-gray-50 cursor-pointer hover:border-indigo-400 transition-colors" onClick={() => fileInputRef.current?.click()}>
+              <div className="w-20 h-20 rounded-xl border-2 border-dashed border-[#E8E8E3] flex items-center justify-center overflow-hidden bg-[#F7F6F3] cursor-pointer hover:border-[#6C47FF] transition-colors" onClick={() => fileInputRef.current?.click()}>
                 {logoUrl
                   // eslint-disable-next-line @next/next/no-img-element
                   ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain" />
-                  : <span className="text-2xl text-gray-400">+</span>
+                  : <span className="text-2xl text-[#6B6B6B]">+</span>
                 }
               </div>
               <div>
-                <button type="button" onClick={() => fileInputRef.current?.click()} disabled={logoUploading} className="text-sm text-indigo-600 hover:text-indigo-500 font-medium disabled:opacity-50">
+                <button type="button" onClick={() => fileInputRef.current?.click()} disabled={logoUploading} className="text-sm text-[#6C47FF] hover:text-[#5835e0] font-medium disabled:opacity-50 transition-colors">
                   {logoUploading ? 'Upload en cours...' : logoUrl ? 'Changer le logo' : 'Choisir un logo'}
                 </button>
-                <p className="text-xs text-gray-500 mt-1">PNG, JPG, SVG — max 2 Mo</p>
+                <p className="text-xs text-[#6B6B6B] mt-1">PNG, JPG, SVG — max 2 Mo</p>
                 {logoError && <p className="text-xs text-red-600 mt-1">{logoError}</p>}
               </div>
             </div>
@@ -272,35 +272,35 @@ export default function MerchantForm({ merchant }: Props) {
 
           {/* Nom */}
           <div>
-            <label htmlFor="business_name" className="block text-sm font-medium text-gray-700">Nom du commerce</label>
+            <label htmlFor="business_name" className="block text-sm font-medium text-[#1A1A1A]">Nom du commerce</label>
             <input {...register('business_name')} type="text" id="business_name" placeholder="Ex : Café de la Paix" className={inputClass} />
-            {errors.business_name && <p className="mt-1 text-sm text-red-600">{errors.business_name.message}</p>}
+            {errors.business_name && <p className="mt-1 text-sm text-red-500">{errors.business_name.message}</p>}
           </div>
 
           {/* Description */}
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-              Description courte <span className="text-gray-400 font-normal">(optionnelle)</span>
+            <label htmlFor="description" className="block text-sm font-medium text-[#1A1A1A]">
+              Description courte <span className="text-[#6B6B6B] font-normal">(optionnelle)</span>
             </label>
             <input {...register('description')} type="text" id="description" placeholder="Ex : Bar à cocktails au cœur de Paris" maxLength={200} className={inputClass} />
-            <p className="mt-1 text-xs text-gray-400">Affichée sous votre nom sur la page client. Max 200 caractères.</p>
-            {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>}
+            <p className="mt-1 text-xs text-[#6B6B6B]">Affichée sous votre nom sur la page client. Max 200 caractères.</p>
+            {errors.description && <p className="mt-1 text-sm text-red-500">{errors.description.message}</p>}
           </div>
 
           {/* Slug */}
           <div>
-            <label htmlFor="slug" className="block text-sm font-medium text-gray-700">Identifiant unique (slug)</label>
-            <div className="mt-1 flex rounded-md shadow-sm">
-              <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">{appUrl}/</span>
-              <input {...register('slug', { onChange: () => { slugTouched.current = true } })} type="text" id="slug" className="flex-1 block w-full rounded-none rounded-r-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
+            <label htmlFor="slug" className="block text-sm font-medium text-[#1A1A1A]">Identifiant unique (slug)</label>
+            <div className="mt-1 flex rounded-xl overflow-hidden border border-[#E8E8E3]">
+              <span className="inline-flex items-center px-3 bg-[#F7F6F3] text-[#6B6B6B] text-sm border-r border-[#E8E8E3] whitespace-nowrap">{appUrl}/</span>
+              <input {...register('slug', { onChange: () => { slugTouched.current = true } })} type="text" id="slug" className="flex-1 block w-full px-3 py-2.5 text-sm text-[#1A1A1A] bg-[#F7F6F3] focus:border-[#6C47FF] focus:outline-none focus:ring-2 focus:ring-[#6C47FF]/15 transition-all" />
             </div>
-            {errors.slug && <p className="mt-1 text-sm text-red-600">{errors.slug.message}</p>}
-            <p className="mt-1 text-xs text-gray-500">Généré automatiquement, modifiable si besoin.</p>
+            {errors.slug && <p className="mt-1 text-sm text-red-500">{errors.slug.message}</p>}
+            <p className="mt-1 text-xs text-[#6B6B6B]">Généré automatiquement, modifiable si besoin.</p>
           </div>
 
           {/* Couleur */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Couleur principale</label>
+            <label className="block text-sm font-medium text-[#1A1A1A] mb-2">Couleur principale</label>
             <div className="flex flex-wrap gap-3 mb-3">
               {PRESET_COLORS.map(({ hex, label }) => (
                 <button
@@ -314,30 +314,30 @@ export default function MerchantForm({ merchant }: Props) {
                     transform: primaryColor === hex ? 'scale(1.1)' : undefined,
                     outline: primaryColor === hex ? `2px solid ${hex}` : 'none',
                     outlineOffset: '2px',
-                    boxShadow: primaryColor === hex ? undefined : '0 0 0 1px #e5e7eb',
+                    boxShadow: primaryColor === hex ? undefined : '0 0 0 1px #E8E8E3',
                   }}
                 />
               ))}
             </div>
             <div className="flex items-center gap-3">
-              <input {...register('primary_color')} type="color" id="primary_color" className="h-9 w-14 cursor-pointer rounded border border-gray-300 p-0.5" />
+              <input {...register('primary_color')} type="color" id="primary_color" className="h-9 w-14 cursor-pointer rounded-xl border border-[#E8E8E3] p-0.5" />
               <span className="text-sm text-gray-600 font-mono">{primaryColor}</span>
-              <div className="h-8 w-24 rounded-md flex items-center justify-center text-xs font-medium" style={{ backgroundColor: primaryColor, color: textColorFor(primaryColor) }}>Aperçu</div>
+              <div className="h-8 w-24 rounded-xl flex items-center justify-center text-xs font-medium" style={{ backgroundColor: primaryColor, color: textColorFor(primaryColor) }}>Aperçu</div>
             </div>
-            {errors.primary_color && <p className="mt-1 text-sm text-red-600">{errors.primary_color.message}</p>}
+            {errors.primary_color && <p className="mt-1 text-sm text-red-500">{errors.primary_color.message}</p>}
           </div>
 
           {/* Règle de fidélité */}
           <div>
-            <label htmlFor="loyalty_rule" className="block text-sm font-medium text-gray-700">Règle de fidélité</label>
-            <textarea {...register('loyalty_rule')} id="loyalty_rule" rows={2} placeholder="Ex : Achetez 10 cafés, le 11ème est offert" className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
-            {errors.loyalty_rule && <p className="mt-1 text-sm text-red-600">{errors.loyalty_rule.message}</p>}
+            <label htmlFor="loyalty_rule" className="block text-sm font-medium text-[#1A1A1A]">Règle de fidélité</label>
+            <textarea {...register('loyalty_rule')} id="loyalty_rule" rows={2} placeholder="Ex : Achetez 10 cafés, le 11ème est offert" className="mt-1 block w-full rounded-xl border border-[#E8E8E3] px-4 py-3 text-sm text-[#1A1A1A] bg-[#F7F6F3] focus:border-[#6C47FF] focus:outline-none focus:ring-2 focus:ring-[#6C47FF]/15 transition-all" />
+            {errors.loyalty_rule && <p className="mt-1 text-sm text-red-500">{errors.loyalty_rule.message}</p>}
           </div>
 
           {/* Mode fidélité */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Mode de fidélité</label>
-            <div className="inline-flex rounded-lg border border-gray-200 bg-gray-50 p-1 gap-1">
+            <label className="block text-sm font-medium text-[#1A1A1A] mb-2">Mode de fidélité</label>
+            <div className="inline-flex rounded-xl border border-[#E8E8E3] bg-[#F7F6F3] p-1 gap-1">
               {(['stamps', 'points'] as const).map((type) => (
                 <button
                   key={type}
@@ -346,7 +346,7 @@ export default function MerchantForm({ merchant }: Props) {
                   className="px-4 py-1.5 rounded-md text-sm font-medium transition-all"
                   style={loyaltyType === type
                     ? { backgroundColor: primaryColor, color: textColorFor(primaryColor) }
-                    : { backgroundColor: 'transparent', color: '#6b7280' }
+                    : { backgroundColor: 'transparent', color: '#6B6B6B' }
                   }
                 >
                   {type === 'stamps' ? '🎴 Tampons' : '🏆 Points'}
@@ -354,7 +354,7 @@ export default function MerchantForm({ merchant }: Props) {
               ))}
             </div>
             <input type="hidden" {...register('loyalty_type')} />
-            <p className="mt-1.5 text-xs text-gray-400">
+            <p className="mt-1.5 text-xs text-[#6B6B6B]">
               {loyaltyType === 'points'
                 ? 'Le client accumule des points selon son montant d\'achat. Ex : 1€ = 1 pt, récompense à 100 pts.'
                 : 'Le commerçant tamponne la carte à chaque visite. Ex : 10 tampons = 1 café offert.'}
@@ -365,64 +365,63 @@ export default function MerchantForm({ merchant }: Props) {
           {loyaltyType === 'points' ? (
             <div className="space-y-4">
               <div>
-                <label htmlFor="points_per_euro" className="block text-sm font-medium text-gray-700">Points par euro dépensé</label>
+                <label htmlFor="points_per_euro" className="block text-sm font-medium text-[#1A1A1A]">Points par euro dépensé</label>
                 <div className="mt-1 flex items-center gap-3">
-                  <input {...register('points_per_euro', { valueAsNumber: true })} type="number" id="points_per_euro" min={1} className="w-24 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
-                  <span className="text-sm text-gray-500">pt / €</span>
+                  <input {...register('points_per_euro', { valueAsNumber: true })} type="number" id="points_per_euro" min={1} className="w-24 rounded-xl border border-[#E8E8E3] px-3 py-2.5 text-sm text-[#1A1A1A] bg-[#F7F6F3] focus:border-[#6C47FF] focus:outline-none focus:ring-2 focus:ring-[#6C47FF]/15 transition-all" />
+                  <span className="text-sm text-[#6B6B6B]">pt / €</span>
                 </div>
-                {errors.points_per_euro && <p className="mt-1 text-sm text-red-600">{errors.points_per_euro.message}</p>}
+                {errors.points_per_euro && <p className="mt-1 text-sm text-red-500">{errors.points_per_euro.message}</p>}
               </div>
               <div>
-                <label htmlFor="points_required" className="block text-sm font-medium text-gray-700">Points requis pour la récompense</label>
+                <label htmlFor="points_required" className="block text-sm font-medium text-[#1A1A1A]">Points requis pour la récompense</label>
                 <div className="mt-1 flex items-center gap-3">
-                  <input {...register('points_required', { valueAsNumber: true })} type="number" id="points_required" min={1} className="w-24 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
-                  <span className="text-sm text-gray-500">points</span>
+                  <input {...register('points_required', { valueAsNumber: true })} type="number" id="points_required" min={1} className="w-24 rounded-xl border border-[#E8E8E3] px-3 py-2.5 text-sm text-[#1A1A1A] bg-[#F7F6F3] focus:border-[#6C47FF] focus:outline-none focus:ring-2 focus:ring-[#6C47FF]/15 transition-all" />
+                  <span className="text-sm text-[#6B6B6B]">points</span>
                 </div>
-                {errors.points_required && <p className="mt-1 text-sm text-red-600">{errors.points_required.message}</p>}
+                {errors.points_required && <p className="mt-1 text-sm text-red-500">{errors.points_required.message}</p>}
               </div>
             </div>
           ) : (
             <div>
-              <label htmlFor="stamps_required" className="block text-sm font-medium text-gray-700">Nombre de tampons pour la récompense</label>
+              <label htmlFor="stamps_required" className="block text-sm font-medium text-[#1A1A1A]">Nombre de tampons pour la récompense</label>
               <div className="mt-1 flex items-center gap-3">
-                <input {...register('stamps_required', { valueAsNumber: true })} type="number" id="stamps_required" min={1} max={50} className="w-24 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
-                <span className="text-sm text-gray-500">tampons</span>
+                <input {...register('stamps_required', { valueAsNumber: true })} type="number" id="stamps_required" min={1} max={50} className="w-24 rounded-xl border border-[#E8E8E3] px-3 py-2.5 text-sm text-[#1A1A1A] bg-[#F7F6F3] focus:border-[#6C47FF] focus:outline-none focus:ring-2 focus:ring-[#6C47FF]/15 transition-all" />
+                <span className="text-sm text-[#6B6B6B]">tampons</span>
               </div>
-              {errors.stamps_required && <p className="mt-1 text-sm text-red-600">{errors.stamps_required.message}</p>}
+              {errors.stamps_required && <p className="mt-1 text-sm text-red-500">{errors.stamps_required.message}</p>}
             </div>
           )}
 
           {/* Instagram */}
           <div>
-            <label htmlFor="instagram_handle" className="block text-sm font-medium text-gray-700">
-              Instagram <span className="text-gray-400 font-normal">(optionnel)</span>
+            <label htmlFor="instagram_handle" className="block text-sm font-medium text-[#1A1A1A]">
+              Instagram <span className="text-[#6B6B6B] font-normal">(optionnel)</span>
             </label>
-            <div className="mt-1 flex rounded-md shadow-sm">
-              <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">@</span>
-              <input {...register('instagram_handle')} type="text" id="instagram_handle" placeholder="votre_compte" maxLength={30} className="flex-1 block w-full rounded-none rounded-r-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" />
+            <div className="mt-1 flex rounded-xl overflow-hidden border border-[#E8E8E3]">
+              <span className="inline-flex items-center px-3 bg-[#F7F6F3] text-[#6B6B6B] text-sm border-r border-[#E8E8E3]">@</span>
+              <input {...register('instagram_handle')} type="text" id="instagram_handle" placeholder="votre_compte" maxLength={30} className="flex-1 block w-full px-3 py-2.5 text-sm text-[#1A1A1A] bg-[#F7F6F3] focus:border-[#6C47FF] focus:outline-none focus:ring-2 focus:ring-[#6C47FF]/15 transition-all" />
             </div>
-            <p className="mt-1 text-xs text-gray-400">Affiché sur la page client avec un lien vers votre profil.</p>
-            {errors.instagram_handle && <p className="mt-1 text-sm text-red-600">{errors.instagram_handle.message}</p>}
+            <p className="mt-1 text-xs text-[#6B6B6B]">Affiché sur la page client avec un lien vers votre profil.</p>
+            {errors.instagram_handle && <p className="mt-1 text-sm text-red-500">{errors.instagram_handle.message}</p>}
           </div>
 
           {/* Ville */}
           <div>
-            <label htmlFor="city" className="block text-sm font-medium text-gray-700">
-              Ville <span className="text-gray-400 font-normal">(optionnelle)</span>
+            <label htmlFor="city" className="block text-sm font-medium text-[#1A1A1A]">
+              Ville <span className="text-[#6B6B6B] font-normal">(optionnelle)</span>
             </label>
             <input {...register('city')} type="text" id="city" placeholder="Ex : Paris, Lyon, Marseille…" maxLength={60} className={inputClass} />
-            <p className="mt-1 text-xs text-gray-400">Utilisée pour la carte de présence dans le dashboard admin.</p>
-            {errors.city && <p className="mt-1 text-sm text-red-600">{errors.city.message}</p>}
+            <p className="mt-1 text-xs text-[#6B6B6B]">Utilisée pour la carte de présence dans le dashboard admin.</p>
+            {errors.city && <p className="mt-1 text-sm text-red-500">{errors.city.message}</p>}
           </div>
 
-          {errors.root && <div className="rounded-md bg-red-50 p-3"><p className="text-sm text-red-700">{errors.root.message}</p></div>}
-          {success && <div className="rounded-md bg-green-50 p-3"><p className="text-sm text-green-700">Configuration enregistrée avec succès !</p></div>}
+          {errors.root && <div className="rounded-xl bg-red-50 border border-red-100 p-3"><p className="text-sm text-red-600">{errors.root.message}</p></div>}
+          {success && <div className="rounded-xl bg-green-50 border border-green-200 p-3"><p className="text-sm text-green-700 font-medium">Configuration enregistrée avec succès !</p></div>}
 
           <button
             type="submit"
             disabled={isSubmitting || logoUploading}
-            className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] transition-all shadow-sm disabled:opacity-60 disabled:cursor-not-allowed disabled:active:scale-100"
-            style={{ transition: 'opacity 0ms, transform 150ms' }}
+            className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-semibold text-white bg-[#6C47FF] hover:bg-[#5835e0] active:scale-[0.98] transition-all shadow-sm disabled:opacity-60 disabled:cursor-not-allowed disabled:active:scale-100"
           >
             {(isSubmitting || logoUploading) && (
               <svg className="animate-spin h-4 w-4 text-white shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -436,7 +435,7 @@ export default function MerchantForm({ merchant }: Props) {
 
         {/* Live preview */}
         <div className="xl:sticky xl:top-6 space-y-3">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide text-center">Aperçu en direct</p>
+          <p className="text-xs font-semibold text-[#6B6B6B] uppercase tracking-wide text-center">Aperçu en direct</p>
           <CardPreview
             businessName={businessName}
             primaryColor={primaryColor}
@@ -449,15 +448,15 @@ export default function MerchantForm({ merchant }: Props) {
             pointsPerEuro={pointsPerEuro || 1}
             pointsRequired={pointsRequired || 100}
           />
-          <p className="text-xs text-gray-400 text-center">Ce que vos clients verront sur leur carte</p>
+          <p className="text-xs text-[#6B6B6B] text-center">Ce que vos clients verront sur leur carte</p>
         </div>
       </div>
 
       {/* QR Code */}
       {qrUrl && savedMerchant && (
-        <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-lg font-medium text-gray-900 mb-1">Votre QR code</h2>
-          <p className="text-sm text-gray-500 mb-6">Lien client : <code className="bg-gray-100 px-1.5 py-0.5 rounded text-xs">{qrUrl}</code></p>
+        <div className="bg-white border border-[#E8E8E3] rounded-2xl p-6">
+          <h2 className="text-lg font-semibold text-[#1A1A1A] mb-1">Votre QR code</h2>
+          <p className="text-sm text-[#6B6B6B] mb-6">Lien client : <code className="bg-[#F7F6F3] border border-[#E8E8E3] px-1.5 py-0.5 rounded-lg text-xs">{qrUrl}</code></p>
           <QRCodeDisplay url={qrUrl} businessName={savedMerchant.business_name} />
         </div>
       )}

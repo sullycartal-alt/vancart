@@ -35,7 +35,6 @@ function formatDate(iso: string | null): string {
 export default function ClientsTable({ clients }: Props) {
   const router = useRouter()
 
-  // Auto-refresh data every 30 seconds silently
   useEffect(() => {
     const interval = setInterval(() => router.refresh(), 30000)
     return () => clearInterval(interval)
@@ -43,10 +42,10 @@ export default function ClientsTable({ clients }: Props) {
 
   if (clients.length === 0) {
     return (
-      <div className="bg-white shadow rounded-lg p-12 text-center">
+      <div className="bg-white border border-[#E8E8E3] rounded-2xl p-12 text-center">
         <div className="text-4xl mb-3">👥</div>
-        <h3 className="text-lg font-medium text-gray-900 mb-1">Aucun client encore</h3>
-        <p className="text-sm text-gray-500">
+        <h3 className="text-lg font-semibold text-[#1A1A1A] mb-1">Aucun client encore</h3>
+        <p className="text-sm text-[#6B6B6B]">
           Vos clients apparaîtront ici après leur premier scan de votre QR code.
         </p>
       </div>
@@ -54,47 +53,47 @@ export default function ClientsTable({ clients }: Props) {
   }
 
   return (
-    <div className="bg-white shadow rounded-lg overflow-hidden">
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
+    <div className="bg-white border border-[#E8E8E3] rounded-2xl overflow-hidden">
+      <table className="min-w-full divide-y divide-[#E8E8E3]">
+        <thead className="bg-[#F7F6F3]">
           <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-6 py-3.5 text-left text-xs font-semibold text-[#6B6B6B] uppercase tracking-wider">
               Client
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-6 py-3.5 text-left text-xs font-semibold text-[#6B6B6B] uppercase tracking-wider">
               Progression
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
+            <th className="px-6 py-3.5 text-left text-xs font-semibold text-[#6B6B6B] uppercase tracking-wider hidden sm:table-cell">
               Dernier tampon
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">
+            <th className="px-6 py-3.5 text-left text-xs font-semibold text-[#6B6B6B] uppercase tracking-wider hidden sm:table-cell">
               Statut
             </th>
           </tr>
         </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
+        <tbody className="bg-white divide-y divide-[#E8E8E3]">
           {clients.map((client) => {
             const pct = Math.round((client.stamps_count / client.stampsRequired) * 100)
             const isAlmostFull = client.stamps_count === client.stampsRequired - 1
             return (
-              <tr key={client.id} className="hover:bg-gray-50 transition-colors">
+              <tr key={client.id} className="hover:bg-[#F7F6F3] transition-colors">
                 <td className="px-6 py-4">
                   <div>
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-semibold text-[#1A1A1A]">
                       {client.customers.first_name}
                     </p>
-                    <p className="text-xs text-gray-500">{client.customers.phone}</p>
+                    <p className="text-xs text-[#6B6B6B]">{client.customers.phone}</p>
                   </div>
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-sm font-semibold text-gray-900">
+                      <div className="flex items-center justify-between mb-1.5">
+                        <span className="text-sm font-semibold text-[#1A1A1A]">
                           {client.stamps_count}/{client.stampsRequired}
                         </span>
                       </div>
-                      <div className="w-full bg-gray-100 rounded-full h-1.5">
+                      <div className="w-full bg-[#F7F6F3] rounded-full h-1.5">
                         <div
                           className="h-1.5 rounded-full transition-all"
                           style={{ width: `${pct}%`, backgroundColor: client.primaryColor }}
@@ -103,20 +102,20 @@ export default function ClientsTable({ clients }: Props) {
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-500 hidden sm:table-cell">
+                <td className="px-6 py-4 text-sm text-[#6B6B6B] hidden sm:table-cell">
                   {formatDate(client.last_stamp_at)}
                 </td>
                 <td className="px-6 py-4 hidden sm:table-cell">
                   {isAlmostFull ? (
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
                       🔥 Presque !
                     </span>
                   ) : client.rewards_unlocked > 0 ? (
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">
                       🎉 {client.rewards_unlocked} récompense{client.rewards_unlocked > 1 ? 's' : ''}
                     </span>
                   ) : (
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-[#F7F6F3] text-[#6B6B6B] border border-[#E8E8E3]">
                       En cours
                     </span>
                   )}
@@ -126,8 +125,8 @@ export default function ClientsTable({ clients }: Props) {
           })}
         </tbody>
       </table>
-      <div className="px-6 py-3 bg-gray-50 border-t border-gray-200">
-        <p className="text-xs text-gray-400">
+      <div className="px-6 py-3.5 bg-[#F7F6F3] border-t border-[#E8E8E3]">
+        <p className="text-xs text-[#6B6B6B]">
           {clients.length} client{clients.length > 1 ? 's' : ''} · actualisation automatique toutes les 30 secondes
         </p>
       </div>

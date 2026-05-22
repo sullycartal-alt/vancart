@@ -5,16 +5,16 @@ export default function Home() {
     <div className="min-h-screen bg-white flex flex-col">
 
       {/* ── Nav ────────────────────────────────────────────────────────────── */}
-      <nav className="border-b border-gray-100 px-6 py-4">
+      <nav className="border-b border-[#E8E8E3] px-6 py-4 bg-white">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <span className="text-xl font-bold text-indigo-600">VanCart</span>
+          <span className="text-xl font-bold text-[#6C47FF]">VanCart</span>
           <div className="flex items-center gap-4">
-            <Link href="/login" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">
+            <Link href="/login" className="text-sm text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors font-medium">
               Connexion
             </Link>
             <Link
               href="/register"
-              className="text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg transition-colors"
+              className="text-sm font-semibold text-white bg-[#6C47FF] hover:bg-[#5835e0] px-4 py-2 rounded-xl transition-colors"
             >
               Commencer gratuitement
             </Link>
@@ -23,46 +23,45 @@ export default function Home() {
       </nav>
 
       {/* ── Hero ───────────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-indigo-500 to-violet-600 px-6 py-24 text-center">
-        <div className="absolute -top-32 -left-32 w-96 h-96 bg-white/5 rounded-full" />
-        <div className="absolute -bottom-20 -right-20 w-72 h-72 bg-white/5 rounded-full" />
-        <div className="relative max-w-3xl mx-auto space-y-6">
-          <div className="inline-flex items-center gap-2 bg-white/15 text-white text-xs font-semibold px-4 py-1.5 rounded-full">
+      <section className="relative overflow-hidden bg-[#F7F6F3] px-6 py-28 text-center">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-[#6C47FF]/6 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative max-w-3xl mx-auto space-y-7">
+          <div className="inline-flex items-center gap-2 bg-[#6C47FF]/10 text-[#6C47FF] text-xs font-semibold px-4 py-1.5 rounded-full border border-[#6C47FF]/15">
             🎴 La carte de fidélité sans plastique, sans app
           </div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-white leading-tight">
+          <h1 className="text-4xl sm:text-6xl font-bold text-[#1A1A1A] leading-tight">
             Fidélisez vos clients.<br className="hidden sm:block" />
-            <span className="text-indigo-200">Sans carte. Sans application.</span>
+            <span className="text-[#6C47FF]">Sans carte. Sans application.</span>
           </h1>
-          <p className="text-lg text-indigo-100 max-w-xl mx-auto">
+          <p className="text-lg text-[#6B6B6B] max-w-xl mx-auto leading-relaxed">
             VanCart génère un QR code unique pour votre commerce. Vos clients scannent, collectent des tampons digitaux et reçoivent leurs récompenses — directement dans leur portefeuille mobile.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
             <Link
               href="/register"
-              className="px-8 py-3.5 bg-white text-indigo-600 font-bold rounded-xl hover:bg-indigo-50 transition-colors shadow-lg text-sm"
+              className="px-8 py-3.5 bg-[#6C47FF] text-white font-bold rounded-xl hover:bg-[#5835e0] transition-colors shadow-sm text-sm"
             >
               Créer mon compte gratuit →
             </Link>
             <Link
               href="/login"
-              className="px-8 py-3.5 bg-white/10 text-white font-semibold rounded-xl hover:bg-white/20 transition-colors text-sm"
+              className="px-8 py-3.5 bg-white border border-[#E8E8E3] text-[#1A1A1A] font-semibold rounded-xl hover:bg-[#F7F6F3] transition-colors text-sm"
             >
               J&apos;ai déjà un compte
             </Link>
           </div>
-          <p className="text-indigo-200 text-xs">Gratuit · Aucune carte bancaire requise</p>
+          <p className="text-[#6B6B6B] text-xs">Gratuit · Aucune carte bancaire requise</p>
         </div>
       </section>
 
       {/* ── Problem ────────────────────────────────────────────────────────── */}
-      <section className="px-6 py-20 bg-gray-50">
+      <section className="px-6 py-20 bg-white">
         <div className="max-w-3xl mx-auto text-center space-y-4">
-          <p className="text-indigo-600 font-semibold text-sm uppercase tracking-wide">Le problème</p>
-          <h2 className="text-3xl font-bold text-gray-900">
+          <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">Le problème</p>
+          <h2 className="text-3xl font-bold text-[#1A1A1A]">
             Vos clients perdent leurs cartes de fidélité ?
           </h2>
-          <p className="text-gray-500 text-lg max-w-xl mx-auto">
+          <p className="text-[#6B6B6B] text-lg max-w-xl mx-auto leading-relaxed">
             Les cartes en plastique s&apos;égarent, s&apos;oublient, se froissent. Résultat : vos clients repartent les mains vides, et vous perdez leur fidélité.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 text-left">
@@ -71,9 +70,9 @@ export default function Home() {
               { icon: '😤', label: 'Un client sur deux abandonne quand il oublie sa carte' },
               { icon: '📊', label: 'Aucune donnée sur vos clients les plus fidèles' },
             ].map(({ icon, label }) => (
-              <div key={label} className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 flex items-start gap-3">
+              <div key={label} className="bg-[#F7F6F3] rounded-xl p-5 border border-[#E8E8E3] flex items-start gap-3">
                 <span className="text-2xl">{icon}</span>
-                <p className="text-sm text-gray-600">{label}</p>
+                <p className="text-sm text-[#6B6B6B] leading-relaxed">{label}</p>
               </div>
             ))}
           </div>
@@ -81,11 +80,11 @@ export default function Home() {
       </section>
 
       {/* ── Benefits ───────────────────────────────────────────────────────── */}
-      <section className="px-6 py-20">
+      <section className="px-6 py-20 bg-[#F7F6F3]">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12 space-y-3">
-            <p className="text-indigo-600 font-semibold text-sm uppercase tracking-wide">La solution</p>
-            <h2 className="text-3xl font-bold text-gray-900">
+            <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">La solution</p>
+            <h2 className="text-3xl font-bold text-[#1A1A1A]">
               Une carte de fidélité toujours dans la poche de vos clients
             </h2>
           </div>
@@ -109,13 +108,13 @@ export default function Home() {
             ].map(({ icon, title, desc }) => (
               <div
                 key={title}
-                className="rounded-2xl border border-gray-100 bg-white p-7 shadow-sm hover:shadow-md transition-shadow space-y-3"
+                className="rounded-2xl border border-[#E8E8E3] bg-white p-7 shadow-sm hover:shadow-md transition-shadow space-y-3"
               >
-                <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-2xl">
+                <div className="w-12 h-12 bg-[#6C47FF]/10 rounded-xl flex items-center justify-center text-2xl">
                   {icon}
                 </div>
-                <h3 className="font-bold text-gray-900">{title}</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">{desc}</p>
+                <h3 className="font-bold text-[#1A1A1A]">{title}</h3>
+                <p className="text-sm text-[#6B6B6B] leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>
@@ -123,11 +122,11 @@ export default function Home() {
       </section>
 
       {/* ── How it works ───────────────────────────────────────────────────── */}
-      <section className="px-6 py-20 bg-gray-50">
+      <section className="px-6 py-20 bg-white">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-12 space-y-3">
-            <p className="text-indigo-600 font-semibold text-sm uppercase tracking-wide">Comment ça marche</p>
-            <h2 className="text-3xl font-bold text-gray-900">Opérationnel en 5 minutes</h2>
+            <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">Comment ça marche</p>
+            <h2 className="text-3xl font-bold text-[#1A1A1A]">Opérationnel en 5 minutes</h2>
           </div>
           <div className="space-y-4">
             {[
@@ -147,13 +146,13 @@ export default function Home() {
                 desc: "Depuis votre dashboard, scannez la carte du client. Le compteur s'incrémente. Quand il est plein, la récompense se débloque automatiquement.",
               },
             ].map(({ step, title, desc }) => (
-              <div key={step} className="flex gap-5 items-start bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                <div className="w-11 h-11 bg-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0">
+              <div key={step} className="flex gap-5 items-start bg-[#F7F6F3] rounded-2xl p-6 border border-[#E8E8E3]">
+                <div className="w-11 h-11 bg-[#6C47FF] rounded-xl flex items-center justify-center flex-shrink-0">
                   <span className="text-white font-black text-xs">{step}</span>
                 </div>
                 <div>
-                  <h3 className="font-bold text-gray-900 mb-1">{title}</h3>
-                  <p className="text-sm text-gray-500 leading-relaxed">{desc}</p>
+                  <h3 className="font-bold text-[#1A1A1A] mb-1">{title}</h3>
+                  <p className="text-sm text-[#6B6B6B] leading-relaxed">{desc}</p>
                 </div>
               </div>
             ))}
@@ -162,26 +161,26 @@ export default function Home() {
       </section>
 
       {/* ── Final CTA ──────────────────────────────────────────────────────── */}
-      <section className="px-6 py-20 bg-gradient-to-br from-indigo-600 to-violet-600 text-center">
+      <section className="px-6 py-20 bg-[#F7F6F3] text-center">
         <div className="max-w-xl mx-auto space-y-6">
-          <h2 className="text-3xl font-extrabold text-white">Prêt à fidéliser vos clients ?</h2>
-          <p className="text-indigo-200 text-lg">
+          <h2 className="text-3xl font-bold text-[#1A1A1A]">Prêt à fidéliser vos clients ?</h2>
+          <p className="text-[#6B6B6B] text-lg leading-relaxed">
             Rejoignez les commerçants qui ont dit adieu aux cartes en plastique.
           </p>
           <Link
             href="/register"
-            className="inline-block px-10 py-4 bg-white text-indigo-600 font-bold rounded-xl hover:bg-indigo-50 transition-colors shadow-lg text-base"
+            className="inline-block px-10 py-4 bg-[#6C47FF] text-white font-bold rounded-xl hover:bg-[#5835e0] transition-colors shadow-sm text-base"
           >
             Commencer gratuitement →
           </Link>
-          <p className="text-indigo-300 text-xs">Gratuit · Sans engagement · Aucune carte bancaire</p>
+          <p className="text-[#6B6B6B] text-xs">Gratuit · Sans engagement · Aucune carte bancaire</p>
         </div>
       </section>
 
       {/* ── Footer ─────────────────────────────────────────────────────────── */}
-      <footer className="border-t border-gray-100 px-6 py-8 text-center text-xs text-gray-400 space-x-4">
+      <footer className="border-t border-[#E8E8E3] px-6 py-8 text-center text-xs text-[#6B6B6B] space-x-4 bg-white">
         <span>© 2025 VanCart · Cartes de fidélité dématérialisées</span>
-        <Link href="/politique-confidentialite" className="hover:text-gray-600 underline underline-offset-2">
+        <Link href="/politique-confidentialite" className="hover:text-[#1A1A1A] underline underline-offset-2">
           Politique de confidentialité
         </Link>
       </footer>

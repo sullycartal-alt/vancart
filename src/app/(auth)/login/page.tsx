@@ -25,6 +25,8 @@ function Spinner() {
 
 const MIN_LOADING_MS = 500
 
+const inputClass = 'block w-full rounded-xl border border-[#E8E8E3] px-4 py-3 text-sm text-[#1A1A1A] bg-[#F7F6F3] focus:border-[#6C47FF] focus:outline-none focus:ring-2 focus:ring-[#6C47FF]/15 transition-all'
+
 export default function LoginPage() {
   const router = useRouter()
   const supabase = createClient()
@@ -64,16 +66,16 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="bg-white shadow-lg rounded-2xl p-8">
+    <div className="bg-white border border-[#E8E8E3] shadow-sm rounded-2xl p-8">
       <div className="text-center mb-8">
-        <Link href="/" className="text-2xl font-bold text-indigo-600">VanCart</Link>
-        <h1 className="text-xl font-bold text-gray-900 mt-3">Connexion</h1>
-        <p className="text-sm text-gray-500 mt-1">Accédez à votre tableau de bord</p>
+        <Link href="/" className="text-2xl font-bold text-[#6C47FF]">VanCart</Link>
+        <h1 className="text-xl font-bold text-[#1A1A1A] mt-3">Connexion</h1>
+        <p className="text-sm text-[#6B6B6B] mt-1">Accédez à votre tableau de bord</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="email" className="block text-sm font-medium text-[#1A1A1A] mb-1.5">
             Email
           </label>
           <input
@@ -81,14 +83,13 @@ export default function LoginPage() {
             type="email"
             id="email"
             autoComplete="email"
-            className="block w-full rounded-xl border border-gray-200 px-4 py-3 text-sm text-gray-900 bg-white shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 transition-colors"
-            style={{ color: '#111827', backgroundColor: '#ffffff' }}
+            className={inputClass}
           />
-          {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>}
+          {errors.email && <p className="mt-1.5 text-xs text-red-500">{errors.email.message}</p>}
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="password" className="block text-sm font-medium text-[#1A1A1A] mb-1.5">
             Mot de passe
           </label>
           <input
@@ -96,14 +97,13 @@ export default function LoginPage() {
             type="password"
             id="password"
             autoComplete="current-password"
-            className="block w-full rounded-xl border border-gray-200 px-4 py-3 text-sm text-gray-900 bg-white shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 transition-colors"
-            style={{ color: '#111827', backgroundColor: '#ffffff' }}
+            className={inputClass}
           />
-          {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>}
+          {errors.password && <p className="mt-1.5 text-xs text-red-500">{errors.password.message}</p>}
         </div>
 
         {errors.root && (
-          <div className="rounded-xl bg-red-50 px-4 py-3">
+          <div className="rounded-xl bg-red-50 border border-red-100 px-4 py-3">
             <p className="text-sm text-red-600">{errors.root.message}</p>
           </div>
         )}
@@ -111,17 +111,16 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] transition-all shadow-sm disabled:opacity-60 disabled:cursor-not-allowed disabled:active:scale-100"
-          style={{ transition: 'opacity 0ms, transform 150ms' }}
+          className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-semibold text-white bg-[#6C47FF] hover:bg-[#5835e0] active:scale-[0.98] transition-all shadow-sm disabled:opacity-60 disabled:cursor-not-allowed disabled:active:scale-100"
         >
           {loading && <Spinner />}
           {loading ? 'Connexion…' : 'Se connecter'}
         </button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-gray-500">
+      <p className="mt-6 text-center text-sm text-[#6B6B6B]">
         Pas encore de compte ?{' '}
-        <Link href="/register" className="text-indigo-600 font-medium hover:text-indigo-500">
+        <Link href="/register" className="text-[#6C47FF] font-medium hover:text-[#5835e0]">
           Créer un compte
         </Link>
       </p>

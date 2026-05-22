@@ -58,7 +58,7 @@ export default function GuideHelper() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="fixed bottom-6 right-6 z-40 w-12 h-12 bg-indigo-600 text-white rounded-full shadow-lg flex items-center justify-center text-xl font-bold hover:bg-indigo-700 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        className="fixed bottom-6 right-6 z-40 w-12 h-12 bg-[#6C47FF] text-white rounded-full shadow-lg flex items-center justify-center text-xl font-bold hover:bg-[#5835e0] transition-colors focus:outline-none focus:ring-2 focus:ring-[#6C47FF] focus:ring-offset-2"
         aria-label="Guide d'aide"
       >
         ?
@@ -66,28 +66,28 @@ export default function GuideHelper() {
 
       {open && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
           onClick={(e) => { if (e.target === e.currentTarget) close() }}
         >
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="bg-indigo-600 px-6 py-5 rounded-t-2xl">
+          <div className="bg-white border border-[#E8E8E3] rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-[#6C47FF] px-6 py-5 rounded-t-2xl">
               <h2 className="text-xl font-bold text-white">Guide de démarrage</h2>
-              <p className="text-indigo-200 text-sm mt-0.5">Lancez votre programme de fidélité en 10 minutes</p>
+              <p className="text-white/70 text-sm mt-0.5">Lancez votre programme de fidélité en 10 minutes</p>
             </div>
 
             <div className="p-6 space-y-4">
               {STEPS.map(({ num, title, desc, href, cta }) => (
                 <div key={num} className="flex gap-4">
-                  <div className="flex-shrink-0 w-9 h-9 rounded-full bg-indigo-50 flex items-center justify-center text-xs font-bold text-indigo-600">
+                  <div className="flex-shrink-0 w-9 h-9 rounded-full bg-[#6C47FF]/10 flex items-center justify-center text-xs font-bold text-[#6C47FF]">
                     {num}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-900">{title}</p>
-                    <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{desc}</p>
+                    <p className="text-sm font-semibold text-[#1A1A1A]">{title}</p>
+                    <p className="text-xs text-[#6B6B6B] mt-0.5 leading-relaxed">{desc}</p>
                     <Link
                       href={href}
                       onClick={close}
-                      className="inline-block mt-1.5 text-xs text-indigo-600 font-medium hover:underline"
+                      className="inline-block mt-1.5 text-xs text-[#6C47FF] font-medium hover:underline"
                     >
                       {cta}
                     </Link>
@@ -98,13 +98,13 @@ export default function GuideHelper() {
               <div className="pt-2 space-y-2">
                 <button
                   onClick={close}
-                  className="w-full py-3 bg-indigo-600 text-white rounded-xl text-sm font-semibold hover:bg-indigo-700 transition-colors"
+                  className="w-full py-3 bg-[#6C47FF] text-white rounded-xl text-sm font-semibold hover:bg-[#5835e0] transition-colors"
                 >
                   Commencer !
                 </button>
                 <button
                   onClick={close}
-                  className="w-full py-2 text-xs text-gray-400 hover:text-gray-600 transition-colors"
+                  className="w-full py-2 text-xs text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors"
                 >
                   Ne plus afficher
                 </button>

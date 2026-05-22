@@ -2,8 +2,10 @@ import Link from 'next/link'
 import LogoutButton from './LogoutButton'
 import GuideHelper from './GuideHelper'
 import ProNudge from './ProNudge'
+import ToastListener from './ToastListener'
 import { createClient } from '@/lib/supabase/server'
 import { effectivePlan, type Plan } from '@/lib/plan-features'
+import { Suspense } from 'react'
 
 const ADMIN_EMAIL = 'sullycartal@gmail.com'
 
@@ -114,6 +116,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
       <GuideHelper />
       {plan === 'essential' && <ProNudge />}
+      <Suspense><ToastListener /></Suspense>
     </div>
   )
 }

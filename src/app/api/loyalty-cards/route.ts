@@ -107,6 +107,37 @@ export async function POST(request: Request) {
 
   if (existing) return NextResponse.json(existing)
 
+  // Check client limit based on merchant plan
+  const { effectivePlan, PLAN_FEATURES } = await import('@/lib/plan-features')
+  const { data: merchantData } = await service
+    .from('merchants')
+    .select('plan, user_id')
+    .eq('id', parsed.data.merchant_id)
+    .single()
+
+  if (merchantData) {
+    const { data: { user: merchantUser } } = await service.auth.admin.getUserById(merchantData.user_id)
+    const userEmail = merchantUser?.email ?? null
+    const plan = effectivePlan((merchantData.plan ?? 'free') as Parameters<typeof effectivePlan>[0], userEmail)
+    const maxClients = PLAN_FEATURES[plan].maxClients
+
+    if (maxClients !== -1) {
+      const { count } = await service
+        .from('loyalty_cards')
+        .select('id', { count: 'exact', head: true })
+        .eq('merchant_id', parsed.data.merchant_id)
+
+      if ((count ?? 0) >= maxClients) {
+        const limitLabel = maxClients === 50 ? '50 clients' : `${maxClients} clients`
+        const nextPlan = maxClients === 50 ? 'Essentiel' : 'Pro'
+        return NextResponse.json(
+          { error: `Limite de ${limitLabel} atteinte. Passez au plan ${nextPlan}.` },
+          { status: 403 },
+        )
+      }
+    }
+  }
+
   const { data, error } = await service
     .from('loyalty_cards')
     .insert(parsed.data)

@@ -160,6 +160,142 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── Pricing ────────────────────────────────────────────────────────── */}
+      <section className="px-6 py-20 bg-[#F7F6F3]">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12 space-y-3">
+            <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">Tarifs</p>
+            <h2 className="text-3xl font-bold text-[#1A1A1A]">Des tarifs simples et transparents</h2>
+            <p className="text-[#6B6B6B] text-lg">Commencez gratuitement, payez quand vous voyez les résultats.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+
+            {/* Plan Découverte */}
+            <div className="bg-white border border-[#E8E8E3] rounded-2xl p-7 space-y-6">
+              <div>
+                <div className="inline-flex items-center bg-[#F7F6F3] text-[#6B6B6B] text-xs font-semibold px-3 py-1 rounded-full border border-[#E8E8E3] mb-3">
+                  Commencer
+                </div>
+                <h3 className="text-xl font-bold text-[#1A1A1A]">Découverte</h3>
+                <div className="mt-2">
+                  <span className="text-3xl font-bold text-[#1A1A1A]">0€</span>
+                  <span className="text-[#6B6B6B] text-sm"> / 1 mois</span>
+                </div>
+                <p className="text-xs text-[#6B6B6B] mt-1">Aucune carte bancaire requise</p>
+              </div>
+              <ul className="space-y-2.5">
+                {[
+                  'QR code + cartes digitales',
+                  "Jusqu'à 50 clients",
+                  'Dashboard basique',
+                  'Google Wallet',
+                  'Personnalisation complète',
+                  'RDV bilan offert à 30 jours',
+                ].map(f => (
+                  <li key={f} className="flex items-center gap-2.5 text-sm text-[#1A1A1A]">
+                    <span className="w-4 h-4 rounded-full bg-[#F7F6F3] border border-[#E8E8E3] flex items-center justify-center flex-shrink-0">
+                      <svg className="w-2.5 h-2.5 text-[#6B6B6B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </span>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="/register"
+                className="block w-full py-3 border border-[#E8E8E3] text-[#1A1A1A] font-semibold rounded-xl hover:bg-[#F7F6F3] transition-colors text-sm text-center"
+              >
+                Commencer gratuitement
+              </Link>
+            </div>
+
+            {/* Plan Essentiel — mis en avant */}
+            <div className="bg-white border-2 border-[#6C47FF] rounded-2xl p-7 space-y-6 relative shadow-lg shadow-[#6C47FF]/10">
+              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
+                <div className="bg-[#6C47FF] text-white text-xs font-bold px-4 py-1 rounded-full whitespace-nowrap">
+                  Le plus populaire
+                </div>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-[#1A1A1A]">Essentiel</h3>
+                <div className="mt-2">
+                  <span className="text-3xl font-bold text-[#1A1A1A]">29€</span>
+                  <span className="text-[#6B6B6B] text-sm"> / mois</span>
+                </div>
+                <p className="text-xs text-[#6B6B6B] mt-1">Sans engagement</p>
+              </div>
+              <ul className="space-y-2.5">
+                {[
+                  'Tout du plan Découverte',
+                  "Jusqu'à 500 clients",
+                  'Stats avancées',
+                  'Conseiller IA 🇫🇷',
+                  'Apple Wallet',
+                  'Export données clients',
+                ].map(f => (
+                  <li key={f} className="flex items-center gap-2.5 text-sm text-[#1A1A1A]">
+                    <span className="w-4 h-4 rounded-full bg-[#6C47FF]/10 flex items-center justify-center flex-shrink-0">
+                      <svg className="w-2.5 h-2.5 text-[#6C47FF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </span>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="/register"
+                className="block w-full py-3 bg-[#6C47FF] text-white font-semibold rounded-xl hover:bg-[#5835e0] transition-colors text-sm text-center"
+              >
+                Choisir Essentiel
+              </Link>
+            </div>
+
+            {/* Plan Pro */}
+            <div className="bg-white border border-[#E8E8E3] rounded-2xl p-7 space-y-6">
+              <div>
+                <div className="inline-flex items-center bg-[#F7F6F3] text-[#6B6B6B] text-xs font-semibold px-3 py-1 rounded-full border border-[#E8E8E3] mb-3">
+                  Pour aller plus loin
+                </div>
+                <h3 className="text-xl font-bold text-[#1A1A1A]">Pro</h3>
+                <div className="mt-2">
+                  <span className="text-3xl font-bold text-[#1A1A1A]">49€</span>
+                  <span className="text-[#6B6B6B] text-sm"> / mois</span>
+                </div>
+                <p className="text-xs text-[#6B6B6B] mt-1">Sans engagement</p>
+              </div>
+              <ul className="space-y-2.5">
+                {[
+                  'Tout du plan Essentiel',
+                  'Clients illimités',
+                  'Notifications SMS',
+                  'Multi-boutique',
+                  'RDV mensuel inclus',
+                ].map(f => (
+                  <li key={f} className="flex items-center gap-2.5 text-sm text-[#1A1A1A]">
+                    <span className="w-4 h-4 rounded-full bg-[#F7F6F3] border border-[#E8E8E3] flex items-center justify-center flex-shrink-0">
+                      <svg className="w-2.5 h-2.5 text-[#6B6B6B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </span>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="/register"
+                className="block w-full py-3 border border-[#E8E8E3] text-[#1A1A1A] font-semibold rounded-xl hover:bg-[#F7F6F3] transition-colors text-sm text-center"
+              >
+                Choisir Pro
+              </Link>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
       {/* ── Final CTA ──────────────────────────────────────────────────────── */}
       <section className="px-6 py-20 bg-[#F7F6F3] text-center">
         <div className="max-w-xl mx-auto space-y-6">

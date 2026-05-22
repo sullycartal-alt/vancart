@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit'
 import { NextResponse } from 'next/server'
+import { Mistral } from '@mistralai/mistralai'
 
 const SYSTEM_PROMPT = `Tu es un expert en fidélisation client pour petits commerces indépendants (bars, restaurants, coffee shops). Tu conseilles les commerçants sur leur stratégie de fidélité de façon chaleureuse, concrète et adaptée à leur réalité terrain. Tu parles toujours en français, de façon simple et directe comme un ami expert.
 
@@ -27,7 +28,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
   }
 
-  // Rate limit: 30 req/day per IP (reuses the in-memory limiter with larger window)
+  // Rate limit: 30 req/day per IP
   const ip = getClientIp(request)
   const { allowed, retryAfter } = checkRateLimit(ip)
   if (!allowed) {
@@ -37,8 +38,8 @@ export async function POST(request: Request) {
     )
   }
 
-  if (!process.env.GOOGLE_GEMINI_API_KEY) {
-    return NextResponse.json({ error: 'Gemini non configuré' }, { status: 501 })
+  if (!process.env.MISTRAL_API_KEY) {
+    return NextResponse.json({ error: 'Mistral non configuré' }, { status: 501 })
   }
 
   const { messages, merchantContext } = await request.json() as {
@@ -62,31 +63,28 @@ export async function POST(request: Request) {
 Tu connais déjà ce commerce. Adapte tes conseils en conséquence et réfère-toi à ces informations quand c'est pertinent.`
   }
 
-  const { GoogleGenerativeAI } = await import('@google/generative-ai')
-  const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY)
-  const model = genAI.getGenerativeModel({
-    model: 'gemini-2.0-flash',
-    systemInstruction: systemPrompt,
-  })
-
-  // Convert message format: last message is the user's prompt, rest is history.
-  // Drop leading 'model' messages (welcome message) — Gemini requires history to start with 'user'.
-  const historyRaw = messages.slice(0, -1)
-  const firstUserIdx = historyRaw.findIndex(m => m.role === 'user')
-  const history = (firstUserIdx === -1 ? [] : historyRaw.slice(firstUserIdx)).map(m => ({
-    role: m.role,
-    parts: [{ text: m.content }],
+  // Convert to Mistral format ('model' role → 'assistant')
+  const conversationHistory = messages.map(m => ({
+    role: (m.role === 'model' ? 'assistant' : m.role) as 'user' | 'assistant',
+    content: m.content,
   }))
-  const lastMessage = messages[messages.length - 1]
+
+  const client = new Mistral({ apiKey: process.env.MISTRAL_API_KEY })
 
   try {
-    const chat = model.startChat({ history })
-    const result = await chat.sendMessage(lastMessage.content)
-    const text = result.response.text()
+    const response = await client.chat.complete({
+      model: 'mistral-small-latest',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        ...conversationHistory,
+      ],
+    })
+
+    const text = response.choices?.[0]?.message?.content ?? ''
     return NextResponse.json({ content: text })
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err)
-    console.error('[ai/conseil] Gemini error:', message)
+    console.error('[ai/conseil] Mistral error:', message)
     return NextResponse.json({ error: message }, { status: 500 })
   }
 }

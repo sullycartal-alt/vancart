@@ -156,7 +156,7 @@ export default function ChatClient({ merchantContext }: { merchantContext: Merch
         <AIAvatar />
         <div>
           <p className="text-sm font-semibold text-[#1A1A1A]">Conseiller Fidélité VanCart</p>
-          <p className="text-xs text-[#6B6B6B]">Propulsé par Gemini · {remaining} message{remaining !== 1 ? 's' : ''} restant{remaining !== 1 ? 's' : ''} aujourd&apos;hui</p>
+          <p className="text-xs text-[#6B6B6B]">Propulsé par Mistral AI 🇫🇷 · {remaining} message{remaining !== 1 ? 's' : ''} restant{remaining !== 1 ? 's' : ''} aujourd&apos;hui</p>
         </div>
         <div className="ml-auto flex items-center gap-1.5">
           <span className="w-2 h-2 rounded-full bg-green-400" />

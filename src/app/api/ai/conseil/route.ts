@@ -69,8 +69,11 @@ Tu connais déjà ce commerce. Adapte tes conseils en conséquence et réfère-t
     systemInstruction: systemPrompt,
   })
 
-  // Convert message format: last message is the user's prompt, rest is history
-  const history = messages.slice(0, -1).map(m => ({
+  // Convert message format: last message is the user's prompt, rest is history.
+  // Drop leading 'model' messages (welcome message) — Gemini requires history to start with 'user'.
+  const historyRaw = messages.slice(0, -1)
+  const firstUserIdx = historyRaw.findIndex(m => m.role === 'user')
+  const history = (firstUserIdx === -1 ? [] : historyRaw.slice(firstUserIdx)).map(m => ({
     role: m.role,
     parts: [{ text: m.content }],
   }))

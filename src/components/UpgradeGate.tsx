@@ -43,7 +43,7 @@ const FEATURE_META: Record<string, { label: string; description: string; benefit
   },
   appleWallet: {
     label: 'Apple Wallet',
-    description: 'Proposez à vos clients d\'ajouter leur carte de fidélité directement dans Apple Wallet.',
+    description: "Proposez à vos clients d'ajouter leur carte de fidélité directement dans Apple Wallet.",
     benefits: [
       'Carte toujours accessible sur iPhone',
       'Mise à jour automatique des tampons',
@@ -89,47 +89,68 @@ export default function UpgradeGate({ plan, feature, requiredPlan, children }: P
   const price = PLAN_PRICES[requiredPlan]
 
   return (
-    <div className="max-w-lg mx-auto mt-8">
-      <div className="bg-white border border-[#E8E8E3] rounded-2xl p-8 text-center space-y-5">
-        <div className="w-14 h-14 bg-[#6C47FF]/10 rounded-2xl flex items-center justify-center mx-auto">
-          <svg className="w-7 h-7 text-[#6C47FF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-          </svg>
-        </div>
+    <div className="relative min-h-[420px]">
+      {/* Blurred preview of actual content */}
+      <div
+        className="pointer-events-none select-none overflow-hidden max-h-[420px]"
+        style={{ filter: 'blur(5px)', opacity: 0.45 }}
+        aria-hidden="true"
+      >
+        {children}
+      </div>
 
-        <div className="space-y-2">
-          <div className="inline-flex items-center gap-1.5 bg-[#6C47FF]/10 text-[#6C47FF] text-xs font-semibold px-3 py-1 rounded-full">
-            Plan {planLabel}
+      {/* Gradient overlay fading to background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#F7F6F3]/10 via-[#F7F6F3]/50 to-[#F7F6F3]" />
+
+      {/* Lock card */}
+      <div className="absolute inset-0 flex items-center justify-center px-4 pt-6">
+        <div className="bg-white border border-[#E8E8E3] rounded-2xl p-8 text-center space-y-5 w-full max-w-md shadow-xl">
+          <div className="w-14 h-14 bg-[#6C47FF]/10 rounded-2xl flex items-center justify-center mx-auto">
+            <svg className="w-7 h-7 text-[#6C47FF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
           </div>
-          <h2 className="text-xl font-bold text-[#1A1A1A]">Fonctionnalité {planLabel}</h2>
-          <p className="text-sm text-[#6B6B6B] leading-relaxed">{meta.description}</p>
-        </div>
 
-        {meta.benefits.length > 0 && (
-          <ul className="text-left space-y-2">
-            {meta.benefits.map(b => (
-              <li key={b} className="flex items-start gap-2.5 text-sm text-[#1A1A1A]">
-                <span className="mt-0.5 w-4 h-4 rounded-full bg-[#6C47FF]/10 flex items-center justify-center flex-shrink-0">
-                  <svg className="w-2.5 h-2.5 text-[#6C47FF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                  </svg>
-                </span>
-                {b}
-              </li>
-            ))}
-          </ul>
-        )}
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-1.5 bg-[#6C47FF]/10 text-[#6C47FF] text-xs font-semibold px-3 py-1 rounded-full">
+              Plan {planLabel}
+            </div>
+            <h2 className="text-xl font-bold text-[#1A1A1A]">{meta.label}</h2>
+            <p className="text-sm text-[#6B6B6B] leading-relaxed">{meta.description}</p>
+          </div>
 
-        <div className="pt-2 space-y-3">
-          <div className="text-2xl font-bold text-[#1A1A1A]">{price}</div>
-          <Link
-            href="/dashboard/upgrade"
-            className="block w-full py-3 bg-[#6C47FF] text-white font-semibold rounded-xl hover:bg-[#5835e0] transition-colors text-sm"
-          >
-            Passer au plan {planLabel} →
-          </Link>
-          <p className="text-xs text-[#6B6B6B]">Sans engagement · Résiliable à tout moment</p>
+          {meta.benefits.length > 0 && (
+            <ul className="text-left space-y-2">
+              {meta.benefits.map(b => (
+                <li key={b} className="flex items-start gap-2.5 text-sm text-[#1A1A1A]">
+                  <span className="mt-0.5 w-4 h-4 rounded-full bg-[#6C47FF]/10 flex items-center justify-center flex-shrink-0">
+                    <svg className="w-2.5 h-2.5 text-[#6C47FF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </span>
+                  {b}
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <div className="space-y-3">
+            <div className="text-2xl font-bold text-[#1A1A1A]">{price}</div>
+            <Link
+              href="/dashboard/upgrade"
+              className="block w-full py-3 bg-[#6C47FF] text-white font-semibold rounded-xl hover:bg-[#5835e0] transition-colors text-sm"
+            >
+              Passer au plan {planLabel} — {price} →
+            </Link>
+            <Link
+              href="/#tarifs"
+              className="block text-xs text-[#6B6B6B] hover:text-[#6C47FF] transition-colors"
+            >
+              En savoir plus sur les tarifs
+            </Link>
+            <p className="text-xs text-[#6B6B6B]">Sans engagement · Résiliable à tout moment</p>
+          </div>
         </div>
       </div>
     </div>

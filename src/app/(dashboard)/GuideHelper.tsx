@@ -34,24 +34,22 @@ const STEPS = [
   },
 ]
 
-const LS_KEY = 'vancart_guide_seen'
+const LS_KEY = 'vancart_guide_seen_v2'
 
 export default function GuideHelper() {
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
     const seen = localStorage.getItem(LS_KEY)
-    console.log('guide_seen:', seen)
     if (!seen) {
-      const t = setTimeout(() => setOpen(true), 1000)
-      return () => clearTimeout(t)
+      const timer = setTimeout(() => setOpen(true), 1000)
+      return () => clearTimeout(timer)
     }
   }, [])
 
   function close() {
     localStorage.setItem(LS_KEY, 'true')
     setOpen(false)
-    console.log('guide_seen after close:', localStorage.getItem(LS_KEY))
   }
 
   return (

@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import LogoutButton from './LogoutButton'
 import GuideHelper from './GuideHelper'
+import ProNudge from './ProNudge'
 import { createClient } from '@/lib/supabase/server'
 import { effectivePlan, type Plan } from '@/lib/plan-features'
 
@@ -31,18 +32,20 @@ export default async function DashboardLayout({ children }: { children: React.Re
     : null
 
   return (
-    <div className="min-h-screen bg-[#F7F6F3]">
-      {/* Trial banner */}
+    <div className="min-h-screen bg-[#F7F6F3] flex flex-col">
+      {/* Trial banner — free plan only */}
       {plan === 'free' && trialDaysLeft !== null && (
-        <div className="bg-[#6C47FF] text-white text-sm px-4 py-2.5 text-center">
+        <div className="bg-amber-500 text-white text-sm px-4 py-2.5 text-center flex items-center justify-center gap-3 flex-wrap">
           <span>
-            🎁 Vous êtes en période d&apos;essai gratuit —{' '}
-            <strong>{trialDaysLeft} jour{trialDaysLeft !== 1 ? 's' : ''} restant{trialDaysLeft !== 1 ? 's' : ''}</strong>.{' '}
-            Passez au plan Essentiel pour continuer après le {trialEndDate}.
+            🎁 Essai gratuit —{' '}
+            <strong>{trialDaysLeft} jour{trialDaysLeft !== 1 ? 's' : ''} restant{trialDaysLeft !== 1 ? 's' : ''}</strong>
+            {trialEndDate && ` · Expire le ${trialEndDate}`}
           </span>
-          {' '}
-          <Link href="/dashboard/upgrade" className="underline font-semibold hover:text-white/80 transition-colors">
-            Voir les plans →
+          <Link
+            href="/dashboard/upgrade"
+            className="bg-white text-amber-600 font-semibold text-xs px-3 py-1 rounded-lg hover:bg-amber-50 transition-colors"
+          >
+            Passer au plan Essentiel →
           </Link>
         </div>
       )}
@@ -75,6 +78,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
                     Admin
                   </Link>
                 )}
+                {plan === 'free' && (
+                  <Link
+                    href="/dashboard/upgrade"
+                    className="px-3 py-1.5 text-sm font-semibold text-[#6C47FF] bg-[#6C47FF]/10 rounded-xl hover:bg-[#6C47FF]/20 transition-colors"
+                  >
+                    ⬆️ Upgrade
+                  </Link>
+                )}
                 <Link
                   href="/dashboard/stamp"
                   className="px-4 py-1.5 text-sm font-semibold text-white bg-[#6C47FF] rounded-xl hover:bg-[#5835e0] transition-colors"
@@ -87,10 +98,22 @@ export default async function DashboardLayout({ children }: { children: React.Re
           </div>
         </div>
       </nav>
-      <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 animate-fade-in">
+
+      <main className="flex-1 max-w-7xl w-full mx-auto py-6 px-4 sm:px-6 lg:px-8 animate-fade-in">
         {children}
       </main>
+
+      {/* Footer — subtle upgrade link for essential plan */}
+      {plan === 'essential' && (
+        <div className="border-t border-[#E8E8E3] py-3 text-center">
+          <Link href="/dashboard/upgrade" className="text-xs text-[#6B6B6B] hover:text-[#6C47FF] transition-colors">
+            Passer au plan Pro → Clients illimités, SMS, multi-boutique
+          </Link>
+        </div>
+      )}
+
       <GuideHelper />
+      {plan === 'essential' && <ProNudge />}
     </div>
   )
 }

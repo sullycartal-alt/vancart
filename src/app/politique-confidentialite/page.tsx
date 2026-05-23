@@ -130,9 +130,10 @@ export default function PrivacyPage() {
         </section>
       </main>
 
-      <footer className="border-t border-gray-100 px-6 py-8 text-center text-xs text-gray-400">
-        © 2025 VanCart ·{' '}
-        <Link href="/" className="hover:text-gray-600">Retour à l'accueil</Link>
+      <footer className="border-t border-gray-100 px-6 py-8 text-center text-xs text-gray-400 space-x-4">
+        <Link href="/" className="hover:text-gray-600">Accueil</Link>
+        <Link href="/cgu" className="hover:text-gray-600">CGU</Link>
+        <Link href="/mentions-legales" className="hover:text-gray-600">Mentions légales</Link>
       </footer>
     </div>
   )

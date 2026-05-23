@@ -352,6 +352,64 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── Testimonials ───────────────────────────────────────────────────── */}
+      <section className="px-6 py-20 bg-white">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12 space-y-3">
+            <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">Témoignages</p>
+            <h2 className="text-3xl font-bold text-[#1A1A1A]">Ils nous font confiance</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              {
+                initials: 'ML',
+                color: '#6C47FF',
+                name: 'Marie L.',
+                business: 'Café des Arts, Lyon',
+                quote: 'Depuis VanCart, mes clients reviennent beaucoup plus régulièrement. La carte dans le téléphone c\'est vraiment pratique, ils ne l\'oublient jamais !',
+              },
+              {
+                initials: 'TB',
+                color: '#2563eb',
+                name: 'Thomas B.',
+                business: 'Bar Le Central, Bordeaux',
+                quote: 'Installation en 10 minutes, mes clients adorent. Le QR code sur le comptoir fait toujours son effet.',
+              },
+              {
+                initials: 'SM',
+                color: '#16a34a',
+                name: 'Sophie M.',
+                business: 'The Coffee Lab, Paris',
+                quote: 'Le conseiller IA m\'a aidé à trouver la bonne règle de fidélité pour mon coffee shop. Vraiment utile !',
+              },
+            ].map(({ initials, color, name, business, quote }) => (
+              <div key={name} className="bg-[#F7F6F3] border border-[#E8E8E3] rounded-2xl p-6 space-y-4 flex flex-col">
+                <div className="flex items-center gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <svg key={i} className="w-4 h-4 text-amber-400 fill-amber-400" viewBox="0 0 24 24">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                    </svg>
+                  ))}
+                </div>
+                <p className="text-sm text-[#1A1A1A] leading-relaxed italic flex-1">&ldquo;{quote}&rdquo;</p>
+                <div className="flex items-center gap-3 pt-2 border-t border-[#E8E8E3]">
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
+                    style={{ backgroundColor: color }}
+                  >
+                    {initials}
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-[#1A1A1A]">{name}</p>
+                    <p className="text-xs text-[#6B6B6B]">{business}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── FAQ ────────────────────────────────────────────────────────────── */}
       <section id="faq" className="px-6 py-20 bg-white">
         <div className="max-w-2xl mx-auto">
@@ -419,11 +477,21 @@ export default function Home() {
       </section>
 
       {/* ── Footer ─────────────────────────────────────────────────────────── */}
-      <footer className="border-t border-[#E8E8E3] px-6 py-8 text-center text-xs text-[#6B6B6B] space-x-4 bg-white">
-        <span>© 2025 VanCart · Cartes de fidélité dématérialisées</span>
-        <Link href="/politique-confidentialite" className="hover:text-[#1A1A1A] underline underline-offset-2">
-          Politique de confidentialité
-        </Link>
+      <footer className="border-t border-[#E8E8E3] px-6 py-8 bg-white">
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+          <span className="text-xs text-[#6B6B6B]">© 2026 VanCart · Cartes de fidélité dématérialisées · Projet ESSCA</span>
+          <div className="flex items-center gap-4 text-xs text-[#6B6B6B]">
+            <Link href="/politique-confidentialite" className="hover:text-[#1A1A1A] underline underline-offset-2">
+              Politique de confidentialité
+            </Link>
+            <Link href="/cgu" className="hover:text-[#1A1A1A] underline underline-offset-2">
+              CGU
+            </Link>
+            <Link href="/mentions-legales" className="hover:text-[#1A1A1A] underline underline-offset-2">
+              Mentions légales
+            </Link>
+          </div>
+        </div>
       </footer>
     </div>
   )

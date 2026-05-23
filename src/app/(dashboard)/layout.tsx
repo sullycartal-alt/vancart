@@ -4,6 +4,7 @@ import GuideHelper from './GuideHelper'
 import ProNudge from './ProNudge'
 import ToastListener from './ToastListener'
 import TrialBanner from './TrialBanner'
+import MobileNav from './MobileNav'
 import { createClient } from '@/lib/supabase/server'
 import { effectivePlan, type Plan } from '@/lib/plan-features'
 import { Suspense } from 'react'
@@ -85,7 +86,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
                 </Link>
               </div>
             </div>
-            <LogoutButton />
+            <div className="flex items-center gap-2">
+              <LogoutButton />
+              <MobileNav isAdmin={isAdmin} plan={plan} />
+            </div>
           </div>
         </div>
       </nav>

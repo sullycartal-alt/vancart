@@ -239,11 +239,11 @@ export default function MerchantForm({ merchant }: Props) {
   }
 
   const qrUrl = savedMerchant ? `${appUrl}/${savedMerchant.slug}` : null
-  const inputClass = 'mt-1 block w-full rounded-xl border border-[#E8E8E3] px-4 py-3 text-[#1A1A1A] bg-[#F7F6F3] text-sm focus:border-[#6C47FF] focus:outline-none focus:ring-2 focus:ring-[#6C47FF]/15 transition-all'
+  const inputClass = 'mt-1 block w-full rounded-xl border border-[#E8E8E3] px-4 py-3 text-[#1A1A1A] bg-[#F7F6F3] text-base sm:text-sm focus:border-[#6C47FF] focus:outline-none focus:ring-2 focus:ring-[#6C47FF]/15 transition-all min-h-[44px]'
 
   return (
     <div className="space-y-8">
-      <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8 items-start">
 
         {/* Form */}
         <form onSubmit={handleSubmit(onSubmit)} className="bg-white border border-[#E8E8E3] rounded-2xl p-6 space-y-6">
@@ -330,7 +330,7 @@ export default function MerchantForm({ merchant }: Props) {
           {/* Règle de fidélité */}
           <div>
             <label htmlFor="loyalty_rule" className="block text-sm font-medium text-[#1A1A1A]">Règle de fidélité</label>
-            <textarea {...register('loyalty_rule')} id="loyalty_rule" rows={2} placeholder="Ex : Achetez 10 cafés, le 11ème est offert" className="mt-1 block w-full rounded-xl border border-[#E8E8E3] px-4 py-3 text-sm text-[#1A1A1A] bg-[#F7F6F3] focus:border-[#6C47FF] focus:outline-none focus:ring-2 focus:ring-[#6C47FF]/15 transition-all" />
+            <textarea {...register('loyalty_rule')} id="loyalty_rule" rows={2} placeholder="Ex : Achetez 10 cafés, le 11ème est offert" className="mt-1 block w-full rounded-xl border border-[#E8E8E3] px-4 py-3 text-base sm:text-sm text-[#1A1A1A] bg-[#F7F6F3] focus:border-[#6C47FF] focus:outline-none focus:ring-2 focus:ring-[#6C47FF]/15 transition-all min-h-[44px]" />
             {errors.loyalty_rule && <p className="mt-1 text-sm text-red-500">{errors.loyalty_rule.message}</p>}
           </div>
 
@@ -434,7 +434,7 @@ export default function MerchantForm({ merchant }: Props) {
         </form>
 
         {/* Live preview */}
-        <div className="xl:sticky xl:top-6 space-y-3">
+        <div className="lg:sticky lg:top-6 space-y-3">
           <p className="text-xs font-semibold text-[#6B6B6B] uppercase tracking-wide text-center">Aperçu en direct</p>
           <CardPreview
             businessName={businessName}

@@ -60,16 +60,16 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-[#1A1A1A]">Tableau de bord</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-[#1A1A1A]">Tableau de bord</h1>
           <p className="mt-1 text-sm text-[#6B6B6B]">{merchant.business_name}</p>
         </div>
         <Link
           href="/dashboard/settings"
-          className="text-sm text-[#6C47FF] hover:text-[#5835e0] font-medium transition-colors"
+          className="text-sm text-[#6C47FF] hover:text-[#5835e0] font-medium transition-colors whitespace-nowrap flex-shrink-0"
         >
-          Modifier mon commerce →
+          Modifier →
         </Link>
       </div>
 
@@ -87,7 +87,7 @@ export default async function DashboardPage() {
       </Link>
 
       {/* Stats row */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 sm:grid-cols-3 gap-3 sm:gap-4">
         <div className="bg-white border border-[#E8E8E3] rounded-xl p-5">
           <p className="text-xs font-medium text-[#6B6B6B]">Cartes actives</p>
           <p className="mt-1.5 text-3xl font-bold text-[#1A1A1A]">{activeCards ?? 0}</p>

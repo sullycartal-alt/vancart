@@ -151,24 +151,24 @@ export default function StampClient({ merchant }: Props) {
     const displayTotal = mode === 'points' ? pointsRequired : merchant.stamps_required
     const unit = mode === 'points' ? 'pts' : 'tampon(s)'
     return (
-      <div className="bg-white border border-[#E8E8E3] rounded-2xl p-8 text-center space-y-6">
-        <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto text-3xl"
+      <div className="bg-white border border-[#E8E8E3] rounded-2xl p-6 sm:p-8 text-center space-y-6">
+        <div className="w-24 h-24 sm:w-20 sm:h-20 rounded-full flex items-center justify-center mx-auto text-4xl sm:text-3xl"
           style={{ backgroundColor: reward_unlocked ? '#10b981' : merchant.primary_color, color: 'white' }}>
           {reward_unlocked ? '🎉' : '✓'}
         </div>
         {reward_unlocked ? (
           <div>
-            <h2 className="text-xl font-bold text-[#1A1A1A]">Récompense débloquée !</h2>
-            <p className="text-[#6B6B6B] mt-1">{c.customers.first_name} a obtenu sa récompense.</p>
+            <h2 className="text-2xl sm:text-xl font-bold text-[#1A1A1A]">Récompense débloquée !</h2>
+            <p className="text-[#6B6B6B] mt-1 text-base sm:text-sm">{c.customers.first_name} a obtenu sa récompense.</p>
             <div className="bg-green-50 border border-green-200 rounded-xl p-4 mt-4">
-              <p className="text-sm text-green-800 font-medium">
+              <p className="text-base sm:text-sm text-green-800 font-medium">
                 Sa carte repart à zéro — {displayCount} {unit} sur {displayTotal}
               </p>
             </div>
           </div>
         ) : (
           <div className="space-y-4">
-            <h2 className="text-xl font-bold text-[#1A1A1A]">
+            <h2 className="text-xl sm:text-xl font-bold text-[#1A1A1A]">
               {mode === 'points'
                 ? `+${points_added} pts ! ${c.customers.first_name} : ${c.points}/${pointsRequired} pts`
                 : `Tampon ajouté ! ${c.customers.first_name} : ${c.stamps_count}/${merchant.stamps_required}`
@@ -238,23 +238,23 @@ export default function StampClient({ merchant }: Props) {
   return (
     <div className="space-y-4">
       {/* QR Scanner */}
-      <div className="bg-white border border-[#E8E8E3] rounded-2xl p-6 space-y-4">
+      <div className="bg-white border border-[#E8E8E3] rounded-2xl p-5 sm:p-6 space-y-4">
         <h2 className="text-sm font-semibold text-[#1A1A1A]">Scanner la carte du client</h2>
         {scanning ? (
           <div className="space-y-3">
             <QRScanner onScan={handleQRScan} onError={handleQRError} />
-            <button onClick={() => setScanning(false)} className="w-full py-2 text-sm text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors">Annuler</button>
+            <button onClick={() => setScanning(false)} className="w-full py-3 text-sm text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors">Annuler</button>
           </div>
         ) : (
           <button
             onClick={() => { setScanError(null); setScanning(true) }}
             disabled={processing}
             style={{ backgroundColor: merchant.primary_color }}
-            className="w-full py-3 px-4 rounded-xl text-white font-semibold text-sm hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full py-5 sm:py-4 px-4 rounded-2xl text-white font-bold text-lg sm:text-base hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-3 min-h-[72px] sm:min-h-0"
           >
             {processing ? 'Enregistrement...' : (
               <>
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-7 h-7 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 3.5V16M4.5 4.5h3v3h-3v-3zm10 0h3v3h-3v-3zm0 10h3v3h-3v-3zM4.5 14.5h3v3h-3v-3z" />
                 </svg>
                 Scanner un QR code
@@ -272,17 +272,18 @@ export default function StampClient({ merchant }: Props) {
       </div>
 
       {/* Phone search */}
-      <form onSubmit={handlePhoneSearch} className="bg-white border border-[#E8E8E3] rounded-2xl p-6">
+      <form onSubmit={handlePhoneSearch} className="bg-white border border-[#E8E8E3] rounded-2xl p-5 sm:p-6">
         <label htmlFor="phone" className="block text-sm font-semibold text-[#1A1A1A] mb-2">Numéro de téléphone</label>
         <div className="flex gap-3">
           <input id="phone" type="tel" value={phone}
             onChange={e => { setPhone(e.target.value); setCard(null); setSearchError(null) }}
             placeholder="+33 6 12 34 56 78"
-            className={inputClass}
+            className={`${inputClass} text-base`}
+            style={{ fontSize: '16px' }}
           />
           <button type="submit" disabled={searching || phone.length < 6}
-            className="px-4 py-2.5 bg-[#6C47FF] text-white text-sm font-semibold rounded-xl hover:bg-[#5835e0] disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-            {searching ? '...' : 'Rechercher'}
+            className="px-4 py-2.5 bg-[#6C47FF] text-white text-sm font-semibold rounded-xl hover:bg-[#5835e0] disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[44px]">
+            {searching ? '...' : 'Chercher'}
           </button>
         </div>
         {searchError && <p className="mt-2 text-sm text-red-500">{searchError}</p>}

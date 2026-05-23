@@ -14,7 +14,7 @@ export default async function DashboardPage() {
     .eq('user_id', user.id)
     .single()
 
-  if (!merchant || !merchant.onboarding_completed) {
+  if (!merchant || merchant.onboarding_completed === false) {
     redirect('/dashboard/onboarding')
   }
 

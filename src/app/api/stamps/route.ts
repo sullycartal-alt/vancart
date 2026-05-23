@@ -3,6 +3,7 @@ import { checkRateLimit, getClientIp } from '@/lib/rate-limit'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { isConfigured, updateWalletPass } from '@/lib/google-wallet'
+import { effectivePlan, type Plan } from '@/lib/plan-features'
 
 const stampSchema = z.object({
   loyalty_card_id: z.string().uuid(),
@@ -25,7 +26,7 @@ export async function POST(request: Request) {
 
   const { data: merchant, error: merchantError } = await supabase
     .from('merchants')
-    .select('id, stamps_required, loyalty_type, points_per_euro, points_required')
+    .select('id, stamps_required, loyalty_type, points_per_euro, points_required, business_name, plan')
     .eq('user_id', user.id)
     .single()
   if (merchantError || !merchant) return NextResponse.json({ error: 'Merchant not found' }, { status: 404 })
@@ -102,6 +103,34 @@ export async function POST(request: Request) {
 
   if (!isPoints && isConfigured()) {
     await updateWalletPass(card.id, updateData.stamps_count ?? 0, merchant.stamps_required).catch(() => {})
+  }
+
+  // SMS notification when reward unlocked (Pro plan only)
+  if (rewardUnlocked) {
+    const plan = effectivePlan((merchant.plan ?? 'free') as Plan, user.email ?? undefined)
+    if (plan === 'pro') {
+      const customerPhone = (updatedCard as { customers?: { phone?: string; first_name?: string } }).customers?.phone
+      const customerFirstName = (updatedCard as { customers?: { phone?: string; first_name?: string } }).customers?.first_name ?? 'vous'
+      if (
+        customerPhone &&
+        process.env.TWILIO_ACCOUNT_SID &&
+        process.env.TWILIO_AUTH_TOKEN &&
+        process.env.TWILIO_PHONE_NUMBER
+      ) {
+        try {
+          const twilio = require('twilio')
+          const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN)
+          const e164Phone = customerPhone.startsWith('+') ? customerPhone : `+33${customerPhone.replace(/^0/, '')}`
+          await client.messages.create({
+            body: `🎉 Félicitations ${customerFirstName} ! Votre récompense chez ${merchant.business_name} est débloquée. Présentez cette carte lors de votre prochaine visite !`,
+            from: process.env.TWILIO_PHONE_NUMBER,
+            to: e164Phone,
+          })
+        } catch {
+          // SMS failure never breaks the stamp flow
+        }
+      }
+    }
   }
 
   return NextResponse.json({

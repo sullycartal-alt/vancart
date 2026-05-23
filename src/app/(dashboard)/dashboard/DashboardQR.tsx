@@ -37,8 +37,8 @@ export default function DashboardQR({ url, businessName, color }: Props) {
   }
 
   return (
-    <div className="bg-white border border-[#E8E8E3] rounded-2xl p-6">
-      <div className="flex items-start gap-6">
+    <div className="bg-white border border-[#E8E8E3] rounded-2xl p-5 sm:p-6">
+      <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5 sm:gap-6">
         {/* QR canvas */}
         <div
           className="flex-shrink-0 p-3 rounded-xl"
@@ -48,8 +48,8 @@ export default function DashboardQR({ url, businessName, color }: Props) {
         </div>
 
         {/* Info + actions */}
-        <div className="flex-1 min-w-0 space-y-3">
-          <div>
+        <div className="flex-1 min-w-0 space-y-3 w-full">
+          <div className="text-center sm:text-left">
             <h2 className="text-base font-semibold text-[#1A1A1A]">Votre QR code client</h2>
             <p className="text-sm text-[#6B6B6B] mt-0.5 leading-relaxed">
               Posez-le en caisse ou partagez le lien — vos clients le scannent pour créer leur carte.
@@ -60,22 +60,22 @@ export default function DashboardQR({ url, businessName, color }: Props) {
             {url}
           </code>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <button
               onClick={handleDownload}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl border transition-colors hover:opacity-80"
+              className="flex items-center justify-center gap-1.5 px-4 py-2.5 sm:py-1.5 text-sm sm:text-xs font-medium rounded-xl border transition-colors hover:opacity-80 min-h-[44px] sm:min-h-0"
               style={{ borderColor: color, color }}
             >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:w-3.5 sm:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
               </svg>
               Télécharger PNG
             </button>
             <button
               onClick={() => navigator.clipboard?.writeText(url)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-xl border border-[#E8E8E3] text-[#6B6B6B] hover:bg-[#F7F6F3] transition-colors"
+              className="flex items-center justify-center gap-1.5 px-4 py-2.5 sm:py-1.5 text-sm sm:text-xs font-medium rounded-xl border border-[#E8E8E3] text-[#6B6B6B] hover:bg-[#F7F6F3] transition-colors min-h-[44px] sm:min-h-0"
             >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:w-3.5 sm:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
               </svg>
               Copier le lien

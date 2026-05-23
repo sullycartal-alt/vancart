@@ -3,6 +3,7 @@ import LogoutButton from './LogoutButton'
 import GuideHelper from './GuideHelper'
 import ProNudge from './ProNudge'
 import ToastListener from './ToastListener'
+import TrialBanner from './TrialBanner'
 import { createClient } from '@/lib/supabase/server'
 import { effectivePlan, type Plan } from '@/lib/plan-features'
 import { Suspense } from 'react'
@@ -37,19 +38,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     <div className="min-h-screen bg-[#F7F6F3] flex flex-col">
       {/* Trial banner — free plan only */}
       {plan === 'free' && trialDaysLeft !== null && (
-        <div className="bg-amber-500 text-white text-sm px-4 py-2.5 text-center flex items-center justify-center gap-3 flex-wrap">
-          <span>
-            🎁 Essai gratuit —{' '}
-            <strong>{trialDaysLeft} jour{trialDaysLeft !== 1 ? 's' : ''} restant{trialDaysLeft !== 1 ? 's' : ''}</strong>
-            {trialEndDate && ` · Expire le ${trialEndDate}`}
-          </span>
-          <Link
-            href="/dashboard/upgrade"
-            className="bg-white text-amber-600 font-semibold text-xs px-3 py-1 rounded-lg hover:bg-amber-50 transition-colors"
-          >
-            Passer au plan Essentiel →
-          </Link>
-        </div>
+        <TrialBanner daysLeft={trialDaysLeft} endDate={trialEndDate} />
       )}
 
       <nav className="bg-white border-b border-[#E8E8E3]">

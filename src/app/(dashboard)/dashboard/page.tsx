@@ -14,8 +14,24 @@ export default async function DashboardPage() {
     .eq('user_id', user.id)
     .single()
 
-  if (!merchant || merchant.onboarding_completed === false) {
-    redirect('/dashboard/onboarding')
+  // No merchant yet — prompt to configure
+  if (!merchant) {
+    return (
+      <div className="space-y-6">
+        <h1 className="text-xl sm:text-2xl font-bold text-[#1A1A1A]">Tableau de bord</h1>
+        <div className="bg-white border border-[#E8E8E3] rounded-2xl p-8 text-center space-y-4">
+          <div className="text-4xl">🚀</div>
+          <h2 className="text-lg font-bold text-[#1A1A1A]">Bienvenue sur VanCart !</h2>
+          <p className="text-sm text-[#6B6B6B]">Configurez votre commerce pour démarrer votre programme de fidélité.</p>
+          <Link
+            href="/dashboard/onboarding"
+            className="inline-block px-6 py-3 bg-[#6C47FF] text-white text-sm font-semibold rounded-xl hover:bg-[#5835e0] transition-colors"
+          >
+            Lancer l&apos;assistant de configuration →
+          </Link>
+        </div>
+      </div>
+    )
   }
 
   const today = new Date()

@@ -9,11 +9,9 @@ export default async function OnboardingPage() {
 
   const { data: merchant } = await supabase
     .from('merchants')
-    .select('id, business_name, slug, logo_url, primary_color, loyalty_type, stamps_required, points_per_euro, points_required, loyalty_rule, onboarding_completed')
+    .select('id, business_name, slug, logo_url, primary_color, loyalty_type, stamps_required, points_per_euro, points_required, loyalty_rule')
     .eq('user_id', user.id)
     .single()
-
-  if (merchant?.onboarding_completed) redirect('/dashboard')
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? ''
 

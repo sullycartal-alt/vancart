@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 import MerchantForm from './MerchantForm'
 
 export default async function SettingsPage() {
@@ -16,11 +17,29 @@ export default async function SettingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-[#1A1A1A]">Configurer mon commerce</h1>
+        <h1 className="text-2xl font-bold text-[#1A1A1A]">Mon commerce</h1>
         <p className="mt-1 text-sm text-[#6B6B6B]">
           Ces informations apparaîtront sur la carte de fidélité de vos clients.
         </p>
       </div>
+
+      {/* Setup assistant banner */}
+      <div className="bg-[#6C47FF]/5 border border-[#6C47FF]/20 rounded-2xl p-5 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <span className="text-3xl">🚀</span>
+          <div>
+            <p className="text-sm font-semibold text-[#1A1A1A]">Assistant de configuration</p>
+            <p className="text-xs text-[#6B6B6B] mt-0.5">Configurez votre commerce en 3 étapes guidées</p>
+          </div>
+        </div>
+        <Link
+          href="/dashboard/onboarding"
+          className="flex-shrink-0 px-4 py-2 bg-[#6C47FF] text-white text-sm font-semibold rounded-xl hover:bg-[#5835e0] transition-colors whitespace-nowrap"
+        >
+          Lancer l&apos;assistant →
+        </Link>
+      </div>
+
       <MerchantForm merchant={merchant} />
 
       {/* Wallet status */}

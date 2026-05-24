@@ -15,7 +15,6 @@ const merchantSchema = z.object({
   description: z.string().max(200).nullable().optional(),
   instagram_handle: z.string().max(30).nullable().optional(),
   city: z.string().max(60).nullable().optional(),
-  onboarding_completed: z.boolean().optional(),
 })
 
 export async function GET() {

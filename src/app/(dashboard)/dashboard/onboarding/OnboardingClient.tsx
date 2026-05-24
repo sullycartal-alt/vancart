@@ -254,7 +254,6 @@ export default function OnboardingClient({ existingMerchant, appUrl }: Props) {
   const router = useRouter()
   const [step, setStep] = useState(1)
   const [saving, setSaving] = useState(false)
-  const [skipping, setSkipping] = useState(false)
   const [error, setError] = useState('')
   const qrCanvasRef = useRef<HTMLCanvasElement>(null)
   const [walletStyle, setWalletStyle] = useState<'google' | 'apple'>('google')
@@ -339,42 +338,7 @@ export default function OnboardingClient({ existingMerchant, appUrl }: Props) {
     setStep(3)
   }
 
-  async function finishOnboarding() {
-    setSaving(true)
-    await fetch('/api/merchants', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ onboarding_completed: true }),
-    })
-    router.push('/dashboard')
-    router.refresh()
-  }
-
-  async function skipOnboarding() {
-    setSkipping(true)
-
-    // Try to mark existing merchant as completed
-    const patchRes = await fetch('/api/merchants', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ onboarding_completed: true }),
-    })
-
-    // If no merchant row exists yet, create a minimal one so the dashboard doesn't loop
-    if (!patchRes.ok) {
-      const name = businessName.trim() || 'Mon Commerce'
-      await fetch('/api/merchants', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          business_name: name.length >= 2 ? name : 'Mon Commerce',
-          slug: slugify(name.length >= 2 ? name : 'Mon Commerce'),
-          primary_color: primaryColor,
-          onboarding_completed: true,
-        }),
-      })
-    }
-
+  function finishOnboarding() {
     router.push('/dashboard')
     router.refresh()
   }
@@ -640,24 +604,11 @@ export default function OnboardingClient({ existingMerchant, appUrl }: Props) {
                 <button
                   type="button"
                   onClick={finishOnboarding}
-                  disabled={saving}
-                  className="px-6 py-2.5 bg-[#6C47FF] text-white text-sm font-semibold rounded-xl hover:bg-[#5835e0] transition-colors disabled:opacity-60 ml-auto"
+                  className="px-6 py-2.5 bg-[#6C47FF] text-white text-sm font-semibold rounded-xl hover:bg-[#5835e0] transition-colors ml-auto"
                 >
-                  {saving ? 'Chargement…' : 'Accéder à mon dashboard →'}
+                  Accéder à mon dashboard →
                 </button>
               )}
-            </div>
-
-            {/* Skip link — visible on every step */}
-            <div className="text-center pt-1 border-t border-[#E8E8E3]">
-              <button
-                type="button"
-                onClick={skipOnboarding}
-                disabled={skipping}
-                className="text-xs text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors disabled:opacity-50"
-              >
-                {skipping ? 'Redirection…' : 'Passer cette étape → Configurer plus tard depuis les paramètres'}
-              </button>
             </div>
           </div>
 

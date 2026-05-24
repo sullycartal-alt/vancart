@@ -62,6 +62,29 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
   }
 
+  // Guard against duplicates: if a merchant already exists, update it instead
+  const { data: existing } = await supabase
+    .from('merchants')
+    .select('id')
+    .eq('user_id', user.id)
+    .single()
+
+  if (existing?.id) {
+    const { data, error } = await supabase
+      .from('merchants')
+      .update(parsed.data)
+      .eq('user_id', user.id)
+      .select()
+      .single()
+
+    if (error) {
+      console.error('[POST→PATCH /api/merchants] Supabase error:', error)
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+
+    return NextResponse.json(data)
+  }
+
   const { data, error } = await supabase
     .from('merchants')
     .insert({ ...parsed.data, user_id: user.id })

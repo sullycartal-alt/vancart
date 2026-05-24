@@ -319,7 +319,12 @@ export default function OnboardingClient({ existingMerchant, appUrl }: Props) {
         : `${pointsRequired} points = 1 récompense`),
     }
 
-    const method = existingMerchant ? 'PATCH' : 'POST'
+    // Always check live whether a merchant row exists — existingMerchant
+    // reflects the state at page load and may be stale (e.g. created via skip).
+    const checkRes = await fetch('/api/merchants')
+    const checkData = await checkRes.json()
+    const method = checkData?.id ? 'PATCH' : 'POST'
+
     const res = await fetch('/api/merchants', {
       method,
       headers: { 'Content-Type': 'application/json' },

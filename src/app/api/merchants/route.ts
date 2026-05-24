@@ -58,6 +58,7 @@ export async function POST(request: Request) {
   const parsed = merchantSchema.safeParse(body)
 
   if (!parsed.success) {
+    console.error('[POST /api/merchants] Zod error:', parsed.error.flatten())
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
   }
 
@@ -68,6 +69,7 @@ export async function POST(request: Request) {
     .single()
 
   if (error) {
+    console.error('[POST /api/merchants] Supabase error:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
@@ -90,6 +92,7 @@ export async function PATCH(request: Request) {
   const parsed = merchantSchema.partial().safeParse(body)
 
   if (!parsed.success) {
+    console.error('[PATCH /api/merchants] Zod error:', parsed.error.flatten())
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
   }
 
@@ -101,6 +104,7 @@ export async function PATCH(request: Request) {
     .single()
 
   if (error) {
+    console.error('[PATCH /api/merchants] Supabase error:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 

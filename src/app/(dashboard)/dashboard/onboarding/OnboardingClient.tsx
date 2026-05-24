@@ -352,11 +352,29 @@ export default function OnboardingClient({ existingMerchant, appUrl }: Props) {
 
   async function skipOnboarding() {
     setSkipping(true)
-    await fetch('/api/merchants', {
+
+    // Try to mark existing merchant as completed
+    const patchRes = await fetch('/api/merchants', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ onboarding_completed: true }),
     })
+
+    // If no merchant row exists yet, create a minimal one so the dashboard doesn't loop
+    if (!patchRes.ok) {
+      const name = businessName.trim() || 'Mon Commerce'
+      await fetch('/api/merchants', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          business_name: name.length >= 2 ? name : 'Mon Commerce',
+          slug: slugify(name.length >= 2 ? name : 'Mon Commerce'),
+          primary_color: primaryColor,
+          onboarding_completed: true,
+        }),
+      })
+    }
+
     router.push('/dashboard')
     router.refresh()
   }

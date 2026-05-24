@@ -299,7 +299,8 @@ export default function OnboardingClient({ existingMerchant, appUrl }: Props) {
     setLogoUploading(false)
   }
 
-  async function saveAndAdvanceToStep3() {
+  // Step 1: save basic identity, advance to step 2
+  async function handleStep1Continue() {
     if (!businessName.trim()) { setError('Le nom du commerce est requis.'); return }
     setSaving(true)
     setError('')
@@ -310,6 +311,39 @@ export default function OnboardingClient({ existingMerchant, appUrl }: Props) {
       slug,
       primary_color: primaryColor,
       logo_url: logoUrl ?? null,
+    }
+
+    // Determine POST vs PATCH from page-load state (accurate at step 1)
+    const method = existingMerchant?.id ? 'PATCH' : 'POST'
+    const res = await fetch('/api/merchants', {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+    const data = await res.json()
+
+    if (!res.ok) {
+      const errMsg = typeof data.error === 'string'
+        ? data.error
+        : data.error?.fieldErrors
+          ? Object.entries(data.error.fieldErrors).map(([f, msgs]) => `${f}: ${(msgs as string[]).join(', ')}`).join(' | ')
+          : JSON.stringify(data.error)
+      setError(errMsg || 'Erreur lors de la sauvegarde.')
+      setSaving(false)
+      return
+    }
+
+    setSavedSlug(data.slug ?? slug)
+    setSaving(false)
+    setStep(2)
+  }
+
+  // Step 2: ALWAYS PATCH loyalty fields only — merchant is guaranteed to exist
+  async function handleStep2Save() {
+    setSaving(true)
+    setError('')
+
+    const payload = {
       loyalty_type: loyaltyType,
       stamps_required: stampsRequired,
       points_per_euro: loyaltyType === 'points' ? pointsPerEuro : null,
@@ -319,32 +353,24 @@ export default function OnboardingClient({ existingMerchant, appUrl }: Props) {
         : `${pointsRequired} points = 1 récompense`),
     }
 
-    // Always check live whether a merchant row exists — existingMerchant
-    // reflects the state at page load and may be stale (e.g. created via skip).
-    const checkRes = await fetch('/api/merchants')
-    const checkData = await checkRes.json()
-    const method = checkData?.id ? 'PATCH' : 'POST'
-
     const res = await fetch('/api/merchants', {
-      method,
+      method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     })
     const data = await res.json()
 
     if (!res.ok) {
-      // data.error can be a string (Supabase) or object (Zod fieldErrors)
       const errMsg = typeof data.error === 'string'
         ? data.error
         : data.error?.fieldErrors
           ? Object.entries(data.error.fieldErrors).map(([f, msgs]) => `${f}: ${(msgs as string[]).join(', ')}`).join(' | ')
-          : data.error?.formErrors?.join(', ') ?? JSON.stringify(data.error)
+          : JSON.stringify(data.error)
       setError(errMsg || 'Erreur lors de la sauvegarde.')
       setSaving(false)
       return
     }
 
-    setSavedSlug(data.slug ?? slug)
     setSaving(false)
     setStep(3)
   }
@@ -593,17 +619,18 @@ export default function OnboardingClient({ existingMerchant, appUrl }: Props) {
               {step === 1 && (
                 <button
                   type="button"
-                  onClick={() => { if (!businessName.trim()) { setError('Le nom du commerce est requis.'); return } setError(''); setStep(2) }}
-                  className="px-6 py-2.5 bg-[#6C47FF] text-white text-sm font-semibold rounded-xl hover:bg-[#5835e0] transition-colors"
+                  onClick={handleStep1Continue}
+                  disabled={saving}
+                  className="px-6 py-2.5 bg-[#6C47FF] text-white text-sm font-semibold rounded-xl hover:bg-[#5835e0] transition-colors disabled:opacity-60"
                 >
-                  Suivant →
+                  {saving ? 'Enregistrement…' : 'Suivant →'}
                 </button>
               )}
 
               {step === 2 && (
                 <button
                   type="button"
-                  onClick={saveAndAdvanceToStep3}
+                  onClick={handleStep2Save}
                   disabled={saving}
                   className="px-6 py-2.5 bg-[#6C47FF] text-white text-sm font-semibold rounded-xl hover:bg-[#5835e0] transition-colors disabled:opacity-60"
                 >

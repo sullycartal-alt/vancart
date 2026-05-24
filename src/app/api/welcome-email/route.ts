@@ -21,9 +21,9 @@ export async function POST(request: Request) {
       num: '01',
       icon: '🏪',
       title: 'Configurez votre commerce',
-      desc: 'Logo, couleur, règle de fidélité — suivez l\'assistant de configuration.',
-      link: `${APP_URL}/dashboard/onboarding`,
-      linkLabel: 'Démarrer la config →',
+      desc: "Logo, couleur, règle de fidélité — rendez-vous dans Mon commerce.",
+      link: `${APP_URL}/dashboard/settings`,
+      linkLabel: 'Configurer →',
     },
     {
       num: '02',

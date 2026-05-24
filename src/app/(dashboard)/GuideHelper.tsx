@@ -8,8 +8,8 @@ const STEPS = [
     num: '01',
     title: 'Configurez votre commerce',
     desc: 'Logo, couleur de marque, règle de fidélité, nombre de tampons — 2 minutes.',
-    href: '/dashboard/onboarding',
-    cta: 'Lancer l\'assistant →',
+    href: '/dashboard/settings',
+    cta: 'Configurer →',
   },
   {
     num: '02',

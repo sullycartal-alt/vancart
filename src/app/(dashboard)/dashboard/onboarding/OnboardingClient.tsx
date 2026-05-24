@@ -328,7 +328,13 @@ export default function OnboardingClient({ existingMerchant, appUrl }: Props) {
     const data = await res.json()
 
     if (!res.ok) {
-      setError(data.error?.message ?? 'Erreur lors de la sauvegarde.')
+      // data.error can be a string (Supabase) or object (Zod fieldErrors)
+      const errMsg = typeof data.error === 'string'
+        ? data.error
+        : data.error?.fieldErrors
+          ? Object.entries(data.error.fieldErrors).map(([f, msgs]) => `${f}: ${(msgs as string[]).join(', ')}`).join(' | ')
+          : data.error?.formErrors?.join(', ') ?? JSON.stringify(data.error)
+      setError(errMsg || 'Erreur lors de la sauvegarde.')
       setSaving(false)
       return
     }

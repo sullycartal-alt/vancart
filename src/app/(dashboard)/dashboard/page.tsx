@@ -14,7 +14,7 @@ export default async function DashboardPage() {
     .eq('user_id', user.id)
     .single()
 
-  // No merchant yet — prompt to configure
+  // No merchant yet — prompt to configure via settings
   if (!merchant) {
     return (
       <div className="space-y-6">
@@ -24,10 +24,10 @@ export default async function DashboardPage() {
           <h2 className="text-lg font-bold text-[#1A1A1A]">Bienvenue sur VanCart !</h2>
           <p className="text-sm text-[#6B6B6B]">Configurez votre commerce pour démarrer votre programme de fidélité.</p>
           <Link
-            href="/dashboard/onboarding"
+            href="/dashboard/settings"
             className="inline-block px-6 py-3 bg-[#6C47FF] text-white text-sm font-semibold rounded-xl hover:bg-[#5835e0] transition-colors"
           >
-            Lancer l&apos;assistant de configuration →
+            Configurer mon commerce →
           </Link>
         </div>
       </div>

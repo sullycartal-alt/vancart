@@ -123,7 +123,19 @@ export default async function StatsPage({ searchParams }: { searchParams: Promis
     .eq('user_id', user.id)
     .single()
 
-  if (!merchant) redirect('/dashboard/settings')
+  if (!merchant) {
+    return (
+      <div className="space-y-6">
+        <h1 className="text-2xl font-bold text-[#1A1A1A]">Statistiques</h1>
+        <div className="bg-white border border-[#E8E8E3] rounded-2xl p-8 text-center space-y-3">
+          <p className="text-sm text-[#6B6B6B]">Configurez votre commerce pour voir vos statistiques.</p>
+          <a href="/dashboard/onboarding" className="inline-block px-5 py-2.5 bg-[#6C47FF] text-white text-sm font-semibold rounded-xl hover:bg-[#5835e0] transition-colors">
+            Lancer l&apos;assistant →
+          </a>
+        </div>
+      </div>
+    )
+  }
 
   const plan = effectivePlan((merchant.plan ?? 'free') as Plan, user.email)
 

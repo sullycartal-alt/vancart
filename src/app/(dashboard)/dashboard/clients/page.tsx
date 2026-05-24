@@ -15,7 +15,19 @@ export default async function ClientsPage() {
     .eq('user_id', user.id)
     .single()
 
-  if (!merchant) redirect('/dashboard/settings')
+  if (!merchant) {
+    return (
+      <div className="space-y-6">
+        <h1 className="text-2xl font-bold text-[#1A1A1A]">Mes clients</h1>
+        <div className="bg-white border border-[#E8E8E3] rounded-2xl p-8 text-center space-y-3">
+          <p className="text-sm text-[#6B6B6B]">Configurez votre commerce pour voir vos clients.</p>
+          <a href="/dashboard/onboarding" className="inline-block px-5 py-2.5 bg-[#6C47FF] text-white text-sm font-semibold rounded-xl hover:bg-[#5835e0] transition-colors">
+            Lancer l&apos;assistant →
+          </a>
+        </div>
+      </div>
+    )
+  }
 
   const [{ data: cards }, { data: lastStamps }] = await Promise.all([
     supabase

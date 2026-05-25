@@ -14,7 +14,7 @@ interface MerchantContext {
   loyalty_type?: string
 }
 
-const WELCOME = "Bonjour ! Je suis votre conseiller fidélité VanCart 👋 Je suis là pour vous aider à créer le programme de fidélité idéal pour votre commerce. Pour commencer, pouvez-vous me dire quel type de commerce vous avez ? (bar, coffee shop, restaurant, autre)"
+const DEFAULT_WELCOME = "Bonjour ! Je suis votre conseiller fidélité VanCart 👋 Je suis là pour vous aider à créer le programme de fidélité idéal pour votre commerce. Pour commencer, pouvez-vous me dire quel type de commerce vous avez ? (bar, coffee shop, restaurant, autre)"
 
 const DAILY_LIMIT = 30
 const LS_KEY = 'vancart_ai_usage'
@@ -76,9 +76,9 @@ function MessageBubble({ message }: { message: Message }) {
   )
 }
 
-export default function ChatClient({ merchantContext }: { merchantContext: MerchantContext }) {
+export default function ChatClient({ merchantContext, initialWelcome }: { merchantContext: MerchantContext; initialWelcome?: string }) {
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'model', content: WELCOME },
+    { role: 'model', content: initialWelcome ?? DEFAULT_WELCOME },
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -149,7 +149,7 @@ export default function ChatClient({ merchantContext }: { merchantContext: Merch
   const remaining = DAILY_LIMIT - dailyCount
 
   return (
-    <div className="flex flex-col h-[calc(100dvh-64px)] sm:h-[calc(100vh-64px)] bg-white border border-[#E8E8E3] rounded-2xl overflow-hidden">
+    <div className="flex flex-col h-full bg-white border border-[#E8E8E3] rounded-2xl overflow-hidden">
 
       {/* Header */}
       <div className="flex items-center gap-3 px-5 py-4 border-b border-[#E8E8E3] bg-[#F7F6F3]">

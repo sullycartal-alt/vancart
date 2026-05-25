@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import LoyaltyDisplay from '@/components/LoyaltyDisplay'
 
 function hexToHsl(hex: string): [number, number, number] {
   const n = parseInt(hex.slice(1), 16)
@@ -44,34 +45,6 @@ function harmonicColors(hex: string): string[] {
   ]
 }
 
-function StampCircles({ total, filled, dark, primaryColor }: {
-  total: number; filled: number; dark: boolean; primaryColor: string
-}) {
-  const display = Math.min(total, 10)
-  const size = display <= 5 ? 20 : display <= 7 ? 17 : 14
-  const gap = size <= 14 ? 3 : 4
-  return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap }}>
-      {Array.from({ length: display }).map((_, i) => {
-        const isFilled = i < filled
-        return (
-          <div key={i} style={{
-            width: size, height: size, borderRadius: '50%', flexShrink: 0,
-            border: isFilled ? 'none' : dark ? '2px solid rgba(255,255,255,0.5)' : `2px solid ${primaryColor}`,
-            background: isFilled ? (dark ? 'white' : primaryColor) : 'transparent',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            {isFilled && (
-              <svg width={size * 0.55} height={size * 0.55} viewBox="0 0 12 12" fill="none">
-                <path d="M2 6l3 3 5-5" stroke={dark ? primaryColor : 'white'} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            )}
-          </div>
-        )
-      })}
-    </div>
-  )
-}
 
 const PRESET_COLORS = [
   '#6C47FF', '#2563eb', '#16a34a', '#dc2626',
@@ -123,12 +96,15 @@ function QRPlaceholder({ color, size = 64 }: { color: string; size?: number }) {
   )
 }
 
-function GoogleWalletPreview({ businessName, primaryColor, logoUrl, stampsRequired, loyaltyRule }: {
+function GoogleWalletPreview({ businessName, primaryColor, logoUrl, stampsRequired, loyaltyRule, loyaltyType, pointsRequired }: {
   businessName: string; primaryColor: string; logoUrl: string | null
   stampsRequired: number; loyaltyRule: string
+  loyaltyType: 'stamps' | 'points'; pointsRequired?: number | null
 }) {
   const dark = darken(primaryColor, 28)
-  const current = Math.floor(stampsRequired * 0.4)
+  const isPoints = loyaltyType === 'points'
+  const target = isPoints ? (pointsRequired ?? 100) : stampsRequired
+  const current = Math.floor(target * 0.4)
 
   return (
     <div
@@ -155,16 +131,20 @@ function GoogleWalletPreview({ businessName, primaryColor, logoUrl, stampsRequir
           </div>
         </div>
 
-        {/* Middle: loyalty rule + stamp circles */}
+        {/* Middle: loyalty rule + display */}
         <div className="relative">
           <p className="text-white font-bold leading-tight" style={{ fontSize: 'clamp(11px, 2.2vw, 18px)' }}>
-            {loyaltyRule || `${stampsRequired} tampons = 1 récompense`}
+            {loyaltyRule || (isPoints ? `${target} points = 1 récompense` : `${stampsRequired} tampons = 1 récompense`)}
           </p>
-          <div className="flex items-center gap-2 mt-1.5">
-            <p className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.55)' }}>{current}/{stampsRequired}</p>
-          </div>
           <div className="mt-2">
-            <StampCircles total={stampsRequired} filled={current} dark primaryColor={primaryColor} />
+            <LoyaltyDisplay
+              mode={loyaltyType}
+              current={current}
+              target={target}
+              primaryColor={primaryColor}
+              dark
+              rewardLabel="votre récompense"
+            />
           </div>
         </div>
 
@@ -180,11 +160,14 @@ function GoogleWalletPreview({ businessName, primaryColor, logoUrl, stampsRequir
   )
 }
 
-function AppleWalletPreview({ businessName, primaryColor, logoUrl, stampsRequired, loyaltyRule }: {
+function AppleWalletPreview({ businessName, primaryColor, logoUrl, stampsRequired, loyaltyRule, loyaltyType, pointsRequired }: {
   businessName: string; primaryColor: string; logoUrl: string | null
   stampsRequired: number; loyaltyRule: string
+  loyaltyType: 'stamps' | 'points'; pointsRequired?: number | null
 }) {
-  const current = Math.floor(stampsRequired * 0.4)
+  const isPoints = loyaltyType === 'points'
+  const target = isPoints ? (pointsRequired ?? 100) : stampsRequired
+  const current = Math.floor(target * 0.4)
 
   return (
     <div
@@ -214,17 +197,24 @@ function AppleWalletPreview({ businessName, primaryColor, logoUrl, stampsRequire
         {/* Fields row */}
         <div className="flex gap-6">
           <div>
-            <p className="text-[9px] font-semibold uppercase tracking-wider text-[#9CA3AF]">Tampons</p>
-            <p className="text-xl font-black text-[#1A1A1A] leading-tight">{current}<span className="text-sm font-medium text-[#9CA3AF]">/{stampsRequired}</span></p>
+            <p className="text-[9px] font-semibold uppercase tracking-wider text-[#9CA3AF]">{isPoints ? 'Points' : 'Tampons'}</p>
+            <p className="text-xl font-black text-[#1A1A1A] leading-tight">{current}<span className="text-sm font-medium text-[#9CA3AF]">/{target}</span></p>
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-[9px] font-semibold uppercase tracking-wider text-[#9CA3AF]">Programme</p>
-            <p className="text-xs font-semibold text-[#1A1A1A] leading-tight truncate">{loyaltyRule || `${stampsRequired} tampons = 1 récompense`}</p>
+            <p className="text-xs font-semibold text-[#1A1A1A] leading-tight truncate">{loyaltyRule || (isPoints ? `${target} points = 1 récompense` : `${stampsRequired} tampons = 1 récompense`)}</p>
           </div>
         </div>
 
-        {/* Stamp circles */}
-        <StampCircles total={stampsRequired} filled={current} dark={false} primaryColor={primaryColor} />
+        {/* Loyalty display */}
+        <LoyaltyDisplay
+          mode={loyaltyType}
+          current={current}
+          target={target}
+          primaryColor={primaryColor}
+          dark={false}
+          rewardLabel="votre récompense"
+        />
 
         {/* QR + footer */}
         <div className="flex items-center justify-between">
@@ -247,6 +237,7 @@ interface Merchant {
   logo_url: string | null
   description: string
   loyalty_type: 'stamps' | 'points'
+  points_required?: number | null
 }
 
 export default function CardDesignClient({ merchant, hideTitle }: { merchant: Merchant; hideTitle?: boolean }) {
@@ -313,6 +304,8 @@ export default function CardDesignClient({ merchant, hideTitle }: { merchant: Me
     logoUrl: merchant.logo_url,
     stampsRequired,
     loyaltyRule: loyaltyRule || `${stampsRequired} tampons = 1 récompense`,
+    loyaltyType: merchant.loyalty_type,
+    pointsRequired: merchant.points_required,
   }
 
   const inputClass = 'block w-full rounded-xl border border-[#E8E8E3] px-4 py-3 text-sm text-[#1A1A1A] bg-white focus:border-[#6C47FF] focus:outline-none focus:ring-2 focus:ring-[#6C47FF]/15 transition-all'
@@ -492,7 +485,7 @@ export default function CardDesignClient({ merchant, hideTitle }: { merchant: Me
           </div>
 
           <p className="text-xs text-[#9CA3AF] text-center max-w-xs">
-            Les tampons affichés ({Math.floor(stampsRequired * 0.4)}/{stampsRequired}) sont des données de démonstration.
+            Les données affichées sont des exemples de démonstration.
           </p>
         </div>
       </div>

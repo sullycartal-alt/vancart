@@ -410,7 +410,7 @@ export default function CardDesignClient({ merchant, hideTitle }: { merchant: Me
                 max={50}
                 value={stampsRequired}
                 onChange={e => setStampsRequired(Number(e.target.value))}
-                className="flex-1 h-2 appearance-none rounded-full cursor-pointer"
+                className="flex-1 cursor-pointer"
                 style={{ accentColor: color }}
               />
               <input

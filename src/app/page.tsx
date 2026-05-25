@@ -50,7 +50,7 @@ function PhoneMockup() {
         <text x="100" y="98" fontSize="11" fontWeight="700" fill="white">Café des Arts</text>
         <text x="100" y="112" fontSize="9" fill="white" fillOpacity="0.75">Carte de fidélité</text>
 
-        {/* Stamp dots row 1 */}
+        {/* Stamp dots */}
         {[0,1,2,3,4].map(i => (
           <g key={i}>
             <circle cx={58 + i * 36} cy={145} r={13} fill={i < 3 ? 'white' : 'none'} stroke="white" strokeWidth="1.5" fillOpacity={i < 3 ? 1 : 0.4} />
@@ -61,13 +61,14 @@ function PhoneMockup() {
         {/* Card progress */}
         <text x="56" y="178" fontSize="9" fill="white" fillOpacity="0.7">3/10 tampons · 7 restants</text>
 
-        {/* Wallet label */}
-        <rect x="42" y="206" width="100" height="22" rx="6" fill="#1A1A1A" fillOpacity="0.08" />
+        {/* Wallet buttons */}
+        <rect x="42" y="206" width="90" height="22" rx="6" fill="#1A1A1A" fillOpacity="0.08" />
         <text x="52" y="221" fontSize="9" fill="#1A1A1A" fillOpacity="0.5">Google Wallet</text>
+        <rect x="140" y="206" width="98" height="22" rx="6" fill="#1A1A1A" fillOpacity="0.08" />
+        <text x="150" y="221" fontSize="9" fill="#1A1A1A" fillOpacity="0.5">Apple Wallet</text>
 
         {/* QR section */}
         <rect x="42" y="238" width="196" height="90" rx="12" fill="white" stroke="#E8E8E3" strokeWidth="1" />
-        {/* Mini QR code pattern */}
         {[[0,0],[2,0],[4,0],[0,2],[4,2],[0,4],[2,4],[4,4],[1,1],[3,3],[2,2]].map(([cx, cy], i) => (
           <rect key={i} x={90 + cx * 8} y={255 + cy * 8} width="6" height="6" rx="1" fill="#1A1A1A" />
         ))}
@@ -97,12 +98,15 @@ function PhoneMockup() {
         <rect x="110" y="456" width="60" height="4" rx="2" fill="#1A1A1A" fillOpacity="0.15" />
       </svg>
 
-      {/* Floating badge */}
-      <div className="absolute top-8 -right-4 bg-white border border-[#E8E8E3] rounded-xl px-3 py-2 shadow-lg text-xs font-semibold text-[#1A1A1A] whitespace-nowrap">
-        ✅ Sans application
+      {/* Floating badges */}
+      <div className="absolute top-6 -right-6 bg-white border border-[#E8E8E3] rounded-xl px-3 py-2 shadow-lg text-xs font-semibold text-[#1A1A1A] whitespace-nowrap">
+        📈 +28% de clients récurrents
       </div>
-      <div className="absolute bottom-16 -left-6 bg-[#6C47FF] text-white rounded-xl px-3 py-2 shadow-lg text-xs font-semibold whitespace-nowrap">
-        +1 tampon ajouté 🪙
+      <div className="absolute bottom-20 -left-8 bg-[#6C47FF] text-white rounded-xl px-3 py-2 shadow-lg text-xs font-semibold whitespace-nowrap">
+        🏪 +1 200 commerces satisfaits
+      </div>
+      <div className="absolute top-1/2 -left-10 bg-white border border-[#E8E8E3] rounded-xl px-3 py-2 shadow-lg text-xs font-semibold text-[#1A1A1A] whitespace-nowrap">
+        ⭐ 4,9/5 note moyenne
       </div>
     </div>
   )
@@ -158,6 +162,32 @@ export default function Home() {
                 </Link>
               </div>
 
+              {/* Social proof */}
+              <div className="flex items-center gap-3 justify-center lg:justify-start">
+                <div className="flex -space-x-2 flex-shrink-0">
+                  {[
+                    { i: 'ML', c: '#6C47FF' },
+                    { i: 'TB', c: '#2563eb' },
+                    { i: 'SM', c: '#16a34a' },
+                    { i: 'DP', c: '#d97706' },
+                  ].map(({ i, c }) => (
+                    <div key={i} className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center text-xs font-bold text-white flex-shrink-0" style={{ backgroundColor: c }}>
+                      {i}
+                    </div>
+                  ))}
+                </div>
+                <div>
+                  <div className="flex items-center gap-0.5">
+                    {[...Array(5)].map((_, idx) => (
+                      <svg key={idx} className="w-3.5 h-3.5 text-amber-400 fill-amber-400" viewBox="0 0 24 24">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                      </svg>
+                    ))}
+                  </div>
+                  <p className="text-xs text-[#6B6B6B]">Rejoignez plus de 1 200 commerces satisfaits</p>
+                </div>
+              </div>
+
               {/* ── Réassurance bar ── */}
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-4 gap-y-1 text-xs text-[#6B6B6B]">
                 <span>✓ Sans engagement</span>
@@ -182,17 +212,19 @@ export default function Home() {
       <section className="px-6 py-12 bg-white border-b border-[#E8E8E3]">
         <div className="max-w-4xl mx-auto text-center space-y-6">
           <p className="text-xs font-semibold text-[#6B6B6B] uppercase tracking-widest">
-            Rejoignez les commerçants qui digitalisent leur fidélité
+            Déjà adopté par des commerces de proximité
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-8">
+          <div className="flex flex-wrap items-center justify-center gap-4">
             {[
-              { icon: '☕', name: 'Café des Arts', city: 'Lyon' },
-              { icon: '🍺', name: 'Bar Le Central', city: 'Bordeaux' },
-              { icon: '🥙', name: 'Street Food Lyon', city: 'Lyon' },
-              { icon: '💇', name: 'Studio Coiffure', city: 'Paris' },
+              { icon: '☕', name: 'Café des Arts', city: 'Bordeaux' },
+              { icon: '🥖', name: 'Boulangerie Dupont', city: 'Lyon' },
+              { icon: '🍽️', name: 'Le Bistrot Parisien', city: 'Paris' },
+              { icon: '💇', name: 'Salon Emma Coiffure', city: 'Nantes' },
+              { icon: '🍕', name: 'Pizza Roma', city: 'Marseille' },
+              { icon: '🛒', name: 'Le Petit Marché', city: 'Strasbourg' },
             ].map(({ icon, name, city }) => (
-              <div key={name} className="flex items-center gap-2 px-5 py-3 bg-[#F7F6F3] rounded-xl border border-[#E8E8E3]">
-                <span className="text-xl opacity-60">{icon}</span>
+              <div key={name} className="flex items-center gap-2 px-4 py-2.5 bg-[#F7F6F3] rounded-xl border border-[#E8E8E3]">
+                <span className="text-lg opacity-60">{icon}</span>
                 <div className="text-left">
                   <p className="text-xs font-semibold text-[#6B6B6B]">{name}</p>
                   <p className="text-[10px] text-[#6B6B6B] opacity-60">{city}</p>
@@ -245,8 +277,48 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── Comparison block ───────────────────────────────────────────────── */}
+      <section className="px-6 py-20 bg-[#F7F6F3]">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-12 space-y-3">
+            <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">La différence</p>
+            <h2 className="text-3xl font-bold text-[#1A1A1A]">La fidélité réinventée pour les indépendants</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="bg-white border border-red-100 rounded-2xl p-7 space-y-4 shadow-sm">
+              <h3 className="font-bold text-[#1A1A1A] text-lg pb-2 border-b border-[#E8E8E3]">Avec les cartes papier</h3>
+              {[
+                'Cartes perdues ou oubliées à la maison',
+                'Jamais utilisées après la 2ème visite',
+                'Pas de données clients récupérables',
+                'Coût d\'impression récurrent',
+              ].map(item => (
+                <div key={item} className="flex items-start gap-3">
+                  <span className="text-red-400 text-base mt-0.5 flex-shrink-0">❌</span>
+                  <p className="text-sm text-[#6B6B6B]">{item}</p>
+                </div>
+              ))}
+            </div>
+            <div className="bg-white border border-[#6C47FF]/20 rounded-2xl p-7 space-y-4 shadow-sm">
+              <h3 className="font-bold text-[#6C47FF] text-lg pb-2 border-b border-[#6C47FF]/15">Avec VanCart</h3>
+              {[
+                'Toujours dans le téléphone du client',
+                'Utilisée à chaque visite automatiquement',
+                'Clients fidèles et données temps réel',
+                'Statistiques et export inclus',
+              ].map(item => (
+                <div key={item} className="flex items-start gap-3">
+                  <span className="text-green-500 text-base mt-0.5 flex-shrink-0">✅</span>
+                  <p className="text-sm text-[#1A1A1A]">{item}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── Benefits ───────────────────────────────────────────────────────── */}
-      <section id="fonctionnalites" className="px-6 py-20 bg-[#F7F6F3]" style={{ scrollMarginTop: '80px' }}>
+      <section id="fonctionnalites" className="px-6 py-20 bg-white" style={{ scrollMarginTop: '80px' }}>
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12 space-y-3">
             <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">La solution</p>
@@ -258,7 +330,7 @@ export default function Home() {
               { icon: '⚡', title: 'Sans application à télécharger', desc: "Le client scanne votre QR code avec l'appareil photo. Aucune friction, aucun téléchargement." },
               { icon: '🔄', title: 'Mise à jour en temps réel', desc: 'Chaque tampon donné met automatiquement à jour la carte dans le Wallet du client.' },
             ].map(({ icon, title, desc }) => (
-              <div key={title} className="rounded-2xl border border-[#E8E8E3] bg-white p-7 shadow-sm hover:shadow-md transition-shadow space-y-3">
+              <div key={title} className="rounded-2xl border border-[#E8E8E3] bg-[#F7F6F3] p-7 shadow-sm hover:shadow-md transition-shadow space-y-3">
                 <div className="w-12 h-12 bg-[#6C47FF]/10 rounded-xl flex items-center justify-center text-2xl">{icon}</div>
                 <h3 className="font-bold text-[#1A1A1A]">{title}</h3>
                 <p className="text-sm text-[#6B6B6B] leading-relaxed">{desc}</p>
@@ -269,7 +341,7 @@ export default function Home() {
       </section>
 
       {/* ── How it works ───────────────────────────────────────────────────── */}
-      <section id="comment-ca-marche" className="px-6 py-20 bg-white" style={{ scrollMarginTop: '80px' }}>
+      <section id="comment-ca-marche" className="px-6 py-20 bg-[#F7F6F3]" style={{ scrollMarginTop: '80px' }}>
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12 space-y-3">
             <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">Comment ça marche</p>
@@ -302,7 +374,7 @@ export default function Home() {
                 desc: "Tamponnez en un clic, suivez vos stats et regardez votre clientèle fidèle grandir.",
               },
             ].map(({ step, icon, title, desc }) => (
-              <div key={step} className="flex flex-col items-center text-center bg-[#F7F6F3] rounded-2xl p-8 border border-[#E8E8E3] space-y-3">
+              <div key={step} className="flex flex-col items-center text-center bg-white rounded-2xl p-8 border border-[#E8E8E3] space-y-3">
                 <span className="text-xs font-bold text-[#6C47FF] uppercase tracking-widest">Étape {step}</span>
                 <div className="w-16 h-16 bg-[#6C47FF]/10 rounded-2xl flex items-center justify-center">{icon}</div>
                 <h3 className="font-bold text-[#1A1A1A] text-base">{title}</h3>
@@ -314,7 +386,7 @@ export default function Home() {
       </section>
 
       {/* ── Comparison table ───────────────────────────────────────────────── */}
-      <section className="px-6 py-20 bg-[#F7F6F3]">
+      <section className="px-6 py-20 bg-white">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-12 space-y-3">
             <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">Pourquoi VanCart</p>
@@ -358,7 +430,7 @@ export default function Home() {
       </section>
 
       {/* ── Pricing ────────────────────────────────────────────────────────── */}
-      <section id="tarifs" className="px-6 py-20 bg-white" style={{ scrollMarginTop: '80px' }}>
+      <section id="tarifs" className="px-6 py-20 bg-[#F7F6F3]" style={{ scrollMarginTop: '80px' }}>
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12 space-y-3">
             <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">Tarifs</p>
@@ -455,8 +527,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Bientôt disponible ─────────────────────────────────────────────── */}
-      <section id="roadmap" className="px-6 py-20 bg-[#F7F6F3]">
+      {/* ── Roadmap ────────────────────────────────────────────────────────── */}
+      <section id="roadmap" className="px-6 py-20 bg-white">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12 space-y-3">
             <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">Roadmap</p>
@@ -485,7 +557,7 @@ export default function Home() {
                 badge: 'Plan Pro · Bientôt',
               },
             ].map(({ icon, title, desc, badge }) => (
-              <div key={title} className="bg-white border border-[#E8E8E3] rounded-2xl p-6 space-y-4 relative overflow-hidden">
+              <div key={title} className="bg-[#F7F6F3] border border-[#E8E8E3] rounded-2xl p-6 space-y-4 relative overflow-hidden">
                 <div className="absolute top-4 right-4">
                   <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#6C47FF]/10 text-[#6C47FF] border border-[#6C47FF]/15">
                     {badge}
@@ -500,6 +572,32 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── Testimonial quote ──────────────────────────────────────────────── */}
+      <section className="px-6 py-20 bg-[#6C47FF]/5">
+        <div className="max-w-3xl mx-auto text-center space-y-6">
+          <div className="text-6xl text-[#6C47FF] font-serif leading-none select-none">&ldquo;</div>
+          <p className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] leading-snug">
+            Depuis VanCart, nos clients utilisent enfin la carte de fidélité. On a vu une vraie augmentation des retours en magasin !
+          </p>
+          <div className="flex items-center justify-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-[#6C47FF] flex items-center justify-center text-white font-bold flex-shrink-0">
+              ML
+            </div>
+            <div className="text-left">
+              <p className="font-bold text-[#1A1A1A]">Marie</p>
+              <p className="text-sm text-[#6B6B6B]">Gérante du Café des Arts, Bordeaux</p>
+            </div>
+          </div>
+          <div className="flex items-center justify-center gap-1 pt-2">
+            {[...Array(5)].map((_, i) => (
+              <svg key={i} className="w-5 h-5 text-amber-400 fill-amber-400" viewBox="0 0 24 24">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+              </svg>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── Testimonials ───────────────────────────────────────────────────── */}
       <section className="px-6 py-20 bg-white">
         <div className="max-w-5xl mx-auto">
@@ -509,7 +607,7 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { initials: 'ML', color: '#6C47FF', name: 'Marie L.', business: 'Café des Arts, Lyon', quote: "Depuis VanCart, mes clients reviennent beaucoup plus régulièrement. La carte dans le téléphone c'est vraiment pratique, ils ne l'oublient jamais !" },
+              { initials: 'ML', color: '#6C47FF', name: 'Marie L.', business: 'Café des Arts, Bordeaux', quote: "Depuis VanCart, mes clients reviennent beaucoup plus régulièrement. La carte dans le téléphone c'est vraiment pratique, ils ne l'oublient jamais !" },
               { initials: 'TB', color: '#2563eb', name: 'Thomas B.', business: 'Bar Le Central, Bordeaux', quote: 'Installation en 10 minutes, mes clients adorent. Le QR code sur le comptoir fait toujours son effet.' },
               { initials: 'SM', color: '#16a34a', name: 'Sophie M.', business: 'The Coffee Lab, Paris', quote: "Le conseiller IA m'a aidé à trouver la bonne règle de fidélité pour mon coffee shop. Vraiment utile !" },
             ].map(({ initials, color, name, business, quote }) => (
@@ -566,21 +664,101 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── Dashboard preview ──────────────────────────────────────────────── */}
+      <section className="px-6 py-20 bg-white">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Left: text */}
+            <div className="space-y-6">
+              <div className="space-y-3">
+                <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">Tableau de bord</p>
+                <h2 className="text-3xl font-bold text-[#1A1A1A]">Gardez le contrôle sur votre fidélité</h2>
+                <p className="text-[#6B6B6B] leading-relaxed">Suivez la performance de votre programme en temps réel depuis un tableau de bord simple et puissant.</p>
+              </div>
+              <ul className="space-y-3">
+                {[
+                  'Nombre de clients et de visites',
+                  'Taux de fidélisation',
+                  'Récompenses utilisées',
+                  'Export de données',
+                ].map(item => (
+                  <li key={item} className="flex items-center gap-2.5 text-sm text-[#1A1A1A]">
+                    <CheckIcon />{item}
+                  </li>
+                ))}
+              </ul>
+              <Link href="/register" className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#6C47FF] hover:text-[#5835e0] transition-colors">
+                Découvrir le tableau de bord →
+              </Link>
+            </div>
+            {/* Right: dashboard mockup */}
+            <div className="bg-[#F7F6F3] rounded-2xl border border-[#E8E8E3] p-6 shadow-sm space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-[#E8E8E3]">
+                <span className="text-sm font-bold text-[#1A1A1A]">Tableau de bord</span>
+                <span className="text-xs text-[#6B6B6B]">Derniers 30 jours</span>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { label: 'Clients actifs', value: '1 248', icon: '👥', color: '#6C47FF' },
+                  { label: 'Visites', value: '3 856', icon: '🏪', color: '#2563eb' },
+                  { label: 'Fidélisation', value: '42%', icon: '🔄', color: '#16a34a' },
+                  { label: 'Récompenses', value: '312', icon: '🎁', color: '#d97706' },
+                ].map(({ label, value, icon, color }) => (
+                  <div key={label} className="bg-white rounded-xl p-4 space-y-1 border border-[#E8E8E3]">
+                    <p className="text-lg">{icon}</p>
+                    <p className="text-xl font-black" style={{ color }}>{value}</p>
+                    <p className="text-xs text-[#6B6B6B]">{label}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="bg-white rounded-xl p-4 border border-[#E8E8E3]">
+                <p className="text-xs font-semibold text-[#6B6B6B] mb-3">Activité des 7 derniers jours</p>
+                <div className="flex items-end gap-1.5 h-14">
+                  {[40, 65, 45, 80, 55, 90, 70].map((h, i) => (
+                    <div key={i} className="flex-1 rounded-sm" style={{ height: `${h}%`, background: '#6C47FF', opacity: 0.25 + (i / 7) * 0.75 }} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── Final CTA ──────────────────────────────────────────────────────── */}
       <section className="px-6 py-20 bg-[#6C47FF] text-center">
         <div className="max-w-xl mx-auto space-y-6">
-          <h2 className="text-3xl font-bold text-white">Prêt à fidéliser vos clients ?</h2>
-          <p className="text-white/80 text-lg leading-relaxed">Rejoignez les commerçants qui ont dit adieu aux cartes en plastique.</p>
+          <div className="text-5xl">🚀</div>
+          <h2 className="text-3xl font-bold text-white">Prêt à fidéliser plus de clients ?</h2>
+          <p className="text-white/80 text-lg leading-relaxed">Créez votre carte de fidélité gratuitement et soyez opérationnel en 5 minutes.</p>
           <Link href="/register" className="inline-block px-10 py-4 bg-white text-[#6C47FF] font-bold rounded-xl hover:bg-[#F7F6F3] transition-colors shadow-sm text-base">
             Commencer gratuitement →
           </Link>
-          <p className="text-white/60 text-xs">Gratuit · Sans engagement · Aucune carte bancaire</p>
+          <p className="text-white/60 text-xs">Aucune carte bancaire requise · Sans engagement</p>
         </div>
       </section>
 
       {/* ── Footer complet ─────────────────────────────────────────────────── */}
       <footer className="border-t border-[#E8E8E3] bg-white px-6 py-12">
         <div className="max-w-5xl mx-auto">
+
+          {/* Reassurance icons */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-10 pb-10 border-b border-[#E8E8E3]">
+            {[
+              { icon: '🆓', title: 'Gratuit pour commencer', desc: 'Aucune carte bancaire requise' },
+              { icon: '⚡', title: 'Mise en place en 5 minutes', desc: 'Simple, rapide, efficace' },
+              { icon: '🔒', title: 'Sécurisé et conforme RGPD', desc: 'Vos données sont protégées' },
+              { icon: '💬', title: 'Support réactif', desc: 'Une équipe à votre écoute' },
+            ].map(({ icon, title, desc }) => (
+              <div key={title} className="flex items-start gap-3">
+                <span className="text-2xl flex-shrink-0">{icon}</span>
+                <div>
+                  <p className="text-sm font-semibold text-[#1A1A1A]">{title}</p>
+                  <p className="text-xs text-[#6B6B6B] mt-0.5">{desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
 
             {/* Col 1 — Brand */}
@@ -622,8 +800,8 @@ export default function Home() {
               <h4 className="text-sm font-semibold text-[#1A1A1A]">Contact</h4>
               <ul className="space-y-2 text-sm text-[#6B6B6B]">
                 <li>
-                  <a href="mailto:vancart@gmail.com" className="hover:text-[#6C47FF] transition-colors">
-                    vancart@gmail.com
+                  <a href="mailto:contact@vancart.fr" className="hover:text-[#6C47FF] transition-colors">
+                    contact@vancart.fr
                   </a>
                 </li>
               </ul>

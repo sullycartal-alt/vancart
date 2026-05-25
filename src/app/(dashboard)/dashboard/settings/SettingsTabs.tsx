@@ -54,6 +54,7 @@ export default function SettingsTabs({ merchant, walletSection }: Props) {
         </div>
       ) : merchant ? (
         <CardDesignClient
+          key={`${merchant.id}-${merchant.stamps_required}-${merchant.primary_color}`}
           hideTitle
           merchant={{
             id: merchant.id,

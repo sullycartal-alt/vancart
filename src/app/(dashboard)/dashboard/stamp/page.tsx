@@ -29,6 +29,57 @@ export default async function StampPage() {
 
   const isPoints = merchant.loyalty_type === 'points'
 
+  const todayStart = new Date()
+  todayStart.setHours(0, 0, 0, 0)
+  const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+
+  const [
+    { count: stampsTodayCount },
+    { count: stampsMonthCount },
+    { data: recentStampsData },
+    { data: monthStampsData },
+    { data: rewardsData },
+  ] = await Promise.all([
+    supabase.from('stamps').select('*', { count: 'exact', head: true })
+      .eq('merchant_id', merchant.id).gte('given_at', todayStart.toISOString()),
+    supabase.from('stamps').select('*', { count: 'exact', head: true })
+      .eq('merchant_id', merchant.id).gte('given_at', monthStart.toISOString()),
+    supabase.from('stamps')
+      .select('given_at, loyalty_cards(stamps_count, customers(first_name, phone))')
+      .eq('merchant_id', merchant.id)
+      .order('given_at', { ascending: false })
+      .limit(5),
+    supabase.from('stamps')
+      .select('loyalty_card_id, loyalty_cards(customers(first_name, phone))')
+      .eq('merchant_id', merchant.id)
+      .gte('given_at', monthStart.toISOString()),
+    supabase.from('loyalty_cards')
+      .select('rewards_unlocked')
+      .eq('merchant_id', merchant.id),
+  ])
+
+  // Build top 3 clients from monthly stamps
+  const clientCounts = new Map<string, { first_name: string; phone: string; count: number }>()
+  for (const stamp of (monthStampsData ?? [])) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const customer = (stamp.loyalty_cards as any)?.customers as { first_name: string; phone: string } | null
+    if (!customer) continue
+    const key = customer.phone
+    const entry = clientCounts.get(key)
+    if (entry) { entry.count++ } else { clientCounts.set(key, { ...customer, count: 1 }) }
+  }
+  const topClients = Array.from(clientCounts.values()).sort((a, b) => b.count - a.count).slice(0, 3)
+  const rewardsMonth = (rewardsData ?? []).reduce((sum, c) => sum + (c.rewards_unlocked ?? 0), 0)
+
+  // Recent stamps with customer info
+  const recentStamps = (recentStampsData ?? [])
+    .map(s => ({
+      given_at: s.given_at as string,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      customer: (s.loyalty_cards as any)?.customers as { first_name: string; phone: string } | null,
+    }))
+    .filter(s => s.customer !== null)
+
   return (
     <div className="max-w-lg space-y-6">
       <div>
@@ -41,7 +92,14 @@ export default async function StampPage() {
             : 'Scannez le QR code du client ou recherchez par téléphone.'}
         </p>
       </div>
-      <StampClient merchant={merchant} />
+      <StampClient
+        merchant={merchant}
+        stampsToday={stampsTodayCount ?? 0}
+        stampsMonth={stampsMonthCount ?? 0}
+        rewardsTotal={rewardsMonth}
+        recentStamps={recentStamps as { given_at: string; customer: { first_name: string; phone: string } }[]}
+        topClients={topClients}
+      />
     </div>
   )
 }

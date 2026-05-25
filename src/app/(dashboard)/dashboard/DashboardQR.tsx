@@ -44,7 +44,7 @@ export default function DashboardQR({ url, businessName, color }: Props) {
           className="flex-shrink-0 p-3 rounded-xl"
           style={{ backgroundColor: `${color}10`, border: `2px solid ${color}25` }}
         >
-          <canvas ref={canvasRef} className="rounded-lg block" />
+          <canvas ref={canvasRef} className="rounded-lg block" style={{ maxWidth: '100%', height: 'auto' }} />
         </div>
 
         {/* Info + actions */}

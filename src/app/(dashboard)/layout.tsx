@@ -65,9 +65,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
                 <Link prefetch href="/dashboard/settings" className="text-sm text-[#6B6B6B] hover:text-[#1A1A1A] font-medium transition-colors">
                   Mon commerce
                 </Link>
-                <Link prefetch href="/dashboard/ma-carte" className="text-sm text-[#6B6B6B] hover:text-[#1A1A1A] font-medium transition-colors">
-                  Ma carte
-                </Link>
                 {isAdmin && (
                   <Link href="/admin" className="text-sm text-red-500 hover:text-red-600 font-medium transition-colors">
                     Admin

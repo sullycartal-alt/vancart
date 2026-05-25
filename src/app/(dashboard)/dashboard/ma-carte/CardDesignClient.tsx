@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import LoyaltyDisplay from '@/components/LoyaltyDisplay'
+import type { MerchantSharedConfig } from '@/types/merchant-config'
 
 function hexToHsl(hex: string): [number, number, number] {
   const n = parseInt(hex.slice(1), 16)
@@ -240,12 +241,38 @@ interface Merchant {
   points_required?: number | null
 }
 
-export default function CardDesignClient({ merchant, hideTitle }: { merchant: Merchant; hideTitle?: boolean }) {
+export default function CardDesignClient({
+  merchant, hideTitle, onConfigChange,
+}: {
+  merchant: Merchant
+  hideTitle?: boolean
+  onConfigChange?: (updates: Partial<MerchantSharedConfig>) => void
+}) {
   const router = useRouter()
+  const onConfigChangeRef = useRef(onConfigChange)
+  onConfigChangeRef.current = onConfigChange
+
   const [color, setColor] = useState(merchant.primary_color)
   const [loyaltyRule, setLoyaltyRule] = useState(merchant.loyalty_rule)
   const [stampsRequired, setStampsRequired] = useState(merchant.stamps_required)
   const [description, setDescription] = useState(merchant.description)
+
+  function handleColorChange(newColor: string) {
+    setColor(newColor)
+    onConfigChangeRef.current?.({ primary_color: newColor })
+  }
+  function handleLoyaltyRuleChange(rule: string) {
+    setLoyaltyRule(rule)
+    onConfigChangeRef.current?.({ loyalty_rule: rule })
+  }
+  function handleStampsRequiredChange(n: number) {
+    setStampsRequired(n)
+    onConfigChangeRef.current?.({ stamps_required: n })
+  }
+  function handleDescriptionChange(desc: string) {
+    setDescription(desc)
+    onConfigChangeRef.current?.({ description: desc })
+  }
   const [walletTab, setWalletTab] = useState<'google' | 'apple'>('google')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -333,7 +360,7 @@ export default function CardDesignClient({ merchant, hideTitle }: { merchant: Me
                   key={hex}
                   type="button"
                   title={hex}
-                  onClick={() => setColor(hex)}
+                  onClick={() => handleColorChange(hex)}
                   className={`w-8 h-8 rounded-full border-2 transition-all ${color === hex ? 'ring-2 ring-offset-2 ring-[#1A1A1A] border-white scale-110' : 'border-transparent'}`}
                   style={{ backgroundColor: hex }}
                 />
@@ -341,7 +368,7 @@ export default function CardDesignClient({ merchant, hideTitle }: { merchant: Me
               <input
                 type="color"
                 value={color}
-                onChange={e => setColor(e.target.value)}
+                onChange={e => handleColorChange(e.target.value)}
                 className="w-8 h-8 rounded-full cursor-pointer border-0 p-0 overflow-hidden"
                 title="Couleur personnalisée"
               />
@@ -365,7 +392,7 @@ export default function CardDesignClient({ merchant, hideTitle }: { merchant: Me
                       <button
                         key={hex}
                         type="button"
-                        onClick={() => setColor(hex)}
+                        onClick={() => handleColorChange(hex)}
                         className={`w-8 h-8 rounded-full border-2 transition-all hover:scale-110 ${color === hex ? 'ring-2 ring-offset-2 ring-[#1A1A1A] border-white' : 'border-[#E8E8E3]'}`}
                         style={{ backgroundColor: hex }}
                         title={hex}
@@ -383,7 +410,7 @@ export default function CardDesignClient({ merchant, hideTitle }: { merchant: Me
             <label className="block text-sm font-semibold text-[#1A1A1A]">Règle de fidélité</label>
             <input
               value={loyaltyRule}
-              onChange={e => setLoyaltyRule(e.target.value)}
+              onChange={e => handleLoyaltyRuleChange(e.target.value)}
               placeholder={`${stampsRequired} tampons = 1 récompense`}
               className={inputClass}
               style={{ fontSize: 16 }}
@@ -402,7 +429,7 @@ export default function CardDesignClient({ merchant, hideTitle }: { merchant: Me
                 min={1}
                 max={50}
                 value={stampsRequired}
-                onChange={e => setStampsRequired(Number(e.target.value))}
+                onChange={e => handleStampsRequiredChange(Number(e.target.value))}
                 className="flex-1 cursor-pointer"
                 style={{ accentColor: color }}
               />
@@ -411,7 +438,7 @@ export default function CardDesignClient({ merchant, hideTitle }: { merchant: Me
                 min={1}
                 max={50}
                 value={stampsRequired}
-                onChange={e => setStampsRequired(Math.min(50, Math.max(1, Number(e.target.value))))}
+                onChange={e => handleStampsRequiredChange(Math.min(50, Math.max(1, Number(e.target.value))))}
                 className="w-16 rounded-xl border border-[#E8E8E3] px-2 py-2 text-sm text-center focus:border-[#6C47FF] focus:outline-none"
               />
             </div>
@@ -425,7 +452,7 @@ export default function CardDesignClient({ merchant, hideTitle }: { merchant: Me
             </label>
             <input
               value={description}
-              onChange={e => setDescription(e.target.value)}
+              onChange={e => handleDescriptionChange(e.target.value)}
               placeholder="Bar à cocktails au cœur de Paris"
               maxLength={120}
               className={inputClass}

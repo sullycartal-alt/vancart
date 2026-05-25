@@ -98,15 +98,15 @@ function PhoneMockup() {
         <rect x="110" y="456" width="60" height="4" rx="2" fill="#1A1A1A" fillOpacity="0.15" />
       </svg>
 
-      {/* Floating badges */}
-      <div className="absolute top-6 -right-6 bg-white border border-[#E8E8E3] rounded-xl px-3 py-2 shadow-lg text-xs font-semibold text-[#1A1A1A] whitespace-nowrap">
-        📈 +28% de clients récurrents
+      {/* Floating badges — placeholders */}
+      <div className="absolute top-6 -right-6 bg-[#F3F4F6] border border-dashed border-[#D1D5DB] rounded-xl px-3 py-2 shadow-sm text-xs italic text-[#9CA3AF] whitespace-nowrap">
+        En attente de données
       </div>
-      <div className="absolute bottom-20 -left-8 bg-[#6C47FF] text-white rounded-xl px-3 py-2 shadow-lg text-xs font-semibold whitespace-nowrap">
-        🏪 +1 200 commerces satisfaits
+      <div className="absolute bottom-20 -left-8 bg-[#F3F4F6] border border-dashed border-[#D1D5DB] rounded-xl px-3 py-2 shadow-sm text-xs italic text-[#9CA3AF] whitespace-nowrap">
+        En attente de données
       </div>
-      <div className="absolute top-1/2 -left-10 bg-white border border-[#E8E8E3] rounded-xl px-3 py-2 shadow-lg text-xs font-semibold text-[#1A1A1A] whitespace-nowrap">
-        ⭐ 4,9/5 note moyenne
+      <div className="absolute top-1/2 -left-10 bg-[#F3F4F6] border border-dashed border-[#D1D5DB] rounded-xl px-3 py-2 shadow-sm text-xs italic text-[#9CA3AF] whitespace-nowrap">
+        En attente de données
       </div>
     </div>
   )
@@ -162,30 +162,16 @@ export default function Home() {
                 </Link>
               </div>
 
-              {/* Social proof */}
+              {/* Social proof — placeholder */}
               <div className="flex items-center gap-3 justify-center lg:justify-start">
                 <div className="flex -space-x-2 flex-shrink-0">
-                  {[
-                    { i: 'ML', c: '#6C47FF' },
-                    { i: 'TB', c: '#2563eb' },
-                    { i: 'SM', c: '#16a34a' },
-                    { i: 'DP', c: '#d97706' },
-                  ].map(({ i, c }) => (
-                    <div key={i} className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center text-xs font-bold text-white flex-shrink-0" style={{ backgroundColor: c }}>
-                      {i}
+                  {[...Array(4)].map((_, idx) => (
+                    <div key={idx} className="w-8 h-8 rounded-full border-2 border-white bg-[#E5E7EB] flex items-center justify-center text-sm flex-shrink-0">
+                      👤
                     </div>
                   ))}
                 </div>
-                <div>
-                  <div className="flex items-center gap-0.5">
-                    {[...Array(5)].map((_, idx) => (
-                      <svg key={idx} className="w-3.5 h-3.5 text-amber-400 fill-amber-400" viewBox="0 0 24 24">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                      </svg>
-                    ))}
-                  </div>
-                  <p className="text-xs text-[#6B6B6B]">Rejoignez plus de 1 200 commerces satisfaits</p>
-                </div>
+                <p className="text-xs italic text-[#9CA3AF]">En attente de données</p>
               </div>
 
               {/* ── Réassurance bar ── */}
@@ -208,29 +194,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Logos bar ──────────────────────────────────────────────────────── */}
+      {/* ── Logos bar — placeholder ────────────────────────────────────────── */}
       <section className="px-6 py-12 bg-white border-b border-[#E8E8E3]">
-        <div className="max-w-4xl mx-auto text-center space-y-6">
+        <div className="max-w-4xl mx-auto text-center space-y-5">
           <p className="text-xs font-semibold text-[#6B6B6B] uppercase tracking-widest">
-            Déjà adopté par des commerces de proximité
+            Adoptés par des commerces de proximité
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            {[
-              { icon: '☕', name: 'Café des Arts', city: 'Bordeaux' },
-              { icon: '🥖', name: 'Boulangerie Dupont', city: 'Lyon' },
-              { icon: '🍽️', name: 'Le Bistrot Parisien', city: 'Paris' },
-              { icon: '💇', name: 'Salon Emma Coiffure', city: 'Nantes' },
-              { icon: '🍕', name: 'Pizza Roma', city: 'Marseille' },
-              { icon: '🛒', name: 'Le Petit Marché', city: 'Strasbourg' },
-            ].map(({ icon, name, city }) => (
-              <div key={name} className="flex items-center gap-2 px-4 py-2.5 bg-[#F7F6F3] rounded-xl border border-[#E8E8E3]">
-                <span className="text-lg opacity-60">{icon}</span>
-                <div className="text-left">
-                  <p className="text-xs font-semibold text-[#6B6B6B]">{name}</p>
-                  <p className="text-[10px] text-[#6B6B6B] opacity-60">{city}</p>
-                </div>
-              </div>
-            ))}
+          <div className="flex items-center justify-center px-10 py-6 bg-[#F3F4F6] rounded-2xl border border-dashed border-[#D1D5DB]">
+            <p className="text-sm italic text-[#9CA3AF]">🏪 En attente de partenaires</p>
           </div>
         </div>
       </section>
@@ -572,33 +543,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Testimonial quote ──────────────────────────────────────────────── */}
+      {/* ── Testimonial quote — placeholder ────────────────────────────────── */}
       <section className="px-6 py-20 bg-[#6C47FF]/5">
-        <div className="max-w-3xl mx-auto text-center space-y-6">
-          <div className="text-6xl text-[#6C47FF] font-serif leading-none select-none">&ldquo;</div>
-          <p className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] leading-snug">
-            Depuis VanCart, nos clients utilisent enfin la carte de fidélité. On a vu une vraie augmentation des retours en magasin !
-          </p>
-          <div className="flex items-center justify-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-[#6C47FF] flex items-center justify-center text-white font-bold flex-shrink-0">
-              ML
-            </div>
-            <div className="text-left">
-              <p className="font-bold text-[#1A1A1A]">Marie</p>
-              <p className="text-sm text-[#6B6B6B]">Gérante du Café des Arts, Bordeaux</p>
-            </div>
-          </div>
-          <div className="flex items-center justify-center gap-1 pt-2">
-            {[...Array(5)].map((_, i) => (
-              <svg key={i} className="w-5 h-5 text-amber-400 fill-amber-400" viewBox="0 0 24 24">
-                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-              </svg>
-            ))}
-          </div>
+        <div className="max-w-3xl mx-auto flex flex-col items-center justify-center gap-4 px-12 py-14 bg-[#F3F4F6] rounded-2xl border border-dashed border-[#D1D5DB]">
+          <span className="text-4xl">💬</span>
+          <p className="text-base italic text-[#9CA3AF]">En attente de témoignages clients</p>
         </div>
       </section>
 
-      {/* ── Testimonials ───────────────────────────────────────────────────── */}
+      {/* ── Testimonials — placeholders ────────────────────────────────────── */}
       <section className="px-6 py-20 bg-white">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12 space-y-3">
@@ -606,29 +559,10 @@ export default function Home() {
             <h2 className="text-3xl font-bold text-[#1A1A1A]">Ils nous font confiance</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              { initials: 'ML', color: '#6C47FF', name: 'Marie L.', business: 'Café des Arts, Bordeaux', quote: "Depuis VanCart, mes clients reviennent beaucoup plus régulièrement. La carte dans le téléphone c'est vraiment pratique, ils ne l'oublient jamais !" },
-              { initials: 'TB', color: '#2563eb', name: 'Thomas B.', business: 'Bar Le Central, Bordeaux', quote: 'Installation en 10 minutes, mes clients adorent. Le QR code sur le comptoir fait toujours son effet.' },
-              { initials: 'SM', color: '#16a34a', name: 'Sophie M.', business: 'The Coffee Lab, Paris', quote: "Le conseiller IA m'a aidé à trouver la bonne règle de fidélité pour mon coffee shop. Vraiment utile !" },
-            ].map(({ initials, color, name, business, quote }) => (
-              <div key={name} className="bg-[#F7F6F3] border border-[#E8E8E3] rounded-2xl p-6 space-y-4 flex flex-col">
-                <div className="flex items-center gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <svg key={i} className="w-4 h-4 text-amber-400 fill-amber-400" viewBox="0 0 24 24">
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                    </svg>
-                  ))}
-                </div>
-                <p className="text-sm text-[#1A1A1A] leading-relaxed italic flex-1">&ldquo;{quote}&rdquo;</p>
-                <div className="flex items-center gap-3 pt-2 border-t border-[#E8E8E3]">
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0" style={{ backgroundColor: color }}>
-                    {initials}
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-[#1A1A1A]">{name}</p>
-                    <p className="text-xs text-[#6B6B6B]">{business}</p>
-                  </div>
-                </div>
+            {[1, 2, 3].map(i => (
+              <div key={i} className="bg-[#F3F4F6] border border-dashed border-[#D1D5DB] rounded-2xl p-8 flex flex-col items-center justify-center gap-3 min-h-[180px]">
+                <span className="text-3xl">💬</span>
+                <p className="text-sm italic text-[#9CA3AF] text-center">En attente de témoignages clients</p>
               </div>
             ))}
           </div>
@@ -699,14 +633,14 @@ export default function Home() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 {[
-                  { label: 'Clients actifs', value: '1 248', icon: '👥', color: '#6C47FF' },
-                  { label: 'Visites', value: '3 856', icon: '🏪', color: '#2563eb' },
-                  { label: 'Fidélisation', value: '42%', icon: '🔄', color: '#16a34a' },
-                  { label: 'Récompenses', value: '312', icon: '🎁', color: '#d97706' },
-                ].map(({ label, value, icon, color }) => (
+                  { label: 'Clients actifs', icon: '👥', color: '#6C47FF' },
+                  { label: 'Visites', icon: '🏪', color: '#2563eb' },
+                  { label: 'Fidélisation', icon: '🔄', color: '#16a34a' },
+                  { label: 'Récompenses', icon: '🎁', color: '#d97706' },
+                ].map(({ label, icon, color }) => (
                   <div key={label} className="bg-white rounded-xl p-4 space-y-1 border border-[#E8E8E3]">
                     <p className="text-lg">{icon}</p>
-                    <p className="text-xl font-black" style={{ color }}>{value}</p>
+                    <div className="h-5 w-14 bg-[#F3F4F6] rounded-md border border-dashed border-[#D1D5DB]" style={{ borderColor: color + '44' }} />
                     <p className="text-xs text-[#6B6B6B]">{label}</p>
                   </div>
                 ))}

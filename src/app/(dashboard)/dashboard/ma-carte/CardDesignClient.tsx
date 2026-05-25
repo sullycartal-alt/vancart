@@ -19,7 +19,7 @@ function darken(hex: string, pct = 22): string {
 
 function QRPlaceholder({ color, size = 64 }: { color: string; size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 64 64" fill="none">
+    <svg width={size} height={size} viewBox="0 0 64 64" fill="none" style={{ flexShrink: 0, minWidth: size, minHeight: size }}>
       {/* corners */}
       <rect x="2" y="2" width="18" height="18" rx="2" stroke={color} strokeWidth="3" fill="none"/>
       <rect x="44" y="2" width="18" height="18" rx="2" stroke={color} strokeWidth="3" fill="none"/>
@@ -63,7 +63,7 @@ function GoogleWalletPreview({ businessName, primaryColor, logoUrl, stampsRequir
   return (
     <div
       className="w-full rounded-2xl overflow-hidden shadow-2xl select-none"
-      style={{ background: `linear-gradient(145deg, ${primaryColor} 0%, ${dark} 100%)`, aspectRatio: '2.1' }}
+      style={{ background: `linear-gradient(145deg, ${primaryColor} 0%, ${dark} 100%)`, aspectRatio: '1.586' }}
     >
       <div className="relative h-full flex flex-col justify-between p-5">
         {/* Decorative circles */}
@@ -98,7 +98,7 @@ function GoogleWalletPreview({ businessName, primaryColor, logoUrl, stampsRequir
 
         {/* Bottom row: QR + member ID */}
         <div className="relative flex items-end justify-between">
-          <div className="p-1.5 rounded-lg" style={{ background: 'rgba(255,255,255,0.92)' }}>
+          <div className="p-1.5 rounded-lg flex-shrink-0" style={{ background: 'rgba(255,255,255,0.92)' }}>
             <QRPlaceholder color={primaryColor} size={48} />
           </div>
           <p className="text-[9px] font-mono" style={{ color: 'rgba(255,255,255,0.4)' }}>MEMBRE • VC-0001042</p>
@@ -158,7 +158,7 @@ function AppleWalletPreview({ businessName, primaryColor, logoUrl, stampsRequire
 
         {/* QR + footer */}
         <div className="flex items-center justify-between">
-          <div>
+          <div className="flex-shrink-0">
             <QRPlaceholder color="#1A1A1A" size={40} />
           </div>
           <p className="text-[8px] font-medium text-[#9CA3AF] text-right">VanCart · Fidélité digitale<br/>VC-0001042</p>
@@ -179,7 +179,7 @@ interface Merchant {
   loyalty_type: 'stamps' | 'points'
 }
 
-export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
+export default function CardDesignClient({ merchant, hideTitle }: { merchant: Merchant; hideTitle?: boolean }) {
   const router = useRouter()
   const [color, setColor] = useState(merchant.primary_color)
   const [loyaltyRule, setLoyaltyRule] = useState(merchant.loyalty_rule)
@@ -248,10 +248,12 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-[#1A1A1A]">Ma carte de fidélité</h1>
-        <p className="mt-1 text-sm text-[#6B6B6B]">Personnalisez l&apos;apparence de votre carte et prévisualisez-la en temps réel.</p>
-      </div>
+      {!hideTitle && (
+        <div>
+          <h1 className="text-2xl font-bold text-[#1A1A1A]">Ma carte de fidélité</h1>
+          <p className="mt-1 text-sm text-[#6B6B6B]">Personnalisez l&apos;apparence de votre carte et prévisualisez-la en temps réel.</p>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
 

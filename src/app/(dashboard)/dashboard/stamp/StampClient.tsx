@@ -28,7 +28,25 @@ interface StampResult {
   points_added?: number
 }
 
-interface Props { merchant: Merchant }
+interface RecentStamp {
+  given_at: string
+  customer: { first_name: string; phone: string }
+}
+
+interface TopClient {
+  first_name: string
+  phone: string
+  count: number
+}
+
+interface Props {
+  merchant: Merchant
+  stampsToday: number
+  stampsMonth: number
+  rewardsTotal: number
+  recentStamps: RecentStamp[]
+  topClients: TopClient[]
+}
 
 function StampDots({ count, total, color }: { count: number; total: number; color: string }) {
   const dots = Math.min(total, 20)
@@ -63,7 +81,20 @@ function PointsBar({ points, required, color }: { points: number; required: numb
 
 const inputClass = 'block w-full rounded-xl border border-[#E8E8E3] px-4 py-3 text-[#1A1A1A] bg-[#F7F6F3] focus:border-[#6C47FF] focus:outline-none focus:ring-2 focus:ring-[#6C47FF]/15 transition-all'
 
-export default function StampClient({ merchant }: Props) {
+const MEDALS = ['🥇', '🥈', '🥉']
+
+function formatRelativeTime(isoString: string): string {
+  const diff = Date.now() - new Date(isoString).getTime()
+  const mins = Math.floor(diff / 60000)
+  if (mins < 1) return 'à l\'instant'
+  if (mins < 60) return `il y a ${mins} min`
+  const hours = Math.floor(mins / 60)
+  if (hours < 24) return `il y a ${hours}h`
+  const days = Math.floor(hours / 24)
+  return `il y a ${days}j`
+}
+
+export default function StampClient({ merchant, stampsToday, stampsMonth, rewardsTotal, recentStamps, topClients }: Props) {
   const isPoints = merchant.loyalty_type === 'points'
   const pointsPerEuro = merchant.points_per_euro ?? 1
   const pointsRequired = merchant.points_required ?? 100
@@ -237,6 +268,22 @@ export default function StampClient({ merchant }: Props) {
 
   return (
     <div className="space-y-4">
+      {/* Stats strip */}
+      <div className="grid grid-cols-3 gap-2">
+        <div className="bg-white border border-[#E8E8E3] rounded-2xl p-3 text-center">
+          <p className="text-xl font-black" style={{ color: merchant.primary_color }}>{stampsToday}</p>
+          <p className="text-[10px] text-[#6B6B6B] mt-0.5 leading-tight">aujourd&apos;hui</p>
+        </div>
+        <div className="bg-white border border-[#E8E8E3] rounded-2xl p-3 text-center">
+          <p className="text-xl font-black" style={{ color: merchant.primary_color }}>{stampsMonth}</p>
+          <p className="text-[10px] text-[#6B6B6B] mt-0.5 leading-tight">ce mois</p>
+        </div>
+        <div className="bg-white border border-[#E8E8E3] rounded-2xl p-3 text-center">
+          <p className="text-xl font-black text-amber-500">{rewardsTotal}</p>
+          <p className="text-[10px] text-[#6B6B6B] mt-0.5 leading-tight">récompenses</p>
+        </div>
+      </div>
+
       {/* QR Scanner */}
       <div className="bg-white border border-[#E8E8E3] rounded-2xl p-5 sm:p-6 space-y-4">
         <h2 className="text-sm font-semibold text-[#1A1A1A]">Scanner la carte du client</h2>
@@ -254,7 +301,7 @@ export default function StampClient({ merchant }: Props) {
           >
             {processing ? 'Enregistrement...' : (
               <>
-                <svg className="w-7 h-7 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 3.5V16M4.5 4.5h3v3h-3v-3zm10 0h3v3h-3v-3zm0 10h3v3h-3v-3zM4.5 14.5h3v3h-3v-3z" />
                 </svg>
                 Scanner un QR code
@@ -288,6 +335,53 @@ export default function StampClient({ merchant }: Props) {
         </div>
         {searchError && <p className="mt-2 text-sm text-red-500">{searchError}</p>}
       </form>
+
+      {/* Top 3 clients this month */}
+      {topClients.length > 0 && (
+        <div className="bg-white border border-[#E8E8E3] rounded-2xl p-5 space-y-3">
+          <h3 className="text-sm font-semibold text-[#1A1A1A]">Top clients du mois</h3>
+          <div className="space-y-2">
+            {topClients.map((client, i) => (
+              <div key={client.phone} className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <span className="text-lg leading-none">{MEDALS[i]}</span>
+                  <div>
+                    <p className="text-sm font-semibold text-[#1A1A1A]">{client.first_name}</p>
+                    <p className="text-xs text-[#6B6B6B]">{client.phone}</p>
+                  </div>
+                </div>
+                <span className="text-sm font-bold" style={{ color: merchant.primary_color }}>
+                  {client.count} tampon{client.count > 1 ? 's' : ''}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Last 5 stamped clients */}
+      {recentStamps.length > 0 && (
+        <div className="bg-white border border-[#E8E8E3] rounded-2xl p-5 space-y-3">
+          <h3 className="text-sm font-semibold text-[#1A1A1A]">Derniers clients tamponnés</h3>
+          <div className="space-y-2">
+            {recentStamps.map((stamp, i) => (
+              <div key={i} className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+                    style={{ backgroundColor: merchant.primary_color }}>
+                    {stamp.customer.first_name.slice(0, 1).toUpperCase()}
+                  </div>
+                  <div>
+                    <p className="font-medium text-[#1A1A1A]">{stamp.customer.first_name}</p>
+                    <p className="text-xs text-[#6B6B6B]">{stamp.customer.phone}</p>
+                  </div>
+                </div>
+                <span className="text-xs text-[#6B6B6B] flex-shrink-0">{formatRelativeTime(stamp.given_at)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Card preview */}
       {card && (

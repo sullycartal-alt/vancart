@@ -149,7 +149,7 @@ export default function ChatClient({ merchantContext }: { merchantContext: Merch
   const remaining = DAILY_LIMIT - dailyCount
 
   return (
-    <div className="flex flex-col h-[calc(100vh-10rem)] max-h-[700px] bg-white border border-[#E8E8E3] rounded-2xl overflow-hidden">
+    <div className="flex flex-col h-[calc(100dvh-9rem)] max-h-[700px] bg-white border border-[#E8E8E3] rounded-2xl overflow-hidden">
 
       {/* Header */}
       <div className="flex items-center gap-3 px-5 py-4 border-b border-[#E8E8E3] bg-[#F7F6F3]">
@@ -202,7 +202,7 @@ export default function ChatClient({ merchantContext }: { merchantContext: Merch
               rows={1}
               disabled={loading}
               className="flex-1 resize-none rounded-xl border border-[#E8E8E3] bg-[#F7F6F3] px-4 py-3 text-sm text-[#1A1A1A] placeholder-[#6B6B6B] focus:border-[#6C47FF] focus:outline-none focus:ring-2 focus:ring-[#6C47FF]/15 transition-all disabled:opacity-50"
-              style={{ minHeight: '44px', maxHeight: '120px' }}
+              style={{ minHeight: '44px', maxHeight: '120px', fontSize: '16px' }}
             />
             <button
               onClick={sendMessage}

@@ -12,10 +12,10 @@ const stampSchema = z.object({
 
 export async function POST(request: Request) {
   const ip = getClientIp(request)
-  const { allowed, retryAfter } = checkRateLimit(ip)
+  const { allowed, retryAfter } = checkRateLimit(`stamps:${ip}`, 30, 60_000)
   if (!allowed) {
     return NextResponse.json(
-      { error: 'Too many requests, please try again later.' },
+      { error: 'Trop de requêtes, veuillez réessayer dans quelques instants.' },
       { status: 429, headers: { 'Retry-After': String(retryAfter) } },
     )
   }

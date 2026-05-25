@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import QRCodeDisplay from './QRCodeDisplay'
+import type { MerchantSharedConfig } from '@/types/merchant-config'
 
 const schema = z.object({
   business_name: z.string().min(2, 'Au moins 2 caractères'),
@@ -43,6 +44,7 @@ interface Merchant {
 
 interface Props {
   merchant: Merchant | null
+  onConfigChange?: (updates: Partial<MerchantSharedConfig>) => void
 }
 
 const PRESET_COLORS = [
@@ -165,7 +167,7 @@ function CardPreview({ businessName, primaryColor, loyaltyRule, stampsRequired, 
   )
 }
 
-export default function MerchantForm({ merchant }: Props) {
+export default function MerchantForm({ merchant, onConfigChange }: Props) {
   const [logoUrl, setLogoUrl] = useState<string | null>(merchant?.logo_url ?? null)
   const [logoUploading, setLogoUploading] = useState(false)
   const [logoError, setLogoError] = useState<string | null>(null)
@@ -202,12 +204,28 @@ export default function MerchantForm({ merchant }: Props) {
   const instagramHandle = watch('instagram_handle')
   const city = watch('city')
   const slugTouched = useRef(!!merchant)
+  const onConfigChangeRef = useRef(onConfigChange)
+  useEffect(() => { onConfigChangeRef.current = onConfigChange }, [onConfigChange])
 
   useEffect(() => {
     if (!slugTouched.current && businessName) {
       setValue('slug', generateSlug(businessName), { shouldValidate: true })
     }
   }, [businessName, setValue])
+
+  // Report live form changes to parent for cross-tab sync
+  useEffect(() => {
+    onConfigChangeRef.current?.({
+      business_name: businessName,
+      primary_color: primaryColor,
+      loyalty_rule: loyaltyRule,
+      stamps_required: stampsRequired ?? 10,
+      loyalty_type: loyaltyType as 'stamps' | 'points',
+      points_required: pointsRequired ?? null,
+      points_per_euro: pointsPerEuro ?? null,
+      description: description ?? '',
+    })
+  }, [businessName, primaryColor, loyaltyRule, stampsRequired, loyaltyType, pointsRequired, pointsPerEuro, description])
 
   async function handleLogoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
@@ -218,7 +236,12 @@ export default function MerchantForm({ merchant }: Props) {
     formData.append('file', file)
     const res = await fetch('/api/upload/logo', { method: 'POST', body: formData })
     const data = await res.json()
-    if (!res.ok) { setLogoError(data.error ?? "Erreur lors de l'upload") } else { setLogoUrl(data.url) }
+    if (!res.ok) {
+      setLogoError(data.error ?? "Erreur lors de l'upload")
+    } else {
+      setLogoUrl(data.url)
+      onConfigChangeRef.current?.({ logo_url: data.url })
+    }
     setLogoUploading(false)
   }
 

@@ -8,7 +8,7 @@ const PLAN_LABELS: Record<'essential' | 'pro', string> = {
 
 const PLAN_PRICES: Record<'essential' | 'pro', string> = {
   essential: '29€/mois',
-  pro: '49€/mois',
+  pro: '59€/mois',
 }
 
 const FEATURE_META: Record<string, { label: string; description: string; benefits: string[] }> = {
@@ -99,8 +99,8 @@ export default function UpgradeGate({ plan, feature, requiredPlan, children }: P
         {children}
       </div>
 
-      {/* Fixed overlay centered */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/20 backdrop-blur-[2px]">
+      {/* Fixed overlay — starts below navbar (z-40 so nav at z-50 stays on top) */}
+      <div className="fixed top-16 inset-x-0 bottom-0 z-40 flex items-center justify-center px-4 bg-black/20 backdrop-blur-[2px]">
         <div className="bg-white border border-[#E8E8E3] rounded-2xl p-8 text-center space-y-5 w-full max-w-md shadow-2xl">
           <div className="w-14 h-14 bg-[#6C47FF]/10 rounded-2xl flex items-center justify-center mx-auto">
             <svg className="w-7 h-7 text-[#6C47FF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">

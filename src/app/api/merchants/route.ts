@@ -1,14 +1,15 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
+import { sanitizeText } from '@/lib/sanitize'
 
 const merchantSchema = z.object({
-  business_name: z.string().min(2),
+  business_name: z.string().min(2).max(100),
   slug: z.string().min(2).regex(/^[a-z0-9-]+$/, 'Slug must be lowercase alphanumeric with hyphens'),
   logo_url: z.string().url().nullable().optional(),
-  primary_color: z.string().optional(),
-  loyalty_rule: z.string().optional(),
-  stamps_required: z.number().int().min(1).max(50).optional(),
+  primary_color: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Must be a valid hex color').optional(),
+  loyalty_rule: z.string().max(200).optional(),
+  stamps_required: z.number().int().min(1).max(100).optional(),
   loyalty_type: z.enum(['stamps', 'points']).optional(),
   points_per_euro: z.number().int().min(1).nullable().optional(),
   points_required: z.number().int().min(1).nullable().optional(),
@@ -16,6 +17,17 @@ const merchantSchema = z.object({
   instagram_handle: z.string().max(30).nullable().optional(),
   city: z.string().max(60).nullable().optional(),
 })
+
+function sanitizeMerchantData<T extends Record<string, unknown>>(data: T): T {
+  const textFields = ['business_name', 'loyalty_rule', 'description', 'instagram_handle', 'city'] as const
+  const result = { ...data }
+  for (const field of textFields) {
+    if (typeof result[field] === 'string') {
+      (result as Record<string, unknown>)[field] = sanitizeText(result[field] as string)
+    }
+  }
+  return result
+}
 
 export async function GET() {
   const supabase = await createClient()
@@ -62,6 +74,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
   }
 
+  const sanitized = sanitizeMerchantData(parsed.data)
+
   // Guard against duplicates: if a merchant already exists, update it instead
   const { data: existing } = await supabase
     .from('merchants')
@@ -72,7 +86,7 @@ export async function POST(request: Request) {
   if (existing?.id) {
     const { data, error } = await supabase
       .from('merchants')
-      .update(parsed.data)
+      .update(sanitized)
       .eq('user_id', user.id)
       .select()
       .single()
@@ -87,7 +101,7 @@ export async function POST(request: Request) {
 
   const { data, error } = await supabase
     .from('merchants')
-    .insert({ ...parsed.data, user_id: user.id })
+    .insert({ ...sanitized, user_id: user.id })
     .select()
     .single()
 
@@ -119,9 +133,11 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
   }
 
+  const sanitized = sanitizeMerchantData(parsed.data)
+
   const { data, error } = await supabase
     .from('merchants')
-    .update(parsed.data)
+    .update(sanitized)
     .eq('user_id', user.id)
     .select()
     .single()

@@ -3,6 +3,76 @@
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 
+function hexToHsl(hex: string): [number, number, number] {
+  const n = parseInt(hex.slice(1), 16)
+  const r = (n >> 16) / 255
+  const g = ((n >> 8) & 0xff) / 255
+  const b = (n & 0xff) / 255
+  const max = Math.max(r, g, b), min = Math.min(r, g, b)
+  const l = (max + min) / 2
+  let h = 0, s = 0
+  if (max !== min) {
+    const d = max - min
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
+    switch (max) {
+      case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break
+      case g: h = ((b - r) / d + 2) / 6; break
+      case b: h = ((r - g) / d + 4) / 6; break
+    }
+  }
+  return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)]
+}
+
+function hslToHex(h: number, s: number, l: number): string {
+  h = ((h % 360) + 360) % 360
+  const sn = s / 100, ln = l / 100
+  const a = sn * Math.min(ln, 1 - ln)
+  const f = (n: number) => {
+    const k = (n + h / 30) % 12
+    const c = ln - a * Math.max(-1, Math.min(k - 3, 9 - k, 1))
+    return Math.round(255 * c).toString(16).padStart(2, '0')
+  }
+  return `#${f(0)}${f(8)}${f(4)}`
+}
+
+function harmonicColors(hex: string): string[] {
+  const [h, s, l] = hexToHsl(hex)
+  return [
+    hslToHex(h + 30, s, l),
+    hslToHex(h - 30, s, l),
+    hslToHex(h + 180, s, l),
+  ]
+}
+
+function StampCircles({ total, filled, dark, primaryColor }: {
+  total: number; filled: number; dark: boolean; primaryColor: string
+}) {
+  const display = Math.min(total, 10)
+  const size = display <= 5 ? 20 : display <= 7 ? 17 : 14
+  const gap = size <= 14 ? 3 : 4
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap }}>
+      {Array.from({ length: display }).map((_, i) => {
+        const isFilled = i < filled
+        return (
+          <div key={i} style={{
+            width: size, height: size, borderRadius: '50%', flexShrink: 0,
+            border: isFilled ? 'none' : dark ? '2px solid rgba(255,255,255,0.5)' : `2px solid ${primaryColor}`,
+            background: isFilled ? (dark ? 'white' : primaryColor) : 'transparent',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            {isFilled && (
+              <svg width={size * 0.55} height={size * 0.55} viewBox="0 0 12 12" fill="none">
+                <path d="M2 6l3 3 5-5" stroke={dark ? primaryColor : 'white'} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 const PRESET_COLORS = [
   '#6C47FF', '#2563eb', '#16a34a', '#dc2626',
   '#d97706', '#0891b2', '#7c3aed', '#be185d',
@@ -85,14 +155,16 @@ function GoogleWalletPreview({ businessName, primaryColor, logoUrl, stampsRequir
           </div>
         </div>
 
-        {/* Middle: loyalty rule + counter */}
+        {/* Middle: loyalty rule + stamp circles */}
         <div className="relative">
-          <p className="text-white font-bold leading-tight" style={{ fontSize: 'clamp(13px, 2.5vw, 20px)' }}>
+          <p className="text-white font-bold leading-tight" style={{ fontSize: 'clamp(11px, 2.2vw, 18px)' }}>
             {loyaltyRule || `${stampsRequired} tampons = 1 récompense`}
           </p>
-          <div className="flex items-center gap-2 mt-2">
-            <p className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.55)' }}>Tampons</p>
-            <p className="text-sm font-black text-white">{current}/{stampsRequired}</p>
+          <div className="flex items-center gap-2 mt-1.5">
+            <p className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.55)' }}>{current}/{stampsRequired}</p>
+          </div>
+          <div className="mt-2">
+            <StampCircles total={stampsRequired} filled={current} dark primaryColor={primaryColor} />
           </div>
         </div>
 
@@ -151,10 +223,8 @@ function AppleWalletPreview({ businessName, primaryColor, logoUrl, stampsRequire
           </div>
         </div>
 
-        {/* Progress bar */}
-        <div className="h-1.5 rounded-full bg-[#E5E7EB]">
-          <div className="h-1.5 rounded-full" style={{ width: `${Math.round((current / stampsRequired) * 100)}%`, background: primaryColor }} />
-        </div>
+        {/* Stamp circles */}
+        <StampCircles total={stampsRequired} filled={current} dark={false} primaryColor={primaryColor} />
 
         {/* QR + footer */}
         <div className="flex items-center justify-between">
@@ -210,11 +280,12 @@ export default function CardDesignClient({ merchant, hideTitle }: { merchant: Me
         `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`
       )
       setSuggestedColors(hex)
-    } catch {
-      setSuggestedColors([])
+    } catch (err) {
+      console.error('[ColorThief] logo color extraction failed:', err)
+      setSuggestedColors(harmonicColors(merchant.primary_color))
     }
     setExtracting(false)
-  }, [merchant.logo_url])
+  }, [merchant.logo_url, merchant.primary_color])
 
   async function handleSave() {
     setSaving(true)

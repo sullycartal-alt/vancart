@@ -118,8 +118,8 @@ export default function Home() {
           <span className="text-xl font-bold text-[#6C47FF]">VanCart</span>
           <div className="hidden sm:flex items-center gap-6">
             <a href="#fonctionnalites" className="text-sm text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors font-medium">Fonctionnalités</a>
+            <a href="#comment-ca-marche" className="text-sm text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors font-medium">Comment ça marche</a>
             <a href="#tarifs" className="text-sm text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors font-medium">Tarifs</a>
-            <a href="#roadmap" className="text-sm text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors font-medium">Roadmap</a>
             <a href="#faq" className="text-sm text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors font-medium">FAQ</a>
           </div>
           <div className="flex items-center gap-4">
@@ -164,7 +164,7 @@ export default function Home() {
                 <span className="hidden sm:inline text-[#E8E8E3]">·</span>
                 <span>✓ Installation en 5 minutes</span>
                 <span className="hidden sm:inline text-[#E8E8E3]">·</span>
-                <span>✓ Données hébergées en France 🇫🇷</span>
+                <span>✓ Données hébergées en Europe 🇪🇺</span>
                 <span className="hidden sm:inline text-[#E8E8E3]">·</span>
                 <span>✓ Support réactif</span>
               </div>
@@ -246,7 +246,7 @@ export default function Home() {
       </section>
 
       {/* ── Benefits ───────────────────────────────────────────────────────── */}
-      <section id="fonctionnalites" className="px-6 py-20 bg-[#F7F6F3]">
+      <section id="fonctionnalites" className="px-6 py-20 bg-[#F7F6F3]" style={{ scrollMarginTop: '80px' }}>
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12 space-y-3">
             <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">La solution</p>
@@ -269,7 +269,7 @@ export default function Home() {
       </section>
 
       {/* ── How it works ───────────────────────────────────────────────────── */}
-      <section className="px-6 py-20 bg-white">
+      <section id="comment-ca-marche" className="px-6 py-20 bg-white" style={{ scrollMarginTop: '80px' }}>
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12 space-y-3">
             <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">Comment ça marche</p>
@@ -339,7 +339,7 @@ export default function Home() {
                   { feature: 'Sans téléchargement', paper: true, app: false, vancart: true },
                   { feature: 'Mise à jour en temps réel', paper: false, app: true, vancart: true },
                   { feature: 'Installation en 5 min', paper: true, app: false, vancart: true },
-                  { feature: 'Données hébergées en France 🇫🇷', paper: true, app: false, vancart: true },
+                  { feature: 'Données hébergées en Europe 🇪🇺', paper: true, app: false, vancart: true },
                   { feature: 'Prix accessible', paper: true, app: false, vancart: true },
                 ].map(({ feature, paper, app, vancart }, i) => (
                   <tr key={feature} className={`border-b border-[#E8E8E3] last:border-0 ${i % 2 === 0 ? '' : 'bg-[#F7F6F3]/40'}`}>
@@ -358,7 +358,7 @@ export default function Home() {
       </section>
 
       {/* ── Pricing ────────────────────────────────────────────────────────── */}
-      <section id="tarifs" className="px-6 py-20 bg-white">
+      <section id="tarifs" className="px-6 py-20 bg-white" style={{ scrollMarginTop: '80px' }}>
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12 space-y-3">
             <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">Tarifs</p>
@@ -538,7 +538,7 @@ export default function Home() {
       </section>
 
       {/* ── FAQ ────────────────────────────────────────────────────────────── */}
-      <section id="faq" className="px-6 py-20 bg-[#F7F6F3]">
+      <section id="faq" className="px-6 py-20 bg-[#F7F6F3]" style={{ scrollMarginTop: '80px' }}>
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-12 space-y-3">
             <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">FAQ</p>
@@ -591,7 +591,7 @@ export default function Home() {
               </p>
               <div className="flex items-center gap-2 pt-1">
                 <span className="inline-flex items-center gap-1.5 text-xs text-[#6B6B6B] bg-[#F7F6F3] border border-[#E8E8E3] px-2.5 py-1 rounded-full">
-                  🔒 Données hébergées en France
+                  🔒 Données hébergées en Europe 🇪🇺
                 </span>
               </div>
             </div>
@@ -626,16 +626,13 @@ export default function Home() {
                     vancart@gmail.com
                   </a>
                 </li>
-                <li className="text-xs leading-relaxed pt-1">
-                  Fait avec ❤️ par des étudiants ESSCA
-                </li>
               </ul>
             </div>
           </div>
 
           <div className="border-t border-[#E8E8E3] pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#6B6B6B]">
             <span>© 2026 VanCart · Tous droits réservés</span>
-            <span>Cartes de fidélité dématérialisées · Projet ESSCA</span>
+            <span>Données hébergées en Europe 🇪🇺</span>
           </div>
         </div>
       </footer>

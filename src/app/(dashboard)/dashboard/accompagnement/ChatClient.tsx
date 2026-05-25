@@ -149,7 +149,7 @@ export default function ChatClient({ merchantContext }: { merchantContext: Merch
   const remaining = DAILY_LIMIT - dailyCount
 
   return (
-    <div className="flex flex-col h-[calc(100dvh-9rem)] max-h-[700px] bg-white border border-[#E8E8E3] rounded-2xl overflow-hidden">
+    <div className="flex flex-col h-[calc(100dvh-64px)] sm:h-[calc(100vh-64px)] bg-white border border-[#E8E8E3] rounded-2xl overflow-hidden">
 
       {/* Header */}
       <div className="flex items-center gap-3 px-5 py-4 border-b border-[#E8E8E3] bg-[#F7F6F3]">

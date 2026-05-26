@@ -62,7 +62,7 @@ export async function GET(request: Request) {
   const service = createServiceClient()
   const { data: card, error: cardError } = await service
     .from('loyalty_cards')
-    .select('id, stamps_count, merchants(id, business_name, primary_color, loyalty_rule, stamps_required, logo_url), customers(first_name)')
+    .select('id, stamps_count, merchants(id, business_name, primary_color, loyalty_rule, stamps_required, logo_url, hero_image_url, wallet_message, card_expiry_months, show_instagram_on_card, instagram_handle), customers(first_name)')
     .eq('id', cardId)
     .single()
 
@@ -77,6 +77,8 @@ export async function GET(request: Request) {
 
   const merchant = Array.isArray(card.merchants) ? card.merchants[0] : card.merchants as {
     id: string; business_name: string; primary_color: string; loyalty_rule: string; stamps_required: number; logo_url: string | null
+    hero_image_url?: string | null; wallet_message?: string | null; card_expiry_months?: number | null
+    show_instagram_on_card?: boolean; instagram_handle?: string | null
   }
 
   if (!merchant) {
@@ -100,6 +102,11 @@ export async function GET(request: Request) {
       logoUrl: merchant.logo_url,
       stampsCount: card.stamps_count,
       stampsRequired: merchant.stamps_required,
+      heroImageUrl: merchant.hero_image_url,
+      walletMessage: merchant.wallet_message,
+      cardExpiryMonths: merchant.card_expiry_months,
+      instagramHandle: merchant.instagram_handle,
+      showInstagram: merchant.show_instagram_on_card,
     })
     console.log('[wallet/google] success, redirecting to pay.google.com')
     return NextResponse.redirect(url)

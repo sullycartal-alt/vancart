@@ -99,8 +99,20 @@ function objectBody(oId: string, cId: string, p: {
   customerName: string
   stampsCount: number
   stampsRequired: number
+  walletMessage?: string | null
+  heroImageUrl?: string | null
+  cardExpiryMonths?: number | null
+  instagramHandle?: string | null
+  showInstagram?: boolean
 }) {
-  return {
+  const textModules: Array<{ header: string; body: string; id: string }> = [
+    { header: 'Progression', body: `${p.stampsCount} tampon(s) sur ${p.stampsRequired}`, id: 'stamps_progress' },
+  ]
+  if (p.walletMessage) {
+    textModules.push({ header: 'Message', body: p.walletMessage, id: 'wallet_message' })
+  }
+
+  const obj: Record<string, unknown> = {
     id: oId,
     classId: cId,
     state: 'ACTIVE',
@@ -115,12 +127,34 @@ function objectBody(oId: string, cId: string, p: {
       value: p.cardId,
       alternateText: p.cardId,
     },
-    textModulesData: [{
-      header: 'Progression',
-      body: `${p.stampsCount} tampon(s) sur ${p.stampsRequired}`,
-      id: 'stamps_progress',
-    }],
+    textModulesData: textModules,
   }
+
+  if (p.heroImageUrl) {
+    obj.heroImage = {
+      sourceUri: { uri: p.heroImageUrl },
+      contentDescription: { defaultValue: { language: 'fr', value: 'Bannière' } },
+    }
+  }
+
+  if (p.showInstagram && p.instagramHandle) {
+    obj.linksModuleData = {
+      uris: [{
+        uri: `https://instagram.com/${p.instagramHandle}`,
+        description: `@${p.instagramHandle}`,
+        id: 'instagram',
+      }],
+    }
+  }
+
+  if (p.cardExpiryMonths) {
+    const expiryMs = Date.now() + p.cardExpiryMonths * 30 * 24 * 60 * 60 * 1000
+    obj.validTimeInterval = {
+      end: { date: new Date(expiryMs).toISOString() },
+    }
+  }
+
+  return obj
 }
 
 async function ensureClass(
@@ -154,7 +188,11 @@ async function upsertObject(
   token: string,
   oId: string,
   cId: string,
-  p: { cardId: string; customerName: string; stampsCount: number; stampsRequired: number },
+  p: {
+    cardId: string; customerName: string; stampsCount: number; stampsRequired: number
+    walletMessage?: string | null; heroImageUrl?: string | null; cardExpiryMonths?: number | null
+    instagramHandle?: string | null; showInstagram?: boolean
+  },
 ) {
   const body = objectBody(oId, cId, p)
   console.log('[google-wallet] upsertObject:', oId, 'state:', body.state)
@@ -208,13 +246,28 @@ export async function buildGoogleWalletURL(params: {
   logoUrl?: string | null
   stampsCount: number
   stampsRequired: number
+  heroImageUrl?: string | null
+  walletMessage?: string | null
+  cardExpiryMonths?: number | null
+  instagramHandle?: string | null
+  showInstagram?: boolean
 }): Promise<string> {
   const token = await getAccessToken()
   const cId = classId(params.merchantId)
   const oId = objectId(params.cardId)
 
   await ensureClass(token, cId, params)
-  await upsertObject(token, oId, cId, params)
+  await upsertObject(token, oId, cId, {
+    cardId: params.cardId,
+    customerName: params.customerName,
+    stampsCount: params.stampsCount,
+    stampsRequired: params.stampsRequired,
+    walletMessage: params.walletMessage,
+    heroImageUrl: params.heroImageUrl,
+    cardExpiryMonths: params.cardExpiryMonths,
+    instagramHandle: params.instagramHandle,
+    showInstagram: params.showInstagram,
+  })
 
   const { email } = cfg()
   const jwt = signJWT({

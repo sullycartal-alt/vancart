@@ -97,22 +97,35 @@ function QRPlaceholder({ color, size = 64 }: { color: string; size?: number }) {
   )
 }
 
-function GoogleWalletPreview({ businessName, primaryColor, logoUrl, stampsRequired, loyaltyRule, loyaltyType, pointsRequired }: {
+function GoogleWalletPreview({ businessName, primaryColor, logoUrl, stampsRequired, loyaltyRule, loyaltyType, pointsRequired, heroImageUrl, walletMessage, cardExpiryMonths }: {
   businessName: string; primaryColor: string; logoUrl: string | null
   stampsRequired: number; loyaltyRule: string
   loyaltyType: 'stamps' | 'points'; pointsRequired?: number | null
+  heroImageUrl?: string | null; walletMessage?: string | null; cardExpiryMonths?: number | null
 }) {
   const dark = darken(primaryColor, 28)
   const isPoints = loyaltyType === 'points'
   const target = isPoints ? (pointsRequired ?? 100) : stampsRequired
   const current = Math.floor(target * 0.4)
 
+  const expiryDate = cardExpiryMonths
+    ? new Date(Date.now() + cardExpiryMonths * 30 * 24 * 60 * 60 * 1000).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
+    : null
+
   return (
     <div
       className="w-full rounded-2xl overflow-hidden shadow-2xl select-none"
-      style={{ background: `linear-gradient(145deg, ${primaryColor} 0%, ${dark} 100%)`, aspectRatio: '1.586' }}
+      style={{ background: `linear-gradient(145deg, ${primaryColor} 0%, ${dark} 100%)` }}
     >
-      <div className="relative h-full flex flex-col justify-between p-5">
+      {/* Hero image */}
+      {heroImageUrl && (
+        <div className="w-full overflow-hidden" style={{ height: 80 }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={heroImageUrl} alt="" className="w-full h-full object-cover opacity-80" />
+        </div>
+      )}
+
+      <div className="relative flex flex-col justify-between p-5" style={{ aspectRatio: heroImageUrl ? undefined : '1.586', minHeight: heroImageUrl ? 200 : undefined }}>
         {/* Decorative circles */}
         <div style={{ position: 'absolute', top: -50, right: -30, width: 170, height: 170, borderRadius: '50%', background: 'rgba(255,255,255,0.06)', pointerEvents: 'none' }} />
         <div style={{ position: 'absolute', bottom: -40, left: -20, width: 130, height: 130, borderRadius: '50%', background: 'rgba(255,255,255,0.04)', pointerEvents: 'none' }} />
@@ -120,6 +133,7 @@ function GoogleWalletPreview({ businessName, primaryColor, logoUrl, stampsRequir
         {/* Top row */}
         <div className="relative flex items-center gap-3">
           {logoUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
             <img src={logoUrl} alt="" className="w-10 h-10 rounded-full object-cover ring-2 ring-white/30 flex-shrink-0" />
           ) : (
             <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-black flex-shrink-0" style={{ background: 'rgba(255,255,255,0.22)', color: 'white' }}>
@@ -133,10 +147,13 @@ function GoogleWalletPreview({ businessName, primaryColor, logoUrl, stampsRequir
         </div>
 
         {/* Middle: loyalty rule + display */}
-        <div className="relative">
+        <div className="relative mt-3">
           <p className="text-white font-bold leading-tight" style={{ fontSize: 'clamp(11px, 2.2vw, 18px)' }}>
             {loyaltyRule || (isPoints ? `${target} points = 1 récompense` : `${stampsRequired} tampons = 1 récompense`)}
           </p>
+          {walletMessage && (
+            <p className="text-white/70 text-[11px] mt-1 leading-snug">{walletMessage}</p>
+          )}
           <div className="mt-2">
             <LoyaltyDisplay
               mode={loyaltyType}
@@ -149,12 +166,17 @@ function GoogleWalletPreview({ businessName, primaryColor, logoUrl, stampsRequir
           </div>
         </div>
 
-        {/* Bottom row: QR + member ID */}
-        <div className="relative flex items-end justify-between">
+        {/* Bottom row: QR + member ID + expiry */}
+        <div className="relative flex items-end justify-between mt-3">
           <div className="p-1.5 rounded-lg flex-shrink-0" style={{ background: 'rgba(255,255,255,0.92)' }}>
             <QRPlaceholder color={primaryColor} size={48} />
           </div>
-          <p className="text-[9px] font-mono" style={{ color: 'rgba(255,255,255,0.4)' }}>MEMBRE • VC-0001042</p>
+          <div className="text-right">
+            <p className="text-[9px] font-mono" style={{ color: 'rgba(255,255,255,0.4)' }}>MEMBRE • VC-0001042</p>
+            {expiryDate && (
+              <p className="text-[9px]" style={{ color: 'rgba(255,255,255,0.35)' }}>Expire {expiryDate}</p>
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -240,6 +262,11 @@ interface Merchant {
   loyalty_type: 'stamps' | 'points'
   points_required?: number | null
   points_per_euro?: number | null
+  hero_image_url?: string | null
+  wallet_message?: string | null
+  card_expiry_months?: number | null
+  show_instagram_on_card?: boolean
+  instagram_handle?: string | null
 }
 
 export default function CardDesignClient({
@@ -259,6 +286,13 @@ export default function CardDesignClient({
   const [loyaltyType, setLoyaltyType] = useState<'stamps' | 'points'>(merchant.loyalty_type)
   const [pointsRequired, setPointsRequired] = useState(merchant.points_required ?? 100)
   const [pointsPerEuro, setPointsPerEuro] = useState(merchant.points_per_euro ?? 1)
+  const [heroImageUrl, setHeroImageUrl] = useState<string | null>(merchant.hero_image_url ?? null)
+  const [heroUploading, setHeroUploading] = useState(false)
+  const [heroError, setHeroError] = useState<string | null>(null)
+  const [walletMessage, setWalletMessage] = useState(merchant.wallet_message ?? '')
+  const [cardExpiryMonths, setCardExpiryMonths] = useState<number>(merchant.card_expiry_months ?? 12)
+  const [showInstagram, setShowInstagram] = useState(merchant.show_instagram_on_card ?? false)
+  const heroInputRef = useRef<HTMLInputElement>(null)
 
   function handleColorChange(newColor: string) {
     setColor(newColor)
@@ -284,6 +318,26 @@ export default function CardDesignClient({
     setPointsPerEuro(n)
     onConfigChangeRef.current?.({ points_per_euro: n })
   }
+
+  async function handleHeroImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setHeroUploading(true)
+    setHeroError(null)
+    const formData = new FormData()
+    formData.append('file', file)
+    const res = await fetch('/api/upload/hero-image', { method: 'POST', body: formData })
+    const data = await res.json()
+    if (!res.ok) {
+      setHeroError(data.error ?? "Erreur lors de l'upload")
+    } else {
+      setHeroImageUrl(data.url)
+      onConfigChangeRef.current?.({ hero_image_url: data.url })
+    }
+    setHeroUploading(false)
+    if (heroInputRef.current) heroInputRef.current.value = ''
+  }
+
   const [walletTab, setWalletTab] = useState<'google' | 'apple'>('google')
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -328,6 +382,10 @@ export default function CardDesignClient({
         loyalty_type: loyaltyType,
         points_required: pointsRequired,
         points_per_euro: pointsPerEuro,
+        hero_image_url: heroImageUrl,
+        wallet_message: walletMessage || null,
+        card_expiry_months: cardExpiryMonths,
+        show_instagram_on_card: showInstagram,
       }),
     })
     setSaving(false)
@@ -347,6 +405,9 @@ export default function CardDesignClient({
     loyaltyRule: loyaltyRule || (isPoints ? `${pointsRequired} pts = 1 récompense` : `${stampsRequired} tampons = 1 récompense`),
     loyaltyType,
     pointsRequired,
+    heroImageUrl,
+    walletMessage: walletMessage || null,
+    cardExpiryMonths,
   }
 
   const inputClass = 'block w-full rounded-xl border border-[#E8E8E3] px-4 py-3 text-sm text-[#1A1A1A] bg-white focus:border-[#6C47FF] focus:outline-none focus:ring-2 focus:ring-[#6C47FF]/15 transition-all'
@@ -530,11 +591,117 @@ export default function CardDesignClient({
             />
           </div>
 
+          {/* ── Personnalisation avancée ─────────────────── */}
+          <details className="group">
+            <summary className="cursor-pointer list-none flex items-center justify-between py-2 text-sm font-semibold text-[#1A1A1A] select-none">
+              <span>Personnalisation avancée</span>
+              <svg className="w-4 h-4 text-[#6B6B6B] transition-transform group-open:rotate-180" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z" clipRule="evenodd" />
+              </svg>
+            </summary>
+
+            <div className="pt-4 space-y-5">
+              {/* Hero image */}
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-[#1A1A1A]">Image de fond (hero)</label>
+                <p className="text-xs text-[#6B6B6B]">Visible en haut de votre carte Google Wallet. JPG/PNG, max 4 Mo.</p>
+                <div className="flex items-start gap-4">
+                  {heroImageUrl ? (
+                    <div className="relative w-32 h-16 rounded-xl overflow-hidden border border-[#E8E8E3] flex-shrink-0 bg-[#F7F6F3]">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={heroImageUrl} alt="" className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => { setHeroImageUrl(null); onConfigChangeRef.current?.({ hero_image_url: null }) }}
+                        className="absolute top-1 right-1 w-5 h-5 bg-black/50 rounded-full flex items-center justify-center text-white hover:bg-black/70 transition-colors"
+                        title="Supprimer"
+                      >
+                        <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                      </button>
+                    </div>
+                  ) : (
+                    <div
+                      className="w-32 h-16 rounded-xl border-2 border-dashed border-[#E8E8E3] flex items-center justify-center bg-[#F7F6F3] cursor-pointer hover:border-[#6C47FF] transition-colors flex-shrink-0 text-xs text-[#9CA3AF]"
+                      onClick={() => heroInputRef.current?.click()}
+                    >
+                      Ajouter
+                    </div>
+                  )}
+                  <div>
+                    <button
+                      type="button"
+                      onClick={() => heroInputRef.current?.click()}
+                      disabled={heroUploading}
+                      className="text-sm text-[#6C47FF] hover:text-[#5835e0] font-medium disabled:opacity-50 transition-colors"
+                    >
+                      {heroUploading ? 'Upload en cours…' : heroImageUrl ? 'Changer l\'image' : 'Choisir une image'}
+                    </button>
+                    {heroError && <p className="text-xs text-red-600 mt-1">{heroError}</p>}
+                  </div>
+                </div>
+                <input ref={heroInputRef} type="file" accept="image/*" className="hidden" onChange={handleHeroImageChange} />
+              </div>
+
+              {/* Wallet message */}
+              <div className="space-y-1.5">
+                <label className="block text-sm font-semibold text-[#1A1A1A]">
+                  Message personnalisé
+                  <span className="ml-2 text-xs font-normal text-[#6B6B6B]">{walletMessage.length}/100</span>
+                </label>
+                <textarea
+                  value={walletMessage}
+                  onChange={e => {
+                    const v = e.target.value.slice(0, 100)
+                    setWalletMessage(v)
+                    onConfigChangeRef.current?.({ wallet_message: v || null })
+                  }}
+                  placeholder="Ex : Merci de votre fidélité ! Présentez cette carte en caisse."
+                  maxLength={100}
+                  rows={2}
+                  className={inputClass + ' resize-none'}
+                />
+                <p className="text-xs text-[#6B6B6B]">Affiché sur votre carte Google Wallet sous la règle de fidélité.</p>
+              </div>
+
+              {/* Expiry */}
+              <div className="space-y-1.5">
+                <label className="block text-sm font-semibold text-[#1A1A1A]">Validité de la carte</label>
+                <select
+                  value={cardExpiryMonths}
+                  onChange={e => setCardExpiryMonths(Number(e.target.value))}
+                  className={inputClass}
+                >
+                  <option value={3}>3 mois</option>
+                  <option value={6}>6 mois</option>
+                  <option value={12}>12 mois (recommandé)</option>
+                  <option value={24}>24 mois</option>
+                  <option value={0}>Pas de date d&apos;expiration</option>
+                </select>
+                <p className="text-xs text-[#6B6B6B]">La date d&apos;expiration apparaît sur la carte Google Wallet.</p>
+              </div>
+
+              {/* Show Instagram on card */}
+              {merchant.instagram_handle && (
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={showInstagram}
+                    onChange={e => { setShowInstagram(e.target.checked); onConfigChangeRef.current?.({ show_instagram_on_card: e.target.checked }) }}
+                    className="w-4 h-4 rounded border-[#E8E8E3] accent-[#6C47FF]"
+                  />
+                  <span className="text-sm text-[#1A1A1A]">
+                    Afficher <strong>@{merchant.instagram_handle}</strong> sur la carte Wallet
+                  </span>
+                </label>
+              )}
+            </div>
+          </details>
+
           {/* Save */}
           <button
             type="button"
             onClick={handleSave}
-            disabled={saving}
+            disabled={saving || heroUploading}
             className="w-full py-3 text-sm font-semibold rounded-xl text-white transition-colors disabled:opacity-60"
             style={{ backgroundColor: color }}
           >

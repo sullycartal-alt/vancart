@@ -21,6 +21,8 @@ const merchantSchema = z.object({
   wallet_message: z.string().max(100).nullable().optional(),
   card_expiry_months: z.number().int().min(0).max(60).nullable().optional(),
   show_instagram_on_card: z.boolean().optional(),
+  allow_multiple_stamps: z.boolean().optional(),
+  min_minutes_between_stamps: z.number().int().min(0).max(1440).optional(),
 })
 
 function sanitizeMerchantData<T extends Record<string, unknown>>(data: T): T {

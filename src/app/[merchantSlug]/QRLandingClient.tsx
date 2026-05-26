@@ -133,6 +133,7 @@ export default function QRLandingClient({ merchant }: Props) {
   const [firstName, setFirstName] = useState('')
   const [logoError, setLogoError] = useState(false)
   const [confettiActive, setConfettiActive] = useState(false)
+  const [duplicateCardId, setDuplicateCardId] = useState<string | null>(null)
 
   const color = /^#[0-9a-f]{6}$/i.test(merchant.primary_color)
     ? merchant.primary_color
@@ -153,11 +154,15 @@ export default function QRLandingClient({ merchant }: Props) {
       const customerRes = await fetch('/api/customers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: data.phone, first_name: data.first_name }),
+        body: JSON.stringify({ phone: data.phone, first_name: data.first_name, merchant_id: merchant.id }),
       })
 
       if (!customerRes.ok) {
         const err = await customerRes.json()
+        if (err.error === 'DUPLICATE_PHONE' && err.existingCardId) {
+          setDuplicateCardId(err.existingCardId)
+          return
+        }
         setError('root', { message: err.error ?? 'Une erreur est survenue' })
         return
       }
@@ -415,6 +420,19 @@ export default function QRLandingClient({ merchant }: Props) {
               )}
             </div>
 
+            {duplicateCardId && (
+              <div className="rounded-xl px-4 py-3 text-center" style={{ background: `${color}12`, border: `1px solid ${color}30` }}>
+                <p className="text-sm font-semibold" style={{ color }}>Ce numéro est déjà inscrit !</p>
+                <p className="text-xs text-gray-500 mt-0.5">Votre carte de fidélité existe déjà.</p>
+                <a
+                  href={`/carte/${duplicateCardId}`}
+                  className="inline-block mt-2 text-sm font-bold underline"
+                  style={{ color }}
+                >
+                  Voir ma carte →
+                </a>
+              </div>
+            )}
             {errors.root && (
               <div className="rounded-xl bg-red-50 px-4 py-3">
                 <p className="text-sm text-red-600">{errors.root.message}</p>

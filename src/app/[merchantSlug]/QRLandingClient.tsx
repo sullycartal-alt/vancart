@@ -46,14 +46,15 @@ function ConfettiCanvas({ active, color }: { active: boolean; color: string }) {
 
   return (
     <canvas
-      ref={(canvas) => {
-        if (!canvas || !active) return
-        const ctx = canvas.getContext('2d')!
-        canvas.width = window.innerWidth
-        canvas.height = window.innerHeight
+      ref={(canvasEl) => {
+        if (!canvasEl || !active) return
+        const el: HTMLCanvasElement = canvasEl
+        const ctx = el.getContext('2d')!
+        el.width = window.innerWidth
+        el.height = window.innerHeight
         const colors = [color, '#f59e0b', '#10b981', '#ef4444', '#3b82f6', '#ec4899', '#8b5cf6']
         const pieces = Array.from({ length: 130 }, () => ({
-          x: Math.random() * canvas.width, y: -20 - Math.random() * 80,
+          x: Math.random() * el.width, y: -20 - Math.random() * 80,
           vx: (Math.random() - 0.5) * 5, vy: Math.random() * 4 + 2,
           color: colors[Math.floor(Math.random() * colors.length)],
           w: Math.random() * 10 + 4, h: Math.random() * 6 + 3,
@@ -63,7 +64,7 @@ function ConfettiCanvas({ active, color }: { active: boolean; color: string }) {
         let frame = 0
         const max = 200
         function draw() {
-          ctx.clearRect(0, 0, canvas.width, canvas.height)
+          ctx.clearRect(0, 0, el.width, el.height)
           for (const p of pieces) {
             ctx.save()
             ctx.translate(p.x, p.y)
@@ -76,7 +77,7 @@ function ConfettiCanvas({ active, color }: { active: boolean; color: string }) {
           }
           frame++
           if (frame < max) id = requestAnimationFrame(draw)
-          else ctx.clearRect(0, 0, canvas.width, canvas.height)
+          else ctx.clearRect(0, 0, el.width, el.height)
         }
         id = requestAnimationFrame(draw)
         return () => cancelAnimationFrame(id)

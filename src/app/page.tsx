@@ -36,8 +36,8 @@ function PhoneMockup() {
         {/* Boutons volume (gauche) */}
         <div style={{ position: 'absolute', left: -3, top: 80, width: 3, height: 35, background: '#2a2a2a', borderRadius: '3px 0 0 3px', boxShadow: '0 50px 0 #2a2a2a, 0 100px 0 #2a2a2a' }} />
 
-        {/* Notch */}
-        <div style={{ width: 100, height: 28, background: '#1a1a1a', borderRadius: '0 0 20px 20px', margin: '0 auto 8px', position: 'relative', zIndex: 10 }} />
+        {/* Dynamic Island */}
+        <div style={{ width: 120, height: 34, background: '#000', borderRadius: 20, margin: '8px auto 6px' }} />
 
         {/* Écran */}
         <div style={{ background: '#f5f5f7', borderRadius: 38, overflow: 'hidden', minHeight: 520 }}>
@@ -166,7 +166,7 @@ export default function Home() {
           </div>
           <div className="flex items-center gap-4">
             <Link href="/login" className="text-sm text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors font-medium">Connexion</Link>
-            <Link href="/register" className="text-sm font-semibold text-white bg-[#6C47FF] hover:bg-[#5835e0] px-4 py-2 rounded-xl transition-colors">
+            <Link href="/signup" className="text-sm font-semibold text-white bg-[#6C47FF] hover:bg-[#5835e0] px-4 py-2 rounded-xl transition-colors">
               Commencer gratuitement
             </Link>
           </div>
@@ -192,10 +192,13 @@ export default function Home() {
                 VanCart génère un QR code unique pour votre commerce. Vos clients scannent, collectent des tampons digitaux et reçoivent leurs récompenses — directement dans leur portefeuille mobile.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
-                <Link href="/register" className="w-full sm:w-auto px-8 py-3.5 bg-[#6C47FF] text-white font-bold rounded-xl hover:bg-[#5835e0] transition-colors shadow-sm text-sm text-center">
+                <Link href="/signup" className="w-full sm:w-auto px-8 py-3.5 bg-[#6C47FF] text-white font-bold rounded-xl hover:bg-[#5835e0] transition-colors shadow-sm text-sm text-center">
                   Créer mon compte gratuit →
                 </Link>
-                <Link href="/login" className="w-full sm:w-auto px-8 py-3.5 bg-white border border-[#E8E8E3] text-[#1A1A1A] font-semibold rounded-xl hover:bg-[#F7F6F3] transition-colors text-sm text-center">
+                <Link href="/sullivan-test" className="w-full sm:w-auto px-8 py-3.5 bg-white border border-[#E8E8E3] text-[#1A1A1A] font-semibold rounded-xl hover:bg-[#F7F6F3] transition-colors text-sm text-center">
+                  Voir une démo →
+                </Link>
+                <Link href="/login" className="w-full sm:w-auto text-sm font-medium text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors text-center py-3.5">
                   J&apos;ai déjà un compte
                 </Link>
               </div>
@@ -512,7 +515,7 @@ export default function Home() {
                 </ul>
               </div>
               <div className="mt-6">
-                <Link href="/register" className="block w-full py-3 border border-[#E8E8E3] text-[#1A1A1A] font-semibold rounded-xl hover:bg-[#F7F6F3] transition-colors text-sm text-center">
+                <Link href="/signup" className="block w-full py-3 border border-[#E8E8E3] text-[#1A1A1A] font-semibold rounded-xl hover:bg-[#F7F6F3] transition-colors text-sm text-center">
                   Commencer gratuitement
                 </Link>
               </div>
@@ -541,7 +544,7 @@ export default function Home() {
                 </ul>
               </div>
               <div className="mt-6">
-                <Link href="/register" className="block w-full py-3 bg-[#6C47FF] text-white font-semibold rounded-xl hover:bg-[#5835e0] transition-colors text-sm text-center">
+                <Link href="/signup?plan=essentiel" className="block w-full py-3 bg-[#6C47FF] text-white font-semibold rounded-xl hover:bg-[#5835e0] transition-colors text-sm text-center">
                   Choisir Essentiel
                 </Link>
               </div>
@@ -568,7 +571,7 @@ export default function Home() {
                 </ul>
               </div>
               <div className="mt-6">
-                <Link href="/register" className="block w-full py-3 border border-[#E8E8E3] text-[#1A1A1A] font-semibold rounded-xl hover:bg-[#F7F6F3] transition-colors text-sm text-center">
+                <Link href="/signup?plan=pro" className="block w-full py-3 border border-[#E8E8E3] text-[#1A1A1A] font-semibold rounded-xl hover:bg-[#F7F6F3] transition-colors text-sm text-center">
                   Choisir Pro
                 </Link>
               </div>
@@ -701,7 +704,7 @@ export default function Home() {
                   </li>
                 ))}
               </ul>
-              <Link href="/register" className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#6C47FF] hover:text-[#5835e0] transition-colors">
+              <Link href="/signup" className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#6C47FF] hover:text-[#5835e0] transition-colors">
                 Découvrir le tableau de bord →
               </Link>
             </div>
@@ -744,7 +747,7 @@ export default function Home() {
           <div className="text-5xl">🚀</div>
           <h2 className="text-3xl font-bold text-white">Prêt à fidéliser plus de clients ?</h2>
           <p className="text-white/80 text-lg leading-relaxed">Créez votre carte de fidélité gratuitement et soyez opérationnel en 5 minutes.</p>
-          <Link href="/register" className="inline-block px-10 py-4 bg-white text-[#6C47FF] font-bold rounded-xl hover:bg-[#F7F6F3] transition-colors shadow-sm text-base">
+          <Link href="/signup" className="inline-block px-10 py-4 bg-white text-[#6C47FF] font-bold rounded-xl hover:bg-[#F7F6F3] transition-colors shadow-sm text-base">
             Commencer gratuitement →
           </Link>
           <p className="text-white/60 text-xs">Aucune carte bancaire requise · Sans engagement</p>

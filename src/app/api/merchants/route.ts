@@ -131,6 +131,7 @@ export async function PATCH(request: Request) {
   }
 
   const body = await request.json()
+  console.log('[PATCH /api/merchants] body:', JSON.stringify(body))
   const parsed = merchantSchema.partial().safeParse(body)
 
   if (!parsed.success) {
@@ -139,6 +140,7 @@ export async function PATCH(request: Request) {
   }
 
   const sanitized = sanitizeMerchantData(parsed.data)
+  console.log('[PATCH /api/merchants] sanitized primary_color:', sanitized.primary_color)
 
   // Fetch current merchant to detect branding changes for Google Wallet sync
   const { data: current } = await supabase
@@ -158,6 +160,7 @@ export async function PATCH(request: Request) {
     console.error('[PATCH /api/merchants] Supabase error:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
+  console.log('[PATCH /api/merchants] saved primary_color:', data?.primary_color)
 
   // Sync Google Wallet class when logo or branding changes (fire-and-forget)
   const brandingChanged = current && (

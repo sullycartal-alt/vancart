@@ -18,9 +18,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   const { data: merchant } = await supabase
     .from('merchants')
-    .select('plan, trial_ends_at')
+    .select('plan, trial_ends_at, primary_color')
     .eq('user_id', user?.id ?? '')
     .single()
+
+  const merchantColor = /^#[0-9a-fA-F]{6}$/.test(merchant?.primary_color ?? '') ? merchant!.primary_color : '#6C47FF'
 
   const plan = effectivePlan((merchant?.plan ?? 'free') as Plan, user?.email)
 
@@ -36,7 +38,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     : null
 
   return (
-    <div className="min-h-screen bg-[#F7F6F3] flex flex-col">
+    <div className="min-h-screen bg-[#F7F6F3] flex flex-col" style={{ '--merchant-color': merchantColor } as React.CSSProperties}>
       {/* Trial banner — free plan only */}
       {plan === 'free' && trialDaysLeft !== null && (
         <TrialBanner daysLeft={trialDaysLeft} endDate={trialEndDate} />
@@ -80,7 +82,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
                 )}
                 <Link
                   href="/dashboard/stamp"
-                  className="px-4 py-1.5 text-sm font-semibold text-white bg-[#6C47FF] rounded-xl hover:bg-[#5835e0] transition-colors"
+                  className="px-4 py-1.5 text-sm font-semibold text-white rounded-xl transition-opacity hover:opacity-90"
+                  style={{ backgroundColor: 'var(--merchant-color, #6C47FF)' }}
                 >
                   Tamponner
                 </Link>
@@ -88,7 +91,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
             </div>
             <div className="flex items-center gap-2">
               <LogoutButton />
-              <MobileNav isAdmin={isAdmin} plan={plan} />
+              <MobileNav isAdmin={isAdmin} plan={plan} primaryColor={merchantColor} />
             </div>
           </div>
         </div>

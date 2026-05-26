@@ -12,101 +12,139 @@ function CheckIcon({ color = '#6C47FF' }: { color?: string }) {
 
 function PhoneMockup() {
   return (
-    <div className="relative flex items-center justify-center">
-      {/* Glow */}
-      <div className="absolute inset-0 bg-[#6C47FF]/15 rounded-full blur-3xl scale-75" />
+    <div className="relative flex items-center justify-center select-none">
+      {/* Halo violet derrière le téléphone */}
+      <div style={{
+        position: 'absolute',
+        width: 400, height: 400,
+        background: 'radial-gradient(ellipse, rgba(108,71,255,0.12), transparent 70%)',
+        borderRadius: '50%',
+        pointerEvents: 'none',
+      }} />
 
-      <svg viewBox="0 0 280 480" className="relative w-64 h-auto drop-shadow-2xl" xmlns="http://www.w3.org/2000/svg">
-        {/* Phone body */}
-        <rect x="20" y="8" width="240" height="464" rx="36" fill="#1A1A1A" />
-        <rect x="24" y="12" width="232" height="456" rx="33" fill="#111111" />
-
-        {/* Screen */}
-        <rect x="30" y="28" width="220" height="424" rx="26" fill="#F7F6F3" />
+      {/* Cadre iPhone */}
+      <div style={{
+        width: 280,
+        background: '#1a1a1a',
+        borderRadius: 50,
+        padding: 14,
+        boxShadow: '0 0 0 1px #3a3a3a, 0 40px 80px rgba(0,0,0,0.35), 0 20px 40px rgba(108,71,255,0.15), inset 0 0 0 1px #2a2a2a',
+        position: 'relative',
+      }}>
+        {/* Bouton power (droite) */}
+        <div style={{ position: 'absolute', right: -3, top: 100, width: 3, height: 60, background: '#2a2a2a', borderRadius: '0 3px 3px 0', boxShadow: '0 80px 0 #2a2a2a' }} />
+        {/* Boutons volume (gauche) */}
+        <div style={{ position: 'absolute', left: -3, top: 80, width: 3, height: 35, background: '#2a2a2a', borderRadius: '3px 0 0 3px', boxShadow: '0 50px 0 #2a2a2a, 0 100px 0 #2a2a2a' }} />
 
         {/* Notch */}
-        <rect x="110" y="28" width="60" height="22" rx="11" fill="#1A1A1A" />
+        <div style={{ width: 100, height: 28, background: '#1a1a1a', borderRadius: '0 0 20px 20px', margin: '0 auto 8px', position: 'relative', zIndex: 10 }} />
 
-        {/* Status bar dots */}
-        <circle cx="200" cy="42" r="3" fill="#1A1A1A" opacity="0.3" />
-        <circle cx="213" cy="42" r="3" fill="#1A1A1A" opacity="0.3" />
-        <circle cx="226" cy="42" r="3" fill="#1A1A1A" opacity="0.3" />
+        {/* Écran */}
+        <div style={{ background: '#f5f5f7', borderRadius: 38, overflow: 'hidden', minHeight: 520 }}>
 
-        {/* Wallet card */}
-        <rect x="42" y="68" width="196" height="128" rx="16" fill="#6C47FF" />
-        <rect x="42" y="68" width="196" height="128" rx="16" fill="url(#cardGrad)" />
-        <defs>
-          <linearGradient id="cardGrad" x1="42" y1="68" x2="238" y2="196" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#8B6BFF" />
-            <stop offset="100%" stopColor="#5835E0" />
-          </linearGradient>
-        </defs>
+          {/* Barre de status iOS */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 20px 6px', background: '#f5f5f7' }}>
+            <span style={{ fontSize: 13, fontWeight: 700, color: '#1a1a1a', letterSpacing: -0.3 }}>9:41</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+              {/* Signal */}
+              <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="6" width="3" height="6" rx="1" fill="#1a1a1a"/><rect x="4.5" y="4" width="3" height="8" rx="1" fill="#1a1a1a"/><rect x="9" y="2" width="3" height="10" rx="1" fill="#1a1a1a"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="#1a1a1a"/></svg>
+              {/* Wifi */}
+              <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 9.5c.7 0 1.2.5 1.2 1.2S8.7 12 8 12s-1.2-.5-1.2-1.2S7.3 9.5 8 9.5z" fill="#1a1a1a"/><path d="M4.8 7.2C5.7 6.4 6.8 6 8 6s2.3.4 3.2 1.2" stroke="#1a1a1a" strokeWidth="1.3" strokeLinecap="round" fill="none"/><path d="M2 4.4C3.5 3 5.7 2 8 2s4.5 1 6 2.4" stroke="#1a1a1a" strokeWidth="1.3" strokeLinecap="round" fill="none"/></svg>
+              {/* Batterie */}
+              <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="#1a1a1a" strokeOpacity="0.35"/><rect x="2" y="2" width="16" height="8" rx="2" fill="#1a1a1a"/><path d="M22.5 4v4a2 2 0 000-4z" fill="#1a1a1a" fillOpacity="0.4"/></svg>
+            </div>
+          </div>
 
-        {/* Card logo area */}
-        <rect x="56" y="82" width="32" height="32" rx="8" fill="white" fillOpacity="0.2" />
-        <text x="72" y="103" textAnchor="middle" fontSize="16" fill="white">☕</text>
+          <div style={{ padding: '4px 14px 16px' }}>
 
-        {/* Card title */}
-        <text x="100" y="98" fontSize="11" fontWeight="700" fill="white">Café des Arts</text>
-        <text x="100" y="112" fontSize="9" fill="white" fillOpacity="0.75">Carte de fidélité</text>
+            {/* Carte de fidélité */}
+            <div style={{
+              background: 'linear-gradient(135deg, #7C5CFC 0%, #5835E0 100%)',
+              borderRadius: 20,
+              padding: '14px 16px',
+              boxShadow: '0 8px 24px rgba(108,71,255,0.35)',
+              marginBottom: 10,
+            }}>
+              {/* Header carte */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+                <div style={{ width: 36, height: 36, borderRadius: 12, background: 'rgba(255,255,255,0.22)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <span style={{ fontSize: 11, fontWeight: 900, color: 'white', letterSpacing: -0.5 }}>CA</span>
+                </div>
+                <div>
+                  <p style={{ fontSize: 12, fontWeight: 700, color: 'white', margin: 0, lineHeight: 1.2 }}>Café des Arts</p>
+                  <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.65)', margin: 0 }}>Carte de fidélité</p>
+                </div>
+              </div>
 
-        {/* Stamp dots */}
-        {[0,1,2,3,4].map(i => (
-          <g key={i}>
-            <circle cx={58 + i * 36} cy={145} r={13} fill={i < 3 ? 'white' : 'none'} stroke="white" strokeWidth="1.5" fillOpacity={i < 3 ? 1 : 0.4} />
-            {i < 3 && <text x={58 + i * 36} y={150} textAnchor="middle" fontSize="11" fill="#6C47FF">✓</text>}
-          </g>
-        ))}
+              {/* Règle */}
+              <p style={{ fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.9)', margin: '0 0 10px', lineHeight: 1.3 }}>
+                ☕ 9 cafés achetés, 1 offert
+              </p>
 
-        {/* Card progress */}
-        <text x="56" y="178" fontSize="9" fill="white" fillOpacity="0.7">3/10 tampons · 7 restants</text>
+              {/* Tampons */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
+                {[0,1,2,3,4,5,6,7,8].map(i => (
+                  <div key={i} style={{
+                    width: 22, height: 22, borderRadius: '50%',
+                    background: i < 5 ? 'white' : 'rgba(255,255,255,0.18)',
+                    border: i < 5 ? 'none' : '1.5px solid rgba(255,255,255,0.35)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 11, color: i < 5 ? '#6C47FF' : 'transparent',
+                    fontWeight: 700,
+                  }}>
+                    {i < 5 ? '✓' : ''}
+                  </div>
+                ))}
+              </div>
 
-        {/* Wallet buttons */}
-        <rect x="42" y="206" width="90" height="22" rx="6" fill="#1A1A1A" fillOpacity="0.08" />
-        <text x="52" y="221" fontSize="9" fill="#1A1A1A" fillOpacity="0.5">Google Wallet</text>
-        <rect x="140" y="206" width="98" height="22" rx="6" fill="#1A1A1A" fillOpacity="0.08" />
-        <text x="150" y="221" fontSize="9" fill="#1A1A1A" fillOpacity="0.5">Apple Wallet</text>
+              {/* Compteur */}
+              <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.6)', margin: 0 }}>5 / 9 tampons</p>
+            </div>
 
-        {/* QR section */}
-        <rect x="42" y="238" width="196" height="90" rx="12" fill="white" stroke="#E8E8E3" strokeWidth="1" />
-        {[[0,0],[2,0],[4,0],[0,2],[4,2],[0,4],[2,4],[4,4],[1,1],[3,3],[2,2]].map(([cx, cy], i) => (
-          <rect key={i} x={90 + cx * 8} y={255 + cy * 8} width="6" height="6" rx="1" fill="#1A1A1A" />
-        ))}
-        <rect x={90} y={255} width="22" height="22" rx="3" fill="none" stroke="#1A1A1A" strokeWidth="1.5" />
-        <rect x={112} y={255} width="22" height="22" rx="3" fill="none" stroke="#1A1A1A" strokeWidth="1.5" />
-        <rect x={90} y={277} width="22" height="22" rx="3" fill="none" stroke="#1A1A1A" strokeWidth="1.5" />
-        <text x="152" y="270" fontSize="8" fill="#1A1A1A" fontWeight="600">Scanner pour</text>
-        <text x="152" y="281" fontSize="8" fill="#1A1A1A" fontWeight="600">rejoindre</text>
-        <text x="152" y="300" fontSize="7" fill="#6B6B6B">Présentez ce QR</text>
-        <text x="152" y="311" fontSize="7" fill="#6B6B6B">à votre caisse</text>
+            {/* Boutons Wallet */}
+            <div style={{ display: 'flex', gap: 8, marginBottom: 10 }}>
+              <div style={{ flex: 1, border: '1px solid #e0e0e0', borderRadius: 12, padding: '8px 6px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, background: 'white' }}>
+                <svg width="12" height="12" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                <span style={{ fontSize: 9, fontWeight: 600, color: '#1a1a1a' }}>Google Wallet</span>
+              </div>
+              <div style={{ flex: 1, borderRadius: 12, padding: '8px 6px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, background: '#1a1a1a' }}>
+                <svg width="10" height="12" viewBox="0 0 24 24" fill="white"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+                <span style={{ fontSize: 9, fontWeight: 600, color: 'white' }}>Apple Wallet</span>
+              </div>
+            </div>
 
-        {/* Notification badge */}
-        <rect x="54" y="342" width="172" height="40" rx="10" fill="white" stroke="#E8E8E3" strokeWidth="1" />
-        <circle cx="74" cy="362" r="10" fill="#6C47FF" />
-        <text x="74" y="366" textAnchor="middle" fontSize="10" fill="white">🎉</text>
-        <text x="92" y="357" fontSize="9" fontWeight="700" fill="#1A1A1A">Récompense débloquée !</text>
-        <text x="92" y="370" fontSize="8" fill="#6B6B6B">Présentez votre carte</text>
+            {/* Notification */}
+            <div style={{
+              background: 'white',
+              borderRadius: 14,
+              padding: '10px 12px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+              border: '1px solid #f0f0f0',
+            }}>
+              <div style={{ width: 32, height: 32, borderRadius: 10, background: '#6C47FF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 16 }}>
+                🎉
+              </div>
+              <div>
+                <p style={{ fontSize: 11, fontWeight: 700, color: '#1a1a1a', margin: 0, lineHeight: 1.3 }}>Tampon ajouté !</p>
+                <p style={{ fontSize: 10, color: '#6b6b6b', margin: 0, lineHeight: 1.3 }}>Plus que 4 pour votre café offert</p>
+              </div>
+            </div>
 
-        {/* Bottom nav bar */}
-        <rect x="30" y="396" width="220" height="50" rx="0" fill="white" />
-        <rect x="30" y="396" width="220" height="1" fill="#E8E8E3" />
-        {['🏠','🎴','📊','⚙️'].map((icon, i) => (
-          <text key={i} x={65 + i * 54} y="426" textAnchor="middle" fontSize="16" fill={i === 1 ? '#6C47FF' : '#6B6B6B'}>{icon}</text>
-        ))}
+          </div>
 
-        {/* Home indicator */}
-        <rect x="110" y="456" width="60" height="4" rx="2" fill="#1A1A1A" fillOpacity="0.15" />
-      </svg>
+          {/* Home bar */}
+          <div style={{ display: 'flex', justifyContent: 'center', paddingBottom: 10, paddingTop: 4 }}>
+            <div style={{ width: 100, height: 4, background: '#c0c0c0', borderRadius: 4 }} />
+          </div>
+        </div>
 
-      {/* Floating badges — placeholders */}
-      <div className="absolute top-6 -right-6 bg-[#F3F4F6] border border-dashed border-[#D1D5DB] rounded-xl px-3 py-2 shadow-sm text-xs italic text-[#9CA3AF] whitespace-nowrap">
-        En attente de données
-      </div>
-      <div className="absolute bottom-20 -left-8 bg-[#F3F4F6] border border-dashed border-[#D1D5DB] rounded-xl px-3 py-2 shadow-sm text-xs italic text-[#9CA3AF] whitespace-nowrap">
-        En attente de données
-      </div>
-      <div className="absolute top-1/2 -left-10 bg-[#F3F4F6] border border-dashed border-[#D1D5DB] rounded-xl px-3 py-2 shadow-sm text-xs italic text-[#9CA3AF] whitespace-nowrap">
-        En attente de données
+        {/* Home indicator sous l'écran */}
+        <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 10 }}>
+          <div style={{ width: 100, height: 4, background: '#3a3a3a', borderRadius: 4 }} />
+        </div>
       </div>
     </div>
   )

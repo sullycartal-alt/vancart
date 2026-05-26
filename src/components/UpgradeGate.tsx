@@ -1,3 +1,6 @@
+'use client'
+
+import { useEffect } from 'react'
 import Link from 'next/link'
 import { canAccess, type Plan, PLAN_FEATURES } from '@/lib/plan-features'
 
@@ -78,7 +81,16 @@ interface Props {
 }
 
 export default function UpgradeGate({ plan, feature, requiredPlan, children }: Props) {
-  if (canAccess(plan, feature)) return <>{children}</>
+  const locked = !canAccess(plan, feature)
+
+  useEffect(() => {
+    if (!locked) return
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = prev }
+  }, [locked])
+
+  if (!locked) return <>{children}</>
 
   const meta = FEATURE_META[feature as string] ?? {
     label: String(feature),
@@ -89,19 +101,22 @@ export default function UpgradeGate({ plan, feature, requiredPlan, children }: P
   const price = PLAN_PRICES[requiredPlan]
 
   return (
-    <div className="relative min-h-[420px]">
-      {/* Blurred preview of actual content */}
+    <div className="relative min-h-[320px]">
+      {/* Blurred preview */}
       <div
-        className="pointer-events-none select-none overflow-hidden max-h-[420px]"
-        style={{ filter: 'blur(5px)', opacity: 0.45 }}
+        className="pointer-events-none select-none overflow-hidden max-h-[320px]"
+        style={{ filter: 'blur(5px)', opacity: 0.4 }}
         aria-hidden="true"
       >
         {children}
       </div>
 
-      {/* Absolute overlay — covers only the gated feature area */}
-      <div className="absolute inset-0 z-20 flex items-center justify-center px-4 rounded-2xl overflow-auto" style={{ background: 'rgba(255,255,255,0.82)', backdropFilter: 'blur(4px)' }}>
-        <div className="bg-white border border-[#E8E8E3] rounded-2xl p-8 text-center space-y-5 w-full max-w-md shadow-2xl">
+      {/* Fixed overlay — covers entire viewport */}
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center px-4 overflow-y-auto"
+        style={{ background: 'rgba(247,246,243,0.88)', backdropFilter: 'blur(6px)' }}
+      >
+        <div className="bg-white border border-[#E8E8E3] rounded-2xl p-8 text-center space-y-5 w-full max-w-md shadow-2xl my-8">
           <div className="w-14 h-14 bg-[#6C47FF]/10 rounded-2xl flex items-center justify-center mx-auto">
             <svg className="w-7 h-7 text-[#6C47FF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}

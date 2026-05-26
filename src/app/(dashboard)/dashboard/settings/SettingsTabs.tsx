@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import MerchantForm from './MerchantForm'
 import CardDesignClient from '../ma-carte/CardDesignClient'
 import type { MerchantSharedConfig } from '@/types/merchant-config'
@@ -23,7 +23,6 @@ interface Merchant {
 
 interface Props {
   merchant: Merchant | null
-  walletSection: React.ReactNode
 }
 
 function merchantToConfig(m: Merchant): MerchantSharedConfig {
@@ -40,7 +39,7 @@ function merchantToConfig(m: Merchant): MerchantSharedConfig {
   }
 }
 
-export default function SettingsTabs({ merchant, walletSection }: Props) {
+export default function SettingsTabs({ merchant }: Props) {
   const [tab, setTab] = useState<'settings' | 'card'>('settings')
   const [cardInitVersion, setCardInitVersion] = useState(0)
   const [liveConfig, setLiveConfig] = useState<MerchantSharedConfig>(
@@ -51,7 +50,7 @@ export default function SettingsTabs({ merchant, walletSection }: Props) {
     }
   )
 
-  // Re-sync from server when merchant data refreshes (after router.refresh() in CardDesignClient)
+  // Re-sync when server data refreshes (after save + router.refresh())
   useEffect(() => {
     if (!merchant) return
     setLiveConfig(merchantToConfig(merchant))
@@ -61,9 +60,11 @@ export default function SettingsTabs({ merchant, walletSection }: Props) {
     merchant?.stamps_required,
     merchant?.loyalty_type,
     merchant?.points_required,
+    merchant?.points_per_euro,
     merchant?.loyalty_rule,
     merchant?.logo_url,
     merchant?.description,
+    merchant?.business_name,
   ])
 
   const updateLiveConfig = useCallback((updates: Partial<MerchantSharedConfig>) => {
@@ -72,7 +73,6 @@ export default function SettingsTabs({ merchant, walletSection }: Props) {
 
   function handleTabChange(newTab: 'settings' | 'card') {
     if (newTab === 'card' && tab === 'settings') {
-      // Increment so CardDesignClient remounts with the latest liveConfig
       setCardInitVersion(v => v + 1)
     }
     setTab(newTab)
@@ -86,7 +86,7 @@ export default function SettingsTabs({ merchant, walletSection }: Props) {
           onClick={() => handleTabChange('settings')}
           className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${tab === 'settings' ? 'bg-white shadow-sm text-[#1A1A1A]' : 'text-[#6B6B6B] hover:text-[#1A1A1A]'}`}
         >
-          ⚙️ Paramètres
+          🏪 Infos commerce
         </button>
         <button
           type="button"
@@ -98,13 +98,10 @@ export default function SettingsTabs({ merchant, walletSection }: Props) {
       </div>
 
       {tab === 'settings' ? (
-        <div className="space-y-6">
-          <MerchantForm
-            merchant={merchant}
-            onConfigChange={updateLiveConfig}
-          />
-          {walletSection}
-        </div>
+        <MerchantForm
+          merchant={merchant}
+          onConfigChange={updateLiveConfig}
+        />
       ) : merchant ? (
         <CardDesignClient
           key={`${merchant.id}-v${cardInitVersion}`}
@@ -119,6 +116,7 @@ export default function SettingsTabs({ merchant, walletSection }: Props) {
             description: liveConfig.description,
             loyalty_type: liveConfig.loyalty_type,
             points_required: liveConfig.points_required,
+            points_per_euro: liveConfig.points_per_euro,
           }}
           onConfigChange={updateLiveConfig}
         />

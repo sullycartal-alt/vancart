@@ -19,6 +19,10 @@ interface Merchant {
   description?: string | null
   instagram_handle?: string | null
   city?: string | null
+  hero_image_url?: string | null
+  wallet_message?: string | null
+  card_expiry_months?: number | null
+  show_instagram_on_card?: boolean
 }
 
 interface Props {
@@ -36,6 +40,11 @@ function merchantToConfig(m: Merchant): MerchantSharedConfig {
     points_per_euro: m.points_per_euro ?? null,
     logo_url: m.logo_url ?? null,
     description: m.description ?? '',
+    hero_image_url: m.hero_image_url ?? null,
+    wallet_message: m.wallet_message ?? null,
+    card_expiry_months: m.card_expiry_months ?? 12,
+    show_instagram_on_card: m.show_instagram_on_card ?? false,
+    instagram_handle: m.instagram_handle ?? null,
   }
 }
 
@@ -47,6 +56,8 @@ export default function SettingsTabs({ merchant }: Props) {
       business_name: '', primary_color: '#6C47FF', loyalty_rule: '',
       stamps_required: 10, loyalty_type: 'stamps',
       points_required: null, points_per_euro: null, logo_url: null, description: '',
+      hero_image_url: null, wallet_message: null, card_expiry_months: 12,
+      show_instagram_on_card: false, instagram_handle: null,
     }
   )
 
@@ -65,6 +76,11 @@ export default function SettingsTabs({ merchant }: Props) {
     merchant?.logo_url,
     merchant?.description,
     merchant?.business_name,
+    merchant?.hero_image_url,
+    merchant?.wallet_message,
+    merchant?.card_expiry_months,
+    merchant?.show_instagram_on_card,
+    merchant?.instagram_handle,
   ])
 
   const updateLiveConfig = useCallback((updates: Partial<MerchantSharedConfig>) => {
@@ -117,6 +133,11 @@ export default function SettingsTabs({ merchant }: Props) {
             loyalty_type: liveConfig.loyalty_type,
             points_required: liveConfig.points_required,
             points_per_euro: liveConfig.points_per_euro,
+            hero_image_url: liveConfig.hero_image_url ?? null,
+            wallet_message: liveConfig.wallet_message ?? null,
+            card_expiry_months: liveConfig.card_expiry_months ?? null,
+            show_instagram_on_card: liveConfig.show_instagram_on_card ?? false,
+            instagram_handle: liveConfig.instagram_handle ?? null,
           }}
           onConfigChange={updateLiveConfig}
         />

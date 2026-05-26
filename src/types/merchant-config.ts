@@ -8,4 +8,9 @@ export interface MerchantSharedConfig {
   points_per_euro: number | null
   logo_url: string | null
   description: string
+  hero_image_url?: string | null
+  wallet_message?: string | null
+  card_expiry_months?: number | null
+  show_instagram_on_card?: boolean
+  instagram_handle?: string | null
 }

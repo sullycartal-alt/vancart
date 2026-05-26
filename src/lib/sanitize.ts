@@ -1,5 +1,4 @@
-import DOMPurify from 'isomorphic-dompurify'
-
+// Strip all HTML tags and trim — no jsdom/DOMPurify needed for plain-text fields
 export function sanitizeText(input: string): string {
-  return DOMPurify.sanitize(input, { ALLOWED_TAGS: [] }).trim()
+  return input.replace(/<[^>]*>/g, '').trim()
 }

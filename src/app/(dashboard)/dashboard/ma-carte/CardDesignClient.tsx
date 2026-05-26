@@ -392,6 +392,7 @@ export default function CardDesignClient({
     if (res.ok) {
       setSaved(true)
       setTimeout(() => setSaved(false), 3000)
+      document.documentElement.style.setProperty('--merchant-color', color)
       router.refresh()
     }
   }

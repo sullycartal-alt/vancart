@@ -353,7 +353,7 @@ export default function QRLandingClient({ merchant }: Props) {
                 id="first_name"
                 placeholder="Jean-Baptiste"
                 autoComplete="given-name"
-                className="block w-full rounded-2xl border border-gray-200 px-4 py-3.5 text-sm text-gray-900 bg-white shadow-sm focus:border-transparent focus:outline-none focus:ring-2 transition-all"
+                className="block w-full rounded-2xl border border-gray-200 px-4 py-3.5 text-base text-gray-900 bg-white shadow-sm focus:border-transparent focus:outline-none focus:ring-2 transition-all"
                 style={{ '--tw-ring-color': `${color}60` } as React.CSSProperties}
               />
               {errors.first_name && (
@@ -371,7 +371,7 @@ export default function QRLandingClient({ merchant }: Props) {
                 id="phone"
                 placeholder="+33 6 12 34 56 78"
                 autoComplete="tel"
-                className="block w-full rounded-2xl border border-gray-200 px-4 py-3.5 text-sm text-gray-900 bg-white shadow-sm focus:border-transparent focus:outline-none focus:ring-2 transition-all"
+                className="block w-full rounded-2xl border border-gray-200 px-4 py-3.5 text-base text-gray-900 bg-white shadow-sm focus:border-transparent focus:outline-none focus:ring-2 transition-all"
                 style={{ '--tw-ring-color': `${color}60` } as React.CSSProperties}
               />
               {errors.phone && (

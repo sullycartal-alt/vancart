@@ -90,6 +90,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <Link
+                href="/dashboard/stamp"
+                className="sm:hidden px-3 py-2 text-sm font-semibold text-white rounded-xl transition-opacity hover:opacity-90 min-h-[44px] flex items-center"
+                style={{ backgroundColor: 'var(--merchant-color, #6C47FF)' }}
+              >
+                Tamponner
+              </Link>
               <LogoutButton />
               <MobileNav isAdmin={isAdmin} plan={plan} primaryColor={merchantColor} />
             </div>

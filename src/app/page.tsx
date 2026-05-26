@@ -154,10 +154,10 @@ export default function Home() {
                 VanCart génère un QR code unique pour votre commerce. Vos clients scannent, collectent des tampons digitaux et reçoivent leurs récompenses — directement dans leur portefeuille mobile.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
-                <Link href="/register" className="px-8 py-3.5 bg-[#6C47FF] text-white font-bold rounded-xl hover:bg-[#5835e0] transition-colors shadow-sm text-sm">
+                <Link href="/register" className="w-full sm:w-auto px-8 py-3.5 bg-[#6C47FF] text-white font-bold rounded-xl hover:bg-[#5835e0] transition-colors shadow-sm text-sm text-center">
                   Créer mon compte gratuit →
                 </Link>
-                <Link href="/login" className="px-8 py-3.5 bg-white border border-[#E8E8E3] text-[#1A1A1A] font-semibold rounded-xl hover:bg-[#F7F6F3] transition-colors text-sm">
+                <Link href="/login" className="w-full sm:w-auto px-8 py-3.5 bg-white border border-[#E8E8E3] text-[#1A1A1A] font-semibold rounded-xl hover:bg-[#F7F6F3] transition-colors text-sm text-center">
                   J&apos;ai déjà un compte
                 </Link>
               </div>
@@ -364,39 +364,81 @@ export default function Home() {
             <h2 className="text-3xl font-bold text-[#1A1A1A]">La fidélité, enfin accessible à tous</h2>
           </div>
 
-          <div className="bg-white rounded-2xl border border-[#E8E8E3] overflow-hidden">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-[#E8E8E3]">
-                  <th className="px-5 py-4 text-left text-sm font-semibold text-[#6B6B6B] w-2/5"></th>
-                  <th className="px-4 py-4 text-center text-sm font-semibold text-[#6B6B6B]">Carte papier</th>
-                  <th className="px-4 py-4 text-center text-sm font-semibold text-[#6B6B6B]">Application</th>
-                  <th className="px-4 py-4 text-center rounded-t-none" style={{ background: '#6C47FF0D' }}>
-                    <span className="text-sm font-bold text-[#6C47FF]">VanCart ✦</span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {[
-                  { feature: 'Toujours dans la poche', paper: false, app: true, vancart: true },
-                  { feature: 'Sans téléchargement', paper: true, app: false, vancart: true },
-                  { feature: 'Mise à jour en temps réel', paper: false, app: true, vancart: true },
-                  { feature: 'Installation en 5 min', paper: true, app: false, vancart: true },
-                  { feature: 'Données hébergées en Europe 🇪🇺', paper: true, app: false, vancart: true },
-                  { feature: 'Prix accessible', paper: true, app: false, vancart: true },
-                ].map(({ feature, paper, app, vancart }, i) => (
-                  <tr key={feature} className={`border-b border-[#E8E8E3] last:border-0 ${i % 2 === 0 ? '' : 'bg-[#F7F6F3]/40'}`}>
-                    <td className="px-5 py-3.5 text-sm text-[#1A1A1A] font-medium">{feature}</td>
-                    <td className="px-4 py-3.5 text-center text-lg">{paper ? '✅' : '❌'}</td>
-                    <td className="px-4 py-3.5 text-center text-lg">{app ? '✅' : '❌'}</td>
-                    <td className="px-4 py-3.5 text-center text-lg" style={{ background: '#6C47FF0D' }}>
-                      {vancart ? '✅' : '❌'}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          {/* Mobile: 3 stacked column cards */}
+          {(() => {
+            const features = [
+              { feature: 'Toujours dans la poche', paper: false, app: true, vancart: true },
+              { feature: 'Sans téléchargement', paper: true, app: false, vancart: true },
+              { feature: 'Mise à jour en temps réel', paper: false, app: true, vancart: true },
+              { feature: 'Installation en 5 min', paper: true, app: false, vancart: true },
+              { feature: 'Données hébergées en Europe 🇪🇺', paper: true, app: false, vancart: true },
+              { feature: 'Prix accessible', paper: true, app: false, vancart: true },
+            ];
+            return (
+              <>
+                <div className="sm:hidden space-y-4">
+                  {/* Carte papier card */}
+                  <div className="bg-white border border-[#E8E8E3] rounded-2xl p-5 space-y-3">
+                    <h3 className="text-sm font-semibold text-[#6B6B6B] text-center">Carte papier</h3>
+                    {features.map(({ feature, paper }) => (
+                      <div key={feature} className="flex items-center gap-3">
+                        <span className="text-base flex-shrink-0">{paper ? '✅' : '❌'}</span>
+                        <p className="text-sm text-[#1A1A1A]">{feature}</p>
+                      </div>
+                    ))}
+                  </div>
+                  {/* Application card */}
+                  <div className="bg-white border border-[#E8E8E3] rounded-2xl p-5 space-y-3">
+                    <h3 className="text-sm font-semibold text-[#6B6B6B] text-center">Application</h3>
+                    {features.map(({ feature, app }) => (
+                      <div key={feature} className="flex items-center gap-3">
+                        <span className="text-base flex-shrink-0">{app ? '✅' : '❌'}</span>
+                        <p className="text-sm text-[#1A1A1A]">{feature}</p>
+                      </div>
+                    ))}
+                  </div>
+                  {/* VanCart card */}
+                  <div className="border-2 border-[#6C47FF]/30 rounded-2xl p-5 space-y-3" style={{ background: '#6C47FF0A' }}>
+                    <h3 className="text-sm font-bold text-[#6C47FF] text-center">VanCart ✦</h3>
+                    {features.map(({ feature, vancart }) => (
+                      <div key={feature} className="flex items-center gap-3">
+                        <span className="text-base flex-shrink-0">{vancart ? '✅' : '❌'}</span>
+                        <p className="text-sm text-[#1A1A1A]">{feature}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Desktop: existing table */}
+                <div className="hidden sm:block bg-white rounded-2xl border border-[#E8E8E3] overflow-hidden">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-[#E8E8E3]">
+                        <th className="px-5 py-4 text-left text-sm font-semibold text-[#6B6B6B] w-2/5"></th>
+                        <th className="px-4 py-4 text-center text-sm font-semibold text-[#6B6B6B]">Carte papier</th>
+                        <th className="px-4 py-4 text-center text-sm font-semibold text-[#6B6B6B]">Application</th>
+                        <th className="px-4 py-4 text-center rounded-t-none" style={{ background: '#6C47FF0D' }}>
+                          <span className="text-sm font-bold text-[#6C47FF]">VanCart ✦</span>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {features.map(({ feature, paper, app, vancart }, i) => (
+                        <tr key={feature} className={`border-b border-[#E8E8E3] last:border-0 ${i % 2 === 0 ? '' : 'bg-[#F7F6F3]/40'}`}>
+                          <td className="px-5 py-3.5 text-sm text-[#1A1A1A] font-medium">{feature}</td>
+                          <td className="px-4 py-3.5 text-center text-lg">{paper ? '✅' : '❌'}</td>
+                          <td className="px-4 py-3.5 text-center text-lg">{app ? '✅' : '❌'}</td>
+                          <td className="px-4 py-3.5 text-center text-lg" style={{ background: '#6C47FF0D' }}>
+                            {vancart ? '✅' : '❌'}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            );
+          })()}
         </div>
       </section>
 

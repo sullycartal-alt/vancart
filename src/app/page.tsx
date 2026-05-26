@@ -195,9 +195,6 @@ export default function Home() {
                 <Link href="/signup" className="w-full sm:w-auto px-8 py-3.5 bg-[#6C47FF] text-white font-bold rounded-xl hover:bg-[#5835e0] transition-colors shadow-sm text-sm text-center">
                   Créer mon compte gratuit →
                 </Link>
-                <Link href="/sullivan-test" className="w-full sm:w-auto px-8 py-3.5 bg-white border border-[#E8E8E3] text-[#1A1A1A] font-semibold rounded-xl hover:bg-[#F7F6F3] transition-colors text-sm text-center">
-                  Voir une démo →
-                </Link>
                 <Link href="/login" className="w-full sm:w-auto text-sm font-medium text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors text-center py-3.5">
                   J&apos;ai déjà un compte
                 </Link>

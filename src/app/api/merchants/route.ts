@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { sanitizeText } from '@/lib/sanitize'
+import { updateWalletClass } from '@/lib/google-wallet'
 
 const merchantSchema = z.object({
   business_name: z.string().min(2).max(100),
@@ -16,6 +17,10 @@ const merchantSchema = z.object({
   description: z.string().max(200).nullable().optional(),
   instagram_handle: z.string().max(30).nullable().optional(),
   city: z.string().max(60).nullable().optional(),
+  hero_image_url: z.string().url().nullable().optional(),
+  wallet_message: z.string().max(100).nullable().optional(),
+  card_expiry_months: z.number().int().min(0).max(60).nullable().optional(),
+  show_instagram_on_card: z.boolean().optional(),
 })
 
 function sanitizeMerchantData<T extends Record<string, unknown>>(data: T): T {
@@ -135,6 +140,13 @@ export async function PATCH(request: Request) {
 
   const sanitized = sanitizeMerchantData(parsed.data)
 
+  // Fetch current merchant to detect branding changes for Google Wallet sync
+  const { data: current } = await supabase
+    .from('merchants')
+    .select('id, logo_url, primary_color, loyalty_rule, business_name')
+    .eq('user_id', user.id)
+    .single()
+
   const { data, error } = await supabase
     .from('merchants')
     .update(sanitized)
@@ -145,6 +157,22 @@ export async function PATCH(request: Request) {
   if (error) {
     console.error('[PATCH /api/merchants] Supabase error:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
+  }
+
+  // Sync Google Wallet class when logo or branding changes (fire-and-forget)
+  const brandingChanged = current && (
+    (parsed.data.logo_url !== undefined && parsed.data.logo_url !== current.logo_url) ||
+    (parsed.data.primary_color !== undefined && parsed.data.primary_color !== current.primary_color) ||
+    (parsed.data.loyalty_rule !== undefined && parsed.data.loyalty_rule !== current.loyalty_rule)
+  )
+  if (brandingChanged && current) {
+    updateWalletClass({
+      merchantId: current.id,
+      merchantName: data.business_name ?? current.business_name,
+      loyaltyRule: data.loyalty_rule ?? current.loyalty_rule,
+      primaryColor: data.primary_color ?? current.primary_color,
+      logoUrl: data.logo_url ?? current.logo_url,
+    }).catch(err => console.error('[PATCH /api/merchants] updateWalletClass failed:', err))
   }
 
   return NextResponse.json(data)

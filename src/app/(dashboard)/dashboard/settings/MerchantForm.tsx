@@ -250,7 +250,8 @@ export default function MerchantForm({ merchant, onConfigChange }: Props) {
         <button
           type="submit"
           disabled={isSubmitting || logoUploading}
-          className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-semibold text-white bg-[#6C47FF] hover:bg-[#5835e0] active:scale-[0.98] transition-all shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-semibold text-white active:scale-[0.98] transition-all shadow-sm disabled:opacity-60 disabled:cursor-not-allowed hover:opacity-90"
+          style={{ backgroundColor: 'var(--merchant-color, #6C47FF)' }}
         >
           {(isSubmitting || logoUploading) && (
             <svg className="animate-spin h-4 w-4 text-white shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

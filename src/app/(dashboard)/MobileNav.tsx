@@ -6,6 +6,7 @@ import Link from 'next/link'
 interface Props {
   isAdmin: boolean
   plan: string
+  primaryColor?: string
 }
 
 const links = [
@@ -16,7 +17,7 @@ const links = [
   { href: '/dashboard/settings', label: 'Mon commerce' },
 ]
 
-export default function MobileNav({ isAdmin, plan }: Props) {
+export default function MobileNav({ isAdmin, plan, primaryColor = '#6C47FF' }: Props) {
   const [open, setOpen] = useState(false)
   const close = () => setOpen(false)
 
@@ -84,7 +85,8 @@ export default function MobileNav({ isAdmin, plan }: Props) {
               <Link
                 href="/dashboard/stamp"
                 onClick={close}
-                className="flex items-center justify-center gap-2 w-full py-3.5 bg-[#6C47FF] text-white font-bold text-sm rounded-xl hover:bg-[#5835e0] transition-colors"
+                className="flex items-center justify-center gap-2 w-full py-3.5 text-white font-bold text-sm rounded-xl transition-opacity hover:opacity-90"
+                style={{ backgroundColor: primaryColor }}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 3.5V16M4.5 4.5h3v3h-3v-3zm10 0h3v3h-3v-3zm0 10h3v3h-3v-3zM4.5 14.5h3v3h-3v-3z" />

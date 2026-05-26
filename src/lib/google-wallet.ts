@@ -283,6 +283,36 @@ export async function buildGoogleWalletURL(params: {
 }
 
 /**
+ * Updates the LoyaltyClass for a merchant — used when logo or branding changes.
+ * Silent no-op if the class doesn't exist or Google Wallet is not configured.
+ */
+export async function updateWalletClass(params: {
+  merchantId: string
+  merchantName: string
+  loyaltyRule: string
+  primaryColor: string
+  logoUrl?: string | null
+}): Promise<void> {
+  if (!isConfigured()) return
+  try {
+    const token = await getAccessToken()
+    const cId = classId(params.merchantId)
+    const getRes = await fetch(`${API}/loyaltyClass/${encodeURIComponent(cId)}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    if (!getRes.ok) return // class doesn't exist yet, nothing to update
+    const body = classBody(cId, params)
+    await fetch(`${API}/loyaltyClass/${encodeURIComponent(cId)}`, {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+  } catch (err) {
+    console.error('[google-wallet] updateWalletClass failed (non-fatal):', err)
+  }
+}
+
+/**
  * Pushes an updated stamp count to an already-saved Google Wallet pass.
  * Silent no-op if the object doesn't exist yet (user hasn't saved the pass).
  */

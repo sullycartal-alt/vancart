@@ -96,22 +96,29 @@ export default function SettingsTabs({ merchant }: Props) {
 
   return (
     <div>
-      <div className="flex gap-1 p-1 bg-[#F7F6F3] border border-[#E8E8E3] rounded-xl w-fit mb-6">
-        <button
-          type="button"
-          onClick={() => handleTabChange('settings')}
-          className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${tab === 'settings' ? 'bg-white shadow-sm text-[#1A1A1A]' : 'text-[#6B6B6B] hover:text-[#1A1A1A]'}`}
-        >
-          🏪 Infos commerce
-        </button>
-        <button
-          type="button"
-          onClick={() => handleTabChange('card')}
-          className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${tab === 'card' ? 'bg-white shadow-sm text-[#1A1A1A]' : 'text-[#6B6B6B] hover:text-[#1A1A1A]'}`}
-        >
-          🎨 Ma carte
-        </button>
-      </div>
+      {(() => {
+        const activeColor = /^#[0-9a-fA-F]{6}$/.test(merchant?.primary_color ?? '') ? merchant!.primary_color : '#6C47FF'
+        return (
+          <div className="flex gap-1 p-1 bg-[#F7F6F3] border border-[#E8E8E3] rounded-xl w-fit mb-6">
+            <button
+              type="button"
+              onClick={() => handleTabChange('settings')}
+              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${tab === 'settings' ? 'shadow-sm text-white' : 'text-[#6B6B6B] hover:text-[#1A1A1A]'}`}
+              style={tab === 'settings' ? { backgroundColor: activeColor } : {}}
+            >
+              🏪 Infos commerce
+            </button>
+            <button
+              type="button"
+              onClick={() => handleTabChange('card')}
+              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${tab === 'card' ? 'shadow-sm text-white' : 'text-[#6B6B6B] hover:text-[#1A1A1A]'}`}
+              style={tab === 'card' ? { backgroundColor: activeColor } : {}}
+            >
+              🎨 Ma carte
+            </button>
+          </div>
+        )
+      })()}
 
       {tab === 'settings' ? (
         <MerchantForm

@@ -86,18 +86,18 @@ export default async function DashboardPage() {
       </Link>
 
       {/* Stats row */}
-      <div className="grid grid-cols-3 sm:grid-cols-3 gap-3 sm:gap-4">
-        <div className="bg-white border border-[#E8E8E3] rounded-xl p-5">
-          <p className="text-xs font-medium text-[#6B6B6B]">Cartes actives</p>
-          <p className="mt-1.5 text-3xl font-bold text-[#1A1A1A]">{activeCards ?? 0}</p>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+        <div className="bg-white border border-[#E8E8E3] rounded-xl px-5 py-4 flex items-center justify-between sm:block">
+          <p className="text-sm font-medium text-[#6B6B6B]">Cartes actives</p>
+          <p className="text-3xl font-bold text-[#1A1A1A] sm:mt-1.5">{activeCards ?? 0}</p>
         </div>
-        <div className="bg-white border border-[#E8E8E3] rounded-xl p-5">
-          <p className="text-xs font-medium text-[#6B6B6B]">Tampons aujourd&apos;hui</p>
-          <p className="mt-1.5 text-3xl font-bold text-[#1A1A1A]">{stampsToday ?? 0}</p>
+        <div className="bg-white border border-[#E8E8E3] rounded-xl px-5 py-4 flex items-center justify-between sm:block">
+          <p className="text-sm font-medium text-[#6B6B6B]">Tampons aujourd&apos;hui</p>
+          <p className="text-3xl font-bold text-[#1A1A1A] sm:mt-1.5">{stampsToday ?? 0}</p>
         </div>
-        <div className="bg-white border border-[#E8E8E3] rounded-xl p-5">
-          <p className="text-xs font-medium text-[#6B6B6B]">Récompenses</p>
-          <p className="mt-1.5 text-3xl font-bold text-[#1A1A1A]">{totalRewards}</p>
+        <div className="bg-white border border-[#E8E8E3] rounded-xl px-5 py-4 flex items-center justify-between sm:block">
+          <p className="text-sm font-medium text-[#6B6B6B]">Récompenses</p>
+          <p className="text-3xl font-bold text-[#1A1A1A] sm:mt-1.5">{totalRewards}</p>
         </div>
       </div>
 

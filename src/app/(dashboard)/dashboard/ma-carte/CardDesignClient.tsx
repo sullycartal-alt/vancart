@@ -239,6 +239,7 @@ interface Merchant {
   description: string
   loyalty_type: 'stamps' | 'points'
   points_required?: number | null
+  points_per_euro?: number | null
 }
 
 export default function CardDesignClient({
@@ -255,7 +256,9 @@ export default function CardDesignClient({
   const [color, setColor] = useState(merchant.primary_color)
   const [loyaltyRule, setLoyaltyRule] = useState(merchant.loyalty_rule)
   const [stampsRequired, setStampsRequired] = useState(merchant.stamps_required)
-  const [description, setDescription] = useState(merchant.description)
+  const [loyaltyType, setLoyaltyType] = useState<'stamps' | 'points'>(merchant.loyalty_type)
+  const [pointsRequired, setPointsRequired] = useState(merchant.points_required ?? 100)
+  const [pointsPerEuro, setPointsPerEuro] = useState(merchant.points_per_euro ?? 1)
 
   function handleColorChange(newColor: string) {
     setColor(newColor)
@@ -269,9 +272,17 @@ export default function CardDesignClient({
     setStampsRequired(n)
     onConfigChangeRef.current?.({ stamps_required: n })
   }
-  function handleDescriptionChange(desc: string) {
-    setDescription(desc)
-    onConfigChangeRef.current?.({ description: desc })
+  function handleLoyaltyTypeChange(type: 'stamps' | 'points') {
+    setLoyaltyType(type)
+    onConfigChangeRef.current?.({ loyalty_type: type })
+  }
+  function handlePointsRequiredChange(n: number) {
+    setPointsRequired(n)
+    onConfigChangeRef.current?.({ points_required: n })
+  }
+  function handlePointsPerEuroChange(n: number) {
+    setPointsPerEuro(n)
+    onConfigChangeRef.current?.({ points_per_euro: n })
   }
   const [walletTab, setWalletTab] = useState<'google' | 'apple'>('google')
   const [saving, setSaving] = useState(false)
@@ -314,7 +325,9 @@ export default function CardDesignClient({
         primary_color: color,
         loyalty_rule: loyaltyRule,
         stamps_required: stampsRequired,
-        description,
+        loyalty_type: loyaltyType,
+        points_required: pointsRequired,
+        points_per_euro: pointsPerEuro,
       }),
     })
     setSaving(false)
@@ -325,14 +338,15 @@ export default function CardDesignClient({
     }
   }
 
+  const isPoints = loyaltyType === 'points'
   const previewProps = {
     businessName: merchant.business_name,
     primaryColor: color,
     logoUrl: merchant.logo_url,
     stampsRequired,
-    loyaltyRule: loyaltyRule || `${stampsRequired} tampons = 1 récompense`,
-    loyaltyType: merchant.loyalty_type,
-    pointsRequired: merchant.points_required,
+    loyaltyRule: loyaltyRule || (isPoints ? `${pointsRequired} pts = 1 récompense` : `${stampsRequired} tampons = 1 récompense`),
+    loyaltyType,
+    pointsRequired,
   }
 
   const inputClass = 'block w-full rounded-xl border border-[#E8E8E3] px-4 py-3 text-sm text-[#1A1A1A] bg-white focus:border-[#6C47FF] focus:outline-none focus:ring-2 focus:ring-[#6C47FF]/15 transition-all'
@@ -405,60 +419,115 @@ export default function CardDesignClient({
             )}
           </div>
 
+          {/* Mode fidélité */}
+          <div className="space-y-2">
+            <label className="block text-sm font-semibold text-[#1A1A1A]">Mode de fidélité</label>
+            <div className="inline-flex rounded-xl border border-[#E8E8E3] bg-[#F7F6F3] p-1 gap-1">
+              {(['stamps', 'points'] as const).map(type => (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => handleLoyaltyTypeChange(type)}
+                  className="px-4 py-1.5 rounded-lg text-sm font-medium transition-all"
+                  style={loyaltyType === type
+                    ? { backgroundColor: color, color: '#fff' }
+                    : { backgroundColor: 'transparent', color: '#6B6B6B' }
+                  }
+                >
+                  {type === 'stamps' ? '🎴 Tampons' : '🏆 Points'}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Stamps required (mode tampons) */}
+          {!isPoints && (
+            <div className="space-y-1.5">
+              <label className="block text-sm font-semibold text-[#1A1A1A]">
+                Nombre de tampons requis
+                <span className="ml-2 text-[#6C47FF] font-bold">{stampsRequired}</span>
+              </label>
+              <div className="flex items-center gap-3">
+                <input
+                  type="range"
+                  min={1}
+                  max={50}
+                  value={stampsRequired}
+                  onChange={e => handleStampsRequiredChange(Number(e.target.value))}
+                  className="flex-1 cursor-pointer"
+                  style={{ accentColor: color }}
+                />
+                <input
+                  type="number"
+                  min={1}
+                  max={50}
+                  value={stampsRequired}
+                  onChange={e => handleStampsRequiredChange(Math.min(50, Math.max(1, Number(e.target.value))))}
+                  className="w-16 rounded-xl border border-[#E8E8E3] px-2 py-2 text-sm text-center focus:border-[#6C47FF] focus:outline-none"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Points fields (mode points) */}
+          {isPoints && (
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="block text-sm font-semibold text-[#1A1A1A]">
+                  Seuil de points pour la récompense
+                  <span className="ml-2 text-[#6C47FF] font-bold">{pointsRequired} pts</span>
+                </label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="range"
+                    min={50}
+                    max={2000}
+                    step={50}
+                    value={pointsRequired}
+                    onChange={e => handlePointsRequiredChange(Number(e.target.value))}
+                    className="flex-1 cursor-pointer"
+                    style={{ accentColor: color }}
+                  />
+                  <input
+                    type="number"
+                    min={1}
+                    value={pointsRequired}
+                    onChange={e => handlePointsRequiredChange(Math.max(1, Number(e.target.value)))}
+                    className="w-20 rounded-xl border border-[#E8E8E3] px-2 py-2 text-sm text-center focus:border-[#6C47FF] focus:outline-none"
+                  />
+                </div>
+                <p className="text-xs text-[#6B6B6B]">Ex : 500, 1 000, 2 000 points pour obtenir la récompense</p>
+              </div>
+              <div className="space-y-1.5">
+                <label className="block text-sm font-semibold text-[#1A1A1A]">
+                  Points par euro dépensé
+                  <span className="ml-2 text-[#6C47FF] font-bold">{pointsPerEuro} pt/€</span>
+                </label>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="number"
+                    min={1}
+                    max={100}
+                    value={pointsPerEuro}
+                    onChange={e => handlePointsPerEuroChange(Math.max(1, Number(e.target.value)))}
+                    className="w-20 rounded-xl border border-[#E8E8E3] px-2 py-2 text-sm text-center focus:border-[#6C47FF] focus:outline-none"
+                  />
+                  <span className="text-sm text-[#6B6B6B]">point(s) par euro</span>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Loyalty rule */}
           <div className="space-y-1.5">
             <label className="block text-sm font-semibold text-[#1A1A1A]">Règle de fidélité</label>
             <input
               value={loyaltyRule}
               onChange={e => handleLoyaltyRuleChange(e.target.value)}
-              placeholder={`${stampsRequired} tampons = 1 récompense`}
+              placeholder={isPoints ? `${pointsRequired} points = 1 récompense` : `${stampsRequired} tampons = 1 récompense`}
               className={inputClass}
               style={{ fontSize: 16 }}
             />
-          </div>
-
-          {/* Stamps required */}
-          <div className="space-y-1.5">
-            <label className="block text-sm font-semibold text-[#1A1A1A]">
-              Nombre de tampons requis
-              <span className="ml-2 text-[#6C47FF] font-bold">{stampsRequired}</span>
-            </label>
-            <div className="flex items-center gap-3">
-              <input
-                type="range"
-                min={1}
-                max={50}
-                value={stampsRequired}
-                onChange={e => handleStampsRequiredChange(Number(e.target.value))}
-                className="flex-1 cursor-pointer"
-                style={{ accentColor: color }}
-              />
-              <input
-                type="number"
-                min={1}
-                max={50}
-                value={stampsRequired}
-                onChange={e => handleStampsRequiredChange(Math.min(50, Math.max(1, Number(e.target.value))))}
-                className="w-16 rounded-xl border border-[#E8E8E3] px-2 py-2 text-sm text-center focus:border-[#6C47FF] focus:outline-none"
-              />
-            </div>
-          </div>
-
-          {/* Description */}
-          <div className="space-y-1.5">
-            <label className="block text-sm font-semibold text-[#1A1A1A]">
-              Description courte
-              <span className="ml-2 font-normal text-[#6B6B6B]">(optionnel)</span>
-            </label>
-            <input
-              value={description}
-              onChange={e => handleDescriptionChange(e.target.value)}
-              placeholder="Bar à cocktails au cœur de Paris"
-              maxLength={120}
-              className={inputClass}
-              style={{ fontSize: 16 }}
-            />
-            <p className="text-xs text-[#9CA3AF]">{description.length}/120</p>
           </div>
 
           {/* Save */}

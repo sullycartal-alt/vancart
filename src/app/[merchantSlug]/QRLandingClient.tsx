@@ -108,6 +108,8 @@ export default function QRLandingClient({ merchant }: Props) {
   const [logoError, setLogoError] = useState(false)
   const [confettiActive, setConfettiActive] = useState(false)
 
+  console.log('logo:', merchant.logo_url, '| logoError:', logoError)
+
   const color = /^#[0-9a-f]{6}$/i.test(merchant.primary_color)
     ? merchant.primary_color
     : '#4f46e5'
@@ -181,14 +183,17 @@ export default function QRLandingClient({ merchant }: Props) {
           >
             <div className="px-6 pt-8 pb-6 text-center">
               {merchant.logo_url && !logoError ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={merchant.logo_url}
-                  alt={merchant.business_name}
-                  className="h-12 w-auto mx-auto mb-3 object-contain"
-                  onError={() => setLogoError(true)}
-                  style={{ filter: tc === '#ffffff' ? 'brightness(0) invert(1)' : 'none' }}
-                />
+                <div className="flex items-center justify-center mb-3">
+                  <div className="rounded-2xl p-2" style={{ background: 'rgba(255,255,255,0.92)' }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={merchant.logo_url}
+                      alt={merchant.business_name}
+                      className="h-10 w-auto object-contain"
+                      onError={() => setLogoError(true)}
+                    />
+                  </div>
+                </div>
               ) : (
                 <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3" style={{ backgroundColor: `${tc}20` }}>
                   <span className="text-2xl font-bold" style={{ color: tc }}>{merchant.business_name.charAt(0).toUpperCase()}</span>
@@ -282,14 +287,17 @@ export default function QRLandingClient({ merchant }: Props) {
 
         <div className="relative">
           {merchant.logo_url && !logoError ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={merchant.logo_url}
-              alt={merchant.business_name}
-              className="h-16 w-auto mx-auto mb-4 object-contain drop-shadow-lg"
-              onError={() => setLogoError(true)}
-              style={{ filter: tc === '#ffffff' ? 'brightness(0) invert(1)' : 'none' }}
-            />
+            <div className="flex items-center justify-center mb-4">
+              <div className="rounded-2xl p-2.5 shadow-lg" style={{ background: 'rgba(255,255,255,0.92)' }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={merchant.logo_url}
+                  alt={merchant.business_name}
+                  className="h-12 w-auto object-contain"
+                  onError={() => setLogoError(true)}
+                />
+              </div>
+            </div>
           ) : (
             <div
               className="w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-lg"

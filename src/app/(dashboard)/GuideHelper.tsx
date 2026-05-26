@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 
 const STEPS = [
@@ -34,21 +34,10 @@ const STEPS = [
   },
 ]
 
-const LS_KEY = 'vancart_guide_seen_v2'
-
 export default function GuideHelper() {
   const [open, setOpen] = useState(false)
 
-  useEffect(() => {
-    const seen = localStorage.getItem(LS_KEY)
-    if (!seen) {
-      const timer = setTimeout(() => setOpen(true), 1000)
-      return () => clearTimeout(timer)
-    }
-  }, [])
-
   function close() {
-    localStorage.setItem(LS_KEY, 'true')
     setOpen(false)
   }
 
@@ -99,12 +88,6 @@ export default function GuideHelper() {
                   className="w-full py-3 bg-[#6C47FF] text-white rounded-xl text-sm font-semibold hover:bg-[#5835e0] transition-colors"
                 >
                   Commencer !
-                </button>
-                <button
-                  onClick={close}
-                  className="w-full py-2 text-xs text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors"
-                >
-                  Ne plus afficher
                 </button>
               </div>
             </div>

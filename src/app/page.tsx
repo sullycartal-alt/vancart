@@ -1,3 +1,6 @@
+'use client'
+
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 
 function CheckIcon({ color = '#6C47FF' }: { color?: string }) {
@@ -40,7 +43,7 @@ function PhoneMockup() {
         <div style={{ background: '#f5f5f7', borderRadius: 38, overflow: 'hidden', minHeight: 520, position: 'relative' }}>
 
           {/* Dynamic Island — flottant sur l'écran */}
-          <div style={{ width: 126, height: 37, background: '#000', borderRadius: 20, position: 'absolute', top: 12, left: '50%', transform: 'translateX(-50%)', zIndex: 10 }} />
+          <div style={{ width: 90, height: 28, background: '#000', borderRadius: 14, position: 'absolute', top: 12, left: '50%', transform: 'translateX(-50%)', zIndex: 10 }} />
 
           {/* Barre de status iOS */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px 6px', background: '#f5f5f7' }}>
@@ -135,6 +138,51 @@ function PhoneMockup() {
 
           </div>
 
+          {/* Section récompense */}
+          <div style={{ padding: '12px 16px 0' }}>
+            <p style={{ fontSize: 10, fontWeight: 700, color: '#888', marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+              Votre récompense
+            </p>
+            <div style={{ background: '#F5F3FF', borderRadius: 12, padding: 12, display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ width: 36, height: 36, background: '#6C47FF', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, flexShrink: 0 }}>🎁</div>
+              <div>
+                <p style={{ fontSize: 12, fontWeight: 700, color: '#1a1a1a', margin: 0 }}>1 café offert</p>
+                <p style={{ fontSize: 11, color: '#888', margin: 0 }}>Plus que 4 tampons</p>
+              </div>
+            </div>
+          </div>
+
+          {/* QR code */}
+          <div style={{ padding: '12px 16px 16px', textAlign: 'center' }}>
+            <p style={{ fontSize: 10, color: '#888', marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.5, fontWeight: 700 }}>
+              Présenter en caisse
+            </p>
+            <div style={{ background: '#f8f8f8', borderRadius: 12, padding: 12, display: 'inline-block' }}>
+              <svg width="80" height="80" viewBox="0 0 80 80">
+                <rect width="80" height="80" fill="white"/>
+                <rect x="5" y="5" width="25" height="25" fill="none" stroke="#1a1a1a" strokeWidth="3"/>
+                <rect x="10" y="10" width="15" height="15" fill="#1a1a1a"/>
+                <rect x="50" y="5" width="25" height="25" fill="none" stroke="#1a1a1a" strokeWidth="3"/>
+                <rect x="55" y="10" width="15" height="15" fill="#1a1a1a"/>
+                <rect x="5" y="50" width="25" height="25" fill="none" stroke="#1a1a1a" strokeWidth="3"/>
+                <rect x="10" y="55" width="15" height="15" fill="#1a1a1a"/>
+                <rect x="35" y="35" width="5" height="5" fill="#1a1a1a"/>
+                <rect x="42" y="35" width="5" height="5" fill="#1a1a1a"/>
+                <rect x="49" y="35" width="5" height="5" fill="#1a1a1a"/>
+                <rect x="56" y="35" width="5" height="5" fill="#1a1a1a"/>
+                <rect x="35" y="42" width="5" height="5" fill="#1a1a1a"/>
+                <rect x="49" y="42" width="5" height="5" fill="#1a1a1a"/>
+                <rect x="35" y="49" width="5" height="5" fill="#1a1a1a"/>
+                <rect x="42" y="49" width="5" height="5" fill="#1a1a1a"/>
+                <rect x="56" y="49" width="5" height="5" fill="#1a1a1a"/>
+                <rect x="63" y="42" width="5" height="5" fill="#1a1a1a"/>
+                <rect x="63" y="56" width="5" height="5" fill="#1a1a1a"/>
+                <rect x="56" y="63" width="5" height="5" fill="#1a1a1a"/>
+                <rect x="42" y="56" width="5" height="5" fill="#1a1a1a"/>
+              </svg>
+            </div>
+          </div>
+
           {/* Home bar */}
           <div style={{ display: 'flex', justifyContent: 'center', paddingBottom: 10, paddingTop: 4 }}>
             <div style={{ width: 100, height: 4, background: '#c0c0c0', borderRadius: 4 }} />
@@ -147,6 +195,14 @@ function PhoneMockup() {
 }
 
 export default function Home() {
+  const [scrollY, setScrollY] = useState(0)
+
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY)
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   return (
     <div className="min-h-screen bg-white flex flex-col">
 
@@ -221,7 +277,7 @@ export default function Home() {
             </div>
 
             {/* Right: phone mockup */}
-            <div className="hidden lg:flex justify-center items-center">
+            <div className="hidden lg:flex justify-center items-center" style={{ transform: `translateY(${scrollY * 0.08}px)` }}>
               <PhoneMockup />
             </div>
           </div>

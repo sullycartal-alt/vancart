@@ -218,7 +218,7 @@ export default function Home() {
           </div>
           <div className="flex items-center gap-4">
             <Link href="/login" className="text-sm text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors font-medium">Connexion</Link>
-            <Link href="/signup" className="text-sm font-semibold text-white bg-[#6C47FF] hover:bg-[#5835e0] px-4 py-2 rounded-xl transition-colors">
+            <Link href="/register" className="text-sm font-semibold text-white bg-[#6C47FF] hover:bg-[#5835e0] px-4 py-2 rounded-xl transition-colors">
               Commencer gratuitement
             </Link>
           </div>
@@ -244,7 +244,7 @@ export default function Home() {
                 VanCart génère un QR code unique pour votre commerce. Vos clients scannent, collectent des tampons digitaux et reçoivent leurs récompenses — directement dans leur portefeuille mobile.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
-                <Link href="/signup" className="w-full sm:w-auto px-8 py-3.5 bg-[#6C47FF] text-white font-bold rounded-xl hover:bg-[#5835e0] transition-colors shadow-sm text-sm text-center">
+                <Link href="/register" className="w-full sm:w-auto px-8 py-3.5 bg-[#6C47FF] text-white font-bold rounded-xl hover:bg-[#5835e0] transition-colors shadow-sm text-sm text-center">
                   Créer mon compte gratuit →
                 </Link>
                 <Link href="/login" className="w-full sm:w-auto text-sm font-medium text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors text-center py-3.5">
@@ -564,7 +564,7 @@ export default function Home() {
                 </ul>
               </div>
               <div className="mt-6">
-                <Link href="/signup" className="block w-full py-3 border border-[#E8E8E3] text-[#1A1A1A] font-semibold rounded-xl hover:bg-[#F7F6F3] transition-colors text-sm text-center">
+                <Link href="/register" className="block w-full py-3 border border-[#E8E8E3] text-[#1A1A1A] font-semibold rounded-xl hover:bg-[#F7F6F3] transition-colors text-sm text-center">
                   Commencer gratuitement
                 </Link>
               </div>
@@ -593,7 +593,7 @@ export default function Home() {
                 </ul>
               </div>
               <div className="mt-6">
-                <Link href="/signup?plan=essentiel" className="block w-full py-3 bg-[#6C47FF] text-white font-semibold rounded-xl hover:bg-[#5835e0] transition-colors text-sm text-center">
+                <Link href="/register?plan=essentiel" className="block w-full py-3 bg-[#6C47FF] text-white font-semibold rounded-xl hover:bg-[#5835e0] transition-colors text-sm text-center">
                   Choisir Essentiel
                 </Link>
               </div>
@@ -620,7 +620,7 @@ export default function Home() {
                 </ul>
               </div>
               <div className="mt-6">
-                <Link href="/signup?plan=pro" className="block w-full py-3 border border-[#E8E8E3] text-[#1A1A1A] font-semibold rounded-xl hover:bg-[#F7F6F3] transition-colors text-sm text-center">
+                <Link href="/register?plan=pro" className="block w-full py-3 border border-[#E8E8E3] text-[#1A1A1A] font-semibold rounded-xl hover:bg-[#F7F6F3] transition-colors text-sm text-center">
                   Choisir Pro
                 </Link>
               </div>
@@ -753,7 +753,7 @@ export default function Home() {
                   </li>
                 ))}
               </ul>
-              <Link href="/signup" className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#6C47FF] hover:text-[#5835e0] transition-colors">
+              <Link href="/register" className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#6C47FF] hover:text-[#5835e0] transition-colors">
                 Découvrir le tableau de bord →
               </Link>
             </div>
@@ -796,7 +796,7 @@ export default function Home() {
           <div className="text-5xl">🚀</div>
           <h2 className="text-3xl font-bold text-white">Prêt à fidéliser plus de clients ?</h2>
           <p className="text-white/80 text-lg leading-relaxed">Créez votre carte de fidélité gratuitement et soyez opérationnel en 5 minutes.</p>
-          <Link href="/signup" className="inline-block px-10 py-4 bg-white text-[#6C47FF] font-bold rounded-xl hover:bg-[#F7F6F3] transition-colors shadow-sm text-base">
+          <Link href="/register" className="inline-block px-10 py-4 bg-white text-[#6C47FF] font-bold rounded-xl hover:bg-[#F7F6F3] transition-colors shadow-sm text-base">
             Commencer gratuitement →
           </Link>
           <p className="text-white/60 text-xs">Aucune carte bancaire requise · Sans engagement</p>

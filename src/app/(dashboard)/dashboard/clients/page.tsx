@@ -11,7 +11,7 @@ export default async function ClientsPage() {
 
   const { data: merchant } = await supabase
     .from('merchants')
-    .select('id, stamps_required, primary_color')
+    .select('id, stamps_required, points_required, primary_color, loyalty_type')
     .eq('user_id', user.id)
     .single()
 
@@ -50,11 +50,14 @@ export default async function ClientsPage() {
     }
   }
 
+  const loyaltyType = (merchant.loyalty_type ?? 'stamps') as 'stamps' | 'points'
   const clients = (cards ?? []).map((card) => ({
     ...card,
     customers: Array.isArray(card.customers) ? card.customers[0] : card.customers,
     last_stamp_at: lastStampMap.get(card.id) ?? null,
     stampsRequired: merchant.stamps_required,
+    pointsRequired: merchant.points_required ?? 100,
+    loyaltyType,
     primaryColor: merchant.primary_color,
   })) as Parameters<typeof ClientsTable>[0]['clients']
 

@@ -15,6 +15,11 @@ export default async function MaCartePage() {
 
   if (!merchant) redirect('/dashboard/settings')
 
+  const { count: clientCount } = await supabase
+    .from('loyalty_cards')
+    .select('*', { count: 'exact', head: true })
+    .eq('merchant_id', merchant.id)
+
   return (
     <CardDesignClient
       merchant={{
@@ -27,6 +32,7 @@ export default async function MaCartePage() {
         description: merchant.description ?? '',
         loyalty_type: (merchant.loyalty_type ?? 'stamps') as 'stamps' | 'points',
       }}
+      hasClients={(clientCount ?? 0) > 0}
     />
   )
 }

@@ -13,6 +13,8 @@ interface Client {
     phone: string
   }
   stampsRequired: number
+  pointsRequired: number
+  loyaltyType: 'stamps' | 'points'
   primaryColor: string
 }
 
@@ -57,8 +59,12 @@ export default function ClientsTable({ clients }: Props) {
       {/* Mobile cards */}
       <div className="sm:hidden divide-y divide-[#E8E8E3]">
         {clients.map((client) => {
-          const pct = Math.round((client.stamps_count / client.stampsRequired) * 100)
-          const isAlmostFull = client.stamps_count === client.stampsRequired - 1
+          const isPoints = client.loyaltyType === 'points'
+          const target = isPoints ? client.pointsRequired : client.stampsRequired
+          const current = client.stamps_count
+          const pct = Math.min(100, Math.round((current / target) * 100))
+          const isAlmostFull = current === target - 1
+          const unit = isPoints ? 'pts' : 'tampons'
           return (
             <div key={client.id} className="px-4 py-4 space-y-3">
               <div className="flex items-center justify-between gap-3">
@@ -83,7 +89,7 @@ export default function ClientsTable({ clients }: Props) {
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="text-sm font-semibold" style={{ color: client.primaryColor }}>
-                    {client.stamps_count}/{client.stampsRequired} tampons
+                    {current}/{target} {unit}
                   </span>
                   <span className="text-xs text-[#6B6B6B]">{pct}%</span>
                 </div>
@@ -101,15 +107,20 @@ export default function ClientsTable({ clients }: Props) {
         <thead className="bg-[#F7F6F3]">
           <tr>
             <th className="px-6 py-3.5 text-left text-xs font-semibold text-[#6B6B6B] uppercase tracking-wider">Client</th>
-            <th className="px-6 py-3.5 text-left text-xs font-semibold text-[#6B6B6B] uppercase tracking-wider">Progression</th>
-            <th className="px-6 py-3.5 text-left text-xs font-semibold text-[#6B6B6B] uppercase tracking-wider">Dernier tampon</th>
+            <th className="px-6 py-3.5 text-left text-xs font-semibold text-[#6B6B6B] uppercase tracking-wider">
+              {clients[0]?.loyaltyType === 'points' ? 'Points' : 'Tampons'}
+            </th>
+            <th className="px-6 py-3.5 text-left text-xs font-semibold text-[#6B6B6B] uppercase tracking-wider">Dernière activité</th>
             <th className="px-6 py-3.5 text-left text-xs font-semibold text-[#6B6B6B] uppercase tracking-wider">Statut</th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-[#E8E8E3]">
           {clients.map((client) => {
-            const pct = Math.round((client.stamps_count / client.stampsRequired) * 100)
-            const isAlmostFull = client.stamps_count === client.stampsRequired - 1
+            const isPoints = client.loyaltyType === 'points'
+            const target = isPoints ? client.pointsRequired : client.stampsRequired
+            const current = client.stamps_count
+            const pct = Math.min(100, Math.round((current / target) * 100))
+            const isAlmostFull = current === target - 1
             return (
               <tr key={client.id} className="hover:bg-[#F7F6F3] transition-colors">
                 <td className="px-6 py-4">
@@ -118,7 +129,7 @@ export default function ClientsTable({ clients }: Props) {
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex-1 min-w-0">
-                    <span className="text-sm font-semibold text-[#1A1A1A]">{client.stamps_count}/{client.stampsRequired}</span>
+                    <span className="text-sm font-semibold text-[#1A1A1A]">{current}/{target}</span>
                     <div className="w-full bg-[#F7F6F3] rounded-full h-1.5 mt-1.5">
                       <div className="h-1.5 rounded-full transition-all" style={{ width: `${pct}%`, backgroundColor: client.primaryColor }} />
                     </div>

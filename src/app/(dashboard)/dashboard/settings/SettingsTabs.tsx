@@ -27,6 +27,7 @@ interface Merchant {
 
 interface Props {
   merchant: Merchant | null
+  clientCount: number
 }
 
 function merchantToConfig(m: Merchant): MerchantSharedConfig {
@@ -48,7 +49,7 @@ function merchantToConfig(m: Merchant): MerchantSharedConfig {
   }
 }
 
-export default function SettingsTabs({ merchant }: Props) {
+export default function SettingsTabs({ merchant, clientCount }: Props) {
   const [tab, setTab] = useState<'settings' | 'card'>('settings')
   const [cardInitVersion, setCardInitVersion] = useState(0)
   const [liveConfig, setLiveConfig] = useState<MerchantSharedConfig>(
@@ -124,11 +125,13 @@ export default function SettingsTabs({ merchant }: Props) {
         <MerchantForm
           merchant={merchant}
           onConfigChange={updateLiveConfig}
+          clientCount={clientCount}
         />
       ) : merchant ? (
         <CardDesignClient
           key={`${merchant.id}-v${cardInitVersion}`}
           hideTitle
+          hasClients={clientCount > 0}
           merchant={{
             id: merchant.id,
             business_name: liveConfig.business_name,

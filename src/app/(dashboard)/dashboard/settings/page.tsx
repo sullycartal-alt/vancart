@@ -13,6 +13,13 @@ export default async function SettingsPage() {
     .eq('user_id', user.id)
     .single()
 
+  const { count: clientCount } = merchant
+    ? await supabase
+        .from('loyalty_cards')
+        .select('*', { count: 'exact', head: true })
+        .eq('merchant_id', merchant.id)
+    : { count: 0 }
+
   return (
     <div className="space-y-6">
       <div>
@@ -22,7 +29,7 @@ export default async function SettingsPage() {
         </p>
       </div>
 
-      <SettingsTabs merchant={merchant} />
+      <SettingsTabs merchant={merchant} clientCount={clientCount ?? 0} />
     </div>
   )
 }

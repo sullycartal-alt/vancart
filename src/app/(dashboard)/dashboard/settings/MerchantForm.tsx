@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter } from 'next/navigation'
 import { z } from 'zod'
 import QRCodeDisplay from './QRCodeDisplay'
 import type { MerchantSharedConfig } from '@/types/merchant-config'
@@ -40,6 +41,7 @@ interface Merchant {
 interface Props {
   merchant: Merchant | null
   onConfigChange?: (updates: Partial<MerchantSharedConfig>) => void
+  clientCount?: number
 }
 
 function generateSlug(name: string): string {
@@ -52,13 +54,17 @@ function generateSlug(name: string): string {
     .substring(0, 50)
 }
 
-export default function MerchantForm({ merchant, onConfigChange }: Props) {
+export default function MerchantForm({ merchant, onConfigChange, clientCount = 0 }: Props) {
+  const router = useRouter()
   const [logoUrl, setLogoUrl] = useState<string | null>(merchant?.logo_url ?? null)
   const [logoUploading, setLogoUploading] = useState(false)
   const [logoError, setLogoError] = useState<string | null>(null)
   const [savedMerchant, setSavedMerchant] = useState<Merchant | null>(merchant)
   const [allowMultipleStamps, setAllowMultipleStamps] = useState(merchant?.allow_multiple_stamps ?? true)
   const [success, setSuccess] = useState(false)
+  const [showResetModal, setShowResetModal] = useState(false)
+  const [resetting, setResetting] = useState(false)
+  const [resetDone, setResetDone] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? ''
   const onConfigChangeRef = useRef(onConfigChange)
@@ -132,6 +138,15 @@ export default function MerchantForm({ merchant, onConfigChange }: Props) {
     }
     setSavedMerchant(result)
     setSuccess(true)
+  }
+
+  async function handleResetTestData() {
+    setResetting(true)
+    await fetch('/api/merchants/reset-test-data', { method: 'DELETE' })
+    setResetting(false)
+    setShowResetModal(false)
+    setResetDone(true)
+    router.refresh()
   }
 
   const qrUrl = savedMerchant ? `${appUrl}/${savedMerchant.slug}` : null
@@ -271,6 +286,21 @@ export default function MerchantForm({ merchant, onConfigChange }: Props) {
             <p className="text-sm text-green-700 font-medium">Informations enregistrées avec succès !</p>
           </div>
         )}
+        {resetDone && (
+          <div className="rounded-xl bg-green-50 border border-green-200 p-3">
+            <p className="text-sm text-green-700 font-medium">Données de test supprimées. Vous pouvez maintenant changer le mode de fidélité.</p>
+          </div>
+        )}
+
+        {savedMerchant && clientCount < 5 && (
+          <button
+            type="button"
+            onClick={() => setShowResetModal(true)}
+            className="w-full py-2.5 px-4 rounded-xl text-sm font-medium text-red-600 bg-white border border-red-200 hover:bg-red-50 transition-colors"
+          >
+            🗑️ Supprimer mes données de test
+          </button>
+        )}
 
         <button
           type="submit"
@@ -296,6 +326,39 @@ export default function MerchantForm({ merchant, onConfigChange }: Props) {
             Lien client : <code className="bg-[#F7F6F3] border border-[#E8E8E3] px-1.5 py-0.5 rounded-lg text-xs">{qrUrl}</code>
           </p>
           <QRCodeDisplay url={qrUrl} businessName={savedMerchant.business_name} />
+        </div>
+      )}
+
+      {/* Modal de confirmation reset */}
+      {showResetModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4" onClick={() => setShowResetModal(false)}>
+          <div
+            className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl space-y-4"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="text-3xl text-center">⚠️</div>
+            <h3 className="text-base font-bold text-[#1A1A1A] text-center">Supprimer les données de test ?</h3>
+            <p className="text-sm text-[#6B6B6B] text-center leading-relaxed">
+              Cette action supprimera tous vos clients et tampons. Votre carte et vos paramètres seront conservés. Continuer ?
+            </p>
+            <div className="flex gap-3 pt-1">
+              <button
+                type="button"
+                onClick={() => setShowResetModal(false)}
+                className="flex-1 py-2.5 rounded-xl border border-[#E8E8E3] text-sm font-medium text-[#6B6B6B] hover:bg-[#F7F6F3] transition-colors"
+              >
+                Annuler
+              </button>
+              <button
+                type="button"
+                onClick={handleResetTestData}
+                disabled={resetting}
+                className="flex-1 py-2.5 rounded-xl bg-red-600 text-sm font-semibold text-white hover:bg-red-700 transition-colors disabled:opacity-60"
+              >
+                {resetting ? 'Suppression…' : 'Confirmer'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

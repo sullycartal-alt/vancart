@@ -1,7 +1,5 @@
-'use client'
-
-import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import PhoneParallax from './PhoneParallax'
 
 function CheckIcon({ color = '#6C47FF' }: { color?: string }) {
   return (
@@ -195,14 +193,6 @@ function PhoneMockup() {
 }
 
 export default function Home() {
-  const [scrollY, setScrollY] = useState(0)
-
-  useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY)
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
   return (
     <div className="min-h-screen bg-white flex flex-col">
 
@@ -276,9 +266,11 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right: phone mockup */}
-            <div className="hidden lg:flex justify-center items-center" style={{ transform: `translateY(${scrollY * 0.08}px)` }}>
-              <PhoneMockup />
+            {/* Right: phone mockup — reserved space prevents CLS */}
+            <div className="hidden lg:flex justify-center items-center" style={{ minHeight: 680 }}>
+              <PhoneParallax>
+                <PhoneMockup />
+              </PhoneParallax>
             </div>
           </div>
         </div>
@@ -544,7 +536,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
 
             {/* Plan Découverte */}
-            <div className="bg-white border border-[#E8E8E3] rounded-2xl p-7 flex flex-col transition-all duration-200 hover:scale-[1.03] hover:shadow-[0_8px_30px_rgba(108,71,255,0.12)]">
+            <div className="bg-white border border-[#E8E8E3] rounded-2xl p-7 flex flex-col transition-all duration-200 hover:scale-[1.03] hover:shadow-[0_8px_30px_rgba(108,71,255,0.12)]" style={{ minHeight: 440 }}>
               <div className="flex-1 space-y-6">
                 <div>
                   <div className="inline-flex items-center bg-[#F7F6F3] text-[#6B6B6B] text-xs font-semibold px-3 py-1 rounded-full border border-[#E8E8E3] mb-3">Commencer</div>
@@ -571,7 +563,7 @@ export default function Home() {
             </div>
 
             {/* Plan Essentiel */}
-            <div className="bg-white border-2 border-[#6C47FF] rounded-2xl p-7 flex flex-col relative shadow-lg shadow-[#6C47FF]/10 transition-all duration-200 hover:scale-[1.05] hover:shadow-[0_12px_40px_rgba(108,71,255,0.22)]">
+            <div className="bg-white border-2 border-[#6C47FF] rounded-2xl p-7 flex flex-col relative shadow-lg shadow-[#6C47FF]/10 transition-all duration-200 hover:scale-[1.05] hover:shadow-[0_12px_40px_rgba(108,71,255,0.22)]" style={{ minHeight: 440 }}>
               <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
                 <div className="bg-[#6C47FF] text-white text-xs font-bold px-4 py-1 rounded-full whitespace-nowrap">Le plus populaire</div>
               </div>
@@ -600,7 +592,7 @@ export default function Home() {
             </div>
 
             {/* Plan Pro */}
-            <div className="bg-white border border-[#E8E8E3] rounded-2xl p-7 flex flex-col transition-all duration-200 hover:scale-[1.03] hover:shadow-[0_8px_30px_rgba(108,71,255,0.12)]">
+            <div className="bg-white border border-[#E8E8E3] rounded-2xl p-7 flex flex-col transition-all duration-200 hover:scale-[1.03] hover:shadow-[0_8px_30px_rgba(108,71,255,0.12)]" style={{ minHeight: 440 }}>
               <div className="flex-1 space-y-6">
                 <div>
                   <div className="inline-flex items-center bg-[#F7F6F3] text-[#6B6B6B] text-xs font-semibold px-3 py-1 rounded-full border border-[#E8E8E3] mb-3">Pour aller plus loin</div>

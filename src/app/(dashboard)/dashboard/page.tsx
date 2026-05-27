@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import DashboardQR from './DashboardQR'
+import AlertBanner from './AlertBanner'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -37,7 +38,7 @@ export default async function DashboardPage() {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
-  const [{ count: activeCards }, { count: stampsToday }, { data: rewardsData }] = await Promise.all([
+  const [{ count: activeCards }, { count: stampsToday }, { data: rewardsData }, { data: alertsData }] = await Promise.all([
     supabase
       .from('loyalty_cards')
       .select('*', { count: 'exact', head: true })
@@ -51,14 +52,25 @@ export default async function DashboardPage() {
       .from('loyalty_cards')
       .select('rewards_unlocked')
       .eq('merchant_id', merchant.id),
+    supabase
+      .from('stamp_alerts')
+      .select('id, message, triggered_at')
+      .eq('merchant_id', merchant.id)
+      .eq('dismissed', false)
+      .eq('auto_dismissed', false)
+      .order('triggered_at', { ascending: false })
+      .limit(5),
   ])
 
   const totalRewards = rewardsData?.reduce((sum, c) => sum + c.rewards_unlocked, 0) ?? 0
 
   const qrUrl = `${process.env.NEXT_PUBLIC_APP_URL}/${merchant.slug}`
 
+  const activeAlerts = (alertsData ?? []).map(a => ({ id: a.id, message: a.message, triggered_at: a.triggered_at as string }))
+
   return (
     <div className="space-y-6">
+      {activeAlerts.length > 0 && <AlertBanner alerts={activeAlerts} />}
       <div className="flex items-start justify-between gap-3">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-[#1A1A1A]">Tableau de bord</h1>

@@ -6,6 +6,7 @@ import { z } from 'zod'
 const customerSchema = z.object({
   phone: z.string().min(8),
   first_name: z.string().min(1),
+  merchant_id: z.string().uuid().optional(),
 })
 
 export async function POST(request: Request) {
@@ -27,17 +28,37 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
   }
 
+  const { phone, first_name, merchant_id } = parsed.data
+
   const { data: existing } = await service
     .from('customers')
     .select('id, phone, first_name')
-    .eq('phone', parsed.data.phone)
+    .eq('phone', phone)
     .single()
 
-  if (existing) return NextResponse.json(existing)
+  if (existing) {
+    // If merchant_id provided, check for duplicate loyalty card
+    if (merchant_id) {
+      const { data: existingCard } = await service
+        .from('loyalty_cards')
+        .select('id')
+        .eq('merchant_id', merchant_id)
+        .eq('customer_id', existing.id)
+        .single()
+
+      if (existingCard) {
+        return NextResponse.json(
+          { error: 'DUPLICATE_PHONE', existingCardId: existingCard.id },
+          { status: 409 },
+        )
+      }
+    }
+    return NextResponse.json(existing)
+  }
 
   const { data, error } = await service
     .from('customers')
-    .insert(parsed.data)
+    .insert({ phone, first_name })
     .select()
     .single()
 

@@ -34,6 +34,7 @@ interface Merchant {
   description?: string | null
   instagram_handle?: string | null
   city?: string | null
+  allow_multiple_stamps?: boolean | null
 }
 
 interface Props {
@@ -56,6 +57,7 @@ export default function MerchantForm({ merchant, onConfigChange }: Props) {
   const [logoUploading, setLogoUploading] = useState(false)
   const [logoError, setLogoError] = useState<string | null>(null)
   const [savedMerchant, setSavedMerchant] = useState<Merchant | null>(merchant)
+  const [allowMultipleStamps, setAllowMultipleStamps] = useState(merchant?.allow_multiple_stamps ?? true)
   const [success, setSuccess] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? ''
@@ -120,6 +122,7 @@ export default function MerchantForm({ merchant, onConfigChange }: Props) {
         description: data.description || null,
         instagram_handle: data.instagram_handle || null,
         city: data.city || null,
+        allow_multiple_stamps: allowMultipleStamps,
       }),
     })
     const result = await res.json()
@@ -234,6 +237,28 @@ export default function MerchantForm({ merchant, onConfigChange }: Props) {
           </label>
           <input {...register('city')} type="text" id="city" placeholder="Ex : Paris, Lyon, Marseille…" maxLength={60} className={inputClass} />
           {errors.city && <p className="mt-1 text-sm text-red-500">{errors.city.message}</p>}
+        </div>
+
+        {/* Règles de tamponnage */}
+        <div className="rounded-xl border border-[#E8E8E3] p-4 space-y-1">
+          <p className="text-sm font-semibold text-[#1A1A1A] mb-3">Règles de tamponnage</p>
+          <label className="flex items-start gap-3 cursor-pointer select-none">
+            <button
+              type="button"
+              role="switch"
+              aria-checked={allowMultipleStamps}
+              onClick={() => setAllowMultipleStamps(v => !v)}
+              className={`relative mt-0.5 w-10 h-6 rounded-full flex-shrink-0 transition-colors focus:outline-none focus:ring-2 focus:ring-[#6C47FF]/30 ${allowMultipleStamps ? 'bg-[#6C47FF]' : 'bg-gray-300'}`}
+            >
+              <span className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-transform ${allowMultipleStamps ? 'left-5' : 'left-1'}`} />
+            </button>
+            <div>
+              <p className="text-sm font-medium text-[#1A1A1A]">Tampons multiples par visite</p>
+              <p className="text-xs text-[#6B6B6B] mt-0.5 leading-relaxed">
+                Permettre de donner plusieurs tampons en une seule visite (ex : 3 commandes = 3 tampons)
+              </p>
+            </div>
+          </label>
         </div>
 
         {errors.root && (

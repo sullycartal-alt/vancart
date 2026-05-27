@@ -54,8 +54,48 @@ export async function POST(request: Request) {
   const { error: stampError } = await supabase.from('stamps').insert({
     loyalty_card_id: card.id,
     merchant_id: merchant.id,
+    ip_address: ip,
   })
   if (stampError) return NextResponse.json({ error: stampError.message }, { status: 500 })
+
+  // Rapid stamp detection: check if >= 5 stamps in last 5 minutes for this merchant
+  try {
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString()
+    const { count: recentCount } = await supabase
+      .from('stamps')
+      .select('*', { count: 'exact', head: true })
+      .eq('merchant_id', merchant.id)
+      .gte('given_at', fiveMinutesAgo)
+
+    if ((recentCount ?? 0) >= 5) {
+      await supabase.from('stamp_alerts').insert({
+        merchant_id: merchant.id,
+        alert_type: 'rapid_stamps',
+        message: '5 tampons donnés en moins de 5 minutes',
+      })
+
+      // Auto-dismiss if merchant has 5+ rapid_stamps alerts today (they naturally stamp fast)
+      const todayStart = new Date()
+      todayStart.setHours(0, 0, 0, 0)
+      const { count: todayAlertCount } = await supabase
+        .from('stamp_alerts')
+        .select('*', { count: 'exact', head: true })
+        .eq('merchant_id', merchant.id)
+        .eq('alert_type', 'rapid_stamps')
+        .gte('triggered_at', todayStart.toISOString())
+
+      if ((todayAlertCount ?? 0) >= 5) {
+        await supabase
+          .from('stamp_alerts')
+          .update({ auto_dismissed: true })
+          .eq('merchant_id', merchant.id)
+          .eq('alert_type', 'rapid_stamps')
+          .gte('triggered_at', todayStart.toISOString())
+      }
+    }
+  } catch {
+    // Alert logic never breaks the stamp flow
+  }
 
   let updateData: Record<string, number>
   let rewardUnlocked = false

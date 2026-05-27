@@ -25,6 +25,9 @@ function timeAgo(iso: string): string {
 export default async function AdminPage() {
   const supabase = createServiceClient()
 
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
   const [
     { count: totalMerchants },
     { count: totalCards },
@@ -33,14 +36,22 @@ export default async function AdminPage() {
     { data: allMerchants },
     { data: allStamps },
     { data: cardsData },
+    { data: allAlerts },
+    { count: stampsToday },
+    { count: newMerchantsToday },
+    { data: recentStampsRaw },
   ] = await Promise.all([
     supabase.from('merchants').select('*', { count: 'exact', head: true }),
     supabase.from('loyalty_cards').select('*', { count: 'exact', head: true }),
     supabase.from('stamps').select('*', { count: 'exact', head: true }),
     supabase.from('loyalty_cards').select('rewards_unlocked'),
-    supabase.from('merchants').select('id, user_id, business_name, created_at, loyalty_type, city').order('created_at', { ascending: false }),
+    supabase.from('merchants').select('id, user_id, business_name, created_at, loyalty_type, city, plan').order('created_at', { ascending: false }),
     supabase.from('stamps').select('merchant_id, given_at'),
     supabase.from('loyalty_cards').select('merchant_id, created_at'),
+    supabase.from('stamp_alerts').select('id, merchant_id, alert_type, message, triggered_at, dismissed, auto_dismissed').eq('auto_dismissed', false).order('triggered_at', { ascending: false }).limit(200),
+    supabase.from('stamps').select('*', { count: 'exact', head: true }).gte('given_at', today.toISOString()),
+    supabase.from('merchants').select('*', { count: 'exact', head: true }).gte('created_at', today.toISOString()),
+    supabase.from('stamps').select('id, given_at, merchant_id, loyalty_card_id, ip_address').order('given_at', { ascending: false }).limit(50),
   ])
 
   const totalRewards = rewardsData?.reduce((s, c) => s + (c.rewards_unlocked ?? 0), 0) ?? 0
@@ -93,6 +104,12 @@ export default async function AdminPage() {
   const emailByUserId: Record<string, string> = {}
   for (const u of users ?? []) emailByUserId[u.id] = u.email ?? ''
 
+  // Total stamps per merchant (all-time)
+  const totalStampsByMerchant: Record<string, number> = {}
+  for (const s of stamps) {
+    totalStampsByMerchant[s.merchant_id] = (totalStampsByMerchant[s.merchant_id] ?? 0) + 1
+  }
+
   // Merchant rows
   const merchants = (allMerchants ?? []).map(m => ({
     id: m.id,
@@ -100,10 +117,12 @@ export default async function AdminPage() {
     email: emailByUserId[m.user_id] ?? '—',
     created_at: m.created_at,
     stamps_this_month: stampsCountByMerchant[m.id] ?? 0,
+    total_stamps: totalStampsByMerchant[m.id] ?? 0,
     active_cards: cardsCountByMerchant[m.id] ?? 0,
     loyalty_type: m.loyalty_type ?? 'stamps',
     city: m.city ?? null,
     last_stamp_at: lastStampByMerchant[m.id] ?? null,
+    plan: (m as { plan?: string | null }).plan ?? null,
   }))
 
   // Inactive merchants (have had stamps, none in 14+ days)
@@ -119,6 +138,33 @@ export default async function AdminPage() {
       email: m.email,
       last_stamp_at: m.last_stamp_at!,
     }))
+
+  // Alerts enriched with merchant name
+  const merchantNameByIdMap: Record<string, string> = {}
+  for (const m of allMerchants ?? []) merchantNameByIdMap[m.id] = m.business_name
+  const alerts = (allAlerts ?? []).map(a => ({
+    ...a,
+    merchant_name: merchantNameByIdMap[a.merchant_id] ?? '—',
+  }))
+
+  // Recent stamps for Activité tab: enrich with merchant name + loyalty_card customer
+  // We'll join customer names via loyalty_cards in the client for simplicity, pass raw data
+  const recentStampsActivity = (recentStampsRaw ?? []).map(s => ({
+    id: s.id,
+    given_at: s.given_at as string,
+    merchant_name: merchantNameByIdMap[s.merchant_id] ?? '—',
+    loyalty_card_id: s.loyalty_card_id as string,
+    ip_address: (s as { ip_address?: string | null }).ip_address ?? null,
+  }))
+
+  // Today's metrics
+  const todayMetrics = {
+    stampsToday: stampsToday ?? 0,
+    newMerchantsToday: newMerchantsToday ?? 0,
+    activeMerchantsToday: new Set(
+      (allStamps ?? []).filter(s => new Date(s.given_at) >= today).map(s => s.merchant_id)
+    ).size,
+  }
 
   // Activity feed: combine stamps + new cards + new merchants (last 20)
   type ActivityItem = { type: 'stamp' | 'new_card' | 'new_merchant'; business_name: string; timestamp: string }
@@ -199,6 +245,9 @@ export default async function AdminPage() {
         dailyStamps={dailyStamps}
         inactiveMerchants={inactiveMerchants}
         recentActivity={recentActivity}
+        alerts={alerts}
+        todayMetrics={todayMetrics}
+        recentStampsActivity={recentStampsActivity}
       />
     </div>
   )

@@ -27,7 +27,7 @@ function PhoneMockup() {
         width: 280,
         background: '#1a1a1a',
         borderRadius: 44,
-        padding: 8,
+        padding: 6,
         boxShadow: '0 0 0 1px #2a2a2a, 0 30px 60px rgba(0,0,0,0.25), 0 15px 30px rgba(108,71,255,0.12)',
         position: 'relative',
       }}>
@@ -36,14 +36,14 @@ function PhoneMockup() {
         {/* Boutons volume (gauche) */}
         <div style={{ position: 'absolute', left: -2, top: 80, width: 2, height: 35, background: '#2a2a2a', borderRadius: '3px 0 0 3px', boxShadow: '0 50px 0 #2a2a2a, 0 100px 0 #2a2a2a' }} />
 
-        {/* Dynamic Island */}
-        <div style={{ width: 120, height: 34, background: '#000', borderRadius: 20, margin: '8px auto 6px' }} />
-
         {/* Écran */}
-        <div style={{ background: '#f5f5f7', borderRadius: 38, overflow: 'hidden', minHeight: 520 }}>
+        <div style={{ background: '#f5f5f7', borderRadius: 38, overflow: 'hidden', minHeight: 520, position: 'relative' }}>
+
+          {/* Dynamic Island — flottant sur l'écran */}
+          <div style={{ width: 126, height: 37, background: '#000', borderRadius: 20, position: 'absolute', top: 12, left: '50%', transform: 'translateX(-50%)', zIndex: 10 }} />
 
           {/* Barre de status iOS */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 20px 6px', background: '#f5f5f7' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px 6px', background: '#f5f5f7' }}>
             <span style={{ fontSize: 13, fontWeight: 700, color: '#1a1a1a', letterSpacing: -0.3 }}>9:41</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
               {/* Signal */}
@@ -141,10 +141,6 @@ function PhoneMockup() {
           </div>
         </div>
 
-        {/* Home indicator sous l'écran */}
-        <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 10 }}>
-          <div style={{ width: 100, height: 4, background: '#3a3a3a', borderRadius: 4 }} />
-        </div>
       </div>
     </div>
   )

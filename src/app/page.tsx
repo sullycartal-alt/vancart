@@ -26,15 +26,15 @@ function PhoneMockup() {
       <div style={{
         width: 280,
         background: '#1a1a1a',
-        borderRadius: 50,
-        padding: 14,
-        boxShadow: '0 0 0 1px #3a3a3a, 0 40px 80px rgba(0,0,0,0.35), 0 20px 40px rgba(108,71,255,0.15), inset 0 0 0 1px #2a2a2a',
+        borderRadius: 44,
+        padding: 8,
+        boxShadow: '0 0 0 1px #2a2a2a, 0 30px 60px rgba(0,0,0,0.25), 0 15px 30px rgba(108,71,255,0.12)',
         position: 'relative',
       }}>
         {/* Bouton power (droite) */}
-        <div style={{ position: 'absolute', right: -3, top: 100, width: 3, height: 60, background: '#2a2a2a', borderRadius: '0 3px 3px 0', boxShadow: '0 80px 0 #2a2a2a' }} />
+        <div style={{ position: 'absolute', right: -2, top: 100, width: 2, height: 60, background: '#2a2a2a', borderRadius: '0 3px 3px 0', boxShadow: '0 80px 0 #2a2a2a' }} />
         {/* Boutons volume (gauche) */}
-        <div style={{ position: 'absolute', left: -3, top: 80, width: 3, height: 35, background: '#2a2a2a', borderRadius: '3px 0 0 3px', boxShadow: '0 50px 0 #2a2a2a, 0 100px 0 #2a2a2a' }} />
+        <div style={{ position: 'absolute', left: -2, top: 80, width: 2, height: 35, background: '#2a2a2a', borderRadius: '3px 0 0 3px', boxShadow: '0 50px 0 #2a2a2a, 0 100px 0 #2a2a2a' }} />
 
         {/* Dynamic Island */}
         <div style={{ width: 120, height: 34, background: '#000', borderRadius: 20, margin: '8px auto 6px' }} />

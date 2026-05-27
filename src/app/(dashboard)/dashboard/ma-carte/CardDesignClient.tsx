@@ -270,11 +270,12 @@ interface Merchant {
 }
 
 export default function CardDesignClient({
-  merchant, hideTitle, onConfigChange,
+  merchant, hideTitle, onConfigChange, hasClients = false,
 }: {
   merchant: Merchant
   hideTitle?: boolean
   onConfigChange?: (updates: Partial<MerchantSharedConfig>) => void
+  hasClients?: boolean
 }) {
   const router = useRouter()
   const onConfigChangeRef = useRef(onConfigChange)
@@ -483,16 +484,30 @@ export default function CardDesignClient({
 
           {/* Mode fidélité */}
           <div className="space-y-2">
-            <label className="block text-sm font-semibold text-[#1A1A1A]">Mode de fidélité</label>
-            <div className="inline-flex rounded-xl border border-[#E8E8E3] bg-[#F7F6F3] p-1 gap-1">
+            <div className="flex items-center gap-2">
+              <label className="block text-sm font-semibold text-[#1A1A1A]">Mode de fidélité</label>
+              {hasClients && (
+                <span
+                  title="Le mode de fidélité ne peut plus être modifié une fois vos premiers clients inscrits"
+                  className="cursor-help text-base leading-none"
+                >
+                  🔒
+                </span>
+              )}
+            </div>
+            <div
+              className="inline-flex rounded-xl border border-[#E8E8E3] bg-[#F7F6F3] p-1 gap-1"
+              title={hasClients ? "Le mode de fidélité ne peut plus être modifié une fois vos premiers clients inscrits" : undefined}
+            >
               {(['stamps', 'points'] as const).map(type => (
                 <button
                   key={type}
                   type="button"
-                  onClick={() => handleLoyaltyTypeChange(type)}
-                  className="px-4 py-1.5 rounded-lg text-sm font-medium transition-all"
+                  onClick={() => !hasClients && handleLoyaltyTypeChange(type)}
+                  disabled={hasClients}
+                  className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${hasClients ? 'cursor-not-allowed opacity-60' : ''}`}
                   style={loyaltyType === type
-                    ? { backgroundColor: color, color: '#fff' }
+                    ? { backgroundColor: hasClients ? '#9CA3AF' : color, color: '#fff' }
                     : { backgroundColor: 'transparent', color: '#6B6B6B' }
                   }
                 >
@@ -500,6 +515,14 @@ export default function CardDesignClient({
                 </button>
               ))}
             </div>
+            {!hasClients && (
+              <div className="flex items-start gap-2 rounded-xl border border-amber-200 bg-[#FFFBEB] px-4 py-3 mt-2">
+                <span className="text-base leading-none flex-shrink-0 mt-0.5">⚠️</span>
+                <p className="text-xs text-amber-800 leading-relaxed">
+                  Choisissez bien votre mode de fidélité — il ne pourra plus être modifié une fois vos premiers clients inscrits. Les tampons sont recommandés pour les bars et restaurants, les points pour les commerces avec des achats de montants variables.
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Stamps required (mode tampons) */}

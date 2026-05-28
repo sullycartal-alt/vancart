@@ -4,14 +4,25 @@ import { NextResponse, type NextRequest } from 'next/server'
 const ADMIN_EMAIL = 'sullycartal@gmail.com'
 
 export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl
+
   // PWA standalone redirect: SW adds x-pwa-standalone header to navigation requests.
   // If customer cookie exists, skip landing page and go straight to wallet.
   if (
-    request.nextUrl.pathname === '/' &&
+    pathname === '/' &&
     request.headers.get('x-pwa-standalone') === '1' &&
     request.cookies.has('vancart_customer_id')
   ) {
     return NextResponse.redirect(new URL('/wallet', request.url))
+  }
+
+  // Auth guard only applies to merchant-facing protected routes.
+  // /wallet and /carte/* are customer-facing public routes — no Supabase account needed.
+  const isProtectedRoute =
+    pathname.startsWith('/dashboard') || pathname.startsWith('/admin')
+
+  if (!isProtectedRoute) {
+    return NextResponse.next()
   }
 
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
@@ -38,7 +49,7 @@ export async function proxy(request: NextRequest) {
       return NextResponse.redirect(url)
     }
 
-    if (request.nextUrl.pathname.startsWith('/admin') && user.email !== ADMIN_EMAIL) {
+    if (pathname.startsWith('/admin') && user.email !== ADMIN_EMAIL) {
       const url = request.nextUrl.clone()
       url.pathname = '/dashboard'
       return NextResponse.redirect(url)
@@ -53,3 +64,4 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: ['/', '/dashboard/:path*', '/admin/:path*'],
 }
+

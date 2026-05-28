@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import InstallBanner from '@/components/pwa/InstallBanner'
 
@@ -150,13 +151,22 @@ function PointsBar({ count, total, color }: { count: number; total: number; colo
 }
 
 export default function CardClient({ initialCard, customerId }: { initialCard: CardData; customerId: string }) {
+  const router = useRouter()
   const [card, setCard] = useState(initialCard)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
   const [showCelebration, setShowCelebration] = useState(false)
   const [confettiActive, setConfettiActive] = useState(false)
   const [newStampIdx, setNewStampIdx] = useState<number | null>(null)
   const [showRewardQR, setShowRewardQR] = useState(false)
+  const [isStandalone, setIsStandalone] = useState(false)
   const prevCount = useRef(initialCard.stamps_count)
+
+  useEffect(() => {
+    setIsStandalone(
+      window.matchMedia('(display-mode: standalone)').matches ||
+      (window.navigator as { standalone?: boolean }).standalone === true
+    )
+  }, [])
 
   useEffect(() => {
     const maxAge = 60 * 60 * 24 * 365
@@ -232,6 +242,20 @@ export default function CardClient({ initialCard, customerId }: { initialCard: C
               Fermer
             </button>
           </div>
+        </div>
+      )}
+
+      {isStandalone && (
+        <div className="max-w-sm mx-auto px-4 pt-4">
+          <button
+            onClick={() => router.push('/wallet')}
+            className="flex items-center gap-1 text-sm text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Mes cartes
+          </button>
         </div>
       )}
 

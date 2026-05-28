@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import Image from 'next/image'
 import InstallBanner from '@/components/pwa/InstallBanner'
 
 interface Merchant {
@@ -238,10 +239,11 @@ export default function CardClient({ initialCard }: { initialCard: CardData }) {
           {/* Header */}
           <div className="px-6 pt-7 pb-5 text-center">
             {merchant.logo_url ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <Image
                 src={merchant.logo_url}
                 alt={merchant.business_name}
+                width={48}
+                height={48}
                 className="h-12 w-auto mx-auto mb-3 object-contain"
                 style={{ filter: tc === '#ffffff' ? 'brightness(0) invert(1)' : 'none' }}
               />

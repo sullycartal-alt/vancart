@@ -6,7 +6,7 @@ import { updateWalletClass } from '@/lib/google-wallet'
 
 const merchantSchema = z.object({
   business_name: z.string().min(2).max(100),
-  slug: z.string().min(2).regex(/^[a-z0-9-]+$/, 'Slug must be lowercase alphanumeric with hyphens'),
+  slug: z.string().min(2).regex(/^[a-z0-9-]+$/, "L'identifiant doit être en minuscules, sans espaces, avec des tirets"),
   logo_url: z.string().url().nullable().optional(),
   primary_color: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Must be a valid hex color').optional(),
   loyalty_rule: z.string().max(200).optional(),

@@ -43,8 +43,8 @@ export default async function GuidePage() {
   return (
     <div className="max-w-2xl space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Guide de démarrage</h1>
-        <p className="mt-1 text-sm text-gray-500">Tout ce qu'il faut pour lancer votre programme de fidélité.</p>
+        <h1 className="text-2xl font-bold text-[#1A1A1A]">Guide de démarrage</h1>
+        <p className="mt-1 text-sm text-[#6B6B6B]">Tout ce qu'il faut pour lancer votre programme de fidélité.</p>
       </div>
 
       {/* Steps */}
@@ -56,7 +56,7 @@ export default async function GuidePage() {
             desc: 'Ajoutez votre logo, choisissez la couleur de votre marque, rédigez votre règle de fidélité et définissez le nombre de tampons ou points requis.',
             action: (
               <Link href="/dashboard/settings"
-                className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors">
+                className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-[#6C47FF] rounded-xl hover:bg-[#5835e0] transition-colors">
                 Configurer mon commerce →
               </Link>
             ),
@@ -76,7 +76,7 @@ export default async function GuidePage() {
             desc: (
               <span>
                 Pour tamponner une carte, allez sur{' '}
-                <Link href="/dashboard/stamp" className="text-indigo-600 font-medium hover:underline">Tamponner</Link>
+                <Link href="/dashboard/stamp" className="text-[#6C47FF] font-medium hover:underline">Tamponner</Link>
                 {' '}dans le menu. Appuyez sur "Scanner un QR code", pointez la caméra sur la carte du client, et c'est fait en 2 secondes.
                 Si le client n'a pas son QR code sous la main, vous pouvez aussi le rechercher par numéro de téléphone.
                 La confirmation s'affiche instantanément avec le nombre de tampons restants.
@@ -84,7 +84,7 @@ export default async function GuidePage() {
             ),
             action: (
               <Link href="/dashboard/stamp"
-                className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-indigo-600 border border-indigo-200 rounded-lg hover:bg-indigo-50 transition-colors">
+                className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-[#6C47FF] border border-[#6C47FF]/25 rounded-xl hover:bg-[#EEE9FF] transition-colors">
                 Ouvrir Tamponner →
               </Link>
             ),
@@ -102,13 +102,13 @@ export default async function GuidePage() {
         ].map(({ num, title, desc, action, done }) => (
           <div key={num} className="bg-white rounded-xl shadow-sm p-6 flex gap-5">
             <div className="flex-shrink-0">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${done ? 'bg-green-100 text-green-700' : 'bg-indigo-50 text-indigo-600'}`}>
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${done ? 'bg-green-100 text-green-700' : 'bg-[#EEE9FF] text-[#6C47FF]'}`}>
                 {done ? '✓' : num}
               </div>
             </div>
             <div className="space-y-3 flex-1">
-              <h2 className="text-base font-semibold text-gray-900">{title}</h2>
-              <p className="text-sm text-gray-600 leading-relaxed">{desc}</p>
+              <h2 className="text-base font-semibold text-[#1A1A1A]">{title}</h2>
+              <p className="text-sm text-[#6B6B6B] leading-relaxed">{desc}</p>
               {action && <div>{action}</div>}
             </div>
           </div>
@@ -117,12 +117,12 @@ export default async function GuidePage() {
 
       {/* FAQ */}
       <div className="space-y-4">
-        <h2 className="text-lg font-semibold text-gray-900">Questions fréquentes</h2>
+        <h2 className="text-lg font-semibold text-[#1A1A1A]">Questions fréquentes</h2>
         <div className="space-y-3">
           {FAQ.map(({ q, a }) => (
             <div key={q} className="bg-white rounded-xl shadow-sm p-5">
-              <p className="text-sm font-semibold text-gray-900 mb-1.5">{q}</p>
-              <p className="text-sm text-gray-600 leading-relaxed">{a}</p>
+              <p className="text-sm font-semibold text-[#1A1A1A] mb-1.5">{q}</p>
+              <p className="text-sm text-[#6B6B6B] leading-relaxed">{a}</p>
             </div>
           ))}
         </div>

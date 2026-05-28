@@ -195,7 +195,7 @@ function PhoneMockup() {
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-[#F7F6F3] flex flex-col">
       <PWARedirect />
 
       {/* ── Nav ────────────────────────────────────────────────────────────── */}

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 const PEEK = 72
 const FULL = 520
@@ -97,7 +98,8 @@ function PointsProgress({ count, total }: { count: number; total: number }) {
   )
 }
 
-export default function WalletClient({ cards }: { cards: WalletCard[] }) {
+export default function WalletClient({ cards, error }: { cards: WalletCard[]; error?: boolean }) {
+  const router = useRouter()
   const [openIdx, setOpenIdx] = useState<number | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -111,6 +113,22 @@ export default function WalletClient({ cards }: { cards: WalletCard[] }) {
     document.addEventListener('mousedown', handle)
     return () => document.removeEventListener('mousedown', handle)
   }, [openIdx])
+
+  if (error) {
+    return (
+      <div className="bg-white border border-[#E8E8E3] rounded-2xl p-8 text-center space-y-4">
+        <p className="text-2xl">⚠️</p>
+        <p className="text-sm text-[#6B6B6B]">Impossible de charger vos cartes.</p>
+        <button
+          onClick={() => router.refresh()}
+          className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white transition-colors hover:opacity-90 active:scale-[0.98]"
+          style={{ backgroundColor: '#6C47FF' }}
+        >
+          Réessayer
+        </button>
+      </div>
+    )
+  }
 
   if (cards.length === 0) {
     return (

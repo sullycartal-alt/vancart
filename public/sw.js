@@ -143,7 +143,15 @@ self.addEventListener('fetch', (event) => {
   } else if (isImage(url)) {
     event.respondWith(cacheFirstWithExpiry(event.request))
   } else if (isNavigationRequest(event.request)) {
-    event.respondWith(networkFirst(event.request, DYNAMIC_CACHE))
+    const headers = new Headers(event.request.headers)
+    headers.set('x-pwa-standalone', '1')
+    const pwaRequest = new Request(event.request.url, {
+      method: event.request.method,
+      headers,
+      credentials: event.request.credentials,
+      redirect: event.request.redirect,
+    })
+    event.respondWith(networkFirst(pwaRequest, DYNAMIC_CACHE))
   } else {
     event.respondWith(networkFirst(event.request, DYNAMIC_CACHE))
   }

@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import PhoneParallax from './PhoneParallax'
+import PWARedirect from '@/components/pwa/PWARedirect'
 
 function CheckIcon({ color = '#6C47FF' }: { color?: string }) {
   return (
@@ -195,6 +196,7 @@ function PhoneMockup() {
 export default function Home() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
+      <PWARedirect />
 
       {/* ── Nav ────────────────────────────────────────────────────────────── */}
       <nav className="border-b border-[#E8E8E3] px-6 py-4 bg-white sticky top-0 z-50">

@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import DashboardQR from './DashboardQR'
 import AlertBanner from './AlertBanner'
+import PushNotifySection from './PushNotifySection'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -119,6 +120,9 @@ export default async function DashboardPage() {
         businessName={merchant.business_name}
         color={merchant.primary_color}
       />
+
+      {/* Push notifications */}
+      <PushNotifySection merchantId={merchant.id} />
     </div>
   )
 }

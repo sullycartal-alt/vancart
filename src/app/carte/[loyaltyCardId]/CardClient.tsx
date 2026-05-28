@@ -265,15 +265,28 @@ export default function CardClient({ initialCard }: { initialCard: CardData }) {
 
           {/* Status bar */}
           <div className="mx-4 mb-5 rounded-xl px-4 py-2.5 text-center" style={{ backgroundColor: `${tc}18` }}>
-            {isComplete ? (
-              <p className="text-xs font-bold" style={{ color: tc }}>🎉 Récompense prête ! Montrez cette carte au commerçant.</p>
-            ) : (
-              <p className="text-xs font-semibold" style={{ color: tc }}>
-                {isPoints
-                  ? `🎯 Plus que ${left} pts pour votre récompense`
-                  : left === 1 ? "⭐ Plus qu'1 tampon pour votre récompense !" : `🎯 Plus que ${left} tampons pour votre récompense`}
-              </p>
-            )}
+            {(() => {
+              const unit = isPoints ? 'pt' : 'tampon'
+              const unitPlural = isPoints ? 'pts' : 'tampons'
+              const pct = Math.round((count / total) * 100)
+              let msg: string
+              if (isComplete) {
+                msg = '🎉 Récompense prête ! Montrez cette carte au commerçant.'
+              } else if (pct >= 95) {
+                msg = `😍 Plus que ${left} ${left === 1 ? unit : unitPlural}... votre récompense vous attend !`
+              } else if (pct >= 90) {
+                msg = `🚀 Ça sent la récompense, plus que ${left} ${left === 1 ? unit : unitPlural} !`
+              } else if (pct >= 80) {
+                msg = '💪 Vous y êtes presque, encore un effort !'
+              } else if (pct >= 70) {
+                msg = `🔥 C'est pour bientôt, plus que ${left} ${left === 1 ? unit : unitPlural} !`
+              } else if (pct >= 50) {
+                msg = '⚡ Vous êtes à mi-chemin, continuez !'
+              } else {
+                msg = `🎯 Plus que ${left} ${left === 1 ? unit : unitPlural} pour votre récompense`
+              }
+              return <p className="text-xs font-semibold" style={{ color: tc }}>{msg}</p>
+            })()}
           </div>
         </div>
 

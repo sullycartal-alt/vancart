@@ -149,7 +149,7 @@ function PointsBar({ count, total, color }: { count: number; total: number; colo
   )
 }
 
-export default function CardClient({ initialCard }: { initialCard: CardData }) {
+export default function CardClient({ initialCard, customerId }: { initialCard: CardData; customerId: string }) {
   const [card, setCard] = useState(initialCard)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
   const [showCelebration, setShowCelebration] = useState(false)
@@ -157,6 +157,12 @@ export default function CardClient({ initialCard }: { initialCard: CardData }) {
   const [newStampIdx, setNewStampIdx] = useState<number | null>(null)
   const [showRewardQR, setShowRewardQR] = useState(false)
   const prevCount = useRef(initialCard.stamps_count)
+
+  useEffect(() => {
+    const maxAge = 60 * 60 * 24 * 365
+    const secure = location.protocol === 'https:' ? '; Secure' : ''
+    document.cookie = `vancart_customer_id=${customerId}; max-age=${maxAge}; path=/; SameSite=Lax${secure}`
+  }, [customerId])
 
   useEffect(() => {
     const interval = setInterval(async () => {

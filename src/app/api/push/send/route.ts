@@ -12,6 +12,7 @@ webpush.setVapidDetails(
 
 const schema = z.object({
   merchant_id: z.string().uuid(),
+  customer_id: z.string().uuid().optional(),
   title: z.string().min(1).max(100),
   body: z.string().min(1).max(200),
 })
@@ -25,7 +26,7 @@ export async function POST(request: Request) {
   const parsed = schema.safeParse(body)
   if (!parsed.success) return NextResponse.json({ error: 'Invalid payload' }, { status: 400 })
 
-  const { merchant_id, title, body: notifBody } = parsed.data
+  const { merchant_id, customer_id, title, body: notifBody } = parsed.data
   const service = createServiceClient()
 
   // Verify caller owns the merchant
@@ -38,12 +39,16 @@ export async function POST(request: Request) {
 
   if (!merchant) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
-  const { data: subs } = await service
+  let query = service
     .from('push_subscriptions')
     .select('subscription')
     .eq('merchant_id', merchant_id)
 
-  if (!subs?.length) return NextResponse.json({ sent: 0 })
+  if (customer_id) query = query.eq('customer_id', customer_id)
+
+  const { data: subs } = await query
+
+  if (!subs?.length) return NextResponse.json({ sent: 0, total: 0 })
 
   const payload = JSON.stringify({ title, body: notifBody, url: '/wallet' })
 

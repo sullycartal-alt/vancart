@@ -131,7 +131,8 @@ export default function MerchantForm({ merchant, onConfigChange, clientCount = 0
         instagram_handle: data.instagram_handle || null,
         city: data.city || null,
         allow_multiple_stamps: allowMultipleStamps,
-        stamps_per_visit: stampsPerVisit,
+        // Only include once the column exists in the DB (migration applied)
+        ...(merchant?.stamps_per_visit != null ? { stamps_per_visit: stampsPerVisit } : {}),
       }),
     })
     const result = await res.json()

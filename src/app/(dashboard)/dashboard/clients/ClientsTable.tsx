@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 interface Client {
   id: string
   stamps_count: number
+  points: number
   rewards_unlocked: number
   last_stamp_at: string | null
   customers: {
@@ -61,10 +62,11 @@ export default function ClientsTable({ clients }: Props) {
         {clients.map((client) => {
           const isPoints = client.loyaltyType === 'points'
           const target = isPoints ? client.pointsRequired : client.stampsRequired
-          const current = client.stamps_count
+          const current = isPoints ? client.points : client.stamps_count
           const pct = Math.min(100, Math.round((current / target) * 100))
           const isAlmostFull = current === target - 1
           const unit = isPoints ? 'pts' : 'tampons'
+          const icon = isPoints ? '🏆' : '🎴'
           return (
             <div key={client.id} className="px-4 py-4 space-y-3">
               <div className="flex items-center justify-between gap-3">
@@ -89,7 +91,7 @@ export default function ClientsTable({ clients }: Props) {
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="text-sm font-semibold" style={{ color: client.primaryColor }}>
-                    {current}/{target} {unit}
+                    {icon} {current}/{target} {unit}
                   </span>
                   <span className="text-xs text-[#6B6B6B]">{pct}%</span>
                 </div>
@@ -118,9 +120,10 @@ export default function ClientsTable({ clients }: Props) {
           {clients.map((client) => {
             const isPoints = client.loyaltyType === 'points'
             const target = isPoints ? client.pointsRequired : client.stampsRequired
-            const current = client.stamps_count
+            const current = isPoints ? client.points : client.stamps_count
             const pct = Math.min(100, Math.round((current / target) * 100))
             const isAlmostFull = current === target - 1
+            const icon = isPoints ? '🏆' : '🎴'
             return (
               <tr key={client.id} className="hover:bg-[#F7F6F3] transition-colors">
                 <td className="px-6 py-4">
@@ -129,7 +132,7 @@ export default function ClientsTable({ clients }: Props) {
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex-1 min-w-0">
-                    <span className="text-sm font-semibold text-[#1A1A1A]">{current}/{target}</span>
+                    <span className="text-sm font-semibold text-[#1A1A1A]">{icon} {current}/{target}</span>
                     <div className="w-full bg-[#F7F6F3] rounded-full h-1.5 mt-1.5">
                       <div className="h-1.5 rounded-full transition-all" style={{ width: `${pct}%`, backgroundColor: client.primaryColor }} />
                     </div>

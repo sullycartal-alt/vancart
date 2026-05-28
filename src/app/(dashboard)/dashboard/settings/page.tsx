@@ -20,6 +20,9 @@ export default async function SettingsPage() {
         .eq('merchant_id', merchant.id)
     : { count: 0 }
 
+  const isAdmin = user.email === 'sullycartal@gmail.com'
+  const effectiveClientCount = isAdmin ? 0 : (clientCount ?? 0)
+
   return (
     <div className="space-y-6">
       <div>
@@ -29,7 +32,7 @@ export default async function SettingsPage() {
         </p>
       </div>
 
-      <SettingsTabs merchant={merchant} clientCount={clientCount ?? 0} />
+      <SettingsTabs merchant={merchant} clientCount={effectiveClientCount} />
     </div>
   )
 }

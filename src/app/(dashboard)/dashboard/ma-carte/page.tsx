@@ -20,6 +20,9 @@ export default async function MaCartePage() {
     .select('*', { count: 'exact', head: true })
     .eq('merchant_id', merchant.id)
 
+  const isAdmin = user.email === 'sullycartal@gmail.com'
+  const hasClients = !isAdmin && (clientCount ?? 0) > 0
+
   return (
     <CardDesignClient
       merchant={{
@@ -32,7 +35,7 @@ export default async function MaCartePage() {
         description: merchant.description ?? '',
         loyalty_type: (merchant.loyalty_type ?? 'stamps') as 'stamps' | 'points',
       }}
-      hasClients={(clientCount ?? 0) > 0}
+      hasClients={hasClients}
     />
   )
 }

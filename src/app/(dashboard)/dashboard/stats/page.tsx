@@ -119,7 +119,7 @@ export default async function StatsPage({ searchParams }: { searchParams: Promis
 
   const { data: merchant } = await supabase
     .from('merchants')
-    .select('id, primary_color, stamps_required, plan')
+    .select('id, primary_color, stamps_required, loyalty_type, plan')
     .eq('user_id', user.id)
     .single()
 
@@ -258,6 +258,7 @@ export default async function StatsPage({ searchParams }: { searchParams: Promis
           <StatsAnalyseClient
             primaryColor={merchant.primary_color}
             period={period}
+            loyaltyType={merchant.loyalty_type ?? 'stamps'}
             clients={analyseClients}
             plan={plan}
             customFrom={params.from}
@@ -267,6 +268,7 @@ export default async function StatsPage({ searchParams }: { searchParams: Promis
           <StatsClient
             primaryColor={merchant.primary_color}
             period={period}
+            loyaltyType={merchant.loyalty_type ?? 'stamps'}
             kpis={{ totalClients, stampsCount, rewardsInPeriod, returnRate }}
             weeklyNewClients={weeklyNewClients}
             dailyStamps={dailyStamps}

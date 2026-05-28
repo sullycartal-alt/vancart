@@ -9,6 +9,7 @@ interface MerchantContext {
   business_name?: string
   loyalty_rule?: string
   stamps_required?: number
+  points_required?: number | null
   loyalty_type?: string
 }
 

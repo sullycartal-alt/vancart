@@ -325,9 +325,9 @@ export default function AdminClient({
                   { label: 'Inscrit le', value: new Date(detailMerchant.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' }) },
                   { label: 'Mode fidélité', value: detailMerchant.loyalty_type === 'points' ? '🏆 Points' : '🎴 Tampons' },
                   { label: 'Cartes actives', value: String(detailMerchant.active_cards) },
-                  { label: 'Tampons ce mois', value: String(detailMerchant.stamps_this_month) },
-                  { label: 'Tampons total', value: String(detailMerchant.total_stamps) },
-                  { label: 'Dernier tampon', value: detailMerchant.last_stamp_at ? timeAgoFmt(detailMerchant.last_stamp_at) : '—' },
+                  { label: detailMerchant.loyalty_type === 'points' ? 'Points ce mois' : 'Tampons ce mois', value: String(detailMerchant.stamps_this_month) },
+                  { label: detailMerchant.loyalty_type === 'points' ? 'Points total' : 'Tampons total', value: String(detailMerchant.total_stamps) },
+                  { label: detailMerchant.loyalty_type === 'points' ? 'Dernier point' : 'Dernier tampon', value: detailMerchant.last_stamp_at ? timeAgoFmt(detailMerchant.last_stamp_at) : '—' },
                 ].map(({ label, value }) => (
                   <div key={label} className="flex justify-between gap-4">
                     <dt className="text-gray-500 font-medium shrink-0">{label}</dt>
@@ -500,7 +500,7 @@ export default function AdminClient({
                       Clients <SortIcon k="active_cards" />
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide cursor-pointer hover:text-gray-700 select-none" onClick={() => toggleSort('total_stamps')}>
-                      Tampons total <SortIcon k="total_stamps" />
+                      Activité totale <SortIcon k="total_stamps" />
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wide cursor-pointer hover:text-gray-700 select-none" onClick={() => toggleSort('stamps_this_month')}>
                       Ce mois <SortIcon k="stamps_this_month" />

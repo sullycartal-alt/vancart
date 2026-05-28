@@ -28,6 +28,7 @@ interface KPIs {
 interface Props {
   primaryColor: string
   period: Period
+  loyaltyType: string
   kpis: KPIs
   weeklyNewClients: { week: string; clients: number }[]
   dailyStamps: { date: string; tampons: number }[]
@@ -56,11 +57,13 @@ function formatDate(iso: string) {
 }
 
 export default function StatsClient({
-  primaryColor, period, kpis, weeklyNewClients, dailyStamps, byDayOfWeek, top5, customFrom, customTo,
+  primaryColor, period, loyaltyType, kpis, weeklyNewClients, dailyStamps, byDayOfWeek, top5, customFrom, customTo,
 }: Props) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const maxDow = Math.max(...byDayOfWeek.map(d => d.tampons), 1)
+  const isPoints = loyaltyType === 'points'
+  const activityLabel = isPoints ? 'Points' : 'Tampons'
 
   function updateParams(updates: Record<string, string | undefined>) {
     const params = new URLSearchParams(searchParams.toString())
@@ -147,7 +150,7 @@ export default function StatsClient({
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <KPICard label="Clients inscrits" value={kpis.totalClients} sub="total" />
-        <KPICard label="Tampons" value={kpis.stampsCount} sub="sur la période" />
+        <KPICard label={activityLabel} value={kpis.stampsCount} sub="sur la période" />
         <KPICard label="Récompenses" value={kpis.rewardsInPeriod} sub="sur la période" />
         <KPICard label="Taux de retour" value={`${kpis.returnRate}%`} sub="clients actifs / total" />
       </div>
@@ -168,13 +171,13 @@ export default function StatsClient({
         </div>
 
         <div className="bg-white border border-[#E8E8E3] rounded-xl p-5">
-          <SectionTitle>Tampons sur la période</SectionTitle>
+          <SectionTitle>{activityLabel} sur la période</SectionTitle>
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={dailyStamps}>
               <CartesianGrid strokeDasharray="3 3" stroke="#E8E8E3" vertical={false} />
               <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#6B6B6B' }} axisLine={false} tickLine={false} interval={Math.max(0, Math.floor(dailyStamps.length / 6) - 1)} />
               <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: '#6B6B6B' }} axisLine={false} tickLine={false} width={24} />
-              <Tooltip contentStyle={{ fontSize: 12, borderRadius: 10, border: '1px solid #E8E8E3' }} formatter={(v) => [v, 'Tampons']} />
+              <Tooltip contentStyle={{ fontSize: 12, borderRadius: 10, border: '1px solid #E8E8E3' }} formatter={(v) => [v, activityLabel]} />
               <Line type="monotone" dataKey="tampons" stroke={primaryColor} strokeWidth={2} dot={false} activeDot={{ r: 4, strokeWidth: 0 }} />
             </LineChart>
           </ResponsiveContainer>
@@ -203,7 +206,7 @@ export default function StatsClient({
       <div className="bg-white border border-[#E8E8E3] rounded-xl p-5">
         <SectionTitle>Top 5 clients les plus fidèles</SectionTitle>
         {top5.length === 0 ? (
-          <p className="text-sm text-[#6B6B6B] py-4 text-center">Aucun tampon distribué pour l&apos;instant</p>
+          <p className="text-sm text-[#6B6B6B] py-4 text-center">Aucun {isPoints ? 'point' : 'tampon'} distribué pour l&apos;instant</p>
         ) : (
           <div className="divide-y divide-[#E8E8E3]">
             {top5.map((client, i) => (
@@ -218,7 +221,7 @@ export default function StatsClient({
                   <span className="text-sm font-semibold text-[#1A1A1A]">{client.firstName}</span>
                 </div>
                 <div className="flex items-center gap-6 text-sm text-[#6B6B6B]">
-                  <span><strong className="text-[#1A1A1A]">{client.totalStamps}</strong> tampon{client.totalStamps !== 1 ? 's' : ''}</span>
+                  <span><strong className="text-[#1A1A1A]">{client.totalStamps}</strong> {isPoints ? 'point' : 'tampon'}{client.totalStamps !== 1 ? 's' : ''}</span>
                   <span className="hidden sm:block text-xs text-[#6B6B6B]">Dernière visite : {formatDate(client.lastVisit)}</span>
                 </div>
               </div>

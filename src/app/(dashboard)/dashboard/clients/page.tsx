@@ -32,7 +32,7 @@ export default async function ClientsPage() {
   const [{ data: cards }, { data: lastStamps }] = await Promise.all([
     supabase
       .from('loyalty_cards')
-      .select('id, stamps_count, rewards_unlocked, customers(first_name, phone)')
+      .select('id, stamps_count, points, rewards_unlocked, customers(first_name, phone)')
       .eq('merchant_id', merchant.id)
       .order('created_at', { ascending: false }),
     supabase
@@ -58,6 +58,7 @@ export default async function ClientsPage() {
     stampsRequired: merchant.stamps_required,
     pointsRequired: merchant.points_required ?? 100,
     loyaltyType,
+    points: (card as { points?: number | null }).points ?? 0,
     primaryColor: merchant.primary_color,
   })) as Parameters<typeof ClientsTable>[0]['clients']
 

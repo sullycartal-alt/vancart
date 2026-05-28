@@ -11,6 +11,7 @@ interface Merchant {
   loyalty_type: string
   points_per_euro: number | null
   points_required: number | null
+  stamps_per_visit?: number | null
 }
 
 interface LoyaltyCard {
@@ -23,9 +24,14 @@ interface LoyaltyCard {
 
 interface StampResult {
   card: LoyaltyCard
-  reward_unlocked: boolean
+  reward_pending: boolean
   mode: string
   points_added?: number
+}
+
+interface PendingReward {
+  cardId: string
+  firstName: string
 }
 
 interface RecentStamp {
@@ -106,6 +112,12 @@ export default function StampClient({ merchant, stampsToday, stampsMonth, reward
   const [pendingCardId, setPendingCardId] = useState<string | null>(null)
   const [purchaseAmount, setPurchaseAmount] = useState('')
 
+  const [pendingReward, setPendingReward] = useState<PendingReward | null>(null)
+  const [rewardProcessing, setRewardProcessing] = useState(false)
+  const [rewardValidated, setRewardValidated] = useState<{ firstName: string } | null>(null)
+
+  const [nbStamps, setNbStamps] = useState(merchant.stamps_per_visit ?? 1)
+
   const [phone, setPhone] = useState('')
   const [searching, setSearching] = useState(false)
   const [card, setCard] = useState<LoyaltyCard | null>(null)
@@ -114,20 +126,42 @@ export default function StampClient({ merchant, stampsToday, stampsMonth, reward
 
   const [result, setResult] = useState<StampResult | null>(null)
 
-  async function submitStamp(cardId: string, amount?: number) {
+  async function submitStamp(cardId: string, amount?: number, stamps?: number) {
     const res = await fetch('/api/stamps', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ loyalty_card_id: cardId, ...(amount !== undefined ? { amount } : {}) }),
+      body: JSON.stringify({
+        loyalty_card_id: cardId,
+        ...(amount !== undefined ? { amount } : {}),
+        ...(stamps !== undefined && stamps > 1 ? { nb_stamps: stamps } : {}),
+      }),
     })
     const data = await res.json()
     if (res.ok) { setResult(data) } else { setScanError(data.error ?? 'Erreur') }
   }
 
-  const handleQRScan = useCallback(async (data: string) => {
+  const handleQRScan = useCallback(async (raw: string) => {
     setScanning(false)
     setScanError(null)
-    const uuid = data.trim()
+    const trimmed = raw.trim()
+
+    if (trimmed.startsWith('REWARD:')) {
+      const cardId = trimmed.slice('REWARD:'.length)
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cardId)) {
+        setScanError('QR de récompense invalide.')
+        return
+      }
+      setProcessing(true)
+      const res = await fetch(`/api/public/card?id=${cardId}`)
+      setProcessing(false)
+      if (!res.ok) { setScanError('Carte non trouvée.'); return }
+      const cardData = await res.json()
+      const firstName = (Array.isArray(cardData.customers) ? cardData.customers[0] : cardData.customers)?.first_name ?? '?'
+      setPendingReward({ cardId, firstName })
+      return
+    }
+
+    const uuid = trimmed
     if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(uuid)) {
       setScanError('QR code non reconnu. Assurez-vous de scanner la carte de fidélité.')
       return
@@ -137,10 +171,10 @@ export default function StampClient({ merchant, stampsToday, stampsMonth, reward
       setPurchaseAmount('')
     } else {
       setProcessing(true)
-      await submitStamp(uuid)
+      await submitStamp(uuid, undefined, nbStamps)
       setProcessing(false)
     }
-  }, [isPoints]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isPoints, nbStamps]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleQRError = useCallback((msg: string) => {
     setScanning(false)
@@ -164,36 +198,80 @@ export default function StampClient({ merchant, stampsToday, stampsMonth, reward
     const res = await fetch('/api/stamps', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ loyalty_card_id: card.id, ...(amount !== undefined ? { amount } : {}) }),
+      body: JSON.stringify({
+        loyalty_card_id: card.id,
+        ...(amount !== undefined ? { amount } : {}),
+        ...(!isPoints && nbStamps > 1 ? { nb_stamps: nbStamps } : {}),
+      }),
     })
     const data = await res.json()
     if (res.ok) { setResult(data); setCard(null) }
     setStamping(false)
   }
 
+  async function handleRewardConfirm() {
+    if (!pendingReward) return
+    setRewardProcessing(true)
+    const res = await fetch('/api/rewards/redeem', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ card_id: pendingReward.cardId }),
+    })
+    setRewardProcessing(false)
+    if (res.ok) {
+      setRewardValidated({ firstName: pendingReward.firstName })
+      setPendingReward(null)
+    } else {
+      const data = await res.json()
+      setScanError(data.error ?? 'Erreur lors de la validation')
+      setPendingReward(null)
+    }
+  }
+
   function handleReset() {
     setPhone(''); setCard(null); setResult(null); setSearchError(null)
     setScanError(null); setScanning(false); setPendingCardId(null); setPurchaseAmount('')
+    setPendingReward(null); setRewardValidated(null)
+  }
+
+  if (rewardValidated) {
+    return (
+      <div className="bg-white border border-amber-300 rounded-2xl p-6 sm:p-8 text-center space-y-6">
+        <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto text-3xl bg-amber-400">
+          🎁
+        </div>
+        <div>
+          <h2 className="text-xl font-bold text-[#1A1A1A]">Récompense validée !</h2>
+          <p className="text-[#6B6B6B] mt-1 text-sm">{rewardValidated.firstName} a réclamé sa récompense.</p>
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mt-4">
+            <p className="text-sm text-amber-800 font-medium">Le compteur repart à zéro ✓</p>
+          </div>
+        </div>
+        <button onClick={handleReset} className="w-full py-2.5 px-4 border border-[#E8E8E3] rounded-xl text-sm font-medium text-[#1A1A1A] hover:bg-[#F7F6F3] transition-colors">
+          Nouveau client
+        </button>
+      </div>
+    )
   }
 
   if (result) {
-    const { card: c, reward_unlocked, mode, points_added } = result
+    const { card: c, reward_pending, mode, points_added } = result
     const displayCount = mode === 'points' ? (c.points ?? 0) : c.stamps_count
     const displayTotal = mode === 'points' ? pointsRequired : merchant.stamps_required
     const unit = mode === 'points' ? 'pts' : 'tampon(s)'
     return (
       <div className="bg-white border border-[#E8E8E3] rounded-2xl p-6 sm:p-8 text-center space-y-6">
         <div className="w-24 h-24 sm:w-20 sm:h-20 rounded-full flex items-center justify-center mx-auto text-4xl sm:text-3xl"
-          style={{ backgroundColor: reward_unlocked ? '#10b981' : merchant.primary_color, color: 'white' }}>
-          {reward_unlocked ? '🎉' : '✓'}
+          style={{ backgroundColor: reward_pending ? '#f59e0b' : merchant.primary_color, color: 'white' }}>
+          {reward_pending ? '🎁' : '✓'}
         </div>
-        {reward_unlocked ? (
+        {reward_pending ? (
           <div>
             <h2 className="text-2xl sm:text-xl font-bold text-[#1A1A1A]">Récompense débloquée !</h2>
-            <p className="text-[#6B6B6B] mt-1 text-base sm:text-sm">{c.customers.first_name} a obtenu sa récompense.</p>
-            <div className="bg-green-50 border border-green-200 rounded-xl p-4 mt-4">
-              <p className="text-base sm:text-sm text-green-800 font-medium">
-                Sa carte repart à zéro — {displayCount} {unit} sur {displayTotal}
+            <p className="text-[#6B6B6B] mt-1 text-base sm:text-sm">{c.customers.first_name} a atteint son objectif.</p>
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mt-4">
+              <p className="text-base sm:text-sm text-amber-800 font-medium">
+                {displayCount}/{displayTotal} {unit} — Demandez-lui le QR doré pour valider la récompense
               </p>
             </div>
           </div>
@@ -220,6 +298,33 @@ export default function StampClient({ merchant, stampsToday, stampsMonth, reward
         <button onClick={handleReset} className="w-full py-2.5 px-4 border border-[#E8E8E3] rounded-xl text-sm font-medium text-[#1A1A1A] hover:bg-[#F7F6F3] transition-colors">
           Nouveau client
         </button>
+      </div>
+    )
+  }
+
+  if (pendingReward) {
+    return (
+      <div className="bg-white border-2 border-amber-400 rounded-2xl p-6 space-y-5">
+        <div className="text-center">
+          <div className="text-4xl mb-3">🎁</div>
+          <h2 className="text-lg font-bold text-[#1A1A1A]">Valider la récompense de {pendingReward.firstName} ?</h2>
+          <p className="text-sm text-[#6B6B6B] mt-1">Le compteur sera remis à zéro.</p>
+        </div>
+        <div className="flex gap-3">
+          <button
+            onClick={() => setPendingReward(null)}
+            className="flex-1 py-2.5 px-4 border border-[#E8E8E3] rounded-xl text-sm font-medium text-[#1A1A1A] hover:bg-[#F7F6F3] transition-colors"
+          >
+            Annuler
+          </button>
+          <button
+            onClick={handleRewardConfirm}
+            disabled={rewardProcessing}
+            className="flex-1 py-2.5 px-4 rounded-xl text-white text-sm font-semibold bg-amber-500 hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {rewardProcessing ? 'Validation...' : '✓ Confirmer'}
+          </button>
+        </div>
       </div>
     )
   }
@@ -286,7 +391,22 @@ export default function StampClient({ merchant, stampsToday, stampsMonth, reward
 
       {/* QR Scanner */}
       <div className="bg-white border border-[#E8E8E3] rounded-2xl p-5 sm:p-6 space-y-4">
-        <h2 className="text-sm font-semibold text-[#1A1A1A]">Scanner la carte du client</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-[#1A1A1A]">Scanner la carte du client</h2>
+          {!isPoints && (
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-[#6B6B6B]">Tampons :</span>
+              <input
+                type="number"
+                min={1}
+                max={10}
+                value={nbStamps}
+                onChange={e => setNbStamps(Math.max(1, Math.min(10, parseInt(e.target.value) || 1)))}
+                className="w-14 text-center rounded-lg border border-[#E8E8E3] bg-[#F7F6F3] px-2 py-1 text-sm font-semibold text-[#1A1A1A] focus:outline-none focus:border-[#6C47FF]"
+              />
+            </div>
+          )}
+        </div>
         {scanning ? (
           <div className="space-y-3">
             <QRScanner onScan={handleQRScan} onError={handleQRError} />
@@ -299,7 +419,7 @@ export default function StampClient({ merchant, stampsToday, stampsMonth, reward
             style={{ backgroundColor: merchant.primary_color }}
             className="w-full py-5 sm:py-4 px-4 rounded-2xl text-white font-bold text-lg sm:text-base hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-3 min-h-[72px] sm:min-h-0"
           >
-            {processing ? 'Enregistrement...' : (
+            {processing ? 'Recherche...' : (
               <>
                 <svg className="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 3.5V16M4.5 4.5h3v3h-3v-3zm10 0h3v3h-3v-3zm0 10h3v3h-3v-3zM4.5 14.5h3v3h-3v-3z" />

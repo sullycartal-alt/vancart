@@ -1,0 +1,1 @@
+ALTER TABLE merchants ADD COLUMN IF NOT EXISTS stamps_per_visit INTEGER DEFAULT 1;

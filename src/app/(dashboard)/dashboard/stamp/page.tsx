@@ -9,7 +9,7 @@ export default async function StampPage() {
 
   const { data: merchant } = await supabase
     .from('merchants')
-    .select('id, business_name, stamps_required, primary_color, loyalty_type, points_per_euro, points_required')
+    .select('id, business_name, stamps_required, primary_color, loyalty_type, points_per_euro, points_required, stamps_per_visit')
     .eq('user_id', user.id)
     .single()
 

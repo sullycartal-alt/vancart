@@ -77,6 +77,12 @@ function objectId(cardId: string): string {
   return `${cfg().issuerId}.c_${cardId.replace(/-/g, '_')}`
 }
 
+function buildStampsVisual(stampsCount: number, stampsRequired: number): string {
+  const filled = '●'.repeat(Math.min(stampsCount, stampsRequired))
+  const empty = '○'.repeat(Math.max(stampsRequired - stampsCount, 0))
+  return `${filled}${empty}   ${stampsCount}/${stampsRequired}`
+}
+
 function classBody(cId: string, p: { merchantName: string; loyaltyRule: string; primaryColor: string; logoUrl?: string | null }) {
   const body: Record<string, unknown> = {
     id: cId,
@@ -106,7 +112,7 @@ function objectBody(oId: string, cId: string, p: {
   showInstagram?: boolean
 }) {
   const textModules: Array<{ header: string; body: string; id: string }> = [
-    { header: 'Progression', body: `${p.stampsCount} tampon(s) sur ${p.stampsRequired}`, id: 'stamps_progress' },
+    { header: 'Tampons', body: buildStampsVisual(p.stampsCount, p.stampsRequired), id: 'stamps_progress' },
   ]
   if (p.walletMessage) {
     textModules.push({ header: 'Message', body: p.walletMessage, id: 'wallet_message' })
@@ -125,7 +131,6 @@ function objectBody(oId: string, cId: string, p: {
     barcode: {
       type: 'QR_CODE',
       value: p.cardId,
-      alternateText: p.cardId,
     },
     textModulesData: textModules,
   }
@@ -332,8 +337,8 @@ export async function updateWalletPass(
         label: 'Tampons',
       },
       textModulesData: [{
-        header: 'Progression',
-        body: `${stampsCount} tampon(s) sur ${stampsRequired}`,
+        header: 'Tampons',
+        body: buildStampsVisual(stampsCount, stampsRequired),
         id: 'stamps_progress',
       }],
     }),

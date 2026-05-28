@@ -153,6 +153,7 @@ export default function CardClient({ initialCard }: { initialCard: CardData }) {
   const [showCelebration, setShowCelebration] = useState(false)
   const [confettiActive, setConfettiActive] = useState(false)
   const [newStampIdx, setNewStampIdx] = useState<number | null>(null)
+  const [showRewardQR, setShowRewardQR] = useState(false)
   const prevCount = useRef(initialCard.stamps_count)
 
   useEffect(() => {
@@ -295,6 +296,35 @@ export default function CardClient({ initialCard }: { initialCard: CardData }) {
           <p className="text-sm font-semibold text-gray-800">Présentez ce QR code au commerçant</p>
           <div className="flex justify-center"><QRCanvas value={card.id} /></div>
         </div>
+
+        {/* Reward QR block — shown when card is complete */}
+        {isComplete && (
+          <div className="border-2 border-amber-400 bg-amber-50 rounded-2xl p-5 text-center space-y-3" style={{ boxShadow: '0 0 0 4px #fef3c720' }}>
+            <p className="text-base font-bold text-amber-800">🎁 Récompense prête !</p>
+            <p className="text-sm text-amber-700">{merchant.loyalty_rule}</p>
+            {showRewardQR ? (
+              <div className="space-y-3">
+                <div className="flex justify-center bg-white rounded-xl p-3">
+                  <QRCanvas value={`REWARD:${card.id}`} />
+                </div>
+                <p className="text-xs font-semibold text-amber-700">Montrez ce QR code doré au commerçant</p>
+                <button
+                  onClick={() => setShowRewardQR(false)}
+                  className="text-xs text-amber-500 underline hover:text-amber-700"
+                >
+                  Masquer
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setShowRewardQR(true)}
+                className="w-full py-3 rounded-xl font-semibold text-sm text-amber-900 bg-amber-400 hover:bg-amber-500 active:scale-[0.98] transition-all shadow-md"
+              >
+                Demander ma récompense →
+              </button>
+            )}
+          </div>
+        )}
 
         {/* Google Wallet — prominent */}
         <a

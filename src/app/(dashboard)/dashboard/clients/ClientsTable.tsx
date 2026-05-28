@@ -64,7 +64,8 @@ export default function ClientsTable({ clients }: Props) {
           const target = isPoints ? client.pointsRequired : client.stampsRequired
           const current = isPoints ? client.points : client.stamps_count
           const pct = Math.min(100, Math.round((current / target) * 100))
-          const isAlmostFull = current === target - 1
+          const isRewardPending = current >= target
+          const isAlmostFull = !isRewardPending && current === target - 1
           const unit = isPoints ? 'pts' : 'tampons'
           const icon = isPoints ? '🏆' : '🎴'
           return (
@@ -75,7 +76,11 @@ export default function ClientsTable({ clients }: Props) {
                   <p className="text-xs text-[#6B6B6B] mt-0.5">{client.customers.phone}</p>
                 </div>
                 <div className="flex-shrink-0">
-                  {isAlmostFull ? (
+                  {isRewardPending ? (
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-400">
+                      🎁 Récompense en attente
+                    </span>
+                  ) : isAlmostFull ? (
                     <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
                       🔥 Presque !
                     </span>
@@ -122,7 +127,8 @@ export default function ClientsTable({ clients }: Props) {
             const target = isPoints ? client.pointsRequired : client.stampsRequired
             const current = isPoints ? client.points : client.stamps_count
             const pct = Math.min(100, Math.round((current / target) * 100))
-            const isAlmostFull = current === target - 1
+            const isRewardPending = current >= target
+            const isAlmostFull = !isRewardPending && current === target - 1
             const icon = isPoints ? '🏆' : '🎴'
             return (
               <tr key={client.id} className="hover:bg-[#F7F6F3] transition-colors">
@@ -140,7 +146,9 @@ export default function ClientsTable({ clients }: Props) {
                 </td>
                 <td className="px-6 py-4 text-sm text-[#6B6B6B]">{formatDate(client.last_stamp_at)}</td>
                 <td className="px-6 py-4">
-                  {isAlmostFull ? (
+                  {isRewardPending ? (
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-400">🎁 Récompense en attente</span>
+                  ) : isAlmostFull ? (
                     <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">🔥 Presque !</span>
                   ) : client.rewards_unlocked > 0 ? (
                     <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">🎉 {client.rewards_unlocked} récompense{client.rewards_unlocked > 1 ? 's' : ''}</span>

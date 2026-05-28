@@ -3,11 +3,11 @@ import { checkRateLimit, getClientIp } from '@/lib/rate-limit'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { isConfigured, updateWalletPass } from '@/lib/google-wallet'
-import { effectivePlan, type Plan } from '@/lib/plan-features'
 
 const stampSchema = z.object({
   loyalty_card_id: z.string().uuid(),
   amount: z.number().positive().optional(), // required in points mode (purchase € amount)
+  nb_stamps: z.number().int().min(1).max(10).optional(), // stamps mode only: stamps to add at once
 })
 
 export async function POST(request: Request) {
@@ -51,11 +51,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Loyalty card not found or access denied' }, { status: 403 })
   }
 
-  const { error: stampError } = await supabase.from('stamps').insert({
+  const nbStamps = (!isPoints && parsed.data.nb_stamps) ? parsed.data.nb_stamps : 1
+  const stampRows = Array.from({ length: nbStamps }, () => ({
     loyalty_card_id: card.id,
     merchant_id: merchant.id,
     ip_address: ip,
-  })
+  }))
+  const { error: stampError } = await supabase.from('stamps').insert(stampRows)
   if (stampError) return NextResponse.json({ error: stampError.message }, { status: 500 })
 
   // Rapid stamp detection: check if >= 5 stamps in last 5 minutes for this merchant
@@ -98,38 +100,26 @@ export async function POST(request: Request) {
   }
 
   let updateData: Record<string, number>
-  let rewardUnlocked = false
+  let rewardPending = false
   let pointsAdded: number | undefined
 
   if (isPoints) {
     pointsAdded = Math.round((parsed.data.amount ?? 0) * (merchant.points_per_euro ?? 1))
     const newPoints = (card.points ?? 0) + pointsAdded
     const required = merchant.points_required ?? 100
-    let finalPoints = newPoints
-    let newRewards = card.rewards_unlocked
-    if (newPoints >= required) {
-      newRewards += 1
-      finalPoints = newPoints - required
-      rewardUnlocked = true
-    }
+    rewardPending = newPoints >= required
+    const finalPoints = rewardPending ? required : newPoints
     updateData = {
       points: finalPoints,
       total_stamps_earned: card.total_stamps_earned + pointsAdded,
-      rewards_unlocked: newRewards,
     }
   } else {
-    const newStamps = card.stamps_count + 1
-    let finalStamps = newStamps
-    let newRewards = card.rewards_unlocked
-    if (newStamps >= merchant.stamps_required) {
-      newRewards += 1
-      finalStamps = newStamps - merchant.stamps_required
-      rewardUnlocked = true
-    }
+    const newStamps = card.stamps_count + nbStamps
+    rewardPending = newStamps >= merchant.stamps_required
+    const finalStamps = rewardPending ? merchant.stamps_required : newStamps
     updateData = {
       stamps_count: finalStamps,
-      total_stamps_earned: card.total_stamps_earned + 1,
-      rewards_unlocked: newRewards,
+      total_stamps_earned: card.total_stamps_earned + nbStamps,
     }
   }
 
@@ -145,37 +135,9 @@ export async function POST(request: Request) {
     await updateWalletPass(card.id, updateData.stamps_count ?? 0, merchant.stamps_required).catch(() => {})
   }
 
-  // SMS notification when reward unlocked (Pro plan only)
-  if (rewardUnlocked) {
-    const plan = effectivePlan((merchant.plan ?? 'free') as Plan, user.email ?? undefined)
-    if (plan === 'pro') {
-      const customerPhone = (updatedCard as { customers?: { phone?: string; first_name?: string } }).customers?.phone
-      const customerFirstName = (updatedCard as { customers?: { phone?: string; first_name?: string } }).customers?.first_name ?? 'vous'
-      if (
-        customerPhone &&
-        process.env.TWILIO_ACCOUNT_SID &&
-        process.env.TWILIO_AUTH_TOKEN &&
-        process.env.TWILIO_PHONE_NUMBER
-      ) {
-        try {
-          const twilio = require('twilio')
-          const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN)
-          const e164Phone = customerPhone.startsWith('+') ? customerPhone : `+33${customerPhone.replace(/^0/, '')}`
-          await client.messages.create({
-            body: `🎉 Félicitations ${customerFirstName} ! Votre récompense chez ${merchant.business_name} est débloquée. Présentez cette carte lors de votre prochaine visite !`,
-            from: process.env.TWILIO_PHONE_NUMBER,
-            to: e164Phone,
-          })
-        } catch {
-          // SMS failure never breaks the stamp flow
-        }
-      }
-    }
-  }
-
   return NextResponse.json({
     card: updatedCard,
-    reward_unlocked: rewardUnlocked,
+    reward_pending: rewardPending,
     mode: merchant.loyalty_type,
     points_added: pointsAdded,
   })

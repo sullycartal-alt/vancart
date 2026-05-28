@@ -163,6 +163,7 @@ export default function CardClient({ initialCard }: { initialCard: CardData }) {
         const fresh = await res.json()
         const next: CardData = {
           ...fresh,
+          points: fresh.points ?? 0,
           merchants: Array.isArray(fresh.merchants) ? fresh.merchants[0] : fresh.merchants,
           customers: Array.isArray(fresh.customers) ? fresh.customers[0] : fresh.customers,
         }
@@ -280,7 +281,6 @@ export default function CardClient({ initialCard }: { initialCard: CardData }) {
         <div className="bg-white rounded-2xl shadow-sm p-5 text-center space-y-3">
           <p className="text-sm font-semibold text-gray-800">Présentez ce QR code au commerçant</p>
           <div className="flex justify-center"><QRCanvas value={card.id} /></div>
-          <p className="text-xs text-gray-300 font-mono truncate">{card.id}</p>
         </div>
 
         {/* Google Wallet — prominent */}

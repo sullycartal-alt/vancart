@@ -27,6 +27,7 @@ interface Client {
 interface Props {
   primaryColor: string
   period: Period
+  loyaltyType: string
   clients: Client[]
   plan: Plan
   customFrom?: string
@@ -59,7 +60,9 @@ function isActive(lastVisit: string): boolean {
 
 type SortKey = 'firstName' | 'totalStamps' | 'rewardsUnlocked' | 'firstVisit' | 'lastVisit'
 
-export default function StatsAnalyseClient({ primaryColor, period, clients, plan, customFrom, customTo }: Props) {
+export default function StatsAnalyseClient({ primaryColor, period, loyaltyType, clients, plan, customFrom, customTo }: Props) {
+  const isPoints = loyaltyType === 'points'
+  const activityLabel = isPoints ? 'Points' : 'Tampons'
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -100,7 +103,7 @@ export default function StatsAnalyseClient({ primaryColor, period, clients, plan
   }, [clients, search, sortKey, sortAsc])
 
   function exportCSV() {
-    const header = ['Prénom', 'Téléphone', 'Tampons totaux', 'Récompenses', 'Première visite', 'Dernière visite', 'Fréquence', 'Statut']
+    const header = ['Prénom', 'Téléphone', `${activityLabel} totaux`, 'Récompenses', 'Première visite', 'Dernière visite', 'Fréquence', 'Statut']
     const rows = clients.map(c => [
       c.firstName,
       c.phone,
@@ -250,7 +253,7 @@ export default function StatsAnalyseClient({ primaryColor, period, clients, plan
                 </span>
               </div>
               <div className="flex items-center gap-4 text-xs text-[#6B6B6B]">
-                <span><strong className="text-[#1A1A1A]">{client.totalStamps}</strong> tampons</span>
+                <span><strong className="text-[#1A1A1A]">{client.totalStamps}</strong> {isPoints ? 'points' : 'tampons'}</span>
                 <span><strong className="text-[#1A1A1A]">{client.rewardsUnlocked}</strong> récompense{client.rewardsUnlocked !== 1 ? 's' : ''}</span>
                 <span>{calcFrequency(client.firstVisit, client.totalStamps)}</span>
               </div>
@@ -268,7 +271,7 @@ export default function StatsAnalyseClient({ primaryColor, period, clients, plan
               <tr>
                 {[
                   { key: 'firstName' as SortKey, label: 'Client' },
-                  { key: 'totalStamps' as SortKey, label: 'Tampons' },
+                  { key: 'totalStamps' as SortKey, label: activityLabel },
                   { key: 'rewardsUnlocked' as SortKey, label: 'Récompenses' },
                   { key: 'firstVisit' as SortKey, label: '1ère visite' },
                   { key: 'lastVisit' as SortKey, label: 'Dernière visite' },

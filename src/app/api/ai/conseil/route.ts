@@ -44,7 +44,13 @@ export async function POST(request: Request) {
 
   const { messages, merchantContext } = await request.json() as {
     messages: { role: 'user' | 'model'; content: string }[]
-    merchantContext?: { business_name?: string; loyalty_rule?: string; stamps_required?: number; loyalty_type?: string }
+    merchantContext?: {
+      business_name?: string
+      loyalty_rule?: string
+      stamps_required?: number
+      points_required?: number | null
+      loyalty_type?: string
+    }
   }
 
   if (!messages?.length) {
@@ -54,13 +60,17 @@ export async function POST(request: Request) {
   // Build context-aware system prompt
   let systemPrompt = SYSTEM_PROMPT
   if (merchantContext?.business_name) {
+    const isPoints = merchantContext.loyalty_type === 'points'
+    const requiredCount = isPoints
+      ? (merchantContext.points_required ?? 'non défini')
+      : (merchantContext.stamps_required ?? 'non défini')
     systemPrompt += `\n\nInformations sur le commerce de cet utilisateur :
 - Nom : ${merchantContext.business_name}
 - Règle actuelle : ${merchantContext.loyalty_rule || 'non définie'}
-- Type de programme : ${merchantContext.loyalty_type === 'points' ? 'Points' : 'Tampons'}
-- Nombre de tampons/points requis : ${merchantContext.stamps_required ?? 'non défini'}
+- Type de programme : ${isPoints ? 'Points (le client accumule des points par euro dépensé)' : 'Tampons (le client reçoit un tampon par visite/achat)'}
+- ${isPoints ? 'Points requis pour une récompense' : 'Tampons requis pour une récompense'} : ${requiredCount}
 
-Tu connais déjà ce commerce. Adapte tes conseils en conséquence et réfère-toi à ces informations quand c'est pertinent.`
+Tu connais déjà ce commerce. Adapte tes conseils en conséquence et parle de "${isPoints ? 'points' : 'tampons'}" selon le programme actuel. Réfère-toi à ces informations quand c'est pertinent.`
   }
 
   // Convert to Mistral format ('model' role → 'assistant')

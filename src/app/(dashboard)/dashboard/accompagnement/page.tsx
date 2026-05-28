@@ -10,7 +10,7 @@ export default async function AccompagnementPage() {
 
   const { data: merchant } = await supabase
     .from('merchants')
-    .select('business_name, loyalty_rule, stamps_required, loyalty_type, plan')
+    .select('business_name, loyalty_rule, stamps_required, points_required, loyalty_type, plan')
     .eq('user_id', user.id)
     .single()
 
@@ -21,6 +21,7 @@ export default async function AccompagnementPage() {
         business_name: merchant.business_name,
         loyalty_rule: merchant.loyalty_rule,
         stamps_required: merchant.stamps_required,
+        points_required: merchant.points_required,
         loyalty_type: merchant.loyalty_type,
       }
     : {}

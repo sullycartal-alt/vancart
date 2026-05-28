@@ -4,6 +4,7 @@ import { useCallback, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import LoyaltyDisplay from '@/components/LoyaltyDisplay'
 import type { MerchantSharedConfig } from '@/types/merchant-config'
+import Toast from '@/components/Toast'
 
 function hexToHsl(hex: string): [number, number, number] {
   const n = parseInt(hex.slice(1), 16)
@@ -489,7 +490,7 @@ export default function CardDesignClient({
 
   const [walletTab, setWalletTab] = useState<'google' | 'apple'>('google')
   const [saving, setSaving] = useState(false)
-  const [saved, setSaved] = useState(false)
+  const [showToast, setShowToast] = useState(false)
   const [suggestedColors, setSuggestedColors] = useState<string[]>([])
   const [extracting, setExtracting] = useState(false)
 
@@ -540,8 +541,7 @@ export default function CardDesignClient({
     })
     setSaving(false)
     if (res.ok) {
-      setSaved(true)
-      setTimeout(() => setSaved(false), 3000)
+      setShowToast(true)
       document.documentElement.style.setProperty('--merchant-color', color)
       router.refresh()
     }
@@ -566,6 +566,7 @@ export default function CardDesignClient({
 
   return (
     <div className="space-y-6">
+      {showToast && <Toast message="Modifications enregistrées" onHide={() => setShowToast(false)} />}
       {!hideTitle && (
         <div>
           <h1 className="text-2xl font-bold text-[#1A1A1A]">Ma carte de fidélité</h1>
@@ -920,7 +921,7 @@ export default function CardDesignClient({
             className="w-full py-3 text-sm font-semibold rounded-xl text-white transition-colors disabled:opacity-60"
             style={{ backgroundColor: color }}
           >
-            {saving ? 'Enregistrement…' : saved ? '✓ Modifications enregistrées' : 'Enregistrer les modifications'}
+            {saving ? 'Enregistrement…' : 'Enregistrer les modifications'}
           </button>
         </div>
 

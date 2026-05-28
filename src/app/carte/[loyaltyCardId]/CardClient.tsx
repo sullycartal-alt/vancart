@@ -108,8 +108,8 @@ function StampGrid({ count, total, color, newStampIdx }: {
                     animation: isNew ? 'stamp-pop 0.45s cubic-bezier(0.16,1,0.3,1) both' : undefined,
                   }
                 : {
-                    backgroundColor: '#f3f4f6',
-                    border: '2px dashed #e5e7eb',
+                    backgroundColor: '#F7F6F3',
+                    border: '2px dashed #E8E8E3',
                     color: 'transparent',
                   }}
             >
@@ -118,14 +118,14 @@ function StampGrid({ count, total, color, newStampIdx }: {
           )
         })}
         {total > 20 && (
-          <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-100 text-xs text-gray-400 font-medium">
+          <div className="w-10 h-10 rounded-full flex items-center justify-center bg-[#F7F6F3] text-xs text-[#6B6B6B] font-medium">
             +{total - 20}
           </div>
         )}
       </div>
-      <p className="text-center text-sm text-gray-500">
-        <span className="font-bold text-gray-900">{count}</span>
-        <span className="text-gray-300"> / {total}</span>
+      <p className="text-center text-sm text-[#6B6B6B]">
+        <span className="font-bold text-[#1A1A1A]">{count}</span>
+        <span style={{ color: '#C4C4C0' }}> / {total}</span>
         {' '}tampons
       </p>
     </div>
@@ -139,11 +139,11 @@ function PointsBar({ count, total, color }: { count: number; total: number; colo
       <div className="flex items-end justify-between">
         <div>
           <span className="text-5xl font-bold tabular-nums" style={{ color }}>{count}</span>
-          <span className="text-2xl text-gray-300 font-light"> / {total}</span>
+          <span className="text-2xl font-light pb-2" style={{ color: '#C4C4C0' }}> / {total}</span>
         </div>
-        <span className="text-sm text-gray-400 pb-2">points</span>
+        <span className="text-sm text-[#6B6B6B] pb-2">points</span>
       </div>
-      <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+      <div className="w-full bg-[#F7F6F3] rounded-full h-3 overflow-hidden">
         <div className="h-3 rounded-full transition-all duration-700 ease-out" style={{ width: `${pct}%`, backgroundColor: color }} />
       </div>
     </div>
@@ -396,7 +396,7 @@ export default function CardClient({ initialCard, customerId, merchantId }: {
         {/* Google Wallet — prominent */}
         <a
           href={`/api/wallet/google?card_id=${card.id}`}
-          className="flex items-center justify-center gap-3 w-full py-3.5 rounded-2xl bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
+          className="flex items-center justify-center gap-3 w-full py-3.5 rounded-2xl bg-white border border-[#E8E8E3] shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -404,11 +404,11 @@ export default function CardClient({ initialCard, customerId, merchantId }: {
             <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
             <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
           </svg>
-          <span className="text-sm font-semibold text-gray-700">Ajouter à Google Wallet</span>
+          <span className="text-sm font-semibold text-[#1A1A1A]">Ajouter à Google Wallet</span>
         </a>
 
-        <div className="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl bg-gray-50 border border-gray-100 cursor-not-allowed">
-          <span className="text-sm font-medium text-gray-300">Apple Wallet — bientôt</span>
+        <div className="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl bg-[#F7F6F3] border border-[#E8E8E3] cursor-not-allowed">
+          <span className="text-sm font-medium text-[#9CA3AF]">Apple Wallet — bientôt</span>
         </div>
 
         {/* Bookmark hint */}
@@ -422,7 +422,7 @@ export default function CardClient({ initialCard, customerId, merchantId }: {
         </div>
 
         {card.rewards_unlocked > 0 && (
-          <p className="text-xs text-center text-gray-300">
+          <p className="text-xs text-center text-[#9CA3AF]">
             🏆 {card.rewards_unlocked} récompense{card.rewards_unlocked > 1 ? 's' : ''} obtenue{card.rewards_unlocked > 1 ? 's' : ''} au total
           </p>
         )}

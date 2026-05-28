@@ -251,6 +251,130 @@ function AppleWalletPreview({ businessName, primaryColor, logoUrl, stampsRequire
   )
 }
 
+function PWAWalletPreview({
+  businessName,
+  primaryColor,
+  logoUrl,
+  bannerUrl,
+  stampsRequired,
+  loyaltyType,
+  pointsRequired,
+}: {
+  businessName: string
+  primaryColor: string
+  logoUrl: string | null
+  bannerUrl: string | null
+  stampsRequired: number
+  loyaltyType: 'stamps' | 'points'
+  pointsRequired: number | null
+}) {
+  const color = primaryColor || '#6C47FF'
+  const isPoints = loyaltyType === 'points'
+  const total = isPoints ? (pointsRequired ?? 100) : stampsRequired
+  const current = Math.floor(total * 0.4)
+  const pct = Math.min(100, Math.round((current / total) * 100))
+
+  return (
+    <div className="rounded-[18px] overflow-hidden select-none w-full" style={{ backgroundColor: color }}>
+      {/* Header 72px */}
+      <div className="flex items-center justify-between px-4" style={{ height: 72 }}>
+        <div className="flex items-center gap-3 min-w-0">
+          <div
+            className="flex items-center justify-center flex-shrink-0"
+            style={{ width: 44, height: 44, borderRadius: 10, backgroundColor: 'rgba(255,255,255,0.2)', overflow: 'hidden' }}
+          >
+            {logoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={logoUrl} alt="" style={{ width: 44, height: 44, objectFit: 'contain' }} />
+            ) : (
+              <span style={{ color: 'white', fontWeight: 700, fontSize: 18 }}>
+                {businessName.charAt(0).toUpperCase() || '?'}
+              </span>
+            )}
+          </div>
+          <span className="font-semibold text-sm truncate" style={{ color: 'white' }}>
+            {businessName || 'Mon Commerce'}
+          </span>
+        </div>
+        <div className="text-right flex-shrink-0 ml-3">
+          <p style={{ fontSize: 10, textTransform: 'uppercase', color: 'rgba(255,255,255,0.6)', letterSpacing: '0.08em', lineHeight: 1.3 }}>
+            {isPoints ? 'Points' : 'Tampons'}
+          </p>
+          <p style={{ fontSize: 22, fontWeight: 700, color: 'white', lineHeight: 1 }}>
+            {current}
+          </p>
+        </div>
+      </div>
+
+      {/* Banner 90px */}
+      <div
+        className="mx-3 flex items-center justify-center overflow-hidden"
+        style={{ height: 90, borderRadius: 10, backgroundColor: 'rgba(255,255,255,0.12)' }}
+      >
+        {bannerUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={bannerUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+        ) : (
+          <span className="font-bold text-center px-4 leading-tight" style={{ color: 'white', fontSize: 24 }}>
+            {businessName || 'Mon Commerce'}
+          </span>
+        )}
+      </div>
+
+      {/* Card holder */}
+      <p style={{ fontSize: 11, textTransform: 'uppercase', color: 'rgba(255,255,255,0.6)', letterSpacing: '0.06em', margin: '10px 16px 6px' }}>
+        Carte de Jean
+      </p>
+
+      {/* Stamps or points */}
+      <div className="px-4 space-y-2 mb-3">
+        {isPoints ? (
+          <>
+            <div className="w-full rounded-full" style={{ height: 4, backgroundColor: 'rgba(255,255,255,0.2)' }}>
+              <div className="rounded-full bg-white" style={{ height: 4, width: `${pct}%` }} />
+            </div>
+            <p className="text-center text-xs" style={{ color: 'rgba(255,255,255,0.7)' }}>{current} / {total} pts</p>
+          </>
+        ) : (
+          <>
+            <div className="flex flex-wrap gap-1.5 justify-center">
+              {Array.from({ length: Math.min(total, 12) }).map((_, i) => {
+                const filled = i < current
+                return (
+                  <div
+                    key={i}
+                    className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
+                    style={filled ? { backgroundColor: 'white' } : { border: '2px solid rgba(255,255,255,0.35)' }}
+                  >
+                    {filled && (
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                        <path d="M2 6.5L4.5 9L10 3" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                  </div>
+                )
+              })}
+              {total > 12 && <span className="text-xs self-center" style={{ color: 'rgba(255,255,255,0.5)' }}>+{total - 12}</span>}
+            </div>
+            <div className="w-full rounded-full" style={{ height: 3, backgroundColor: 'rgba(255,255,255,0.2)' }}>
+              <div className="rounded-full bg-white" style={{ height: 3, width: `${pct}%` }} />
+            </div>
+            <p className="text-center text-xs" style={{ color: 'rgba(255,255,255,0.7)' }}>{current} / {total} tampons</p>
+          </>
+        )}
+      </div>
+
+      {/* QR placeholder */}
+      <div className="flex flex-col items-center gap-2 px-4 pb-5">
+        <div className="bg-white inline-flex items-center justify-center" style={{ borderRadius: 12, padding: 12 }}>
+          <QRPlaceholder color={color} size={80} />
+        </div>
+        <p className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>••••••••—••••</p>
+      </div>
+    </div>
+  )
+}
+
 interface Merchant {
   id: string
   business_name: string
@@ -267,6 +391,7 @@ interface Merchant {
   card_expiry_months?: number | null
   show_instagram_on_card?: boolean
   instagram_handle?: string | null
+  banner_url?: string | null
 }
 
 export default function CardDesignClient({
@@ -290,10 +415,14 @@ export default function CardDesignClient({
   const [heroImageUrl, setHeroImageUrl] = useState<string | null>(merchant.hero_image_url ?? null)
   const [heroUploading, setHeroUploading] = useState(false)
   const [heroError, setHeroError] = useState<string | null>(null)
+  const [bannerUrl, setBannerUrl] = useState<string | null>(merchant.banner_url ?? null)
+  const [bannerUploading, setBannerUploading] = useState(false)
+  const [bannerError, setBannerError] = useState<string | null>(null)
   const [walletMessage, setWalletMessage] = useState(merchant.wallet_message ?? '')
   const [cardExpiryMonths, setCardExpiryMonths] = useState<number>(merchant.card_expiry_months ?? 12)
   const [showInstagram, setShowInstagram] = useState(merchant.show_instagram_on_card ?? false)
   const heroInputRef = useRef<HTMLInputElement>(null)
+  const bannerInputRef = useRef<HTMLInputElement>(null)
 
   function handleColorChange(newColor: string) {
     setColor(newColor)
@@ -337,6 +466,25 @@ export default function CardDesignClient({
     }
     setHeroUploading(false)
     if (heroInputRef.current) heroInputRef.current.value = ''
+  }
+
+  async function handleBannerChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setBannerUploading(true)
+    setBannerError(null)
+    const formData = new FormData()
+    formData.append('file', file)
+    const res = await fetch('/api/upload/banner', { method: 'POST', body: formData })
+    const data = await res.json()
+    if (!res.ok) {
+      setBannerError(data.error ?? "Erreur lors de l'upload")
+    } else {
+      setBannerUrl(data.url)
+      onConfigChangeRef.current?.({ banner_url: data.url })
+    }
+    setBannerUploading(false)
+    if (bannerInputRef.current) bannerInputRef.current.value = ''
   }
 
   const [walletTab, setWalletTab] = useState<'google' | 'apple'>('google')
@@ -384,6 +532,7 @@ export default function CardDesignClient({
         points_required: pointsRequired,
         points_per_euro: pointsPerEuro,
         hero_image_url: heroImageUrl,
+        banner_url: bannerUrl,
         wallet_message: walletMessage || null,
         card_expiry_months: cardExpiryMonths,
         show_instagram_on_card: showInstagram,
@@ -410,6 +559,7 @@ export default function CardDesignClient({
     heroImageUrl,
     walletMessage: walletMessage || null,
     cardExpiryMonths,
+    bannerUrl,
   }
 
   const inputClass = 'block w-full rounded-xl border border-[#E8E8E3] px-4 py-3 text-sm text-[#1A1A1A] bg-white focus:border-[#6C47FF] focus:outline-none focus:ring-2 focus:ring-[#6C47FF]/15 transition-all'
@@ -615,6 +765,47 @@ export default function CardDesignClient({
             />
           </div>
 
+          {/* Banner image */}
+          <div className="space-y-2">
+            <label className="block text-sm font-semibold text-[#1A1A1A]">Image bannière</label>
+            <p className="text-xs text-[#6B6B6B]">Visible en bannière centrale dans le Wallet PWA. JPG/PNG/WebP, max 4 Mo.</p>
+            <div className="flex items-start gap-4">
+              {bannerUrl ? (
+                <div className="relative w-32 h-16 rounded-xl overflow-hidden border border-[#E8E8E3] flex-shrink-0 bg-[#F7F6F3]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={bannerUrl} alt="" className="w-full h-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => { setBannerUrl(null); onConfigChangeRef.current?.({ banner_url: null }) }}
+                    className="absolute top-1 right-1 w-5 h-5 bg-black/50 rounded-full flex items-center justify-center text-white hover:bg-black/70 transition-colors"
+                    title="Supprimer"
+                  >
+                    <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                  </button>
+                </div>
+              ) : (
+                <div
+                  className="w-32 h-16 rounded-xl border-2 border-dashed border-[#E8E8E3] flex items-center justify-center bg-[#F7F6F3] cursor-pointer hover:border-[#6C47FF] transition-colors flex-shrink-0 text-xs text-[#9CA3AF]"
+                  onClick={() => bannerInputRef.current?.click()}
+                >
+                  Ajouter
+                </div>
+              )}
+              <div>
+                <button
+                  type="button"
+                  onClick={() => bannerInputRef.current?.click()}
+                  disabled={bannerUploading}
+                  className="text-sm text-[#6C47FF] hover:text-[#5835e0] font-medium disabled:opacity-50 transition-colors"
+                >
+                  {bannerUploading ? 'Upload en cours…' : bannerUrl ? "Changer l'image" : 'Choisir une image'}
+                </button>
+                {bannerError && <p className="text-xs text-red-600 mt-1">{bannerError}</p>}
+              </div>
+            </div>
+            <input ref={bannerInputRef} type="file" accept="image/*" className="hidden" onChange={handleBannerChange} />
+          </div>
+
           {/* ── Personnalisation avancée ─────────────────── */}
           <details className="group">
             <summary className="cursor-pointer list-none flex items-center justify-between py-2 text-sm font-semibold text-[#1A1A1A] select-none">
@@ -774,6 +965,23 @@ export default function CardDesignClient({
           <p className="text-xs text-[#9CA3AF] text-center max-w-xs">
             Les données affichées sont des exemples de démonstration.
           </p>
+        </div>
+      </div>
+
+      {/* ── PWA Wallet preview ──────────────────────────── */}
+      <div className="space-y-3">
+        <p className="text-xs font-semibold text-[#6B6B6B] uppercase tracking-wider">Aperçu Wallet</p>
+        <p className="text-xs text-[#9CA3AF]">Aperçu de la carte dans le Wallet PWA (état ouvert). Se met à jour en temps réel.</p>
+        <div className="max-w-xs">
+          <PWAWalletPreview
+            businessName={merchant.business_name}
+            primaryColor={color}
+            logoUrl={merchant.logo_url}
+            bannerUrl={bannerUrl}
+            stampsRequired={stampsRequired}
+            loyaltyType={loyaltyType}
+            pointsRequired={pointsRequired}
+          />
         </div>
       </div>
     </div>

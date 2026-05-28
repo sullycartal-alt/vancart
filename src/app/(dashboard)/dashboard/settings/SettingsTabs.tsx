@@ -23,6 +23,7 @@ interface Merchant {
   wallet_message?: string | null
   card_expiry_months?: number | null
   show_instagram_on_card?: boolean
+  banner_url?: string | null
 }
 
 interface Props {
@@ -46,6 +47,7 @@ function merchantToConfig(m: Merchant): MerchantSharedConfig {
     card_expiry_months: m.card_expiry_months ?? 12,
     show_instagram_on_card: m.show_instagram_on_card ?? false,
     instagram_handle: m.instagram_handle ?? null,
+    banner_url: m.banner_url ?? null,
   }
 }
 
@@ -58,7 +60,7 @@ export default function SettingsTabs({ merchant, clientCount }: Props) {
       stamps_required: 10, loyalty_type: 'stamps',
       points_required: null, points_per_euro: null, logo_url: null, description: '',
       hero_image_url: null, wallet_message: null, card_expiry_months: 12,
-      show_instagram_on_card: false, instagram_handle: null,
+      show_instagram_on_card: false, instagram_handle: null, banner_url: null,
     }
   )
 
@@ -82,6 +84,7 @@ export default function SettingsTabs({ merchant, clientCount }: Props) {
     merchant?.card_expiry_months,
     merchant?.show_instagram_on_card,
     merchant?.instagram_handle,
+    merchant?.banner_url,
   ])
 
   const updateLiveConfig = useCallback((updates: Partial<MerchantSharedConfig>) => {
@@ -148,6 +151,7 @@ export default function SettingsTabs({ merchant, clientCount }: Props) {
             card_expiry_months: liveConfig.card_expiry_months ?? null,
             show_instagram_on_card: liveConfig.show_instagram_on_card ?? false,
             instagram_handle: liveConfig.instagram_handle ?? null,
+            banner_url: liveConfig.banner_url ?? null,
           }}
           onConfigChange={updateLiveConfig}
         />

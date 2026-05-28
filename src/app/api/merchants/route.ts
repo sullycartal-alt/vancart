@@ -21,6 +21,7 @@ const merchantSchema = z.object({
   wallet_message: z.string().max(100).nullable().optional(),
   card_expiry_months: z.number().int().min(0).max(60).nullable().optional(),
   show_instagram_on_card: z.boolean().optional(),
+  banner_url: z.string().url().nullable().optional(),
   allow_multiple_stamps: z.boolean().optional(),
   min_minutes_between_stamps: z.number().int().min(0).max(1440).optional(),
   stamps_per_visit: z.number().int().min(1).max(10).optional(),

@@ -199,7 +199,7 @@ export default function Home() {
       <PWARedirect />
 
       {/* ── Nav ────────────────────────────────────────────────────────────── */}
-      <nav className="border-b border-[#E8E8E3] px-6 py-4 bg-white sticky top-0 z-50">
+      <nav className="border-b border-[#E8E8E3] px-4 sm:px-6 py-4 bg-white sticky top-0 z-50">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <span className="text-xl font-bold text-[#6C47FF]">VanCart</span>
           <div className="hidden sm:flex items-center gap-6">
@@ -208,17 +208,18 @@ export default function Home() {
             <a href="#tarifs" className="text-sm text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors font-medium">Tarifs</a>
             <a href="#faq" className="text-sm text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors font-medium">FAQ</a>
           </div>
-          <div className="flex items-center gap-4">
-            <Link href="/login" className="text-sm text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors font-medium">Connexion</Link>
-            <Link href="/register" className="text-sm font-semibold text-white bg-[#6C47FF] hover:bg-[#5835e0] px-4 py-2 rounded-xl transition-colors">
-              Commencer gratuitement
+          <div className="flex items-center gap-3 sm:gap-4">
+            <Link href="/login" className="hidden sm:inline text-sm text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors font-medium">Connexion</Link>
+            <Link href="/register" className="text-sm font-semibold text-white bg-[#6C47FF] hover:bg-[#5835e0] px-3 sm:px-4 py-2 rounded-xl transition-colors whitespace-nowrap">
+              <span className="sm:hidden">Commencer</span>
+              <span className="hidden sm:inline">Commencer gratuitement</span>
             </Link>
           </div>
         </div>
       </nav>
 
       {/* ── Hero ───────────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-[#F7F6F3] px-6 py-16 sm:py-24">
+      <section className="relative overflow-hidden bg-[#F7F6F3] px-4 sm:px-6 py-16 sm:py-24">
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#6C47FF]/5 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/3" />
         <div className="relative max-w-5xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -279,7 +280,7 @@ export default function Home() {
       </section>
 
       {/* ── Logos bar — placeholder ────────────────────────────────────────── */}
-      <section className="px-6 py-12 bg-white border-b border-[#E8E8E3]">
+      <section className="px-4 sm:px-6 py-12 bg-white border-b border-[#E8E8E3]">
         <div className="max-w-4xl mx-auto text-center space-y-5">
           <p className="text-xs font-semibold text-[#6B6B6B] uppercase tracking-widest">
             Adoptés par des commerces de proximité
@@ -291,7 +292,7 @@ export default function Home() {
       </section>
 
       {/* ── Chiffres clés ──────────────────────────────────────────────────── */}
-      <section className="px-6 py-16 bg-[#F7F6F3]">
+      <section className="px-4 sm:px-6 py-16 bg-[#F7F6F3]">
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
             {[
@@ -310,10 +311,10 @@ export default function Home() {
       </section>
 
       {/* ── Problem ────────────────────────────────────────────────────────── */}
-      <section className="px-6 py-20 bg-white">
+      <section className="px-4 sm:px-6 py-20 bg-white">
         <div className="max-w-3xl mx-auto text-center space-y-4">
           <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">Le problème</p>
-          <h2 className="text-3xl font-bold text-[#1A1A1A]">Vos clients perdent leurs cartes de fidélité ?</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">Vos clients perdent leurs cartes de fidélité ?</h2>
           <p className="text-[#6B6B6B] text-lg max-w-xl mx-auto leading-relaxed">
             Les cartes en plastique s&apos;égarent, s&apos;oublient, se froissent. Résultat : vos clients repartent les mains vides, et vous perdez leur fidélité.
           </p>
@@ -333,11 +334,11 @@ export default function Home() {
       </section>
 
       {/* ── Comparison block ───────────────────────────────────────────────── */}
-      <section className="px-6 py-20 bg-[#F7F6F3]">
+      <section className="px-4 sm:px-6 py-20 bg-[#F7F6F3]">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12 space-y-3">
             <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">La différence</p>
-            <h2 className="text-3xl font-bold text-[#1A1A1A]">La fidélité réinventée pour les indépendants</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">La fidélité réinventée pour les indépendants</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="bg-white border border-red-100 rounded-2xl p-7 space-y-4 shadow-sm">
@@ -373,11 +374,11 @@ export default function Home() {
       </section>
 
       {/* ── Benefits ───────────────────────────────────────────────────────── */}
-      <section id="fonctionnalites" className="px-6 py-20 bg-white" style={{ scrollMarginTop: '80px' }}>
+      <section id="fonctionnalites" className="px-4 sm:px-6 py-20 bg-white" style={{ scrollMarginTop: '80px' }}>
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12 space-y-3">
             <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">La solution</p>
-            <h2 className="text-3xl font-bold text-[#1A1A1A]">Une carte de fidélité toujours dans la poche de vos clients</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">Une carte de fidélité toujours dans la poche de vos clients</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {[
@@ -396,11 +397,11 @@ export default function Home() {
       </section>
 
       {/* ── How it works ───────────────────────────────────────────────────── */}
-      <section id="comment-ca-marche" className="px-6 py-20 bg-[#F7F6F3]" style={{ scrollMarginTop: '80px' }}>
+      <section id="comment-ca-marche" className="px-4 sm:px-6 py-20 bg-[#F7F6F3]" style={{ scrollMarginTop: '80px' }}>
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12 space-y-3">
             <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">Comment ça marche</p>
-            <h2 className="text-3xl font-bold text-[#1A1A1A]">Opérationnel en 5 minutes</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">Opérationnel en 5 minutes</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {[
@@ -441,11 +442,11 @@ export default function Home() {
       </section>
 
       {/* ── Comparison table ───────────────────────────────────────────────── */}
-      <section className="px-6 py-20 bg-white">
+      <section className="px-4 sm:px-6 py-20 bg-white">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-12 space-y-3">
             <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">Pourquoi VanCart</p>
-            <h2 className="text-3xl font-bold text-[#1A1A1A]">La fidélité, enfin accessible à tous</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">La fidélité, enfin accessible à tous</h2>
           </div>
 
           {/* Mobile: 3 stacked column cards */}
@@ -527,11 +528,11 @@ export default function Home() {
       </section>
 
       {/* ── Pricing ────────────────────────────────────────────────────────── */}
-      <section id="tarifs" className="px-6 py-20 bg-[#F7F6F3]" style={{ scrollMarginTop: '80px' }}>
+      <section id="tarifs" className="px-4 sm:px-6 py-20 bg-[#F7F6F3]" style={{ scrollMarginTop: '80px' }}>
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12 space-y-3">
             <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">Tarifs</p>
-            <h2 className="text-3xl font-bold text-[#1A1A1A]">Des tarifs simples et transparents</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">Des tarifs simples et transparents</h2>
             <p className="text-[#6B6B6B] text-lg">Commencez gratuitement, payez quand vous voyez les résultats.</p>
           </div>
 
@@ -544,7 +545,7 @@ export default function Home() {
                   <div className="inline-flex items-center bg-[#F7F6F3] text-[#6B6B6B] text-xs font-semibold px-3 py-1 rounded-full border border-[#E8E8E3] mb-3">Commencer</div>
                   <h3 className="text-xl font-bold text-[#1A1A1A]">Découverte</h3>
                   <div className="mt-2">
-                    <span className="text-3xl font-bold text-[#1A1A1A]">0€</span>
+                    <span className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">0€</span>
                     <span className="text-[#6B6B6B] text-sm"> / 1 mois</span>
                   </div>
                   <p className="text-xs text-[#6B6B6B] mt-1">Aucune carte bancaire requise</p>
@@ -573,7 +574,7 @@ export default function Home() {
                 <div>
                   <h3 className="text-xl font-bold text-[#1A1A1A]">Essentiel</h3>
                   <div className="mt-2">
-                    <span className="text-3xl font-bold text-[#1A1A1A]">29€</span>
+                    <span className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">29€</span>
                     <span className="text-[#6B6B6B] text-sm"> / mois</span>
                   </div>
                   <p className="text-xs text-[#6B6B6B] mt-1">Sans engagement</p>
@@ -600,7 +601,7 @@ export default function Home() {
                   <div className="inline-flex items-center bg-[#F7F6F3] text-[#6B6B6B] text-xs font-semibold px-3 py-1 rounded-full border border-[#E8E8E3] mb-3">Pour aller plus loin</div>
                   <h3 className="text-xl font-bold text-[#1A1A1A]">Pro</h3>
                   <div className="mt-2">
-                    <span className="text-3xl font-bold text-[#1A1A1A]">59€</span>
+                    <span className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">59€</span>
                     <span className="text-[#6B6B6B] text-sm"> / mois</span>
                   </div>
                   <p className="text-xs text-[#6B6B6B] mt-1">Sans engagement</p>
@@ -625,11 +626,11 @@ export default function Home() {
       </section>
 
       {/* ── Roadmap ────────────────────────────────────────────────────────── */}
-      <section id="roadmap" className="px-6 py-20 bg-white">
+      <section id="roadmap" className="px-4 sm:px-6 py-20 bg-white">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12 space-y-3">
             <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">Roadmap</p>
-            <h2 className="text-3xl font-bold text-[#1A1A1A]">Bientôt disponible</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">Bientôt disponible</h2>
             <p className="text-[#6B6B6B] text-lg max-w-xl mx-auto">Nous travaillons sur des fonctionnalités encore plus puissantes pour fidéliser encore mieux vos clients.</p>
           </div>
 
@@ -670,7 +671,7 @@ export default function Home() {
       </section>
 
       {/* ── Testimonial quote — placeholder ────────────────────────────────── */}
-      <section className="px-6 py-20 bg-[#6C47FF]/5">
+      <section className="px-4 sm:px-6 py-20 bg-[#6C47FF]/5">
         <div className="max-w-3xl mx-auto flex flex-col items-center justify-center gap-4 px-12 py-14 bg-[#F3F4F6] rounded-2xl border border-dashed border-[#D1D5DB]">
           <span className="text-4xl">💬</span>
           <p className="text-base italic text-[#9CA3AF]">En attente de témoignages clients</p>
@@ -678,11 +679,11 @@ export default function Home() {
       </section>
 
       {/* ── Testimonials — placeholders ────────────────────────────────────── */}
-      <section className="px-6 py-20 bg-white">
+      <section className="px-4 sm:px-6 py-20 bg-white">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12 space-y-3">
             <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">Témoignages</p>
-            <h2 className="text-3xl font-bold text-[#1A1A1A]">Ils nous font confiance</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">Ils nous font confiance</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[1, 2, 3].map(i => (
@@ -696,11 +697,11 @@ export default function Home() {
       </section>
 
       {/* ── FAQ ────────────────────────────────────────────────────────────── */}
-      <section id="faq" className="px-6 py-20 bg-[#F7F6F3]" style={{ scrollMarginTop: '80px' }}>
+      <section id="faq" className="px-4 sm:px-6 py-20 bg-[#F7F6F3]" style={{ scrollMarginTop: '80px' }}>
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-12 space-y-3">
             <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">FAQ</p>
-            <h2 className="text-3xl font-bold text-[#1A1A1A]">Questions fréquentes</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">Questions fréquentes</h2>
           </div>
           <div className="space-y-4">
             {[
@@ -725,14 +726,14 @@ export default function Home() {
       </section>
 
       {/* ── Dashboard preview ──────────────────────────────────────────────── */}
-      <section className="px-6 py-20 bg-white">
+      <section className="px-4 sm:px-6 py-20 bg-white">
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left: text */}
             <div className="space-y-6">
               <div className="space-y-3">
                 <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">Tableau de bord</p>
-                <h2 className="text-3xl font-bold text-[#1A1A1A]">Gardez le contrôle sur votre fidélité</h2>
+                <h2 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">Gardez le contrôle sur votre fidélité</h2>
                 <p className="text-[#6B6B6B] leading-relaxed">Suivez la performance de votre programme en temps réel depuis un tableau de bord simple et puissant.</p>
               </div>
               <ul className="space-y-3">
@@ -785,10 +786,10 @@ export default function Home() {
       </section>
 
       {/* ── Final CTA ──────────────────────────────────────────────────────── */}
-      <section className="px-6 py-20 bg-[#6C47FF] text-center">
+      <section className="px-4 sm:px-6 py-20 bg-[#6C47FF] text-center">
         <div className="max-w-xl mx-auto space-y-6">
           <div className="text-5xl">🚀</div>
-          <h2 className="text-3xl font-bold text-white">Prêt à fidéliser plus de clients ?</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white">Prêt à fidéliser plus de clients ?</h2>
           <p className="text-white/80 text-lg leading-relaxed">Créez votre carte de fidélité gratuitement et soyez opérationnel en 5 minutes.</p>
           <Link href="/register" className="inline-block px-10 py-4 bg-white text-[#6C47FF] font-bold rounded-xl hover:bg-[#F7F6F3] transition-colors shadow-sm text-base">
             Commencer gratuitement →
@@ -798,7 +799,7 @@ export default function Home() {
       </section>
 
       {/* ── Footer complet ─────────────────────────────────────────────────── */}
-      <footer className="border-t border-[#E8E8E3] bg-white px-6 py-12">
+      <footer className="border-t border-[#E8E8E3] bg-white px-4 sm:px-6 py-12">
         <div className="max-w-5xl mx-auto">
 
           {/* Reassurance icons */}

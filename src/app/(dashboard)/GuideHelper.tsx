@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 
 const STEPS = [
   {
@@ -36,6 +37,10 @@ const STEPS = [
 
 export default function GuideHelper() {
   const [open, setOpen] = useState(false)
+  const pathname = usePathname()
+
+  // Hide on accompagnement page — the fixed button overlaps the chat send button
+  if (pathname === '/dashboard/accompagnement') return null
 
   function close() {
     setOpen(false)

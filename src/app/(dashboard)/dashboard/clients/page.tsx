@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/service'
 import { redirect } from 'next/navigation'
 import ClientsTable from './ClientsTable'
 
@@ -29,10 +30,11 @@ export default async function ClientsPage() {
     )
   }
 
-  const [{ data: cards }, { data: lastStamps }] = await Promise.all([
+  const service = createServiceClient()
+  const [{ data: cards }, { data: lastStamps }, { data: pushSubs }] = await Promise.all([
     supabase
       .from('loyalty_cards')
-      .select('id, stamps_count, points, rewards_unlocked, customers(first_name, phone)')
+      .select('id, stamps_count, points, rewards_unlocked, customer_id, customers(first_name, phone)')
       .eq('merchant_id', merchant.id)
       .order('created_at', { ascending: false }),
     supabase
@@ -40,7 +42,13 @@ export default async function ClientsPage() {
       .select('loyalty_card_id, given_at')
       .eq('merchant_id', merchant.id)
       .order('given_at', { ascending: false }),
+    service
+      .from('push_subscriptions')
+      .select('customer_id')
+      .eq('merchant_id', merchant.id),
   ])
+
+  const subscribedCustomerIds = new Set((pushSubs ?? []).map((s) => s.customer_id as string))
 
   // Map last stamp per card (stamps are ordered desc so first match = latest)
   const lastStampMap = new Map<string, string>()
@@ -53,6 +61,7 @@ export default async function ClientsPage() {
   const loyaltyType = (merchant.loyalty_type ?? 'stamps') as 'stamps' | 'points'
   const clients = (cards ?? []).map((card) => ({
     ...card,
+    customer_id: (card as { customer_id?: string | null }).customer_id ?? null,
     customers: Array.isArray(card.customers) ? card.customers[0] : card.customers,
     last_stamp_at: lastStampMap.get(card.id) ?? null,
     stampsRequired: merchant.stamps_required,
@@ -70,7 +79,11 @@ export default async function ClientsPage() {
           {clients.length} client{clients.length !== 1 ? 's' : ''} avec une carte de fidélité
         </p>
       </div>
-      <ClientsTable clients={clients} />
+      <ClientsTable
+        clients={clients}
+        merchantId={merchant.id}
+        subscribedCustomerIds={[...subscribedCustomerIds]}
+      />
     </div>
   )
 }

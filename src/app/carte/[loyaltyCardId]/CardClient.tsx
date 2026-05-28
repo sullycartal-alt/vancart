@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import InstallBanner from '@/components/pwa/InstallBanner'
 
 interface Merchant {
   business_name: string
@@ -360,6 +361,8 @@ export default function CardClient({ initialCard }: { initialCard: CardData }) {
           </p>
         )}
       </div>
+
+      <InstallBanner />
     </div>
   )
 }

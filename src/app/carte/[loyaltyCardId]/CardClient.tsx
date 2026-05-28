@@ -150,7 +150,18 @@ function PointsBar({ count, total, color }: { count: number; total: number; colo
   )
 }
 
-export default function CardClient({ initialCard, customerId }: { initialCard: CardData; customerId: string }) {
+function urlBase64ToUint8Array(base64String: string) {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
+  const rawData = window.atob(base64)
+  return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)))
+}
+
+export default function CardClient({ initialCard, customerId, merchantId }: {
+  initialCard: CardData
+  customerId: string
+  merchantId: string
+}) {
   const router = useRouter()
   const [card, setCard] = useState(initialCard)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
@@ -173,6 +184,29 @@ export default function CardClient({ initialCard, customerId }: { initialCard: C
     const secure = location.protocol === 'https:' ? '; Secure' : ''
     document.cookie = `vancart_customer_id=${customerId}; max-age=${maxAge}; path=/; SameSite=Lax${secure}`
   }, [customerId])
+
+  useEffect(() => {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return
+    const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
+    if (!vapidKey) return
+
+    navigator.serviceWorker.ready.then(async (reg) => {
+      try {
+        const permission = await Notification.requestPermission()
+        if (permission !== 'granted') return
+        const existing = await reg.pushManager.getSubscription()
+        const sub = existing ?? await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(vapidKey),
+        })
+        await fetch('/api/push/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ customer_id: customerId, merchant_id: merchantId, subscription: sub.toJSON() }),
+        })
+      } catch { /* permission denied or unsupported — silent */ }
+    })
+  }, [customerId, merchantId])
 
   useEffect(() => {
     const interval = setInterval(async () => {

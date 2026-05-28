@@ -1,0 +1,292 @@
+'use client'
+
+import { useEffect, useRef, useState } from 'react'
+
+const PEEK = 72
+const FULL = 520
+
+interface Merchant {
+  id: string
+  business_name: string
+  primary_color: string
+  loyalty_rule: string
+  stamps_required: number
+  loyalty_type: string | null
+  points_required: number | null
+  logo_url: string | null
+  banner_url: string | null
+}
+
+export interface WalletCard {
+  id: string
+  stamps_count: number
+  points: number
+  rewards_unlocked: number
+  first_name: string
+  merchants: Merchant
+}
+
+function QRCanvas({ value }: { value: string }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  useEffect(() => {
+    import('qrcode').then((QRCode) => {
+      if (canvasRef.current)
+        QRCode.toCanvas(canvasRef.current, value, {
+          width: 148,
+          margin: 1,
+          color: { dark: '#111827', light: '#ffffff' },
+        })
+    })
+  }, [value])
+  return <canvas ref={canvasRef} className="rounded-lg block" />
+}
+
+function StampCircles({ count, total, color }: { count: number; total: number; color: string }) {
+  const pct = Math.min(100, Math.round((count / total) * 100))
+  return (
+    <div className="px-4 space-y-2">
+      <div className="flex flex-wrap gap-1.5 justify-center">
+        {Array.from({ length: total }).map((_, i) => {
+          const filled = i < count
+          return (
+            <div
+              key={i}
+              className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
+              style={
+                filled
+                  ? { backgroundColor: 'white' }
+                  : { border: '2px solid rgba(255,255,255,0.35)', backgroundColor: 'transparent' }
+              }
+            >
+              {filled && (
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                  <path
+                    d="M2 6.5L4.5 9L10 3"
+                    stroke={color}
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              )}
+            </div>
+          )
+        })}
+      </div>
+      <div className="w-full rounded-full h-1" style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}>
+        <div className="h-1 rounded-full bg-white" style={{ width: `${pct}%` }} />
+      </div>
+      <p className="text-center text-xs" style={{ color: 'rgba(255,255,255,0.7)' }}>
+        {count} / {total} tampons
+      </p>
+    </div>
+  )
+}
+
+function PointsProgress({ count, total }: { count: number; total: number }) {
+  const pct = Math.min(100, Math.round((count / total) * 100))
+  return (
+    <div className="px-4 space-y-1.5">
+      <div className="w-full rounded-full" style={{ height: 4, backgroundColor: 'rgba(255,255,255,0.2)' }}>
+        <div className="rounded-full bg-white" style={{ height: 4, width: `${pct}%` }} />
+      </div>
+      <p className="text-center text-xs" style={{ color: 'rgba(255,255,255,0.7)' }}>
+        {count} / {total} pts
+      </p>
+    </div>
+  )
+}
+
+export default function WalletClient({ cards }: { cards: WalletCard[] }) {
+  const [openIdx, setOpenIdx] = useState<number | null>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handle(e: MouseEvent) {
+      if (openIdx === null) return
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpenIdx(null)
+      }
+    }
+    document.addEventListener('mousedown', handle)
+    return () => document.removeEventListener('mousedown', handle)
+  }, [openIdx])
+
+  if (cards.length === 0) {
+    return (
+      <div className="bg-white border border-[#E8E8E3] rounded-2xl p-8 text-center space-y-3">
+        <p className="text-2xl">🎴</p>
+        <p className="text-sm text-[#6B6B6B]">Vous n&apos;avez pas encore de carte de fidélité.</p>
+      </div>
+    )
+  }
+
+  const containerHeight =
+    openIdx === null ? cards.length * PEEK : cards.length * PEEK + (FULL - PEEK)
+
+  return (
+    <div
+      ref={containerRef}
+      className="relative w-full"
+      style={{ height: containerHeight, transition: 'height 0.4s ease' }}
+    >
+      {cards.map((card, i) => {
+        const isOpen = openIdx === i
+        const merchant = card.merchants
+        const color = merchant.primary_color || '#6C47FF'
+        const isPoints = merchant.loyalty_type === 'points'
+        const count = isPoints ? (card.points ?? 0) : card.stamps_count
+        const total = isPoints ? (merchant.points_required ?? 100) : merchant.stamps_required
+        const displayValue = count
+        const top =
+          openIdx !== null && i > openIdx ? i * PEEK + (FULL - PEEK) : i * PEEK
+        const height = isOpen ? FULL : PEEK
+
+        return (
+          <div
+            key={card.id}
+            className="absolute left-3 right-3 overflow-hidden"
+            style={{
+              top,
+              height,
+              borderRadius: 18,
+              backgroundColor: color,
+              zIndex: isOpen ? 100 : cards.length - i,
+              transition: 'top 0.4s ease, height 0.4s ease',
+            }}
+          >
+            {/* Header — always visible at 72px */}
+            <div
+              className="flex items-center justify-between px-4 cursor-pointer select-none"
+              style={{ height: PEEK, flexShrink: 0 }}
+              onClick={() => setOpenIdx(isOpen ? null : i)}
+            >
+              {/* Left: logo square + merchant name */}
+              <div className="flex items-center gap-3 min-w-0">
+                <div
+                  className="flex items-center justify-center flex-shrink-0"
+                  style={{
+                    width: 44,
+                    height: 44,
+                    borderRadius: 10,
+                    backgroundColor: 'rgba(255,255,255,0.2)',
+                    overflow: 'hidden',
+                  }}
+                >
+                  {merchant.logo_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={merchant.logo_url}
+                      alt=""
+                      width={44}
+                      height={44}
+                      style={{ objectFit: 'contain', width: 44, height: 44 }}
+                    />
+                  ) : (
+                    <span style={{ color: 'white', fontWeight: 700, fontSize: 18, lineHeight: 1 }}>
+                      {merchant.business_name.charAt(0).toUpperCase()}
+                    </span>
+                  )}
+                </div>
+                <span className="font-semibold text-sm truncate" style={{ color: 'white' }}>
+                  {merchant.business_name}
+                </span>
+              </div>
+
+              {/* Right: type label + value */}
+              <div className="text-right flex-shrink-0 ml-3">
+                <p
+                  style={{
+                    fontSize: 10,
+                    textTransform: 'uppercase',
+                    color: 'rgba(255,255,255,0.6)',
+                    letterSpacing: '0.08em',
+                    lineHeight: 1.3,
+                  }}
+                >
+                  {isPoints ? 'Points' : 'Tampons'}
+                </p>
+                <p style={{ fontSize: 22, fontWeight: 700, color: 'white', lineHeight: 1 }}>
+                  {displayValue}
+                </p>
+              </div>
+            </div>
+
+            {/* Expanded body — fades in/out */}
+            <div
+              className="space-y-3 pb-4"
+              style={{
+                opacity: isOpen ? 1 : 0,
+                transition: 'opacity 0.2s ease',
+                pointerEvents: isOpen ? 'auto' : 'none',
+              }}
+            >
+              {/* Banner */}
+              <div
+                className="mx-3 flex items-center justify-center overflow-hidden"
+                style={{
+                  height: 90,
+                  borderRadius: 10,
+                  backgroundColor: 'rgba(255,255,255,0.12)',
+                }}
+              >
+                {merchant.banner_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={merchant.banner_url}
+                    alt=""
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                  />
+                ) : (
+                  <span
+                    className="font-bold text-center px-4 leading-tight"
+                    style={{ color: 'white', fontSize: 28 }}
+                  >
+                    {merchant.business_name}
+                  </span>
+                )}
+              </div>
+
+              {/* Card holder name */}
+              <p
+                style={{
+                  fontSize: 11,
+                  textTransform: 'uppercase',
+                  color: 'rgba(255,255,255,0.6)',
+                  letterSpacing: '0.06em',
+                  marginLeft: 16,
+                  marginRight: 16,
+                }}
+              >
+                Carte de {card.first_name}
+              </p>
+
+              {/* Progress: stamps or points */}
+              {isPoints ? (
+                <PointsProgress count={count} total={total} />
+              ) : (
+                <StampCircles count={count} total={total} color={color} />
+              )}
+
+              {/* QR code */}
+              <div className="flex flex-col items-center gap-2 px-4">
+                <div
+                  className="bg-white inline-flex items-center justify-center"
+                  style={{ borderRadius: 12, padding: 12 }}
+                >
+                  <QRCanvas value={card.id} />
+                </div>
+                <p
+                  className="font-mono"
+                  style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}
+                >
+                  {card.id.slice(0, 8)}…{card.id.slice(-4)}
+                </p>
+              </div>
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}

@@ -21,7 +21,7 @@ export async function POST(request: Request) {
 
   const { error } = await service.from('push_subscriptions').upsert(
     { customer_id, merchant_id, subscription },
-    { onConflict: 'merchant_id' }
+    { onConflict: 'endpoint,merchant_id' }
   )
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })

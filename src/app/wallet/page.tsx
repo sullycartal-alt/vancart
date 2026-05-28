@@ -38,7 +38,7 @@ export default async function WalletPage() {
 
   const service = createServiceClient()
 
-  const { data: cards } = await service
+  const { data: cards, error: cardsError } = await service
     .from('loyalty_cards')
     .select(
       'id, stamps_count, points, rewards_unlocked, customers(first_name), merchants(id, business_name, primary_color, loyalty_rule, stamps_required, loyalty_type, points_required, logo_url)'
@@ -113,7 +113,7 @@ export default async function WalletPage() {
             {normalised.length} carte{normalised.length !== 1 ? 's' : ''} de fidélité
           </p>
         </div>
-        <WalletClient cards={normalised} />
+        <WalletClient cards={normalised} error={!!cardsError} />
       </div>
     </div>
   )

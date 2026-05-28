@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { z } from 'zod'
 import QRCodeDisplay from './QRCodeDisplay'
 import type { MerchantSharedConfig } from '@/types/merchant-config'
+import Toast from '@/components/Toast'
 
 const schema = z.object({
   business_name: z.string().min(2, 'Au moins 2 caractères').max(100),
@@ -63,7 +64,7 @@ export default function MerchantForm({ merchant, onConfigChange, clientCount = 0
   const [savedMerchant, setSavedMerchant] = useState<Merchant | null>(merchant)
   const [allowMultipleStamps, setAllowMultipleStamps] = useState(merchant?.allow_multiple_stamps ?? true)
   const [stampsPerVisit, setStampsPerVisit] = useState(merchant?.stamps_per_visit ?? 1)
-  const [success, setSuccess] = useState(false)
+  const [showToast, setShowToast] = useState(false)
   const [showResetModal, setShowResetModal] = useState(false)
   const [resetting, setResetting] = useState(false)
   const [resetDone, setResetDone] = useState(false)
@@ -120,7 +121,6 @@ export default function MerchantForm({ merchant, onConfigChange, clientCount = 0
   }
 
   async function onSubmit(data: FormData) {
-    setSuccess(false)
     const res = await fetch('/api/merchants', {
       method: savedMerchant ? 'PATCH' : 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -141,7 +141,7 @@ export default function MerchantForm({ merchant, onConfigChange, clientCount = 0
       return
     }
     setSavedMerchant(result)
-    setSuccess(true)
+    setShowToast(true)
   }
 
   async function handleResetTestData() {
@@ -302,11 +302,7 @@ export default function MerchantForm({ merchant, onConfigChange, clientCount = 0
             <p className="text-sm text-red-600">{errors.root.message}</p>
           </div>
         )}
-        {success && (
-          <div className="rounded-xl bg-green-50 border border-green-200 p-3">
-            <p className="text-sm text-green-700 font-medium">Informations enregistrées avec succès !</p>
-          </div>
-        )}
+        {showToast && <Toast message="Informations enregistrées avec succès !" onHide={() => setShowToast(false)} />}
         {resetDone && (
           <div className="rounded-xl bg-green-50 border border-green-200 p-3">
             <p className="text-sm text-green-700 font-medium">Données de test supprimées. Vous pouvez maintenant changer le mode de fidélité.</p>

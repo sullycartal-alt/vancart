@@ -18,6 +18,18 @@ function Spinner() {
 
 const inputClass = 'block w-full rounded-xl border border-[#E8E8E3] px-4 py-3 text-sm text-[#1A1A1A] bg-[#F7F6F3] focus:border-[#6C47FF] focus:outline-none focus:ring-2 focus:ring-[#6C47FF]/15 transition-all'
 
+function generateSlug(name: string): string {
+  // eslint-disable-next-line no-misleading-character-class
+  const base = name
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+    .slice(0, 45) || 'commerce'
+  return `${base}-${Math.random().toString(36).slice(2, 6)}`
+}
+
 export default function RegisterPage() {
   const router = useRouter()
   const supabase = createClient()
@@ -43,6 +55,20 @@ export default function RegisterPage() {
     if (error) {
       setError('root', { message: error.message })
       return
+    }
+
+    // Create merchant record immediately so business_name is saved
+    try {
+      await fetch('/api/merchants', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          business_name: data.businessName,
+          slug: generateSlug(data.businessName),
+        }),
+      })
+    } catch {
+      // Non-critical: user can complete setup in dashboard settings
     }
 
     fetch('/api/welcome-email', {

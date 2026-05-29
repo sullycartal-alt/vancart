@@ -2,15 +2,14 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { createServiceClient } from '@/lib/supabase/service'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2026-05-27.dahlia' as any })
-
-const PRICE_TO_PLAN: Record<string, 'essential' | 'pro'> = {
-  [process.env.STRIPE_PRICE_ESSENTIEL ?? '']: 'essential',
-  [process.env.STRIPE_PRICE_PRO ?? '']: 'pro',
-}
-
 export async function POST(request: NextRequest) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2026-05-27.dahlia' as any })
+
+  const PRICE_TO_PLAN: Record<string, 'essential' | 'pro'> = {
+    [process.env.STRIPE_PRICE_ESSENTIEL ?? '']: 'essential',
+    [process.env.STRIPE_PRICE_PRO ?? '']: 'pro',
+  }
   const rawBody = await request.text()
   const signature = request.headers.get('stripe-signature')
 

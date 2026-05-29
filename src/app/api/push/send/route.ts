@@ -60,6 +60,10 @@ export async function POST(request: Request) {
         return { endpoint, success: true }
       } catch (err: unknown) {
         const e = err as { statusCode?: number; body?: string; message?: string }
+        if (e.statusCode === 410 || e.statusCode === 404) {
+          const fullEndpoint = (subscription as webpush.PushSubscription).endpoint
+          await service.from('push_subscriptions').delete().eq('endpoint', fullEndpoint)
+        }
         return {
           endpoint,
           success: false,

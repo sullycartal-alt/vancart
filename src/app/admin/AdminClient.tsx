@@ -26,6 +26,9 @@ interface MerchantRow {
   plan: string | null
   loyalty_type: string
   city: string | null
+  owner_name: string | null
+  phone: string | null
+  address: string | null
   created_at: string
   client_count: number
   total_activity: number
@@ -288,7 +291,6 @@ function MerchantsTab({
 
               <dl className="space-y-2.5 text-sm">
                 {[
-                  { label: 'Email', value: drawer.email },
                   { label: 'Inscrit le', value: formatDate(drawer.created_at) },
                   { label: 'Clients', value: `${drawer.client_count}` },
                   { label: 'Activité totale', value: `${drawer.total_activity}` },
@@ -301,6 +303,23 @@ function MerchantsTab({
                   </div>
                 ))}
               </dl>
+
+              <div>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#6B6B6B] mb-3">Coordonnées</h4>
+                <div className="space-y-2 text-sm">
+                  {[
+                    { icon: '📧', label: drawer.email || 'Non renseigné' },
+                    { icon: '👤', label: drawer.owner_name || 'Non renseigné' },
+                    { icon: '📞', label: drawer.phone || 'Non renseigné' },
+                    { icon: '📍', label: drawer.address || 'Non renseigné' },
+                  ].map(({ icon, label }) => (
+                    <div key={icon} className="flex items-start gap-2.5 py-1.5 border-b border-[#F7F6F3]">
+                      <span className="text-base leading-5 flex-shrink-0">{icon}</span>
+                      <span className={label === 'Non renseigné' ? 'text-[#9CA3AF] italic' : 'text-[#1A1A1A] break-all'}>{label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
               {(merchantClients[drawer.id] ?? []).length > 0 && (
                 <div>

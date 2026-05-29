@@ -19,6 +19,9 @@ interface Merchant {
   description?: string | null
   instagram_handle?: string | null
   city?: string | null
+  owner_name?: string | null
+  phone?: string | null
+  address?: string | null
   hero_image_url?: string | null
   wallet_message?: string | null
   card_expiry_months?: number | null

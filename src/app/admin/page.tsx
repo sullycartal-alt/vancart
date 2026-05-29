@@ -28,7 +28,7 @@ export default async function AdminPage() {
   ] = await Promise.all([
     service
       .from('merchants')
-      .select('id, business_name, created_at, loyalty_type, plan, city, stamps_required, user_id')
+      .select('id, business_name, created_at, loyalty_type, plan, city, stamps_required, user_id, owner_name, phone, address')
       .order('created_at', { ascending: false }),
     service
       .from('loyalty_cards')
@@ -157,6 +157,9 @@ export default async function AdminPage() {
       plan: m.plan ?? null,
       loyalty_type: m.loyalty_type ?? 'stamps',
       city: m.city ?? null,
+      owner_name: m.owner_name ?? null,
+      phone: m.phone ?? null,
+      address: m.address ?? null,
       created_at: m.created_at,
       client_count: clientCount,
       total_activity: totalAct,

@@ -18,6 +18,9 @@ const schema = z.object({
   description: z.string().max(200).optional(),
   instagram_handle: z.string().max(30).optional(),
   city: z.string().max(60).optional(),
+  owner_name: z.string().max(100).optional(),
+  phone: z.string().max(30).optional(),
+  address: z.string().max(200).optional(),
 })
 
 type FormData = z.infer<typeof schema>
@@ -38,6 +41,9 @@ interface Merchant {
   city?: string | null
   allow_multiple_stamps?: boolean | null
   stamps_per_visit?: number | null
+  owner_name?: string | null
+  phone?: string | null
+  address?: string | null
 }
 
 interface Props {
@@ -81,6 +87,9 @@ export default function MerchantForm({ merchant, onConfigChange, clientCount = 0
       description: merchant?.description ?? '',
       instagram_handle: merchant?.instagram_handle ?? '',
       city: merchant?.city ?? '',
+      owner_name: merchant?.owner_name ?? '',
+      phone: merchant?.phone ?? '',
+      address: merchant?.address ?? '',
     },
   })
 
@@ -130,6 +139,9 @@ export default function MerchantForm({ merchant, onConfigChange, clientCount = 0
         description: data.description || null,
         instagram_handle: data.instagram_handle || null,
         city: data.city || null,
+        owner_name: data.owner_name || null,
+        phone: data.phone || null,
+        address: data.address || null,
         allow_multiple_stamps: allowMultipleStamps,
         // Only include once the column exists in the DB (migration applied)
         ...(merchant?.stamps_per_visit != null ? { stamps_per_visit: stampsPerVisit } : {}),
@@ -256,6 +268,33 @@ export default function MerchantForm({ merchant, onConfigChange, clientCount = 0
           </label>
           <input {...register('city')} type="text" id="city" placeholder="Ex : Paris, Lyon, Marseille…" maxLength={60} className={inputClass} />
           {errors.city && <p className="mt-1 text-sm text-red-500">{errors.city.message}</p>}
+        </div>
+
+        {/* Nom du gérant */}
+        <div>
+          <label htmlFor="owner_name" className="block text-sm font-medium text-[#1A1A1A]">
+            Nom complet du gérant <span className="text-[#6B6B6B] font-normal">(optionnel)</span>
+          </label>
+          <input {...register('owner_name')} type="text" id="owner_name" placeholder="Ex : Marie Dupont" maxLength={100} className={inputClass} />
+          {errors.owner_name && <p className="mt-1 text-sm text-red-500">{errors.owner_name.message}</p>}
+        </div>
+
+        {/* Téléphone */}
+        <div>
+          <label htmlFor="phone" className="block text-sm font-medium text-[#1A1A1A]">
+            Téléphone <span className="text-[#6B6B6B] font-normal">(optionnel)</span>
+          </label>
+          <input {...register('phone')} type="tel" id="phone" placeholder="Ex : 06 12 34 56 78" maxLength={30} className={inputClass} />
+          {errors.phone && <p className="mt-1 text-sm text-red-500">{errors.phone.message}</p>}
+        </div>
+
+        {/* Adresse */}
+        <div>
+          <label htmlFor="address" className="block text-sm font-medium text-[#1A1A1A]">
+            Adresse du commerce <span className="text-[#6B6B6B] font-normal">(optionnelle)</span>
+          </label>
+          <input {...register('address')} type="text" id="address" placeholder="Ex : 12 rue de la Paix, 75001 Paris" maxLength={200} className={inputClass} />
+          {errors.address && <p className="mt-1 text-sm text-red-500">{errors.address.message}</p>}
         </div>
 
         {/* Règles de tamponnage */}

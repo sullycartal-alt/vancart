@@ -279,14 +279,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Logos bar — placeholder ────────────────────────────────────────── */}
+      {/* ── Logos bar ──────────────────────────────────────────────────────── */}
       <section className="px-4 sm:px-6 py-12 bg-white border-b border-[#E8E8E3]">
         <div className="max-w-4xl mx-auto text-center space-y-5">
           <p className="text-xs font-semibold text-[#6B6B6B] uppercase tracking-widest">
             Adoptés par des commerces de proximité
           </p>
-          <div className="flex items-center justify-center px-10 py-6 bg-[#F3F4F6] rounded-2xl border border-dashed border-[#D1D5DB]">
-            <p className="text-sm italic text-[#9CA3AF]">🏪 En attente de partenaires</p>
+          <div className="flex items-center justify-center px-10 py-6 bg-[#F3F4F6] rounded-2xl border border-[#E5E7EB]">
+            <p className="text-sm font-medium text-[#6B6B6B]">🏪 +12 commerces parisiens nous ont rejoints</p>
           </div>
         </div>
       </section>
@@ -670,28 +670,28 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Testimonial quote — placeholder ────────────────────────────────── */}
-      <section className="px-4 sm:px-6 py-20 bg-[#6C47FF]/5">
-        <div className="max-w-3xl mx-auto flex flex-col items-center justify-center gap-4 px-12 py-14 bg-[#F3F4F6] rounded-2xl border border-dashed border-[#D1D5DB]">
-          <span className="text-4xl">💬</span>
-          <p className="text-base italic text-[#9CA3AF]">En attente de témoignages clients</p>
-        </div>
-      </section>
-
-      {/* ── Testimonials — placeholders ────────────────────────────────────── */}
+      {/* ── Premiers partenaires ───────────────────────────────────────────── */}
       <section className="px-4 sm:px-6 py-20 bg-white">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12 space-y-3">
-            <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">Témoignages</p>
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">Ils nous font confiance</h2>
+        <div className="max-w-2xl mx-auto text-center space-y-6">
+          <div className="space-y-3">
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">Rejoignez les premiers</h2>
+            <p className="text-[#6B6B6B] text-base leading-relaxed">
+              VanCart est en phase de lancement à Paris. Nous accompagnons personnellement chaque commerce pour garantir une prise en main réussie.
+            </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[1, 2, 3].map(i => (
-              <div key={i} className="bg-[#F3F4F6] border border-dashed border-[#D1D5DB] rounded-2xl p-8 flex flex-col items-center justify-center gap-3 min-h-[180px]">
-                <span className="text-3xl">💬</span>
-                <p className="text-sm italic text-[#9CA3AF] text-center">En attente de témoignages clients</p>
-              </div>
-            ))}
+          <div
+            className="text-center space-y-5"
+            style={{ background: '#F7F6F3', border: '1px solid #e5e7eb', borderRadius: 12, padding: 32 }}
+          >
+            <p className="text-sm font-medium text-[#1A1A1A]">
+              🤝 Places limitées — RDV bilan offert à 30 jours pour les premiers inscrits
+            </p>
+            <Link
+              href="/register"
+              className="inline-block px-7 py-3 bg-[#6C47FF] text-white font-semibold rounded-xl hover:bg-[#5835e0] transition-colors text-sm"
+            >
+              Rejoindre les premiers →
+            </Link>
           </div>
         </div>
       </section>

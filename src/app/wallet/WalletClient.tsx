@@ -98,6 +98,103 @@ function PointsProgress({ count, total }: { count: number; total: number }) {
   )
 }
 
+function urlBase64ToUint8Array(base64String: string) {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
+  const rawData = window.atob(base64)
+  return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)))
+}
+
+function getCookie(name: string): string | null {
+  const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`))
+  return match ? decodeURIComponent(match[1]) : null
+}
+
+function PushButton({ merchantId }: { merchantId: string }) {
+  const [permission, setPermission] = useState<NotificationPermission | null>(null)
+  const [subscribed, setSubscribed] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (!('Notification' in window) || !('PushManager' in window) || !('serviceWorker' in navigator)) return
+    setPermission(Notification.permission)
+    if (Notification.permission === 'granted') {
+      navigator.serviceWorker.ready.then(async (reg) => {
+        const sub = await reg.pushManager.getSubscription()
+        setSubscribed(!!sub)
+      })
+    }
+  }, [])
+
+  async function activate() {
+    if (!('Notification' in window) || !('PushManager' in window)) return
+    setLoading(true)
+    try {
+      const perm = await Notification.requestPermission()
+      setPermission(perm)
+      if (perm !== 'granted') return
+      const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
+      if (!vapidKey) return
+      const reg = await navigator.serviceWorker.ready
+      const existing = await reg.pushManager.getSubscription()
+      const sub = existing ?? await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(vapidKey),
+      })
+      const customerId = getCookie('vancart_customer_id')
+      if (!customerId) return
+      await fetch('/api/push/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ customer_id: customerId, merchant_id: merchantId, subscription: sub.toJSON() }),
+      })
+      setSubscribed(true)
+    } catch { /* silent */ }
+    finally { setLoading(false) }
+  }
+
+  if (permission === null) return null
+
+  if (permission === 'denied') {
+    return (
+      <p style={{ fontSize: 11, color: 'rgba(255,100,100,0.85)', textAlign: 'center', padding: '0 16px' }}>
+        Notifications bloquées — modifiez vos réglages
+      </p>
+    )
+  }
+
+  if (permission === 'granted' && subscribed) {
+    return (
+      <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', textAlign: 'center', padding: '0 16px' }}>
+        🔔 Notifications activées
+      </p>
+    )
+  }
+
+  return (
+    <div style={{ padding: '0 16px' }}>
+      <button
+        onClick={activate}
+        disabled={loading}
+        style={{
+          width: '100%',
+          padding: '8px 12px',
+          borderRadius: 10,
+          backgroundColor: 'rgba(255,255,255,0.15)',
+          border: '1px solid rgba(255,255,255,0.25)',
+          color: 'white',
+          fontSize: 12,
+          fontWeight: 600,
+          cursor: loading ? 'wait' : 'pointer',
+          opacity: loading ? 0.7 : 1,
+        }}
+      >
+        {loading ? '…' : '🔔 Activer les notifications'}
+      </button>
+    </div>
+  )
+}
+
 export default function WalletClient({ cards, error }: { cards: WalletCard[]; error?: boolean }) {
   const router = useRouter()
   const [openIdx, setOpenIdx] = useState<number | null>(null)
@@ -306,6 +403,9 @@ export default function WalletClient({ cards, error }: { cards: WalletCard[]; er
                   {card.id.slice(0, 8)}…{card.id.slice(-4)}
                 </p>
               </div>
+
+              {/* Push notifications */}
+              <PushButton merchantId={merchant.id} />
             </div>
           </div>
         )

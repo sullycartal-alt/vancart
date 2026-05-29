@@ -52,12 +52,26 @@ export async function POST(request: Request) {
 
   const payload = JSON.stringify({ title, body: notifBody, url: '/wallet' })
 
-  const results = await Promise.allSettled(
-    subs.map(({ subscription }) =>
-      webpush.sendNotification(subscription as webpush.PushSubscription, payload)
-    )
+  const details = await Promise.all(
+    subs.map(async ({ subscription }) => {
+      const endpoint = (subscription as webpush.PushSubscription).endpoint?.slice(0, 50) ?? '(unknown)'
+      try {
+        await webpush.sendNotification(subscription as webpush.PushSubscription, payload)
+        return { endpoint, success: true }
+      } catch (err: unknown) {
+        const e = err as { statusCode?: number; body?: string; message?: string }
+        return {
+          endpoint,
+          success: false,
+          statusCode: e.statusCode,
+          body: e.body,
+          message: e.message,
+        }
+      }
+    })
   )
 
-  const sent = results.filter((r) => r.status === 'fulfilled').length
-  return NextResponse.json({ sent, total: subs.length })
+  const sent = details.filter((d) => d.success).length
+  const failed = details.length - sent
+  return NextResponse.json({ sent, failed, total: subs.length, details })
 }

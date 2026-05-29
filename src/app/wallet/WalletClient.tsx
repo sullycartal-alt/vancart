@@ -104,6 +104,11 @@ export default function WalletClient({ cards, error }: { cards: WalletCard[]; er
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    const interval = setInterval(() => router.refresh(), 30000)
+    return () => clearInterval(interval)
+  }, [router])
+
+  useEffect(() => {
     function handle(e: MouseEvent) {
       if (openIdx === null) return
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {

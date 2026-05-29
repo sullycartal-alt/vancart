@@ -16,7 +16,7 @@ export const PLAN_FEATURES = {
   },
   essential: {
     maxClients: 500,
-    aiAdvisor: true,
+    aiAdvisor: false,
     advancedStats: true,
     appleWallet: true,
     googleWallet: true,

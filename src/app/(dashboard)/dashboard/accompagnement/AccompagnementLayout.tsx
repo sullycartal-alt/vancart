@@ -135,7 +135,7 @@ export default function AccompagnementLayout({ plan, merchantContext, businessNa
             </div>
           )}
 
-          <UpgradeGate plan={plan} feature="aiAdvisor" requiredPlan="essential">
+          <UpgradeGate plan={plan} feature="aiAdvisor" requiredPlan="pro">
             <ChatClient
               key={activeTopicId}
               merchantContext={merchantContext}

@@ -17,7 +17,7 @@ const PLAN_PRICES: Record<'essential' | 'pro', string> = {
 const FEATURE_META: Record<string, { label: string; description: string; benefits: string[] }> = {
   aiAdvisor: {
     label: 'Conseiller IA fidélité',
-    description: 'Obtenez des recommandations personnalisées pour optimiser votre programme de fidélité grâce à une IA française.',
+    description: 'Disponible à partir du plan Pro. Obtenez des recommandations personnalisées pour optimiser votre programme de fidélité grâce à une IA française.',
     benefits: [
       'Analyse votre commerce et votre programme actuel',
       'Recommande la règle de fidélité idéale',

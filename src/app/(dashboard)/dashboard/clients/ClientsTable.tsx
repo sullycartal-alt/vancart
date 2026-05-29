@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 
 interface Client {
   id: string
@@ -121,12 +122,38 @@ function NotifyModal({
 export default function ClientsTable({ clients, merchantId, subscribedCustomerIds }: Props) {
   const router = useRouter()
   const [notifyTarget, setNotifyTarget] = useState<NotifyTarget | null>(null)
-  const subscribedSet = new Set(subscribedCustomerIds)
+  const [subscribedSet, setSubscribedSet] = useState(() => new Set(subscribedCustomerIds))
 
   useEffect(() => {
     const interval = setInterval(() => router.refresh(), 30000)
     return () => clearInterval(interval)
   }, [router])
+
+  useEffect(() => {
+    const supabase = createClient()
+    const channel = supabase
+      .channel(`push_subs_${merchantId}`)
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'push_subscriptions',
+        filter: `merchant_id=eq.${merchantId}`,
+      }, (payload) => {
+        const cid = (payload.new as { customer_id: string }).customer_id
+        setSubscribedSet(prev => new Set([...prev, cid]))
+      })
+      .on('postgres_changes', {
+        event: 'DELETE',
+        schema: 'public',
+        table: 'push_subscriptions',
+        filter: `merchant_id=eq.${merchantId}`,
+      }, (payload) => {
+        const cid = (payload.old as { customer_id: string }).customer_id
+        setSubscribedSet(prev => { const n = new Set(prev); n.delete(cid); return n })
+      })
+      .subscribe()
+    return () => { supabase.removeChannel(channel) }
+  }, [merchantId])
 
   function openNotify(client: Client) {
     if (!client.customer_id) return

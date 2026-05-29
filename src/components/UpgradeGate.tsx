@@ -71,6 +71,24 @@ const FEATURE_META: Record<string, { label: string; description: string; benefit
       'Statistiques consolidées',
     ],
   },
+  googleWallet: {
+    label: 'Google Wallet',
+    description: "Proposez à vos clients d'ajouter leur carte de fidélité directement dans Google Wallet.",
+    benefits: [
+      'Carte toujours accessible sur Android',
+      'Mise à jour automatique des tampons',
+      'Compatible tous appareils Android',
+    ],
+  },
+  pushNotifications: {
+    label: 'Notifications push',
+    description: 'Envoyez des notifications push à vos clients directement sur leur téléphone.',
+    benefits: [
+      'Notification automatique à chaque récompense',
+      'Relance des clients inactifs',
+      'Taux d\'ouverture supérieur aux SMS',
+    ],
+  },
 }
 
 interface Props {

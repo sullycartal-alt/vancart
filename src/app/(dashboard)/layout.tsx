@@ -44,6 +44,18 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <TrialBanner daysLeft={trialDaysLeft} endDate={trialEndDate} />
       )}
 
+      {/* Upgrade nudge — free plan with no active trial */}
+      {plan === 'free' && trialDaysLeft === null && (
+        <div className="border-b border-[#6C47FF]/20 bg-[#6C47FF]/8 py-2 px-4 text-center">
+          <span className="text-sm text-[#6C47FF]">
+            ✨ Passez à Essentiel pour débloquer Google Wallet et les stats avancées{' '}
+            <a href="/dashboard/upgrade" className="font-semibold underline underline-offset-2 hover:text-[#5835e0] transition-colors">
+              Voir les plans →
+            </a>
+          </span>
+        </div>
+      )}
+
       <nav className="bg-white/95 backdrop-blur-sm border-b border-[#E8E8E3] sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">

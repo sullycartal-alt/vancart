@@ -551,7 +551,7 @@ export default function Home() {
                   <p className="text-xs text-[#6B6B6B] mt-1">Aucune carte bancaire requise</p>
                 </div>
                 <ul className="space-y-2.5">
-                  {["QR code + cartes digitales", "Jusqu'à 50 clients", 'Dashboard basique', 'Google Wallet', 'Personnalisation complète', 'RDV bilan offert à 30 jours'].map(f => (
+                  {["QR code + cartes digitales", "Jusqu'à 50 clients", 'Google & Apple Wallet inclus', 'Dashboard basique', 'Personnalisation complète', 'RDV bilan offert à 30 jours'].map(f => (
                     <li key={f} className="flex items-center gap-2.5 text-sm text-[#1A1A1A]">
                       <CheckIcon color="#6B6B6B" />{f}
                     </li>
@@ -580,7 +580,7 @@ export default function Home() {
                   <p className="text-xs text-[#6B6B6B] mt-1">Sans engagement</p>
                 </div>
                 <ul className="space-y-2.5">
-                  {["Tout du plan Découverte", "Jusqu'à 500 clients", 'Stats avancées', 'Conseiller IA 🇫🇷', 'Apple Wallet', 'Export données clients'].map(f => (
+                  {["Tout du plan Découverte", "Clients illimités", 'Stats avancées', 'Support prioritaire'].map(f => (
                     <li key={f} className="flex items-center gap-2.5 text-sm text-[#1A1A1A]">
                       <CheckIcon />{f}
                     </li>
@@ -607,7 +607,7 @@ export default function Home() {
                   <p className="text-xs text-[#6B6B6B] mt-1">Sans engagement</p>
                 </div>
                 <ul className="space-y-2.5">
-                  {["Tout du plan Essentiel", 'Clients illimités', 'Notifications SMS', 'Multi-boutique', 'RDV mensuel inclus'].map(f => (
+                  {["Tout du plan Essentiel", 'Conseiller IA Mistral 🇫🇷', 'Notifications push clients', 'Export données clients', 'Multi-boutique', 'RDV mensuel inclus'].map(f => (
                     <li key={f} className="flex items-center gap-2.5 text-sm text-[#1A1A1A]">
                       <CheckIcon color="#6B6B6B" />{f}
                     </li>

@@ -2,14 +2,14 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
-const ADMIN_EMAIL = 'sullycartal@gmail.com'
+const ADMIN_EMAILS = ['sullycartal@gmail.com', 'audrey@vancart.fr']
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) redirect('/login')
-  if (user.email !== ADMIN_EMAIL) redirect('/dashboard')
+  if (!user.email || !ADMIN_EMAILS.includes(user.email)) redirect('/dashboard')
 
   return (
     <div className="min-h-screen bg-[#F7F6F3]">
@@ -20,6 +20,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               <span className="text-sm font-bold text-red-400">⚙ Admin VanCart</span>
               <Link href="/admin" className="text-sm text-gray-300 hover:text-white transition-colors">
                 Dashboard
+              </Link>
+              <Link href="/admin/prospection" className="text-sm text-gray-300 hover:text-white transition-colors">
+                🎯 Prospection
               </Link>
             </div>
             <Link href="/dashboard" className="text-sm text-gray-400 hover:text-white transition-colors">

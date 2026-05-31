@@ -14,7 +14,6 @@ const links = [
   { href: '/dashboard/clients', label: 'Mes clients' },
   { href: '/dashboard/stats', label: 'Stats' },
   { href: '/dashboard/accompagnement', label: 'Accompagnement' },
-  { href: '/dashboard/prospection', label: '🎯 Prospection' },
   { href: '/dashboard/settings', label: 'Mon commerce' },
 ]
 

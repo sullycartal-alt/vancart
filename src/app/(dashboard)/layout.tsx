@@ -76,9 +76,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
                 <Link prefetch href="/dashboard/accompagnement" className="text-sm text-[#6B6B6B] hover:text-[#1A1A1A] font-medium transition-colors">
                   Accompagnement
                 </Link>
-                <Link prefetch href="/dashboard/prospection" className="text-sm text-[#6B6B6B] hover:text-[#1A1A1A] font-medium transition-colors">
-                  Prospection
-                </Link>
                 <Link prefetch href="/dashboard/settings" className="text-sm text-[#6B6B6B] hover:text-[#1A1A1A] font-medium transition-colors">
                   Mon commerce
                 </Link>

@@ -15,6 +15,7 @@ const DECOUVERTE_FEATURES = [
   'Google & Apple Wallet',
   'Carte PWA installable',
   'Stats basiques',
+  'Rendez-vous de suivi avec l\'équipe VanCart',
 ]
 
 const ESSENTIAL_FEATURES = [
@@ -99,9 +100,10 @@ export default function UpgradePageClient({ currentPlan }: Props) {
             <div>
               <h2 className="text-xl font-bold text-[#1A1A1A]">Découverte</h2>
               <div className="mt-1.5">
-                <span className="text-3xl font-bold text-[#1A1A1A]">0€</span>
-                <span className="text-[#6B6B6B] text-sm"> / mois</span>
+                <span className="text-3xl font-bold text-[#1A1A1A]">Gratuit</span>
               </div>
+              <p className="text-[#6B6B6B] text-xs mt-1">1 mois · Sans carte bancaire</p>
+              <p className="text-[#6B6B6B] text-xs mt-0.5">Testez VanCart gratuitement pendant 1 mois, puis échangeons ensemble.</p>
             </div>
 
             <ul className="space-y-2.5">
@@ -118,7 +120,7 @@ export default function UpgradePageClient({ currentPlan }: Props) {
             disabled
             className="mt-6 w-full py-3 border border-[#E8E8E3] text-[#6B6B6B] font-semibold rounded-xl text-sm cursor-not-allowed"
           >
-            {isFree ? 'Plan actuel' : 'Rétrograder'}
+            {isFree ? 'Plan actuel' : 'Démarrer gratuitement'}
           </button>
         </div>
 

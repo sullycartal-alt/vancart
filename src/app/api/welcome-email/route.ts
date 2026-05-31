@@ -106,7 +106,7 @@ export async function POST(request: Request) {
 
         <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:16px;margin-bottom:0">
           <p style="margin:0;font-size:13px;color:#92400e;line-height:1.6">
-            <strong>💡 Bon à savoir :</strong> Vous bénéficiez d'un essai gratuit de 30 jours sans carte bancaire. Pendant cette période, vous pouvez accueillir jusqu'à 50 clients fidèles.
+            <strong>💡 Bon à savoir :</strong> Vous bénéficiez d'1 mois gratuit sans carte bancaire. Vous pouvez accueillir jusqu'à 50 clients fidèles. À la fin du mois, Sullivan &amp; Audrey vous contactent pour faire le point ensemble.
           </p>
         </div>
       </td>

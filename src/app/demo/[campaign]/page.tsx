@@ -8,7 +8,7 @@ export async function generateMetadata({ params }: Props) {
   const { campaign } = await params
   return {
     title: `VanCart — Offre spéciale ${campaign}`,
-    description: 'Créez votre programme de fidélité digital. QR code en caisse, carte sur smartphone. Essai 30 jours gratuit.',
+    description: 'Créez votre programme de fidélité digital. QR code en caisse, carte sur smartphone. 1 mois gratuit, sans carte bancaire.',
   }
 }
 

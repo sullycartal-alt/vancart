@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 import AdminClient from './AdminClient'
 
 export const dynamic = 'force-dynamic'
-const ADMIN_EMAIL = 'sullycartal@gmail.com'
+const ADMIN_EMAIL = 'sullycartal@gmail.com' // primary admin for data access
 
 export default async function AdminPage() {
   // Auth check (layout also does it, belt-and-suspenders)

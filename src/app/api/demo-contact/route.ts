@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { Resend } from 'resend'
+import { createServiceClient } from '@/lib/supabase/service'
 
 const schema = z.object({
   prenom: z.string().min(1, 'Le prénom est requis.').max(80),
@@ -52,7 +53,7 @@ export async function POST(request: NextRequest) {
   const FROM = process.env.RESEND_FROM_EMAIL ?? 'VanCart <onboarding@resend.dev>'
   const campaignLabel = campaign ?? 'accès direct'
 
-  // Mobile-friendly HTML email (Sullivan reads it on his phone)
+  // Mobile-friendly HTML email (Sullivan & Audrey read it on their phones)
   const html = `<!DOCTYPE html>
 <html lang="fr">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
@@ -125,6 +126,15 @@ export async function POST(request: NextRequest) {
     })
   } catch (err) {
     console.error('[demo-contact] Resend failed:', err)
+  }
+
+  if (campaign) {
+    try {
+      const service = createServiceClient()
+      await service.rpc('increment_leads_count', { campaign_slug: campaign })
+    } catch {
+      // Silently ignore — campaign slug may not exist
+    }
   }
 
   return NextResponse.json({ ok: true })

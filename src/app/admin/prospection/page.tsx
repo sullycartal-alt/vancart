@@ -117,6 +117,7 @@ export default function AdminProspectionPage() {
   const [creating, setCreating] = useState(false)
   const [copied, setCopied] = useState<string | null>(null)
   const [qrModal, setQrModal] = useState<Campaign | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function init() {
@@ -133,30 +134,47 @@ export default function AdminProspectionPage() {
 
   async function loadCampaigns() {
     setLoading(true)
-    const { data } = await supabase
+    const { data, error: fetchError } = await supabase
       .from('prospection_campaigns')
       .select('*')
       .order('created_at', { ascending: false })
-    setCampaigns(data ?? [])
+    if (fetchError) {
+      setError(`Erreur chargement : ${fetchError.message} (code: ${fetchError.code})`)
+    } else {
+      setCampaigns(data ?? [])
+    }
     setLoading(false)
   }
 
   async function createCampaign() {
     const trimmed = name.trim()
-    if (!trimmed || !userId) return
+    if (!trimmed) return
+    setError(null)
     setCreating(true)
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      setError('Non authentifié — recharge la page')
+      setCreating(false)
+      return
+    }
+
     const slug = generateSlug(trimmed)
     const url = `${APP_URL}/demo/${slug}`
-    const { error } = await supabase
+    const { error: insertError } = await supabase
       .from('prospection_campaigns')
       .insert({
-        admin_user_id: userId,
-        admin_name: userEmail,
+        admin_user_id: user.id,
+        admin_name: user.email ?? userEmail,
         nom: trimmed,
         slug,
         url,
+        leads_count: 0,
       })
-    if (!error) {
+
+    if (insertError) {
+      setError(`Erreur Supabase : ${insertError.message} (code: ${insertError.code})`)
+    } else {
       setName('')
       await loadCampaigns()
     }
@@ -213,13 +231,24 @@ export default function AdminProspectionPage() {
               className="px-5 bg-[#6C47FF] text-white text-sm font-bold rounded-xl hover:bg-[#5835e0] disabled:opacity-40 transition-colors whitespace-nowrap"
               style={{ minHeight: 52 }}
             >
-              {creating ? '…' : 'Générer'}
+              {creating ? 'Génération…' : 'Générer'}
             </button>
           </div>
           {previewSlug && (
             <p className="mt-2 text-xs text-[#9CA3AF] break-all">
               → {APP_URL}/demo/{previewSlug}
             </p>
+          )}
+          {error && (
+            <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+              ⚠️ {error}
+            </div>
+          )}
+          {error?.includes('does not exist') && (
+            <div className="mt-2 p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-sm">
+              <p className="font-semibold">Migration SQL manquante</p>
+              <p className="mt-0.5">La table <code className="font-mono bg-amber-100 px-1 rounded">prospection_campaigns</code> n&apos;existe pas encore. Va dans Supabase → SQL Editor et exécute le fichier <code className="font-mono bg-amber-100 px-1 rounded">supabase/migrations/20260531_prospection_campaigns.sql</code>.</p>
+            </div>
           )}
         </div>
 

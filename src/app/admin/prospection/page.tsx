@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import QRCode from 'qrcode'
+import { QRCodeSVG, QRCodeCanvas } from 'qrcode.react'
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://vancart.vercel.app'
 
@@ -44,19 +44,12 @@ function leadsBadge(count: number) {
 }
 
 function QRModal({ url, nom, onClose }: { url: string; nom: string; onClose: () => void }) {
-  const [dataUrl, setDataUrl] = useState<string | null>(null)
-
-  useEffect(() => {
-    QRCode.toDataURL(url, {
-      width: 400,
-      margin: 2,
-      color: { dark: '#1A1A1A', light: '#FFFFFF' },
-      errorCorrectionLevel: 'M',
-    }).then(setDataUrl).catch(() => setDataUrl(null))
-  }, [url])
+  const canvasRef = useRef<HTMLCanvasElement>(null)
 
   function download() {
-    if (!dataUrl) return
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const dataUrl = canvas.toDataURL('image/png')
     const a = document.createElement('a')
     a.href = dataUrl
     a.download = `vancart-qr-${nom.toLowerCase().replace(/\s+/g, '-')}.png`
@@ -77,14 +70,33 @@ function QRModal({ url, nom, onClose }: { url: string; nom: string; onClose: () 
           <button onClick={onClose} className="text-[#6B6B6B] hover:text-[#1A1A1A] text-xl leading-none flex-shrink-0">×</button>
         </div>
 
-        <div className="flex justify-center">
-          {dataUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={dataUrl} alt="QR Code" className="w-56 h-56 rounded-xl border border-[#E8E8E3]" />
-          ) : (
-            <div className="w-56 h-56 rounded-xl bg-[#F7F6F3] animate-pulse" />
-          )}
-        </div>
+        {url && (
+          <div className="flex justify-center">
+            <div className="rounded-xl border border-[#E8E8E3] p-3 bg-white">
+              <QRCodeSVG
+                value={url}
+                size={200}
+                bgColor="#ffffff"
+                fgColor="#1A1A1A"
+                level="M"
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Hidden canvas for PNG export */}
+        {url && (
+          <div className="hidden">
+            <QRCodeCanvas
+              ref={canvasRef}
+              value={url}
+              size={400}
+              bgColor="#ffffff"
+              fgColor="#1A1A1A"
+              level="M"
+            />
+          </div>
+        )}
 
         <div className="bg-[#F7F6F3] rounded-xl px-3 py-2">
           <p className="text-xs text-[#6B6B6B] break-all">{url}</p>
@@ -93,8 +105,7 @@ function QRModal({ url, nom, onClose }: { url: string; nom: string; onClose: () 
         <div className="flex flex-col gap-2">
           <button
             onClick={download}
-            disabled={!dataUrl}
-            className="w-full py-3 bg-[#6C47FF] text-white text-sm font-bold rounded-xl hover:bg-[#5835e0] disabled:opacity-40 transition-colors"
+            className="w-full py-3 bg-[#6C47FF] text-white text-sm font-bold rounded-xl hover:bg-[#5835e0] transition-colors"
           >
             ⬇️ Télécharger PNG
           </button>

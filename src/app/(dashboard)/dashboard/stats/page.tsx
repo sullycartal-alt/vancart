@@ -3,7 +3,6 @@ import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
 import StatsClient from './StatsClient'
 import StatsAnalyseClient from './StatsAnalyseClient'
-import UpgradeGate from '@/components/UpgradeGate'
 import { effectivePlan, type Plan } from '@/lib/plan-features'
 
 export type Period = 'this_week' | 'this_month' | 'last_month' | '3_months' | '6_months' | 'this_year' | 'custom'
@@ -252,33 +251,32 @@ export default async function StatsPage({ searchParams }: { searchParams: Promis
   }
 
   return (
-    <UpgradeGate plan={plan} feature="advancedStats" requiredPlan="essential">
-      <Suspense fallback={<div className="h-96 animate-pulse bg-[#F7F6F3] rounded-2xl" />}>
-        {tab === 'analyse' ? (
-          <StatsAnalyseClient
-            primaryColor={merchant.primary_color}
-            period={period}
-            loyaltyType={merchant.loyalty_type ?? 'stamps'}
-            clients={analyseClients}
-            plan={plan}
-            customFrom={params.from}
-            customTo={params.to}
-          />
-        ) : (
-          <StatsClient
-            primaryColor={merchant.primary_color}
-            period={period}
-            loyaltyType={merchant.loyalty_type ?? 'stamps'}
-            kpis={{ totalClients, stampsCount, rewardsInPeriod, returnRate }}
-            weeklyNewClients={weeklyNewClients}
-            dailyStamps={dailyStamps}
-            byDayOfWeek={byDayOfWeek}
-            top5={top5}
-            customFrom={params.from}
-            customTo={params.to}
-          />
-        )}
-      </Suspense>
-    </UpgradeGate>
+    <Suspense fallback={<div className="h-96 animate-pulse bg-[#F7F6F3] rounded-2xl" />}>
+      {tab === 'analyse' ? (
+        <StatsAnalyseClient
+          primaryColor={merchant.primary_color}
+          period={period}
+          loyaltyType={merchant.loyalty_type ?? 'stamps'}
+          clients={analyseClients}
+          plan={plan}
+          customFrom={params.from}
+          customTo={params.to}
+        />
+      ) : (
+        <StatsClient
+          primaryColor={merchant.primary_color}
+          period={period}
+          loyaltyType={merchant.loyalty_type ?? 'stamps'}
+          kpis={{ totalClients, stampsCount, rewardsInPeriod, returnRate }}
+          weeklyNewClients={weeklyNewClients}
+          dailyStamps={dailyStamps}
+          byDayOfWeek={byDayOfWeek}
+          top5={top5}
+          plan={plan}
+          customFrom={params.from}
+          customTo={params.to}
+        />
+      )}
+    </Suspense>
   )
 }

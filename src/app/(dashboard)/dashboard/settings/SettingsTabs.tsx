@@ -133,7 +133,7 @@ export default function SettingsTabs({ merchant, clientCount }: Props) {
           onConfigChange={updateLiveConfig}
           clientCount={clientCount}
         />
-      ) : merchant ? (
+      ) : (merchant?.business_name?.trim()) ? (
         <CardDesignClient
           key={`${merchant.id}-v${cardInitVersion}`}
           hideTitle

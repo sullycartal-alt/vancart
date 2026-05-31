@@ -25,6 +25,7 @@ interface Props {
   clients: Client[]
   merchantId: string
   subscribedCustomerIds: string[]
+  isPro: boolean
 }
 
 interface NotifyTarget {
@@ -119,7 +120,7 @@ function NotifyModal({
   )
 }
 
-export default function ClientsTable({ clients, merchantId, subscribedCustomerIds }: Props) {
+export default function ClientsTable({ clients, merchantId, subscribedCustomerIds, isPro }: Props) {
   const router = useRouter()
   const [notifyTarget, setNotifyTarget] = useState<NotifyTarget | null>(null)
   const [subscribedSet, setSubscribedSet] = useState(() => new Set(subscribedCustomerIds))
@@ -203,7 +204,7 @@ export default function ClientsTable({ clients, merchantId, subscribedCustomerId
             const isAlmostFull = !isRewardPending && current === target - 1
             const unit = isPoints ? 'pts' : 'tampons'
             const icon = isPoints ? '🏆' : '🎴'
-            const canNotify = !!client.customer_id && subscribedSet.has(client.customer_id)
+            const canNotify = isPro && !!client.customer_id && subscribedSet.has(client.customer_id)
             return (
               <div key={client.id} className="px-4 py-4 space-y-3">
                 <div className="flex items-center justify-between gap-3">
@@ -277,7 +278,7 @@ export default function ClientsTable({ clients, merchantId, subscribedCustomerId
               const isRewardPending = current >= target
               const isAlmostFull = !isRewardPending && current === target - 1
               const icon = isPoints ? '🏆' : '🎴'
-              const canNotify = !!client.customer_id && subscribedSet.has(client.customer_id)
+              const canNotify = isPro && !!client.customer_id && subscribedSet.has(client.customer_id)
               return (
                 <tr key={client.id} className="hover:bg-[#F7F6F3] transition-colors">
                   <td className="px-6 py-4">

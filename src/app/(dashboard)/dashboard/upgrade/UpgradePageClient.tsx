@@ -12,23 +12,24 @@ const CONTACT = 'vancart@gmail.com'
 const DECOUVERTE_FEATURES = [
   '1 carte de fidélité',
   "Jusqu'à 50 clients",
-  'Carte digitale + Google & Apple Wallet',
+  'Google & Apple Wallet',
+  'Carte PWA installable',
   'Stats basiques',
 ]
 
 const ESSENTIAL_FEATURES = [
-  'Cartes illimitées',
-  'Clients illimités',
+  '1 carte de fidélité',
+  "Jusqu'à 500 clients",
   'Stats avancées',
   'Support prioritaire',
 ]
 
 const PRO_FEATURES = [
   'Tout du plan Essentiel',
+  'Clients illimités',
   'Conseiller IA Mistral 🇫🇷',
   'Notifications push clients',
   'Export données clients',
-  'Appel consulting mensuel',
 ]
 
 function CheckIcon() {

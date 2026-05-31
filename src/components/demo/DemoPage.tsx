@@ -7,116 +7,162 @@ interface Props {
   campaign?: string
 }
 
-function LoyaltyStampsPreview({ color }: { color: string }) {
-  const stamps = Array.from({ length: 8 })
+// ── Confetti ──────────────────────────────────────────────────────────────────
+function ConfettiCanvas({ active }: { active: boolean }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  useEffect(() => {
+    if (!active || !canvasRef.current) return
+    const canvas = canvasRef.current
+    const ctx = canvas.getContext('2d')!
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+    const colors = ['#6C47FF', '#f59e0b', '#10b981', '#ef4444', '#3b82f6', '#ec4899', '#8b5cf6']
+    const pieces = Array.from({ length: 120 }, () => ({
+      x: Math.random() * canvas.width,
+      y: -20 - Math.random() * 80,
+      vx: (Math.random() - 0.5) * 5,
+      vy: Math.random() * 4 + 2,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      w: Math.random() * 10 + 4,
+      h: Math.random() * 6 + 3,
+      angle: Math.random() * Math.PI * 2,
+      va: (Math.random() - 0.5) * 0.15,
+    }))
+    let rafId: number
+    let frame = 0
+    const max = 200
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      for (const p of pieces) {
+        ctx.save()
+        ctx.translate(p.x, p.y)
+        ctx.rotate(p.angle)
+        ctx.globalAlpha = Math.max(0, 1 - frame / max)
+        ctx.fillStyle = p.color
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h)
+        ctx.restore()
+        p.x += p.vx
+        p.y += p.vy
+        p.vy += 0.07
+        p.angle += p.va
+      }
+      frame++
+      if (frame < max) rafId = requestAnimationFrame(draw)
+      else ctx.clearRect(0, 0, canvas.width, canvas.height)
+    }
+    rafId = requestAnimationFrame(draw)
+    return () => cancelAnimationFrame(rafId)
+  }, [active])
+
+  if (!active) return null
   return (
-    <div className="flex flex-wrap gap-2 justify-center">
-      {stamps.map((_, i) => (
-        <div
-          key={i}
-          className="w-10 h-10 rounded-full flex items-center justify-center text-white text-base font-bold shadow-md transition-transform active:scale-95"
-          style={{ backgroundColor: i < 3 ? color : 'transparent', border: `2.5px solid ${color}`, color: i < 3 ? 'white' : color }}
-        >
-          {i < 3 ? '✓' : ''}
-        </div>
-      ))}
-    </div>
+    <canvas
+      ref={canvasRef}
+      className="fixed inset-0 pointer-events-none"
+      style={{ zIndex: 9999 }}
+    />
   )
 }
 
-function PhoneMockup({ businessName, color }: { businessName: string; color: string }) {
+// ── Wallet preview card ────────────────────────────────────────────────────────
+function WalletCard({ color = '#6C47FF' }: { color?: string }) {
+  const stampsTotal = 8
+  const stampsDone = 3
   return (
-    <div className="relative mx-auto" style={{ width: 240, height: 440 }}>
-      {/* Phone frame */}
-      <div
-        className="absolute inset-0 rounded-[2.5rem] shadow-2xl border-4 border-[#1A1A1A] bg-white overflow-hidden"
-        style={{ boxShadow: `0 24px 60px rgba(0,0,0,0.28), 0 0 0 1px rgba(0,0,0,0.08)` }}
-      >
-        {/* Status bar */}
-        <div className="h-8 bg-[#F7F6F3] flex items-center justify-between px-5">
-          <span className="text-[10px] font-semibold text-[#1A1A1A]">9:41</span>
-          <div className="w-16 h-4 rounded-full bg-[#1A1A1A] mx-auto absolute left-1/2 -translate-x-1/2 top-1.5" style={{ width: 60, height: 16 }} />
-          <div className="flex gap-1 items-center">
-            <div className="w-4 h-2 border border-[#1A1A1A] rounded-sm relative"><div className="absolute inset-0.5 right-1 bg-[#1A1A1A] rounded-sm" /></div>
+    <div
+      className="w-full rounded-2xl overflow-hidden shadow-2xl select-none mx-auto"
+      style={{ maxWidth: 320, background: `linear-gradient(145deg, ${color} 0%, #4a2dbf 100%)` }}
+    >
+      {/* Header */}
+      <div className="flex items-center gap-3 px-5 pt-5 pb-3">
+        <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white font-black text-sm flex-shrink-0">
+          CA
+        </div>
+        <div>
+          <p className="text-white/60 text-xs leading-none">Carte de fidélité</p>
+          <p className="text-white font-bold text-sm leading-tight mt-0.5">Café Demo ☕</p>
+        </div>
+        <div className="ml-auto">
+          <div className="bg-white/10 rounded-lg px-2 py-0.5">
+            <p className="text-white/80 text-[10px] font-semibold">MEMBRE</p>
           </div>
         </div>
+      </div>
 
-        {/* Card header */}
-        <div className="px-4 py-3" style={{ background: color }}>
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white text-xs font-black">
-              {businessName.slice(0, 2).toUpperCase()}
+      {/* Stamps grid */}
+      <div className="px-5 pb-3">
+        <p className="text-white/60 text-xs mb-2.5">
+          {stampsDone}/{stampsTotal} tampons — encore {stampsTotal - stampsDone} pour votre récompense
+        </p>
+        <div className="flex gap-2 flex-wrap">
+          {Array.from({ length: stampsTotal }).map((_, i) => (
+            <div
+              key={i}
+              className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm"
+              style={
+                i < stampsDone
+                  ? { background: 'rgba(255,255,255,0.9)', color: color }
+                  : { border: '2px solid rgba(255,255,255,0.3)', color: 'rgba(255,255,255,0.4)' }
+              }
+            >
+              {i < stampsDone ? '✓' : ''}
             </div>
-            <div>
-              <p className="text-white text-[11px] font-bold leading-tight">{businessName}</p>
-              <p className="text-white/70 text-[9px]">Carte de fidélité</p>
-            </div>
-          </div>
+          ))}
         </div>
+        {/* Progress bar */}
+        <div className="mt-3 h-1.5 bg-white/20 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-white rounded-full transition-all"
+            style={{ width: `${(stampsDone / stampsTotal) * 100}%` }}
+          />
+        </div>
+      </div>
 
-        {/* Card body */}
-        <div className="px-4 py-3 bg-white">
-          <p className="text-[10px] font-semibold text-[#6B6B6B] uppercase tracking-wider mb-2">Vos tampons</p>
-          <LoyaltyStampsPreview color={color} />
-          <div className="mt-3 bg-[#F7F6F3] rounded-xl p-2.5">
-            <p className="text-[10px] text-[#6B6B6B]">3 / 8 tampons</p>
-            <div className="mt-1 h-1.5 bg-[#E8E8E3] rounded-full overflow-hidden">
-              <div className="h-full rounded-full" style={{ width: '37.5%', backgroundColor: color }} />
-            </div>
-          </div>
+      {/* Footer */}
+      <div className="flex items-center justify-between px-5 py-3 border-t border-white/10">
+        <div className="flex items-center gap-1.5">
+          <svg width="20" height="20" viewBox="0 0 64 64" fill="none">
+            <rect x="2" y="2" width="16" height="16" rx="2" stroke="rgba(255,255,255,0.6)" strokeWidth="3" fill="none"/>
+            <rect x="46" y="2" width="16" height="16" rx="2" stroke="rgba(255,255,255,0.6)" strokeWidth="3" fill="none"/>
+            <rect x="2" y="46" width="16" height="16" rx="2" stroke="rgba(255,255,255,0.6)" strokeWidth="3" fill="none"/>
+            <rect x="6" y="6" width="8" height="8" fill="rgba(255,255,255,0.6)"/>
+            <rect x="50" y="6" width="8" height="8" fill="rgba(255,255,255,0.6)"/>
+            <rect x="6" y="50" width="8" height="8" fill="rgba(255,255,255,0.6)"/>
+          </svg>
+          <span className="text-white/60 text-[10px] font-medium">Scanner en caisse</span>
         </div>
-
-        {/* QR scanner area */}
-        <div className="px-4 py-3 border-t border-[#E8E8E3]">
-          <div className="rounded-xl bg-[#F7F6F3] flex flex-col items-center justify-center py-4 gap-2">
-            <svg width="36" height="36" viewBox="0 0 64 64" fill="none">
-              <rect x="2" y="2" width="18" height="18" rx="2" stroke={color} strokeWidth="3" fill="none"/>
-              <rect x="44" y="2" width="18" height="18" rx="2" stroke={color} strokeWidth="3" fill="none"/>
-              <rect x="2" y="44" width="18" height="18" rx="2" stroke={color} strokeWidth="3" fill="none"/>
-              <rect x="7" y="7" width="8" height="8" fill={color}/>
-              <rect x="49" y="7" width="8" height="8" fill={color}/>
-              <rect x="7" y="49" width="8" height="8" fill={color}/>
-              <rect x="26" y="2" width="4" height="4" fill={color}/>
-              <rect x="32" y="2" width="4" height="4" fill={color}/>
-              <rect x="26" y="8" width="4" height="4" fill={color}/>
-              <rect x="26" y="26" width="4" height="4" fill={color}/>
-              <rect x="32" y="32" width="4" height="4" fill={color}/>
-              <rect x="44" y="26" width="4" height="4" fill={color}/>
-              <rect x="26" y="44" width="4" height="4" fill={color}/>
-              <rect x="32" y="50" width="4" height="4" fill={color}/>
-            </svg>
-            <p className="text-[9px] text-[#6B6B6B] font-medium">Scanner en caisse</p>
-          </div>
-        </div>
+        <p className="text-white/30 text-[9px] font-mono">VC-DEMO</p>
       </div>
     </div>
   )
 }
 
+// ── Steps data ─────────────────────────────────────────────────────────────────
 const STEPS = [
   {
-    icon: '📲',
-    title: 'Le client scanne',
-    desc: 'Un QR code posé en caisse — aucune application à télécharger',
+    icon: '⚡',
+    title: 'Créez votre carte',
+    desc: 'Nom, couleur, logo. C\'est tout.',
   },
   {
-    icon: '✅',
-    title: 'Vous tamponnez',
-    desc: 'Un clic sur votre dashboard suffit. Le client voit son tampon en temps réel',
+    icon: '📱',
+    title: 'Posez le QR code en caisse',
+    desc: 'Vos clients scannent, la carte apparaît dans leur téléphone.',
   },
   {
-    icon: '🎁',
-    title: 'Il revient !',
-    desc: 'Carte pleine = récompense. Vos meilleurs clients reviennent naturellement',
+    icon: '🏆',
+    title: 'Ils reviennent',
+    desc: 'Points, tampons, récompenses. Automatique.',
   },
 ]
 
+// ── Pricing data ───────────────────────────────────────────────────────────────
 const PLANS = [
   {
     name: 'Découverte',
     price: '0€',
-    period: '/mois',
-    features: ['1 carte de fidélité', '50 clients', 'QR code en caisse', 'Statistiques basiques'],
+    period: '',
+    features: ['1 carte de fidélité', '50 clients max', 'QR code en caisse', 'Statistiques basiques'],
     cta: 'Commencer gratuit',
     highlight: false,
     badge: null,
@@ -128,7 +174,7 @@ const PLANS = [
     features: ['Clients illimités', 'Stats avancées', 'Google Wallet', 'Support email'],
     cta: 'Essayer 30j gratuit',
     highlight: true,
-    badge: 'Recommandé',
+    badge: 'Le plus populaire',
   },
   {
     name: 'Pro',
@@ -141,34 +187,35 @@ const PLANS = [
   },
 ]
 
+// ── Form state ─────────────────────────────────────────────────────────────────
 interface FormState {
   prenom: string
   commerce: string
   email: string
-  tel: string
+  telephone: string
   message: string
 }
 
+// ── Main component ─────────────────────────────────────────────────────────────
 export default function DemoPage({ campaign }: Props) {
-  const color = '#6C47FF'
-  const businessName = 'Café Demo ☕'
+  const COLOR = '#6C47FF'
 
   const formRef = useRef<HTMLDivElement>(null)
-  const ctaRef = useRef<HTMLDivElement>(null)
   const [ctaVisible, setCtaVisible] = useState(true)
   const [carouselIndex, setCarouselIndex] = useState(0)
-  const [form, setForm] = useState<FormState>({ prenom: '', commerce: '', email: '', tel: '', message: '' })
+  const [form, setForm] = useState<FormState>({ prenom: '', commerce: '', email: '', telephone: '', message: '' })
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [confetti, setConfetti] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Hide sticky CTA when form is visible
+  // Hide sticky CTA when form section reaches viewport
   useEffect(() => {
     const el = formRef.current
     if (!el) return
     const observer = new IntersectionObserver(
       ([entry]) => setCtaVisible(!entry.isIntersecting),
-      { threshold: 0.1 },
+      { threshold: 0.15 },
     )
     observer.observe(el)
     return () => observer.disconnect()
@@ -176,9 +223,7 @@ export default function DemoPage({ campaign }: Props) {
 
   // Touch swipe for carousel
   const touchStartX = useRef<number | null>(null)
-  function onTouchStart(e: React.TouchEvent) {
-    touchStartX.current = e.touches[0].clientX
-  }
+  function onTouchStart(e: React.TouchEvent) { touchStartX.current = e.touches[0].clientX }
   function onTouchEnd(e: React.TouchEvent) {
     if (touchStartX.current === null) return
     const dx = e.changedTouches[0].clientX - touchStartX.current
@@ -202,12 +247,14 @@ export default function DemoPage({ campaign }: Props) {
       })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
-        setError(data.error ?? 'Une erreur est survenue.')
+        setError(data.error ?? 'Une erreur est survenue. Réessayez.')
       } else {
         setSuccess(true)
+        setConfetti(true)
+        setTimeout(() => setConfetti(false), 4000)
       }
     } catch {
-      setError('Erreur réseau. Réessayez.')
+      setError('Erreur réseau. Vérifiez votre connexion et réessayez.')
     } finally {
       setLoading(false)
     }
@@ -217,127 +264,171 @@ export default function DemoPage({ campaign }: Props) {
     formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
-  return (
-    <div className="min-h-screen bg-white font-sans" style={{ WebkitFontSmoothing: 'antialiased' }}>
+  // Input base classes — enforces 16px font (no iOS zoom), 52px touch target
+  const inputCls = [
+    'w-full rounded-xl border border-[#E8E8E3] px-4 bg-white text-[#1A1A1A]',
+    'text-base', // 16px — prevents iOS auto-zoom
+    'focus:outline-none focus:border-[#6C47FF] focus:ring-2 focus:ring-[#6C47FF]/15',
+    'transition-colors placeholder:text-[#C4C4C4]',
+  ].join(' ')
 
-      {/* ── Hero ───────────────────────────────────────────── */}
-      <section className="bg-gradient-to-b from-[#F7F6F3] to-white px-5 pt-12 pb-10 text-center">
-        <div className="inline-flex items-center gap-2 bg-white border border-[#E8E8E3] rounded-full px-4 py-1.5 mb-6 shadow-sm">
-          <span className="text-lg font-black text-[#6C47FF]">VanCart</span>
+  return (
+    <div className="min-h-screen bg-white" style={{ WebkitFontSmoothing: 'antialiased' }}>
+      <ConfettiCanvas active={confetti} />
+
+      {/* ═══════════════════════════════════════════════════════
+          A. HERO
+      ═══════════════════════════════════════════════════════ */}
+      <section className="bg-gradient-to-b from-[#F7F6F3] to-white px-5 pt-10 pb-8 text-center">
+        {/* Logo */}
+        <div className="inline-flex items-center justify-center mb-6">
+          <span className="text-2xl font-black text-[#6C47FF] tracking-tight">VanCart</span>
         </div>
 
-        <h1 className="text-3xl font-black text-[#1A1A1A] leading-tight max-w-xs mx-auto" style={{ fontSize: 'clamp(26px, 8vw, 36px)' }}>
-          Fidélisez vos clients.<br />
-          <span style={{ color }}>Zéro application.</span>
+        {/* H1 — percutant, 2 lignes sur mobile */}
+        <h1
+          className="font-black text-[#1A1A1A] leading-[1.15] max-w-[300px] mx-auto"
+          style={{ fontSize: 'clamp(28px, 9vw, 40px)' }}
+        >
+          Fidélisez vos clients.{' '}
+          <span style={{ color: COLOR }}>Zéro application.</span>
         </h1>
 
-        <p className="mt-4 text-[#6B6B6B] text-base leading-relaxed max-w-xs mx-auto">
-          Un QR code en caisse, une carte digitale sur le smartphone de vos clients. Simple, rapide, efficace.
+        <p className="mt-4 text-[#6B6B6B] leading-relaxed max-w-xs mx-auto" style={{ fontSize: 18 }}>
+          Une carte dans leur téléphone en 2 minutes.
         </p>
 
-        <div className="mt-8 flex justify-center">
-          <PhoneMockup businessName={businessName} color={color} />
+        {/* Wallet card preview */}
+        <div className="mt-8 px-2">
+          <WalletCard color={COLOR} />
         </div>
+
+        {/* Spacer so sticky CTA doesn't cover content */}
+        <div className="h-6 sm:hidden" />
       </section>
 
-      {/* ── Steps carousel ─────────────────────────────────── */}
+      {/* ═══════════════════════════════════════════════════════
+          B. STEPS CAROUSEL
+      ═══════════════════════════════════════════════════════ */}
       <section className="bg-white py-10 px-5">
-        <h2 className="text-center text-xl font-black text-[#1A1A1A] mb-8">Comment ça marche ?</h2>
+        <h2
+          className="text-center font-black text-[#1A1A1A] mb-8"
+          style={{ fontSize: 'clamp(18px, 5vw, 24px)' }}
+        >
+          Vous avez 30 secondes ?{' '}
+          <span style={{ color: COLOR }}>Regardez ça.</span>
+        </h2>
 
+        {/* Mobile carousel */}
         <div
-          className="relative overflow-hidden"
+          className="sm:hidden relative overflow-hidden"
           onTouchStart={onTouchStart}
           onTouchEnd={onTouchEnd}
         >
           <div
-            className="flex transition-transform duration-300"
+            className="flex transition-transform duration-300 ease-out"
             style={{ transform: `translateX(-${carouselIndex * 100}%)` }}
           >
             {STEPS.map((step, i) => (
-              <div key={i} className="min-w-full px-4">
-                <div className="bg-[#F7F6F3] rounded-2xl p-6 text-center">
-                  <div className="text-5xl mb-4">{step.icon}</div>
-                  <h3 className="text-lg font-black text-[#1A1A1A] mb-2">{step.title}</h3>
-                  <p className="text-[#6B6B6B] text-sm leading-relaxed">{step.desc}</p>
+              <div key={i} className="min-w-full px-2">
+                <div className="bg-[#F7F6F3] rounded-2xl p-7 text-center">
+                  <div style={{ fontSize: 52 }} className="mb-4 leading-none">{step.icon}</div>
+                  <h3 className="font-black text-[#1A1A1A] mb-2" style={{ fontSize: 20 }}>{step.title}</h3>
+                  <p className="text-[#6B6B6B] leading-relaxed" style={{ fontSize: 17 }}>{step.desc}</p>
                 </div>
               </div>
             ))}
           </div>
+
+          {/* Dots */}
+          <div className="flex justify-center gap-2 mt-5">
+            {STEPS.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCarouselIndex(i)}
+                className="rounded-full transition-all"
+                style={{
+                  width: i === carouselIndex ? 28 : 8,
+                  height: 8,
+                  minHeight: 8,
+                  backgroundColor: i === carouselIndex ? COLOR : '#E8E8E3',
+                }}
+                aria-label={`Étape ${i + 1}`}
+              />
+            ))}
+          </div>
         </div>
 
-        {/* Dots */}
-        <div className="flex justify-center gap-2 mt-5">
-          {STEPS.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setCarouselIndex(i)}
-              className="transition-all rounded-full"
-              style={{
-                width: i === carouselIndex ? 24 : 8,
-                height: 8,
-                backgroundColor: i === carouselIndex ? color : '#E8E8E3',
-              }}
-              aria-label={`Étape ${i + 1}`}
-            />
-          ))}
-        </div>
-
-        {/* Desktop: all 3 visible */}
-        <div className="hidden sm:grid sm:grid-cols-3 gap-4 mt-8">
+        {/* Desktop: 3 col */}
+        <div className="hidden sm:grid sm:grid-cols-3 gap-4">
           {STEPS.map((step, i) => (
             <div key={i} className="bg-[#F7F6F3] rounded-2xl p-6 text-center">
-              <div className="text-4xl mb-3">{step.icon}</div>
-              <h3 className="text-base font-black text-[#1A1A1A] mb-1.5">{step.title}</h3>
-              <p className="text-[#6B6B6B] text-sm leading-relaxed">{step.desc}</p>
+              <div style={{ fontSize: 44 }} className="mb-3 leading-none">{step.icon}</div>
+              <h3 className="font-black text-[#1A1A1A] mb-1.5" style={{ fontSize: 18 }}>{step.title}</h3>
+              <p className="text-[#6B6B6B] leading-relaxed" style={{ fontSize: 15 }}>{step.desc}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ── Pricing ────────────────────────────────────────── */}
+      {/* ═══════════════════════════════════════════════════════
+          C. PRICING
+      ═══════════════════════════════════════════════════════ */}
       <section className="bg-[#F7F6F3] py-10 px-5">
-        <h2 className="text-center text-xl font-black text-[#1A1A1A] mb-2">Tarifs simples</h2>
-        <p className="text-center text-sm text-[#6B6B6B] mb-8">30 jours d&apos;essai gratuit · Sans carte bancaire</p>
+        <h2
+          className="text-center font-black text-[#1A1A1A] mb-1"
+          style={{ fontSize: 'clamp(18px, 5vw, 24px)' }}
+        >
+          Tarifs simples
+        </h2>
+        <p className="text-center text-[#6B6B6B] mb-8" style={{ fontSize: 15 }}>
+          30 jours d&apos;essai gratuit · Sans carte bancaire
+        </p>
 
+        {/* Mobile: stacked full-width / Desktop: 3 cols */}
         <div className="flex flex-col gap-4 max-w-lg mx-auto sm:flex-row sm:items-stretch">
           {PLANS.map((plan, i) => (
             <div
               key={i}
               className="relative flex-1 bg-white rounded-2xl p-5 flex flex-col gap-3"
               style={{
-                border: plan.highlight ? `2px solid ${color}` : '1px solid #E8E8E3',
-                boxShadow: plan.highlight ? `0 8px 30px ${color}20` : undefined,
+                border: plan.highlight ? `2px solid ${COLOR}` : '1px solid #E8E8E3',
+                boxShadow: plan.highlight ? `0 8px 32px ${COLOR}22` : undefined,
               }}
             >
               {plan.badge && (
                 <span
-                  className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full text-white text-xs font-bold"
-                  style={{ backgroundColor: color }}
+                  className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-white font-bold whitespace-nowrap"
+                  style={{ backgroundColor: COLOR, fontSize: 12 }}
                 >
                   {plan.badge}
                 </span>
               )}
-              <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-[#6B6B6B]">{plan.name}</p>
-                <p className="text-2xl font-black text-[#1A1A1A] mt-0.5">
-                  {plan.price}<span className="text-sm font-medium text-[#6B6B6B]">{plan.period}</span>
+              <div className={plan.badge ? 'mt-2' : ''}>
+                <p className="font-bold uppercase tracking-wider text-[#6B6B6B]" style={{ fontSize: 12 }}>{plan.name}</p>
+                <p className="font-black text-[#1A1A1A] mt-0.5" style={{ fontSize: 26 }}>
+                  {plan.price}
+                  {plan.period && <span className="font-medium text-[#6B6B6B]" style={{ fontSize: 14 }}>{plan.period}</span>}
                 </p>
               </div>
-              <ul className="space-y-1.5 flex-1">
+              <ul className="flex-1 space-y-2">
                 {plan.features.map((f, j) => (
-                  <li key={j} className="flex items-center gap-2 text-sm text-[#1A1A1A]">
-                    <span style={{ color }}>✓</span>
+                  <li key={j} className="flex items-center gap-2 text-[#1A1A1A]" style={{ fontSize: 15 }}>
+                    <span className="flex-shrink-0 font-bold" style={{ color: COLOR }}>✓</span>
                     {f}
                   </li>
                 ))}
               </ul>
               <button
                 onClick={scrollToForm}
-                className="w-full py-3 rounded-xl text-sm font-bold transition-opacity hover:opacity-90 active:scale-95"
-                style={plan.highlight
-                  ? { backgroundColor: color, color: 'white' }
-                  : { border: `1.5px solid ${color}`, color, background: 'transparent' }
-                }
+                className="w-full rounded-xl font-bold active:scale-95 transition-transform"
+                style={{
+                  minHeight: 52,
+                  fontSize: 16,
+                  ...(plan.highlight
+                    ? { backgroundColor: COLOR, color: 'white' }
+                    : { border: `1.5px solid ${COLOR}`, color: COLOR, background: 'transparent' }),
+                }}
               >
                 {plan.cta}
               </button>
@@ -346,96 +437,124 @@ export default function DemoPage({ campaign }: Props) {
         </div>
       </section>
 
-      {/* ── Contact form ───────────────────────────────────── */}
+      {/* ═══════════════════════════════════════════════════════
+          D. FORM
+      ═══════════════════════════════════════════════════════ */}
       <section ref={formRef} id="formulaire" className="bg-white py-12 px-5 scroll-mt-4">
         <div className="max-w-md mx-auto">
-          <h2 className="text-2xl font-black text-[#1A1A1A] text-center mb-2">
-            Démo gratuite pour votre commerce
+          <h2
+            className="font-black text-[#1A1A1A] text-center mb-2"
+            style={{ fontSize: 'clamp(22px, 6vw, 28px)' }}
+          >
+            Sullivan vous contacte sous 24h 🤝
           </h2>
-          <p className="text-center text-sm text-[#6B6B6B] mb-8">
-            On vous configure ensemble en 15 minutes — sans engagement.
+          <p className="text-center text-[#6B6B6B] mb-8" style={{ fontSize: 16 }}>
+            Gratuit · Sans engagement · 5 minutes pour tout configurer ensemble
           </p>
 
           {success ? (
-            <div className="text-center py-10">
-              <div className="text-6xl mb-4">🎉</div>
-              <h3 className="text-xl font-black text-[#1A1A1A] mb-2">Demande envoyée !</h3>
-              <p className="text-[#6B6B6B] text-sm leading-relaxed mb-6">
-                Sullivan vous contacte sous 24h pour organiser votre démo.
+            <div className="text-center py-10 space-y-4">
+              <div style={{ fontSize: 64 }}>🎉</div>
+              <h3 className="font-black text-[#1A1A1A]" style={{ fontSize: 22 }}>
+                Reçu ! Sullivan vous contacte très vite.
+              </h3>
+              <p className="text-[#6B6B6B]" style={{ fontSize: 16 }}>
+                Vérifiez votre boîte mail — un récap vous a été envoyé.
               </p>
               <Link
                 href="/register"
-                className="inline-block px-6 py-3.5 rounded-xl text-white font-bold text-sm transition-opacity hover:opacity-90"
-                style={{ backgroundColor: color }}
+                className="inline-flex items-center justify-center px-6 rounded-xl text-white font-bold transition-opacity hover:opacity-90 active:scale-95"
+                style={{ backgroundColor: COLOR, minHeight: 52, fontSize: 16 }}
               >
                 Créer mon compte gratuitement →
               </Link>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs font-semibold text-[#1A1A1A] block mb-1.5">Prénom *</label>
-                  <input
-                    required
-                    value={form.prenom}
-                    onChange={e => setForm(f => ({ ...f, prenom: e.target.value }))}
-                    placeholder="Marie"
-                    className="w-full border border-[#E8E8E3] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#6C47FF] transition-colors"
-                    style={{ minHeight: 48 }}
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-semibold text-[#1A1A1A] block mb-1.5">Commerce *</label>
-                  <input
-                    required
-                    value={form.commerce}
-                    onChange={e => setForm(f => ({ ...f, commerce: e.target.value }))}
-                    placeholder="Boulangerie Paul"
-                    className="w-full border border-[#E8E8E3] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#6C47FF] transition-colors"
-                    style={{ minHeight: 48 }}
-                  />
-                </div>
+              {/* Prénom — full width on mobile */}
+              <div>
+                <label className="font-semibold text-[#1A1A1A] block mb-1.5" style={{ fontSize: 16 }}>
+                  Prénom <span className="text-[#6C47FF]">*</span>
+                </label>
+                <input
+                  required
+                  type="text"
+                  autoComplete="given-name"
+                  value={form.prenom}
+                  onChange={e => setForm(f => ({ ...f, prenom: e.target.value }))}
+                  placeholder="Marie"
+                  className={inputCls}
+                  style={{ minHeight: 52 }}
+                />
               </div>
 
+              {/* Commerce — full width */}
               <div>
-                <label className="text-xs font-semibold text-[#1A1A1A] block mb-1.5">Email *</label>
+                <label className="font-semibold text-[#1A1A1A] block mb-1.5" style={{ fontSize: 16 }}>
+                  Nom du commerce <span className="text-[#6C47FF]">*</span>
+                </label>
+                <input
+                  required
+                  type="text"
+                  autoComplete="organization"
+                  value={form.commerce}
+                  onChange={e => setForm(f => ({ ...f, commerce: e.target.value }))}
+                  placeholder="Boulangerie Paul"
+                  className={inputCls}
+                  style={{ minHeight: 52 }}
+                />
+              </div>
+
+              {/* Email */}
+              <div>
+                <label className="font-semibold text-[#1A1A1A] block mb-1.5" style={{ fontSize: 16 }}>
+                  Email <span className="text-[#6C47FF]">*</span>
+                </label>
                 <input
                   required
                   type="email"
+                  autoComplete="email"
                   value={form.email}
                   onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
                   placeholder="marie@boulangerie-paul.fr"
-                  className="w-full border border-[#E8E8E3] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#6C47FF] transition-colors"
-                  style={{ minHeight: 48 }}
+                  className={inputCls}
+                  style={{ minHeight: 52 }}
                 />
               </div>
 
+              {/* Téléphone */}
               <div>
-                <label className="text-xs font-semibold text-[#1A1A1A] block mb-1.5">Téléphone</label>
+                <label className="font-semibold text-[#1A1A1A] block mb-1.5" style={{ fontSize: 16 }}>
+                  Téléphone
+                </label>
                 <input
                   type="tel"
-                  value={form.tel}
-                  onChange={e => setForm(f => ({ ...f, tel: e.target.value }))}
-                  placeholder="06 12 34 56 78"
-                  className="w-full border border-[#E8E8E3] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#6C47FF] transition-colors"
-                  style={{ minHeight: 48 }}
+                  autoComplete="tel"
+                  value={form.telephone}
+                  onChange={e => setForm(f => ({ ...f, telephone: e.target.value }))}
+                  placeholder="+33 6 12 34 56 78"
+                  className={inputCls}
+                  style={{ minHeight: 52 }}
                 />
               </div>
 
+              {/* Message */}
               <div>
-                <label className="text-xs font-semibold text-[#1A1A1A] block mb-1.5">Message (optionnel)</label>
+                <label className="font-semibold text-[#1A1A1A] block mb-1.5" style={{ fontSize: 16 }}>
+                  Message (optionnel)
+                </label>
                 <textarea
                   rows={3}
                   value={form.message}
                   onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
-                  placeholder="Parlez-nous de votre commerce, vos questions..."
-                  className="w-full border border-[#E8E8E3] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#6C47FF] transition-colors resize-none"
+                  placeholder="Une question ?"
+                  className={`${inputCls} resize-none`}
+                  style={{ paddingTop: 14, paddingBottom: 14 }}
                 />
               </div>
 
               {error && (
-                <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">
+                <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-red-700" style={{ fontSize: 16 }}>
                   {error}
                 </div>
               )}
@@ -443,13 +562,13 @@ export default function DemoPage({ campaign }: Props) {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-4 rounded-xl text-white font-bold text-base transition-opacity hover:opacity-90 active:scale-95 disabled:opacity-60"
-                style={{ backgroundColor: color, minHeight: 56 }}
+                className="w-full rounded-xl text-white font-bold active:scale-95 transition-all disabled:opacity-60"
+                style={{ backgroundColor: COLOR, minHeight: 56, fontSize: 18 }}
               >
-                {loading ? 'Envoi...' : 'Demander ma démo gratuite →'}
+                {loading ? 'Envoi en cours…' : 'Je veux ma carte de fidélité →'}
               </button>
 
-              <p className="text-center text-xs text-[#9CA3AF]">
+              <p className="text-center text-[#9CA3AF]" style={{ fontSize: 14 }}>
                 Sans engagement · Réponse sous 24h
               </p>
             </form>
@@ -457,28 +576,38 @@ export default function DemoPage({ campaign }: Props) {
         </div>
       </section>
 
-      {/* ── Footer ─────────────────────────────────────────── */}
+      {/* ═══════════════════════════════════════════════════════
+          E. FOOTER
+      ═══════════════════════════════════════════════════════ */}
       <footer className="bg-[#F7F6F3] border-t border-[#E8E8E3] py-6 text-center">
-        <p className="text-xs text-[#9CA3AF]">
-          VanCart · <a href="https://vancart.vercel.app" className="underline hover:text-[#6C47FF]">vancart.vercel.app</a>
+        <p className="text-[#9CA3AF]" style={{ fontSize: 13 }}>
+          VanCart ·{' '}
+          <a href="https://vancart.vercel.app" className="underline hover:text-[#6C47FF] transition-colors">
+            vancart.vercel.app
+          </a>
         </p>
       </footer>
 
-      {/* ── Sticky CTA ─────────────────────────────────────── */}
-      {ctaVisible && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 p-4 bg-white border-t border-[#E8E8E3] shadow-2xl sm:hidden">
+      {/* ═══════════════════════════════════════════════════════
+          STICKY CTA (mobile only, disappears at form)
+      ═══════════════════════════════════════════════════════ */}
+      <div
+        className="fixed bottom-0 left-0 right-0 z-50 transition-transform duration-300 sm:hidden"
+        style={{ transform: ctaVisible ? 'translateY(0)' : 'translateY(110%)' }}
+      >
+        <div className="bg-white border-t border-[#E8E8E3] shadow-[0_-4px_24px_rgba(0,0,0,0.10)] px-5 py-3">
           <button
             onClick={scrollToForm}
-            className="w-full py-4 rounded-xl text-white font-bold text-base active:scale-95 transition-transform"
-            style={{ backgroundColor: color, minHeight: 56 }}
+            className="w-full rounded-xl text-white font-bold active:scale-95 transition-transform"
+            style={{ backgroundColor: COLOR, minHeight: 52, fontSize: 17 }}
           >
             Créer ma carte gratuite →
           </button>
         </div>
-      )}
+      </div>
 
-      {/* Bottom padding to avoid overlap with sticky CTA */}
-      <div className="sm:hidden h-24" />
+      {/* Bottom padding to clear sticky CTA */}
+      <div className="sm:hidden h-20" />
     </div>
   )
 }

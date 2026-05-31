@@ -160,19 +160,21 @@ const STEPS = [
 const PLANS = [
   {
     name: 'Découverte',
-    price: '0€',
+    price: 'Gratuit',
     period: '',
-    features: ['1 carte de fidélité', "Jusqu'à 50 clients", 'Google & Apple Wallet', 'Stats basiques'],
-    cta: 'Commencer gratuit',
+    sub: '1 mois · Sans carte bancaire',
+    features: ['1 carte de fidélité', "Jusqu'à 50 clients", 'Google & Apple Wallet', 'Stats basiques', 'Rendez-vous de suivi avec l\'équipe VanCart'],
+    cta: 'Démarrer gratuitement',
     highlight: false,
-    badge: null,
+    badge: 'Pour commencer',
   },
   {
     name: 'Essentiel',
     price: '29€',
     period: '/mois',
+    sub: 'Sans engagement',
     features: ['1 carte de fidélité', "Jusqu'à 500 clients", 'Stats avancées', 'Support prioritaire'],
-    cta: 'Essayer 30j gratuit',
+    cta: 'Choisir Essentiel',
     highlight: true,
     badge: 'Le plus populaire',
   },
@@ -180,8 +182,9 @@ const PLANS = [
     name: 'Pro',
     price: '59€',
     period: '/mois',
+    sub: 'Sans engagement',
     features: ['Clients illimités', 'Conseiller IA Mistral 🇫🇷', 'Notifications push', 'Export données'],
-    cta: 'Essayer 30j gratuit',
+    cta: 'Choisir Pro',
     highlight: false,
     badge: null,
   },
@@ -382,7 +385,7 @@ export default function DemoPage({ campaign }: Props) {
           Tarifs simples
         </h2>
         <p className="text-center text-[#6B6B6B] mb-8" style={{ fontSize: 15 }}>
-          30 jours d&apos;essai gratuit · Sans carte bancaire
+          1 mois gratuit pour tester · Puis on échange ensemble
         </p>
 
         {/* Mobile: stacked full-width / Desktop: 3 cols */}
@@ -410,6 +413,9 @@ export default function DemoPage({ campaign }: Props) {
                   {plan.price}
                   {plan.period && <span className="font-medium text-[#6B6B6B]" style={{ fontSize: 14 }}>{plan.period}</span>}
                 </p>
+                {'sub' in plan && plan.sub && (
+                  <p className="text-[#6B6B6B]" style={{ fontSize: 12 }}>{plan.sub}</p>
+                )}
               </div>
               <ul className="flex-1 space-y-2">
                 {plan.features.map((f, j) => (
@@ -446,7 +452,7 @@ export default function DemoPage({ campaign }: Props) {
             className="font-black text-[#1A1A1A] text-center mb-2"
             style={{ fontSize: 'clamp(22px, 6vw, 28px)' }}
           >
-            Sullivan vous contacte sous 24h 🤝
+            Sullivan &amp; Audrey vous contactent sous 24h 🤝
           </h2>
           <p className="text-center text-[#6B6B6B] mb-8" style={{ fontSize: 16 }}>
             Gratuit · Sans engagement · 5 minutes pour tout configurer ensemble
@@ -456,7 +462,7 @@ export default function DemoPage({ campaign }: Props) {
             <div className="text-center py-10 space-y-4">
               <div style={{ fontSize: 64 }}>🎉</div>
               <h3 className="font-black text-[#1A1A1A]" style={{ fontSize: 22 }}>
-                Reçu ! Sullivan vous contacte très vite.
+                Reçu ! Sullivan &amp; Audrey vous contactent très vite.
               </h3>
               <p className="text-[#6B6B6B]" style={{ fontSize: 16 }}>
                 Vérifiez votre boîte mail — un récap vous a été envoyé.

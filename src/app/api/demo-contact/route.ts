@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
   const FROM = process.env.RESEND_FROM_EMAIL ?? 'VanCart <onboarding@resend.dev>'
   const campaignLabel = campaign ?? 'accès direct'
 
-  // Mobile-friendly HTML email (Sullivan reads it on his phone)
+  // Mobile-friendly HTML email (Sullivan & Audrey read it on their phones)
   const html = `<!DOCTYPE html>
 <html lang="fr">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>

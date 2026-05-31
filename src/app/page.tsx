@@ -533,7 +533,7 @@ export default function Home() {
           <div className="text-center mb-12 space-y-3">
             <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">Tarifs</p>
             <h2 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">Des tarifs simples et transparents</h2>
-            <p className="text-[#6B6B6B] text-lg">Commencez gratuitement, payez quand vous voyez les résultats.</p>
+            <p className="text-[#6B6B6B] text-lg">1 mois gratuit pour tester, puis on échange ensemble.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
@@ -542,16 +542,16 @@ export default function Home() {
             <div className="bg-white border border-[#E8E8E3] rounded-2xl p-7 flex flex-col transition-all duration-200 hover:scale-[1.03] hover:shadow-[0_8px_30px_rgba(108,71,255,0.12)]" style={{ minHeight: 440 }}>
               <div className="flex-1 space-y-6">
                 <div>
-                  <div className="inline-flex items-center bg-[#F7F6F3] text-[#6B6B6B] text-xs font-semibold px-3 py-1 rounded-full border border-[#E8E8E3] mb-3">Commencer</div>
+                  <div className="inline-flex items-center bg-[#F7F6F3] text-[#6B6B6B] text-xs font-semibold px-3 py-1 rounded-full border border-[#E8E8E3] mb-3">Pour commencer</div>
                   <h3 className="text-xl font-bold text-[#1A1A1A]">Découverte</h3>
                   <div className="mt-2">
-                    <span className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">0€</span>
-                    <span className="text-[#6B6B6B] text-sm"> / 1 mois</span>
+                    <span className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">Gratuit</span>
                   </div>
-                  <p className="text-xs text-[#6B6B6B] mt-1">Aucune carte bancaire requise</p>
+                  <p className="text-xs text-[#6B6B6B] mt-1">1 mois · Sans carte bancaire</p>
+                  <p className="text-xs text-[#6B6B6B] mt-0.5">Testez VanCart gratuitement pendant 1 mois, puis échangeons ensemble.</p>
                 </div>
                 <ul className="space-y-2.5">
-                  {['1 carte de fidélité', "Jusqu'à 50 clients", 'Google & Apple Wallet', 'Carte PWA installable', 'Stats basiques'].map(f => (
+                  {['1 carte de fidélité', "Jusqu'à 50 clients", 'Google & Apple Wallet', 'Carte PWA installable', 'Stats basiques', 'Rendez-vous de suivi avec l\'équipe VanCart'].map(f => (
                     <li key={f} className="flex items-center gap-2.5 text-sm text-[#1A1A1A]">
                       <CheckIcon color="#6B6B6B" />{f}
                     </li>
@@ -560,7 +560,7 @@ export default function Home() {
               </div>
               <div className="mt-6">
                 <Link href="/register" className="block w-full py-3 border border-[#E8E8E3] text-[#1A1A1A] font-semibold rounded-xl hover:bg-[#F7F6F3] transition-colors text-sm text-center">
-                  Commencer gratuitement
+                  Démarrer gratuitement
                 </Link>
               </div>
             </div>
@@ -706,7 +706,7 @@ export default function Home() {
           <div className="space-y-4">
             {[
               { q: 'Mes clients doivent-ils télécharger une application ?', a: "Non. Vos clients scannent le QR code avec l'appareil photo de leur smartphone. La carte s'ajoute directement dans Apple Wallet ou Google Wallet, sans téléchargement." },
-              { q: "Comment fonctionne la période d'essai ?", a: "Vous démarrez avec 30 jours gratuits, sans carte bancaire. Vous pouvez accueillir jusqu'à 50 clients et tester toutes les fonctionnalités du plan Découverte." },
+              { q: "Comment fonctionne la période d'essai ?", a: "Vous démarrez avec 1 mois gratuit, sans carte bancaire. Vous pouvez accueillir jusqu'à 50 clients et tester toutes les fonctionnalités du plan Découverte. À la fin du mois, on échange ensemble sur votre expérience — sans engagement." },
               { q: 'Puis-je changer de plan à tout moment ?', a: "Oui. Vous pouvez passer à un plan supérieur ou résilier à tout moment, sans engagement ni frais de résiliation." },
               { q: "Comment tamponne-t-on la carte d'un client ?", a: "Depuis votre dashboard, cliquez sur « Tamponner », saisissez le numéro de téléphone du client ou scannez sa carte. Le tampon s'ajoute instantanément." },
               { q: 'Les données de mes clients sont-elles sécurisées ?', a: "Oui. Vos données sont hébergées en Europe et ne sont jamais revendues. Nous respectons le RGPD et vous restez propriétaire de vos données." },

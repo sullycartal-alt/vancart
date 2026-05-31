@@ -34,6 +34,7 @@ interface Props {
   dailyStamps: { date: string; tampons: number }[]
   byDayOfWeek: { day: string; tampons: number }[]
   top5: { firstName: string; totalStamps: number; lastVisit: string }[]
+  plan?: string
   customFrom?: string
   customTo?: string
 }

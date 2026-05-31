@@ -13,7 +13,7 @@ export default async function MaCartePage() {
     .eq('user_id', user.id)
     .single()
 
-  if (!merchant) redirect('/dashboard/settings')
+  if (!merchant || !merchant.business_name?.trim()) redirect('/dashboard/settings')
 
   const { count: clientCount } = await supabase
     .from('loyalty_cards')

@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { createServiceClient } from '@/lib/supabase/service'
 import { redirect } from 'next/navigation'
+import { effectivePlan, type Plan } from '@/lib/plan-features'
 import ClientsTable from './ClientsTable'
 
 export default async function ClientsPage() {
@@ -12,7 +13,7 @@ export default async function ClientsPage() {
 
   const { data: merchant } = await supabase
     .from('merchants')
-    .select('id, stamps_required, points_required, primary_color, loyalty_type')
+    .select('id, stamps_required, points_required, primary_color, loyalty_type, plan')
     .eq('user_id', user.id)
     .single()
 
@@ -58,6 +59,9 @@ export default async function ClientsPage() {
     }
   }
 
+  const plan = effectivePlan((merchant.plan ?? 'free') as Plan, user.email)
+  const isPro = plan === 'pro'
+
   const loyaltyType = (merchant.loyalty_type ?? 'stamps') as 'stamps' | 'points'
   const clients = (cards ?? []).map((card) => ({
     ...card,
@@ -83,6 +87,7 @@ export default async function ClientsPage() {
         clients={clients}
         merchantId={merchant.id}
         subscribedCustomerIds={[...subscribedCustomerIds]}
+        isPro={isPro}
       />
     </div>
   )

@@ -38,9 +38,17 @@ export const PLAN_FEATURES = {
   },
 }
 
-export function effectivePlan(storedPlan: Plan, userEmail?: string | null): Plan {
+function normalizePlan(raw: string | null | undefined): Plan {
+  const lower = (raw ?? '').toLowerCase()
+  if (lower === 'pro') return 'pro'
+  if (lower === 'essential' || lower === 'essentiel') return 'essential'
+  // covers 'free', 'découverte', 'decouverte', '' and any unknown value
+  return 'free'
+}
+
+export function effectivePlan(storedPlan: string | null | undefined, userEmail?: string | null): Plan {
   if (userEmail === ADMIN_EMAIL) return 'pro'
-  return storedPlan
+  return normalizePlan(storedPlan)
 }
 
 export function canAccess(plan: Plan, feature: keyof typeof PLAN_FEATURES['free']): boolean {

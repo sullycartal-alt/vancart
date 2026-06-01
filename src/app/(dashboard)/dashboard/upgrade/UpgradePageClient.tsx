@@ -20,7 +20,7 @@ const DECOUVERTE_FEATURES = [
 ]
 
 const ESSENTIAL_FEATURES = [
-  '1 carte de fidélité',
+  '1 programme de fidélité',
   "Jusqu'à 500 clients",
   'Stats avancées',
   'Support prioritaire',
@@ -29,7 +29,7 @@ const ESSENTIAL_FEATURES = [
 const PRO_FEATURES = [
   'Tout du plan Essentiel',
   'Clients illimités',
-  'Conseiller IA Mistral 🇫🇷',
+  'Assistant IA marketing',
   'Notifications push clients',
   'Export données clients',
 ]

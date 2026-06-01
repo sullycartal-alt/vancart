@@ -3,8 +3,8 @@ import dynamic from 'next/dynamic'
 import PhoneParallax from './PhoneParallax'
 import PWARedirect from '@/components/pwa/PWARedirect'
 
-const ScrollingCarousel = dynamic(() => import('@/components/landing/ScrollingCarousel'), { ssr: false })
-const DashboardDemo = dynamic(() => import('@/components/landing/DashboardDemo'), { ssr: false })
+const ScrollingCarousel = dynamic(() => import('@/components/landing/ScrollingCarousel'))
+const DashboardDemo = dynamic(() => import('@/components/landing/DashboardDemo'))
 
 function CheckIcon({ color = '#6C47FF' }: { color?: string }) {
   return (

@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import MerchantForm from '../settings/MerchantForm'
+import MerchantForm from '@/app/(dashboard)/dashboard/settings/MerchantForm'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,11 +15,11 @@ export default async function OnboardingPage() {
     .eq('user_id', user.id)
     .single()
 
-  // Already fully onboarded — go to dashboard
+  // Already onboarded — go to dashboard
   if (merchant?.business_name?.trim()) redirect('/dashboard')
 
   return (
-    <div className="max-w-2xl mx-auto space-y-8">
+    <div className="space-y-8">
       <div className="text-center space-y-3">
         <div className="text-5xl">🚀</div>
         <h1 className="text-2xl font-bold text-[#1A1A1A]">Bienvenue sur VanCart !</h1>

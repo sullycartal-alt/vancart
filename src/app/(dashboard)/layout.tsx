@@ -9,15 +9,10 @@ import { createClient } from '@/lib/supabase/server'
 import { effectivePlan, type Plan } from '@/lib/plan-features'
 import { Suspense } from 'react'
 import { redirect } from 'next/navigation'
-import { headers } from 'next/headers'
 
 const ADMIN_EMAIL = 'sullycartal@gmail.com'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const headersList = await headers()
-  const pathname = headersList.get('x-pathname') ?? ''
-  const isOnboarding = pathname.startsWith('/dashboard/onboarding')
-
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -31,8 +26,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
     .eq('user_id', user.id)
     .single()
 
-  // Redirect to onboarding if no merchant or commerce not yet named
-  if (!isOnboarding && (!merchant || !merchant.business_name?.trim())) {
+  // No merchant or no name yet → onboarding (no loop: /dashboard/onboarding is in (onboarding) group, not this layout)
+  if (!merchant || !merchant.business_name?.trim()) {
     redirect('/dashboard/onboarding')
   }
 

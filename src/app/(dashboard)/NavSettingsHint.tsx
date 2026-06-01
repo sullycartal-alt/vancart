@@ -15,11 +15,12 @@ export default function NavSettingsHint({ hasBusinessName, variant = 'desktop', 
   const [hinted, setHinted] = useState(false)
 
   useEffect(() => {
-    // Show hint only when commerce not yet configured and user never clicked settings
-    if (!hasBusinessName && localStorage.getItem(LS_KEY) !== 'true') {
+    // Layout redirect guarantees business_name is always set for dashboard users,
+    // so base the hint purely on whether the user has ever visited settings.
+    if (localStorage.getItem(LS_KEY) !== 'true') {
       setHinted(true)
     }
-  }, [hasBusinessName])
+  }, [])
 
   function handleClick() {
     localStorage.setItem(LS_KEY, 'true')

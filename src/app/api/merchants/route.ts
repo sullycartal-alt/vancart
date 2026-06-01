@@ -28,6 +28,7 @@ const merchantSchema = z.object({
   allow_multiple_stamps: z.boolean().optional(),
   min_minutes_between_stamps: z.number().int().min(0).max(1440).optional(),
   stamps_per_visit: z.number().int().min(1).max(10).optional(),
+  wallet_color: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Must be a valid hex color').nullable().optional(),
 })
 
 function sanitizeMerchantData<T extends Record<string, unknown>>(data: T): T {
@@ -129,7 +130,7 @@ export async function PATCH(request: Request) {
   // Fetch current merchant to detect branding changes for Google Wallet sync
   const { data: current } = await supabase
     .from('merchants')
-    .select('id, logo_url, primary_color, loyalty_rule, business_name')
+    .select('id, logo_url, primary_color, wallet_color, loyalty_rule, business_name')
     .eq('user_id', user.id)
     .single()
 
@@ -150,6 +151,7 @@ export async function PATCH(request: Request) {
   const brandingChanged = current && (
     (parsed.data.logo_url !== undefined && parsed.data.logo_url !== current.logo_url) ||
     (parsed.data.primary_color !== undefined && parsed.data.primary_color !== current.primary_color) ||
+    (parsed.data.wallet_color !== undefined && parsed.data.wallet_color !== current.wallet_color) ||
     (parsed.data.loyalty_rule !== undefined && parsed.data.loyalty_rule !== current.loyalty_rule)
   )
   if (brandingChanged && current) {
@@ -157,7 +159,7 @@ export async function PATCH(request: Request) {
       merchantId: current.id,
       merchantName: data.business_name ?? current.business_name,
       loyaltyRule: data.loyalty_rule ?? current.loyalty_rule,
-      primaryColor: data.primary_color ?? current.primary_color,
+      primaryColor: data.wallet_color ?? data.primary_color ?? current.wallet_color ?? current.primary_color,
       logoUrl: data.logo_url ?? current.logo_url,
     }).catch(err => console.error('[PATCH /api/merchants] updateWalletClass failed:', err))
   }

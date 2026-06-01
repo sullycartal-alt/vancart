@@ -14,4 +14,5 @@ export interface MerchantSharedConfig {
   show_instagram_on_card?: boolean
   instagram_handle?: string | null
   banner_url?: string | null
+  wallet_color?: string | null
 }

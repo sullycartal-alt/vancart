@@ -54,6 +54,10 @@ const PRESET_COLORS = [
   '#0f766e', '#92400e',
 ]
 
+const WALLET_PRESET_COLORS = [
+  '#6C47FF', '#1a1a2e', '#0f4c81', '#2d6a4f', '#c9184a', '#e76f51',
+]
+
 function darken(hex: string, pct = 22): string {
   const n = parseInt(hex.slice(1), 16)
   const r = Math.max(0, (n >> 16) - Math.round(2.55 * pct))
@@ -98,13 +102,14 @@ function QRPlaceholder({ color, size = 64 }: { color: string; size?: number }) {
   )
 }
 
-function GoogleWalletPreview({ businessName, primaryColor, logoUrl, stampsRequired, loyaltyRule, loyaltyType, pointsRequired, heroImageUrl, walletMessage, cardExpiryMonths }: {
-  businessName: string; primaryColor: string; logoUrl: string | null
+function GoogleWalletPreview({ businessName, primaryColor, walletColor, logoUrl, stampsRequired, loyaltyRule, loyaltyType, pointsRequired, heroImageUrl, walletMessage, cardExpiryMonths }: {
+  businessName: string; primaryColor: string; walletColor?: string | null; logoUrl: string | null
   stampsRequired: number; loyaltyRule: string
   loyaltyType: 'stamps' | 'points'; pointsRequired?: number | null
   heroImageUrl?: string | null; walletMessage?: string | null; cardExpiryMonths?: number | null
 }) {
-  const dark = darken(primaryColor, 28)
+  const cardColor = walletColor ?? primaryColor
+  const dark = darken(cardColor, 28)
   const isPoints = loyaltyType === 'points'
   const target = isPoints ? (pointsRequired ?? 100) : stampsRequired
   const current = Math.floor(target * 0.4)
@@ -116,7 +121,7 @@ function GoogleWalletPreview({ businessName, primaryColor, logoUrl, stampsRequir
   return (
     <div
       className="w-full rounded-2xl overflow-hidden shadow-2xl select-none"
-      style={{ background: `linear-gradient(145deg, ${primaryColor} 0%, ${dark} 100%)` }}
+      style={{ background: `linear-gradient(145deg, ${cardColor} 0%, ${dark} 100%)` }}
     >
       {/* Hero image */}
       {heroImageUrl && (
@@ -380,6 +385,7 @@ interface Merchant {
   id: string
   business_name: string
   primary_color: string
+  wallet_color?: string | null
   loyalty_rule: string
   stamps_required: number
   logo_url: string | null
@@ -408,6 +414,10 @@ export default function CardDesignClient({
   onConfigChangeRef.current = onConfigChange
 
   const [color, setColor] = useState(merchant.primary_color)
+  const [walletColor, setWalletColor] = useState(merchant.wallet_color ?? merchant.primary_color)
+  const [logoUrl, setLogoUrl] = useState<string | null>(merchant.logo_url)
+  const [logoUploading, setLogoUploading] = useState(false)
+  const [logoError, setLogoError] = useState<string | null>(null)
   const [loyaltyRule, setLoyaltyRule] = useState(merchant.loyalty_rule)
   const [stampsRequired, setStampsRequired] = useState(merchant.stamps_required)
   const [loyaltyType, setLoyaltyType] = useState<'stamps' | 'points'>(merchant.loyalty_type)
@@ -422,12 +432,36 @@ export default function CardDesignClient({
   const [walletMessage, setWalletMessage] = useState(merchant.wallet_message ?? '')
   const [cardExpiryMonths, setCardExpiryMonths] = useState<number>(merchant.card_expiry_months ?? 12)
   const [showInstagram, setShowInstagram] = useState(merchant.show_instagram_on_card ?? false)
+  const logoInputRef = useRef<HTMLInputElement>(null)
   const heroInputRef = useRef<HTMLInputElement>(null)
   const bannerInputRef = useRef<HTMLInputElement>(null)
+
+  async function handleLogoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setLogoUploading(true)
+    setLogoError(null)
+    const formData = new FormData()
+    formData.append('file', file)
+    const res = await fetch('/api/upload/logo', { method: 'POST', body: formData })
+    const data = await res.json()
+    if (!res.ok) {
+      setLogoError(data.error ?? "Erreur lors de l'upload")
+    } else {
+      setLogoUrl(data.url)
+      onConfigChangeRef.current?.({ logo_url: data.url })
+    }
+    setLogoUploading(false)
+    if (logoInputRef.current) logoInputRef.current.value = ''
+  }
 
   function handleColorChange(newColor: string) {
     setColor(newColor)
     onConfigChangeRef.current?.({ primary_color: newColor })
+  }
+
+  function handleWalletColorChange(newColor: string) {
+    setWalletColor(newColor)
   }
   function handleLoyaltyRuleChange(rule: string) {
     setLoyaltyRule(rule)
@@ -495,7 +529,7 @@ export default function CardDesignClient({
   const [extracting, setExtracting] = useState(false)
 
   const extractColors = useCallback(async () => {
-    if (!merchant.logo_url) return
+    if (!logoUrl) return
     setExtracting(true)
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -505,12 +539,12 @@ export default function CardDesignClient({
       await new Promise<void>((resolve, reject) => {
         img.onload = () => resolve()
         img.onerror = reject
-        img.src = merchant.logo_url!
+        img.src = logoUrl!
       })
       const thief = new ColorThief()
       const palette = thief.getPalette(img, 3) as [number, number, number][]
       const hex = palette.map(([r, g, b]) =>
-        `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`
+        `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '00')}${b.toString(16).padStart(2, '00')}`
       )
       setSuggestedColors(hex)
     } catch (err) {
@@ -518,7 +552,7 @@ export default function CardDesignClient({
       setSuggestedColors(harmonicColors(merchant.primary_color))
     }
     setExtracting(false)
-  }, [merchant.logo_url, merchant.primary_color])
+  }, [logoUrl, merchant.primary_color])
 
   async function handleSave() {
     setSaving(true)
@@ -526,7 +560,9 @@ export default function CardDesignClient({
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        logo_url: logoUrl,
         primary_color: color,
+        wallet_color: walletColor,
         loyalty_rule: loyaltyRule,
         stamps_required: stampsRequired,
         loyalty_type: loyaltyType,
@@ -551,7 +587,8 @@ export default function CardDesignClient({
   const previewProps = {
     businessName: merchant.business_name,
     primaryColor: color,
-    logoUrl: merchant.logo_url,
+    walletColor,
+    logoUrl,
     stampsRequired,
     loyaltyRule: loyaltyRule || (isPoints ? `${pointsRequired} pts = 1 récompense` : `${stampsRequired} tampons = 1 récompense`),
     loyaltyType,
@@ -579,6 +616,74 @@ export default function CardDesignClient({
         {/* ── Left: form ─────────────────────────────────── */}
         <div className="bg-white border border-[#E8E8E3] rounded-2xl p-6 space-y-6">
 
+          {/* Logo upload */}
+          <div className="space-y-3">
+            <label className="block text-sm font-semibold text-[#1A1A1A]">Logo</label>
+            <p className="text-xs text-[#6B6B6B]">JPG, PNG ou WebP — max 2 Mo. Affiché sur toutes les cartes de fidélité.</p>
+            <div className="flex items-center gap-4">
+              <div
+                className="w-16 h-16 rounded-full border-2 border-dashed border-[#E8E8E3] flex items-center justify-center bg-[#F7F6F3] cursor-pointer hover:border-[#6C47FF] transition-colors flex-shrink-0 overflow-hidden"
+                onClick={() => !logoUrl && logoInputRef.current?.click()}
+                title={logoUrl ? undefined : 'Choisir un logo'}
+              >
+                {logoUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={logoUrl} alt="Logo" className="w-full h-full object-cover" loading="lazy" />
+                ) : (
+                  <svg className="w-6 h-6 text-[#9CA3AF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                )}
+              </div>
+              <div className="space-y-1.5">
+                <button
+                  type="button"
+                  onClick={() => logoInputRef.current?.click()}
+                  disabled={logoUploading}
+                  className="text-sm text-[#6C47FF] hover:text-[#5835e0] font-medium disabled:opacity-50 transition-colors"
+                >
+                  {logoUploading ? 'Upload en cours…' : logoUrl ? 'Changer le logo' : 'Choisir un logo'}
+                </button>
+                {logoUrl && (
+                  <button
+                    type="button"
+                    onClick={() => { setLogoUrl(null); onConfigChangeRef.current?.({ logo_url: null }) }}
+                    className="block text-xs text-[#9CA3AF] hover:text-red-500 transition-colors"
+                  >
+                    Supprimer
+                  </button>
+                )}
+                {logoError && <p className="text-xs text-red-600">{logoError}</p>}
+              </div>
+            </div>
+            <input ref={logoInputRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleLogoUpload} />
+          </div>
+
+          {/* Wallet color (Google Wallet card background) */}
+          <div className="space-y-3">
+            <label className="block text-sm font-semibold text-[#1A1A1A]">Couleur de fond de la carte</label>
+            <p className="text-xs text-[#6B6B6B]">Couleur de fond utilisée sur la carte Google Wallet.</p>
+            <div className="flex flex-wrap gap-2">
+              {WALLET_PRESET_COLORS.map(hex => (
+                <button
+                  key={hex}
+                  type="button"
+                  title={hex}
+                  onClick={() => handleWalletColorChange(hex)}
+                  className={`w-8 h-8 rounded-full border-2 transition-all ${walletColor === hex ? 'ring-2 ring-offset-2 ring-[#1A1A1A] border-white scale-110' : 'border-transparent'}`}
+                  style={{ backgroundColor: hex }}
+                />
+              ))}
+              <input
+                type="color"
+                value={walletColor}
+                onChange={e => handleWalletColorChange(e.target.value)}
+                className="w-8 h-8 rounded-full cursor-pointer border-0 p-0 overflow-hidden"
+                title="Couleur personnalisée"
+              />
+            </div>
+          </div>
+
           {/* Color */}
           <div className="space-y-3">
             <label className="block text-sm font-semibold text-[#1A1A1A]">Couleur principale</label>
@@ -603,7 +708,7 @@ export default function CardDesignClient({
             </div>
 
             {/* Suggested from logo */}
-            {merchant.logo_url && (
+            {logoUrl && (
               <div className="space-y-2">
                 <button
                   type="button"
@@ -917,7 +1022,7 @@ export default function CardDesignClient({
           <button
             type="button"
             onClick={handleSave}
-            disabled={saving || heroUploading}
+            disabled={saving || logoUploading || heroUploading || bannerUploading}
             className="w-full py-3 text-sm font-semibold rounded-xl text-white transition-colors disabled:opacity-60"
             style={{ backgroundColor: color }}
           >
@@ -971,7 +1076,7 @@ export default function CardDesignClient({
               <PWAWalletPreview
                 businessName={merchant.business_name}
                 primaryColor={color}
-                logoUrl={merchant.logo_url}
+                logoUrl={logoUrl}
                 bannerUrl={bannerUrl}
                 stampsRequired={stampsRequired}
                 loyaltyType={loyaltyType}

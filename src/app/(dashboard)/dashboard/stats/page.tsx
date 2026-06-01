@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
 import StatsClient from './StatsClient'
 import StatsAnalyseClient from './StatsAnalyseClient'
+import UpgradeGate from '@/components/UpgradeGate'
 import { effectivePlan, type Plan } from '@/lib/plan-features'
 
 export type Period = 'this_week' | 'this_month' | 'last_month' | '3_months' | '6_months' | 'this_year' | 'custom'
@@ -109,7 +110,6 @@ interface SearchParams {
 
 export default async function StatsPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const params = await searchParams
-  const period = (params.period ?? 'this_month') as Period
   const tab = params.tab ?? 'overview'
 
   const supabase = await createClient()
@@ -137,6 +137,11 @@ export default async function StatsPage({ searchParams }: { searchParams: Promis
   }
 
   const plan = effectivePlan((merchant.plan ?? 'free') as Plan, user.email)
+
+  // Free plan: force this_week and ignore any period param from URL
+  const period = plan === 'free'
+    ? 'this_week'
+    : ((params.period ?? 'this_month') as Period)
 
   const { start, end } = getPeriodDates(period, params.from, params.to)
   const startIso = start.toISOString()
@@ -227,7 +232,7 @@ export default async function StatsPage({ searchParams }: { searchParams: Promis
     lastVisit: string
   }[] = []
 
-  if (tab === 'analyse') {
+  if (tab === 'analyse' && plan !== 'free') {
     const { data: fullCards } = await supabase
       .from('loyalty_cards')
       .select('id, total_stamps_earned, rewards_unlocked, created_at, updated_at, customers(first_name, phone)')
@@ -253,15 +258,27 @@ export default async function StatsPage({ searchParams }: { searchParams: Promis
   return (
     <Suspense fallback={<div className="h-96 animate-pulse bg-[#F7F6F3] rounded-2xl" />}>
       {tab === 'analyse' ? (
-        <StatsAnalyseClient
-          primaryColor={merchant.primary_color}
-          period={period}
-          loyaltyType={merchant.loyalty_type ?? 'stamps'}
-          clients={analyseClients}
-          plan={plan}
-          customFrom={params.from}
-          customTo={params.to}
-        />
+        plan === 'free' ? (
+          <UpgradeGate plan={plan} feature="advancedStats" requiredPlan="essential">
+            <StatsAnalyseClient
+              primaryColor={merchant.primary_color}
+              period={period}
+              loyaltyType={merchant.loyalty_type ?? 'stamps'}
+              clients={[]}
+              plan={plan}
+            />
+          </UpgradeGate>
+        ) : (
+          <StatsAnalyseClient
+            primaryColor={merchant.primary_color}
+            period={period}
+            loyaltyType={merchant.loyalty_type ?? 'stamps'}
+            clients={analyseClients}
+            plan={plan}
+            customFrom={params.from}
+            customTo={params.to}
+          />
+        )
       ) : (
         <StatsClient
           primaryColor={merchant.primary_color}

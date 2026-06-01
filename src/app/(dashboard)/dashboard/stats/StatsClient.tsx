@@ -58,7 +58,7 @@ function formatDate(iso: string) {
 }
 
 export default function StatsClient({
-  primaryColor, period, loyaltyType, kpis, weeklyNewClients, dailyStamps, byDayOfWeek, top5, customFrom, customTo,
+  primaryColor, period, loyaltyType, kpis, weeklyNewClients, dailyStamps, byDayOfWeek, top5, plan, customFrom, customTo,
 }: Props) {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -88,65 +88,78 @@ export default function StatsClient({
             <button
               key={key}
               onClick={() => updateParams({ tab: key === 'overview' ? undefined : key })}
-              className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px ${
+              className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px ${
                 (key === 'overview' ? !searchParams.get('tab') || searchParams.get('tab') === 'overview' : searchParams.get('tab') === key)
                   ? 'border-[#6C47FF] text-[#6C47FF]'
                   : 'border-transparent text-[#6B6B6B] hover:text-[#1A1A1A]'
               }`}
             >
               {label}
+              {key === 'analyse' && plan === 'free' && (
+                <span className="text-xs">🔒</span>
+              )}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Period filter */}
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="text-xs font-semibold text-[#6B6B6B] uppercase tracking-wide">Période :</span>
-        <div className="flex flex-wrap gap-1.5">
-          {PERIOD_OPTIONS.filter(o => o.value !== 'custom').map(({ value, label }) => (
+      {/* Period filter — free plan locked to this_week */}
+      {plan === 'free' ? (
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-semibold text-[#6B6B6B] uppercase tracking-wide">Période :</span>
+          <span className="px-3 py-1.5 text-xs font-medium rounded-xl border bg-[#6C47FF] text-white border-[#6C47FF]">
+            Cette semaine
+          </span>
+          <span className="text-xs text-[#9CA3AF]">— Filtres disponibles dès le plan Essentiel</span>
+        </div>
+      ) : (
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs font-semibold text-[#6B6B6B] uppercase tracking-wide">Période :</span>
+          <div className="flex flex-wrap gap-1.5">
+            {PERIOD_OPTIONS.filter(o => o.value !== 'custom').map(({ value, label }) => (
+              <button
+                key={value}
+                onClick={() => updateParams({ period: value, from: undefined, to: undefined })}
+                className={`px-3 py-1.5 text-xs font-medium rounded-xl border transition-colors ${
+                  period === value
+                    ? 'bg-[#6C47FF] text-white border-[#6C47FF]'
+                    : 'bg-white text-[#6B6B6B] border-[#E8E8E3] hover:border-[#6C47FF]/30'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
             <button
-              key={value}
-              onClick={() => updateParams({ period: value, from: undefined, to: undefined })}
+              onClick={() => updateParams({ period: 'custom' })}
               className={`px-3 py-1.5 text-xs font-medium rounded-xl border transition-colors ${
-                period === value
+                period === 'custom'
                   ? 'bg-[#6C47FF] text-white border-[#6C47FF]'
                   : 'bg-white text-[#6B6B6B] border-[#E8E8E3] hover:border-[#6C47FF]/30'
               }`}
             >
-              {label}
+              Personnalisé
             </button>
-          ))}
-          <button
-            onClick={() => updateParams({ period: 'custom' })}
-            className={`px-3 py-1.5 text-xs font-medium rounded-xl border transition-colors ${
-              period === 'custom'
-                ? 'bg-[#6C47FF] text-white border-[#6C47FF]'
-                : 'bg-white text-[#6B6B6B] border-[#E8E8E3] hover:border-[#6C47FF]/30'
-            }`}
-          >
-            Personnalisé
-          </button>
-        </div>
-
-        {period === 'custom' && (
-          <div className="flex items-center gap-2 mt-1 w-full sm:w-auto">
-            <input
-              type="date"
-              defaultValue={customFrom ?? ''}
-              onChange={e => updateParams({ period: 'custom', from: e.target.value })}
-              className="text-xs border border-[#E8E8E3] rounded-lg px-2 py-1.5 focus:outline-none focus:border-[#6C47FF]"
-            />
-            <span className="text-xs text-[#6B6B6B]">→</span>
-            <input
-              type="date"
-              defaultValue={customTo ?? ''}
-              onChange={e => updateParams({ period: 'custom', to: e.target.value })}
-              className="text-xs border border-[#E8E8E3] rounded-lg px-2 py-1.5 focus:outline-none focus:border-[#6C47FF]"
-            />
           </div>
-        )}
-      </div>
+
+          {period === 'custom' && (
+            <div className="flex items-center gap-2 mt-1 w-full sm:w-auto">
+              <input
+                type="date"
+                defaultValue={customFrom ?? ''}
+                onChange={e => updateParams({ period: 'custom', from: e.target.value })}
+                className="text-xs border border-[#E8E8E3] rounded-lg px-2 py-1.5 focus:outline-none focus:border-[#6C47FF]"
+              />
+              <span className="text-xs text-[#6B6B6B]">→</span>
+              <input
+                type="date"
+                defaultValue={customTo ?? ''}
+                onChange={e => updateParams({ period: 'custom', to: e.target.value })}
+                className="text-xs border border-[#E8E8E3] rounded-lg px-2 py-1.5 focus:outline-none focus:border-[#6C47FF]"
+              />
+            </div>
+          )}
+        </div>
+      )}
 
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

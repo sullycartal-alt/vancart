@@ -54,9 +54,6 @@ const PRESET_COLORS = [
   '#0f766e', '#92400e',
 ]
 
-const WALLET_PRESET_COLORS = [
-  '#6C47FF', '#1a1a2e', '#0f4c81', '#2d6a4f', '#c9184a', '#e76f51',
-]
 
 function darken(hex: string, pct = 22): string {
   const n = parseInt(hex.slice(1), 16)
@@ -102,14 +99,13 @@ function QRPlaceholder({ color, size = 64 }: { color: string; size?: number }) {
   )
 }
 
-function GoogleWalletPreview({ businessName, primaryColor, walletColor, logoUrl, stampsRequired, loyaltyRule, loyaltyType, pointsRequired, heroImageUrl, walletMessage, cardExpiryMonths }: {
-  businessName: string; primaryColor: string; walletColor?: string | null; logoUrl: string | null
+function GoogleWalletPreview({ businessName, primaryColor, logoUrl, stampsRequired, loyaltyRule, loyaltyType, pointsRequired, heroImageUrl, walletMessage, cardExpiryMonths }: {
+  businessName: string; primaryColor: string; logoUrl: string | null
   stampsRequired: number; loyaltyRule: string
   loyaltyType: 'stamps' | 'points'; pointsRequired?: number | null
   heroImageUrl?: string | null; walletMessage?: string | null; cardExpiryMonths?: number | null
 }) {
-  const cardColor = walletColor ?? primaryColor
-  const dark = darken(cardColor, 28)
+  const dark = darken(primaryColor, 28)
   const isPoints = loyaltyType === 'points'
   const target = isPoints ? (pointsRequired ?? 100) : stampsRequired
   const current = Math.floor(target * 0.4)
@@ -121,7 +117,7 @@ function GoogleWalletPreview({ businessName, primaryColor, walletColor, logoUrl,
   return (
     <div
       className="w-full rounded-2xl overflow-hidden shadow-2xl select-none"
-      style={{ background: `linear-gradient(145deg, ${cardColor} 0%, ${dark} 100%)` }}
+      style={{ background: `linear-gradient(145deg, ${primaryColor} 0%, ${dark} 100%)` }}
     >
       {/* Hero image */}
       {heroImageUrl && (
@@ -385,7 +381,6 @@ interface Merchant {
   id: string
   business_name: string
   primary_color: string
-  wallet_color?: string | null
   loyalty_rule: string
   stamps_required: number
   logo_url: string | null
@@ -414,7 +409,6 @@ export default function CardDesignClient({
   onConfigChangeRef.current = onConfigChange
 
   const [color, setColor] = useState(merchant.primary_color)
-  const [walletColor, setWalletColor] = useState(merchant.wallet_color ?? merchant.primary_color)
   const [logoUrl, setLogoUrl] = useState<string | null>(merchant.logo_url)
   const [logoUploading, setLogoUploading] = useState(false)
   const [logoError, setLogoError] = useState<string | null>(null)
@@ -460,9 +454,6 @@ export default function CardDesignClient({
     onConfigChangeRef.current?.({ primary_color: newColor })
   }
 
-  function handleWalletColorChange(newColor: string) {
-    setWalletColor(newColor)
-  }
   function handleLoyaltyRuleChange(rule: string) {
     setLoyaltyRule(rule)
     onConfigChangeRef.current?.({ loyalty_rule: rule })
@@ -562,7 +553,6 @@ export default function CardDesignClient({
       body: JSON.stringify({
         logo_url: logoUrl,
         primary_color: color,
-        wallet_color: walletColor,
         loyalty_rule: loyaltyRule,
         stamps_required: stampsRequired,
         loyalty_type: loyaltyType,
@@ -587,7 +577,6 @@ export default function CardDesignClient({
   const previewProps = {
     businessName: merchant.business_name,
     primaryColor: color,
-    walletColor,
     logoUrl,
     stampsRequired,
     loyaltyRule: loyaltyRule || (isPoints ? `${pointsRequired} pts = 1 récompense` : `${stampsRequired} tampons = 1 récompense`),
@@ -657,31 +646,6 @@ export default function CardDesignClient({
               </div>
             </div>
             <input ref={logoInputRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleLogoUpload} />
-          </div>
-
-          {/* Wallet color (Google Wallet card background) */}
-          <div className="space-y-3">
-            <label className="block text-sm font-semibold text-[#1A1A1A]">Couleur de fond de la carte</label>
-            <p className="text-xs text-[#6B6B6B]">Couleur de fond utilisée sur la carte Google Wallet.</p>
-            <div className="flex flex-wrap gap-2">
-              {WALLET_PRESET_COLORS.map(hex => (
-                <button
-                  key={hex}
-                  type="button"
-                  title={hex}
-                  onClick={() => handleWalletColorChange(hex)}
-                  className={`w-8 h-8 rounded-full border-2 transition-all ${walletColor === hex ? 'ring-2 ring-offset-2 ring-[#1A1A1A] border-white scale-110' : 'border-transparent'}`}
-                  style={{ backgroundColor: hex }}
-                />
-              ))}
-              <input
-                type="color"
-                value={walletColor}
-                onChange={e => handleWalletColorChange(e.target.value)}
-                className="w-8 h-8 rounded-full cursor-pointer border-0 p-0 overflow-hidden"
-                title="Couleur personnalisée"
-              />
-            </div>
           </div>
 
           {/* Color */}

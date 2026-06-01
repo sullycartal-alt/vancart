@@ -9,6 +9,9 @@ const schema = z.object({
   adresse_commerce: z.string().min(1, "L'adresse du commerce est requise.").max(200),
   email: z.string().min(1, "L'email est requis.").email("L'adresse email n'est pas valide."),
   telephone: z.string().max(30).optional(),
+  logiciel_caisse: z.enum(['Aucun', 'SumUp', 'Zelty', 'Tiller', 'Lightspeed', "L'Addition", 'Autre'], {
+    message: 'Le logiciel de caisse est requis.',
+  }),
   message: z.string().max(1000).optional(),
   campaign: z.string().max(100).optional(),
 })
@@ -43,7 +46,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: firstError }, { status: 400 })
   }
 
-  const { prenom, commerce, adresse_commerce, email, telephone, message, campaign } = parsed.data
+  const { prenom, commerce, adresse_commerce, email, telephone, logiciel_caisse, message, campaign } = parsed.data
 
   if (!process.env.RESEND_API_KEY) {
     console.log('[demo-contact] RESEND_API_KEY not set — skipping email')
@@ -90,6 +93,10 @@ export async function POST(request: NextRequest) {
           <tr>
             <td style="padding:10px 0;border-bottom:1px solid #f3f4f6;color:#6b7280;font-size:14px;vertical-align:top">Téléphone</td>
             <td style="padding:10px 0;border-bottom:1px solid #f3f4f6;color:#111827;font-size:14px">${telephone || '—'}</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 0;border-bottom:1px solid #f3f4f6;color:#6b7280;font-size:14px;vertical-align:top">Caisse</td>
+            <td style="padding:10px 0;border-bottom:1px solid #f3f4f6;color:#111827;font-size:14px">${logiciel_caisse}</td>
           </tr>
           <tr>
             <td style="padding:10px 0;color:#6b7280;font-size:14px;vertical-align:top">📍 Campagne</td>
@@ -142,6 +149,7 @@ export async function POST(request: NextRequest) {
       adresse_commerce,
       email,
       telephone: telephone ?? null,
+      logiciel_caisse,
       campaign_slug: campaign ?? null,
       lu: false,
     })

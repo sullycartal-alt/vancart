@@ -197,6 +197,7 @@ interface FormState {
   adresse_commerce: string
   email: string
   telephone: string
+  logiciel_caisse: string
   message: string
 }
 
@@ -207,7 +208,7 @@ export default function DemoPage({ campaign }: Props) {
   const formRef = useRef<HTMLDivElement>(null)
   const [ctaVisible, setCtaVisible] = useState(true)
   const [carouselIndex, setCarouselIndex] = useState(0)
-  const [form, setForm] = useState<FormState>({ prenom: '', commerce: '', adresse_commerce: '', email: '', telephone: '', message: '' })
+  const [form, setForm] = useState<FormState>({ prenom: '', commerce: '', adresse_commerce: '', email: '', telephone: '', logiciel_caisse: '', message: '' })
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [confetti, setConfetti] = useState(false)
@@ -453,7 +454,7 @@ export default function DemoPage({ campaign }: Props) {
             className="font-black text-[#1A1A1A] text-center mb-2"
             style={{ fontSize: 'clamp(22px, 6vw, 28px)' }}
           >
-            Sullivan &amp; Audrey vous contactent sous 24h 🤝
+            Recevez votre carte de fidélité personnalisée sous 24h 🚀
           </h2>
           <p className="text-center text-[#6B6B6B] mb-8" style={{ fontSize: 16 }}>
             Gratuit · Sans engagement · 5 minutes pour tout configurer ensemble
@@ -559,6 +560,29 @@ export default function DemoPage({ campaign }: Props) {
                 />
               </div>
 
+              {/* Logiciel de caisse */}
+              <div>
+                <label className="font-semibold text-[#1A1A1A] block mb-1.5" style={{ fontSize: 16 }}>
+                  Logiciel de caisse utilisé <span className="text-[#6C47FF]">*</span>
+                </label>
+                <select
+                  required
+                  value={form.logiciel_caisse}
+                  onChange={e => setForm(f => ({ ...f, logiciel_caisse: e.target.value }))}
+                  className={inputCls}
+                  style={{ minHeight: 52 }}
+                >
+                  <option value="" disabled>Choisissez une option</option>
+                  <option value="Aucun">Aucun</option>
+                  <option value="SumUp">SumUp</option>
+                  <option value="Zelty">Zelty</option>
+                  <option value="Tiller">Tiller</option>
+                  <option value="Lightspeed">Lightspeed</option>
+                  <option value="L'Addition">L&apos;Addition</option>
+                  <option value="Autre">Autre</option>
+                </select>
+              </div>
+
               {/* Message */}
               <div>
                 <label className="font-semibold text-[#1A1A1A] block mb-1.5" style={{ fontSize: 16 }}>
@@ -586,7 +610,7 @@ export default function DemoPage({ campaign }: Props) {
                 className="w-full rounded-xl text-white font-bold active:scale-95 transition-all disabled:opacity-60"
                 style={{ backgroundColor: COLOR, minHeight: 56, fontSize: 18 }}
               >
-                {loading ? 'Envoi en cours…' : 'Je veux ma carte de fidélité →'}
+                {loading ? 'Envoi en cours…' : '🚀 Tester VanCart gratuitement'}
               </button>
 
               <p className="text-center text-[#9CA3AF]" style={{ fontSize: 14 }}>

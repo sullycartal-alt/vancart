@@ -12,7 +12,7 @@ interface Props {
 const links = [
   { href: '/dashboard', label: 'Accueil' },
   { href: '/dashboard/clients', label: 'Mes clients' },
-  { href: '/dashboard/stats', label: 'Stats' },
+  { href: '/dashboard/stats', label: 'Tableau de bord' },
   { href: '/dashboard/accompagnement', label: 'Accompagnement' },
   { href: '/dashboard/settings', label: 'Mon commerce' },
 ]

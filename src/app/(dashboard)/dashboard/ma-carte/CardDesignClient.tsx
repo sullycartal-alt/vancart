@@ -122,7 +122,7 @@ function GoogleWalletPreview({ businessName, primaryColor, logoUrl, stampsRequir
       {heroImageUrl && (
         <div className="w-full overflow-hidden" style={{ height: 80 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={heroImageUrl} alt="" className="w-full h-full object-cover opacity-80" />
+          <img src={heroImageUrl} alt="" className="w-full h-full object-cover opacity-80" loading="lazy" />
         </div>
       )}
 
@@ -135,7 +135,7 @@ function GoogleWalletPreview({ businessName, primaryColor, logoUrl, stampsRequir
         <div className="relative flex items-center gap-3">
           {logoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={logoUrl} alt="" className="w-10 h-10 rounded-full object-cover ring-2 ring-white/30 flex-shrink-0" />
+            <img src={logoUrl} alt="" className="w-10 h-10 rounded-full object-cover ring-2 ring-white/30 flex-shrink-0" loading="lazy" />
           ) : (
             <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-black flex-shrink-0" style={{ background: 'rgba(255,255,255,0.22)', color: 'white' }}>
               {businessName.slice(0, 2).toUpperCase() || '?'}
@@ -204,7 +204,7 @@ function AppleWalletPreview({ businessName, primaryColor, logoUrl, stampsRequire
         <div className="flex items-center justify-between h-full relative">
           <div className="flex items-center gap-2.5">
             {logoUrl ? (
-              <img src={logoUrl} alt="" className="w-8 h-8 rounded-lg object-cover flex-shrink-0" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.2)' }} />
+              <img src={logoUrl} alt="" className="w-8 h-8 rounded-lg object-cover flex-shrink-0" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.2)' }} loading="lazy" />
             ) : (
               <div className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black flex-shrink-0" style={{ background: 'rgba(255,255,255,0.22)', color: 'white' }}>
                 {businessName.slice(0, 2).toUpperCase() || '?'}
@@ -286,7 +286,7 @@ function PWAWalletPreview({
           >
             {logoUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={logoUrl} alt="" style={{ width: 44, height: 44, objectFit: 'contain' }} />
+              <img src={logoUrl} alt="" style={{ width: 44, height: 44, objectFit: 'contain' }} loading="lazy" />
             ) : (
               <span style={{ color: 'white', fontWeight: 700, fontSize: 18 }}>
                 {businessName.charAt(0).toUpperCase() || '?'}
@@ -314,7 +314,7 @@ function PWAWalletPreview({
       >
         {bannerUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={bannerUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+          <img src={bannerUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} loading="lazy" />
         ) : (
           <span className="font-bold text-center px-4 leading-tight" style={{ color: 'white', fontSize: 24 }}>
             {businessName || 'Mon Commerce'}
@@ -774,7 +774,7 @@ export default function CardDesignClient({
               {bannerUrl ? (
                 <div className="relative w-32 h-16 rounded-xl overflow-hidden border border-[#E8E8E3] flex-shrink-0 bg-[#F7F6F3]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={bannerUrl} alt="" className="w-full h-full object-cover" />
+                  <img src={bannerUrl} alt="" className="w-full h-full object-cover" loading="lazy" />
                   <button
                     type="button"
                     onClick={() => { setBannerUrl(null); onConfigChangeRef.current?.({ banner_url: null }) }}
@@ -825,7 +825,7 @@ export default function CardDesignClient({
                   {heroImageUrl ? (
                     <div className="relative w-32 h-16 rounded-xl overflow-hidden border border-[#E8E8E3] flex-shrink-0 bg-[#F7F6F3]">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={heroImageUrl} alt="" className="w-full h-full object-cover" />
+                      <img src={heroImageUrl} alt="" className="w-full h-full object-cover" loading="lazy" />
                       <button
                         type="button"
                         onClick={() => { setHeroImageUrl(null); onConfigChangeRef.current?.({ hero_image_url: null }) }}

@@ -117,6 +117,7 @@ export default function AdminProspectionPage() {
   const [creating, setCreating] = useState(false)
   const [copied, setCopied] = useState<string | null>(null)
   const [qrModal, setQrModal] = useState<Campaign | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function init() {
@@ -133,43 +134,59 @@ export default function AdminProspectionPage() {
 
   async function loadCampaigns() {
     setLoading(true)
-    const { data } = await supabase
-      .from('prospection_campaigns')
-      .select('*')
-      .order('created_at', { ascending: false })
-    setCampaigns(data ?? [])
+    try {
+      const res = await fetch('/api/admin/prospection')
+      const json = await res.json()
+      if (!res.ok) {
+        setError(`Erreur chargement : ${json.error ?? res.statusText}${json.code ? ` (code: ${json.code})` : ''}`)
+      } else {
+        setCampaigns(json.campaigns ?? [])
+      }
+    } catch (e: unknown) {
+      setError(`Erreur réseau : ${e instanceof Error ? e.message : String(e)}`)
+    }
     setLoading(false)
   }
 
   async function createCampaign() {
     const trimmed = name.trim()
-    if (!trimmed || !userId) return
+    if (!trimmed) return
+    setError(null)
     setCreating(true)
+
     const slug = generateSlug(trimmed)
     const url = `${APP_URL}/demo/${slug}`
-    const { error } = await supabase
-      .from('prospection_campaigns')
-      .insert({
-        admin_user_id: userId,
-        admin_name: userEmail,
-        nom: trimmed,
-        slug,
-        url,
+
+    try {
+      const res = await fetch('/api/admin/prospection', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nom: trimmed, slug, url }),
       })
-    if (!error) {
-      setName('')
-      await loadCampaigns()
+      const json = await res.json()
+      if (!res.ok) {
+        setError(`Erreur Supabase : ${json.error ?? res.statusText}${json.code ? ` (code: ${json.code})` : ''}`)
+      } else {
+        setName('')
+        await loadCampaigns()
+      }
+    } catch (e: unknown) {
+      setError(`Erreur inattendue : ${e instanceof Error ? e.message : String(e)}`)
     }
     setCreating(false)
   }
 
   async function deleteCampaign(id: string) {
-    await supabase
-      .from('prospection_campaigns')
-      .delete()
-      .eq('id', id)
-      .eq('admin_user_id', userId ?? '')
-    setCampaigns(prev => prev.filter(c => c.id !== id))
+    try {
+      await fetch('/api/admin/prospection', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      })
+      setCampaigns(prev => prev.filter(c => c.id !== id))
+    } catch {
+      // Silently ignore delete failures — list will be stale but recoverable on next load
+    }
   }
 
   function copyUrl(url: string, id: string) {
@@ -213,13 +230,24 @@ export default function AdminProspectionPage() {
               className="px-5 bg-[#6C47FF] text-white text-sm font-bold rounded-xl hover:bg-[#5835e0] disabled:opacity-40 transition-colors whitespace-nowrap"
               style={{ minHeight: 52 }}
             >
-              {creating ? '…' : 'Générer'}
+              {creating ? 'Génération…' : 'Générer'}
             </button>
           </div>
           {previewSlug && (
             <p className="mt-2 text-xs text-[#9CA3AF] break-all">
               → {APP_URL}/demo/{previewSlug}
             </p>
+          )}
+          {error && (
+            <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+              ⚠️ {error}
+            </div>
+          )}
+          {error?.includes('does not exist') && (
+            <div className="mt-2 p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-sm">
+              <p className="font-semibold">Migration SQL manquante</p>
+              <p className="mt-0.5">La table <code className="font-mono bg-amber-100 px-1 rounded">prospection_campaigns</code> n&apos;existe pas encore. Va dans Supabase → SQL Editor et exécute le fichier <code className="font-mono bg-amber-100 px-1 rounded">supabase/migrations/20260531_prospection_campaigns.sql</code>.</p>
+            </div>
           )}
         </div>
 

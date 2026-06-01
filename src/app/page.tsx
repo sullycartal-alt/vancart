@@ -2,6 +2,7 @@ import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import PhoneParallax from './PhoneParallax'
 import PWARedirect from '@/components/pwa/PWARedirect'
+import LandingNav from '@/components/landing/LandingNav'
 
 const ScrollingCarousel = dynamic(() => import('@/components/landing/ScrollingCarousel'))
 const DashboardDemo = dynamic(() => import('@/components/landing/DashboardDemo'))
@@ -170,26 +171,7 @@ export default function Home() {
       <PWARedirect />
 
       {/* ── Nav ──────────────────────────────────────────────────────────── */}
-      <nav className="border-b border-[#E8E8E3] px-4 sm:px-6 py-4 bg-white sticky top-0 z-50">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <span className="text-xl font-bold text-[#6C47FF]">VanCart</span>
-          <div className="hidden sm:flex items-center gap-5">
-            <a href="#comment-ca-marche" className="text-sm text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors font-medium">Comment ça marche</a>
-            <a href="#fonctionnalites" className="text-sm text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors font-medium">Fonctionnalités</a>
-            <a href="#tableau-de-bord" className="text-sm text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors font-medium">Tableau de bord</a>
-            <a href="#tarifs" className="text-sm text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors font-medium">Tarifs</a>
-            <a href="#faq" className="text-sm text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors font-medium">FAQ</a>
-            <a href="#roadmap" className="text-sm text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors font-medium">Roadmap</a>
-          </div>
-          <div className="flex items-center gap-3 sm:gap-4">
-            <Link href="/login" className="hidden sm:inline text-sm text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors font-medium">Connexion</Link>
-            <Link href="/register" className="text-sm font-semibold text-white bg-[#6C47FF] hover:bg-[#5835e0] px-3 sm:px-4 py-2 rounded-xl transition-colors whitespace-nowrap">
-              <span className="sm:hidden">Commencer</span>
-              <span className="hidden sm:inline">Commencer gratuitement</span>
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <LandingNav />
 
       {/* ── 1. Hero ──────────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden bg-[#F7F6F3] px-4 sm:px-6 py-16 sm:py-24">

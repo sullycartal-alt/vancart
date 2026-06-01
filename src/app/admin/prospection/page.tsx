@@ -134,14 +134,16 @@ export default function AdminProspectionPage() {
 
   async function loadCampaigns() {
     setLoading(true)
-    const { data, error: fetchError } = await supabase
-      .from('prospection_campaigns')
-      .select('*')
-      .order('created_at', { ascending: false })
-    if (fetchError) {
-      setError(`Erreur chargement : ${fetchError.message} (code: ${fetchError.code})`)
-    } else {
-      setCampaigns(data ?? [])
+    try {
+      const res = await fetch('/api/admin/prospection')
+      const json = await res.json()
+      if (!res.ok) {
+        setError(`Erreur chargement : ${json.error ?? res.statusText}${json.code ? ` (code: ${json.code})` : ''}`)
+      } else {
+        setCampaigns(json.campaigns ?? [])
+      }
+    } catch (e: unknown) {
+      setError(`Erreur réseau : ${e instanceof Error ? e.message : String(e)}`)
     }
     setLoading(false)
   }
@@ -152,42 +154,39 @@ export default function AdminProspectionPage() {
     setError(null)
     setCreating(true)
 
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) {
-      setError('Non authentifié — recharge la page')
-      setCreating(false)
-      return
-    }
-
     const slug = generateSlug(trimmed)
     const url = `${APP_URL}/demo/${slug}`
-    const { error: insertError } = await supabase
-      .from('prospection_campaigns')
-      .insert({
-        admin_user_id: user.id,
-        admin_name: user.email ?? userEmail,
-        nom: trimmed,
-        slug,
-        url,
-        leads_count: 0,
-      })
 
-    if (insertError) {
-      setError(`Erreur Supabase : ${insertError.message} (code: ${insertError.code})`)
-    } else {
-      setName('')
-      await loadCampaigns()
+    try {
+      const res = await fetch('/api/admin/prospection', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nom: trimmed, slug, url }),
+      })
+      const json = await res.json()
+      if (!res.ok) {
+        setError(`Erreur Supabase : ${json.error ?? res.statusText}${json.code ? ` (code: ${json.code})` : ''}`)
+      } else {
+        setName('')
+        await loadCampaigns()
+      }
+    } catch (e: unknown) {
+      setError(`Erreur inattendue : ${e instanceof Error ? e.message : String(e)}`)
     }
     setCreating(false)
   }
 
   async function deleteCampaign(id: string) {
-    await supabase
-      .from('prospection_campaigns')
-      .delete()
-      .eq('id', id)
-      .eq('admin_user_id', userId ?? '')
-    setCampaigns(prev => prev.filter(c => c.id !== id))
+    try {
+      await fetch('/api/admin/prospection', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      })
+      setCampaigns(prev => prev.filter(c => c.id !== id))
+    } catch {
+      // Silently ignore delete failures — list will be stale but recoverable on next load
+    }
   }
 
   function copyUrl(url: string, id: string) {

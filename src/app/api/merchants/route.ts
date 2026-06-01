@@ -88,32 +88,9 @@ export async function POST(request: Request) {
 
   const sanitized = sanitizeMerchantData(parsed.data)
 
-  // Guard against duplicates: if a merchant already exists, update it instead
-  const { data: existing } = await supabase
-    .from('merchants')
-    .select('id')
-    .eq('user_id', user.id)
-    .single()
-
-  if (existing?.id) {
-    const { data, error } = await supabase
-      .from('merchants')
-      .update(sanitized)
-      .eq('user_id', user.id)
-      .select()
-      .single()
-
-    if (error) {
-      console.error('[POST→PATCH /api/merchants] Supabase error:', error)
-      return NextResponse.json({ error: error.message }, { status: 500 })
-    }
-
-    return NextResponse.json(data)
-  }
-
   const { data, error } = await supabase
     .from('merchants')
-    .insert({ ...sanitized, user_id: user.id })
+    .upsert({ ...sanitized, user_id: user.id }, { onConflict: 'user_id' })
     .select()
     .single()
 

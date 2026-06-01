@@ -94,11 +94,11 @@ function WalletCard({ color = '#6C47FF' }: { color?: string }) {
         <p className="text-white/60 text-xs mb-2.5">
           {stampsDone}/{stampsTotal} tampons — encore {stampsTotal - stampsDone} pour votre récompense
         </p>
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex gap-1">
           {Array.from({ length: stampsTotal }).map((_, i) => (
             <div
               key={i}
-              className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm"
+              className="w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs"
               style={
                 i < stampsDone
                   ? { background: 'rgba(255,255,255,0.9)', color: color }
@@ -194,6 +194,7 @@ const PLANS = [
 interface FormState {
   prenom: string
   commerce: string
+  adresse_commerce: string
   email: string
   telephone: string
   message: string
@@ -206,7 +207,7 @@ export default function DemoPage({ campaign }: Props) {
   const formRef = useRef<HTMLDivElement>(null)
   const [ctaVisible, setCtaVisible] = useState(true)
   const [carouselIndex, setCarouselIndex] = useState(0)
-  const [form, setForm] = useState<FormState>({ prenom: '', commerce: '', email: '', telephone: '', message: '' })
+  const [form, setForm] = useState<FormState>({ prenom: '', commerce: '', adresse_commerce: '', email: '', telephone: '', message: '' })
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [confetti, setConfetti] = useState(false)
@@ -462,11 +463,8 @@ export default function DemoPage({ campaign }: Props) {
             <div className="text-center py-10 space-y-4">
               <div style={{ fontSize: 64 }}>🎉</div>
               <h3 className="font-black text-[#1A1A1A]" style={{ fontSize: 22 }}>
-                Reçu ! Sullivan &amp; Audrey vous contactent très vite.
+                Merci ! On vous recontacte très vite.
               </h3>
-              <p className="text-[#6B6B6B]" style={{ fontSize: 16 }}>
-                Vérifiez votre boîte mail — un récap vous a été envoyé.
-              </p>
               <Link
                 href="/register"
                 className="inline-flex items-center justify-center px-6 rounded-xl text-white font-bold transition-opacity hover:opacity-90 active:scale-95"
@@ -506,6 +504,23 @@ export default function DemoPage({ campaign }: Props) {
                   value={form.commerce}
                   onChange={e => setForm(f => ({ ...f, commerce: e.target.value }))}
                   placeholder="Boulangerie Paul"
+                  className={inputCls}
+                  style={{ minHeight: 52 }}
+                />
+              </div>
+
+              {/* Adresse commerce */}
+              <div>
+                <label className="font-semibold text-[#1A1A1A] block mb-1.5" style={{ fontSize: 16 }}>
+                  Adresse du commerce <span className="text-[#6C47FF]">*</span>
+                </label>
+                <input
+                  required
+                  type="text"
+                  autoComplete="street-address"
+                  value={form.adresse_commerce}
+                  onChange={e => setForm(f => ({ ...f, adresse_commerce: e.target.value }))}
+                  placeholder="12 rue de la Paix, Paris"
                   className={inputCls}
                   style={{ minHeight: 52 }}
                 />

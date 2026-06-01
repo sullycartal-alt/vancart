@@ -153,6 +153,10 @@ export default function MerchantForm({ merchant, onConfigChange, clientCount = 0
       return
     }
     setSavedMerchant(result)
+    if (!savedMerchant) {
+      router.push('/dashboard/ma-carte')
+      return
+    }
     setShowToast(true)
   }
 

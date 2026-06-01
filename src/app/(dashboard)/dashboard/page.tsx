@@ -4,6 +4,7 @@ import Link from 'next/link'
 import DashboardQR from './DashboardQR'
 import AlertBanner from './AlertBanner'
 import PushNotifySection from './PushNotifySection'
+import { effectivePlan, type Plan } from '@/lib/plan-features'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -65,6 +66,7 @@ export default async function DashboardPage() {
 
   const totalRewards = rewardsData?.reduce((sum, c) => sum + c.rewards_unlocked, 0) ?? 0
 
+  const plan = effectivePlan((merchant.plan ?? 'free') as Plan, user.email)
   const qrUrl = `${process.env.NEXT_PUBLIC_APP_URL}/${merchant.slug}`
 
   const activeAlerts = (alertsData ?? []).map(a => ({ id: a.id, message: a.message, triggered_at: a.triggered_at as string }))
@@ -121,8 +123,8 @@ export default async function DashboardPage() {
         color={merchant.primary_color}
       />
 
-      {/* Push notifications */}
-      <PushNotifySection merchantId={merchant.id} />
+      {/* Push notifications — Pro only */}
+      {plan === 'pro' && <PushNotifySection merchantId={merchant.id} />}
     </div>
   )
 }

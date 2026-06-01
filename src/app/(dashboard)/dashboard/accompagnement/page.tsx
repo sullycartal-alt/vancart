@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation'
 import AccompagnementLayout from './AccompagnementLayout'
 import { effectivePlan, type Plan } from '@/lib/plan-features'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AccompagnementPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

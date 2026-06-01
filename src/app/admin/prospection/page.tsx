@@ -148,6 +148,13 @@ export default function AdminProspectionPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  useEffect(() => {
+    if (tab !== 'leads') return
+    const interval = setInterval(loadLeads, 30000)
+    return () => clearInterval(interval)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab])
+
   async function loadCampaigns() {
     setLoading(true)
     try {
@@ -409,6 +416,7 @@ export default function AdminProspectionPage() {
                 Rafraîchir
               </button>
             </div>
+            <p className="text-xs text-[#9CA3AF] mt-1">Actualisation auto toutes les 30s</p>
 
             {leadsLoading ? (
               <div className="space-y-3">

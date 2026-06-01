@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import AccompagnementLayout from './AccompagnementLayout'
+import UpgradeGate from '@/components/UpgradeGate'
 import { effectivePlan, type Plan } from '@/lib/plan-features'
 
 export const dynamic = 'force-dynamic'
@@ -17,6 +18,15 @@ export default async function AccompagnementPage() {
     .single()
 
   const plan = effectivePlan((merchant?.plan ?? 'free') as Plan, user.email)
+
+  // Gate at page level — avoids loading ChatClient entirely for non-Pro users
+  if (plan !== 'pro') {
+    return (
+      <UpgradeGate plan={plan} feature="aiAdvisor" requiredPlan="pro">
+        <div className="h-96" />
+      </UpgradeGate>
+    )
+  }
 
   const merchantContext = merchant
     ? {

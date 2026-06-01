@@ -3,19 +3,11 @@ import dynamic from 'next/dynamic'
 import PhoneParallax from './PhoneParallax'
 import PWARedirect from '@/components/pwa/PWARedirect'
 import LandingNav from '@/components/landing/LandingNav'
+import PricingCards from '@/components/landing/PricingCards'
 
 const ScrollingCarousel = dynamic(() => import('@/components/landing/ScrollingCarousel'))
 const DashboardDemo = dynamic(() => import('@/components/landing/DashboardDemo'))
 
-function CheckIcon({ color = '#6C47FF' }: { color?: string }) {
-  return (
-    <span className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: `${color}18` }}>
-      <svg className="w-2.5 h-2.5" fill="none" stroke={color} viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-      </svg>
-    </span>
-  )
-}
 
 function PhoneMockup() {
   return (
@@ -502,88 +494,7 @@ export default function Home() {
             <h2 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">Des tarifs simples et transparents</h2>
             <p className="text-[#6B6B6B] text-lg">1 mois gratuit pour tester, puis on échange ensemble.</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
-            {/* Découverte */}
-            <div className="bg-white border border-[#E8E8E3] rounded-2xl p-7 flex flex-col transition-all duration-200 hover:scale-[1.03] hover:shadow-[0_8px_30px_rgba(108,71,255,0.12)]" style={{ minHeight: 440 }}>
-              <div className="flex-1 space-y-6">
-                <div>
-                  <div className="inline-flex items-center bg-[#F7F6F3] text-[#6B6B6B] text-xs font-semibold px-3 py-1 rounded-full border border-[#E8E8E3] mb-3">Pour commencer</div>
-                  <h3 className="text-xl font-bold text-[#1A1A1A]">Découverte</h3>
-                  <div className="mt-2">
-                    <span className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">Gratuit</span>
-                  </div>
-                  <p className="text-xs text-[#6B6B6B] mt-1">1 mois · Sans carte bancaire</p>
-                  <p className="text-xs text-[#6B6B6B] mt-0.5">Testez VanCart gratuitement pendant 1 mois, puis échangeons ensemble.</p>
-                </div>
-                <ul className="space-y-2.5">
-                  {['1 carte de fidélité', "Jusqu'à 50 clients", 'Google & Apple Wallet', 'Carte PWA installable', 'Stats basiques', "Rendez-vous de suivi avec l'équipe VanCart"].map(f => (
-                    <li key={f} className="flex items-center gap-2.5 text-sm text-[#1A1A1A]">
-                      <CheckIcon color="#6B6B6B" />{f}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="mt-6">
-                <Link href="/register" className="block w-full py-3 border border-[#E8E8E3] text-[#1A1A1A] font-semibold rounded-xl hover:bg-[#F7F6F3] transition-colors text-sm text-center">
-                  Démarrer gratuitement
-                </Link>
-              </div>
-            </div>
-            {/* Essentiel */}
-            <div className="bg-white border-2 border-[#6C47FF] rounded-2xl p-7 flex flex-col relative shadow-lg shadow-[#6C47FF]/10 transition-all duration-200 hover:scale-[1.05] hover:shadow-[0_12px_40px_rgba(108,71,255,0.22)]" style={{ minHeight: 440 }}>
-              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                <div className="bg-[#6C47FF] text-white text-xs font-bold px-4 py-1 rounded-full whitespace-nowrap">Le plus populaire</div>
-              </div>
-              <div className="flex-1 space-y-6">
-                <div>
-                  <h3 className="text-xl font-bold text-[#1A1A1A]">Essentiel</h3>
-                  <div className="mt-2">
-                    <span className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">29€</span>
-                    <span className="text-[#6B6B6B] text-sm"> / mois</span>
-                  </div>
-                  <p className="text-xs text-[#6B6B6B] mt-1">Sans engagement</p>
-                </div>
-                <ul className="space-y-2.5">
-                  {["1 carte de fidélité", "Jusqu'à 500 clients", 'Stats avancées', 'Support prioritaire'].map(f => (
-                    <li key={f} className="flex items-center gap-2.5 text-sm text-[#1A1A1A]">
-                      <CheckIcon />{f}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="mt-6">
-                <Link href="/register?plan=essentiel" className="block w-full py-3 bg-[#6C47FF] text-white font-semibold rounded-xl hover:bg-[#5835e0] transition-colors text-sm text-center">
-                  Choisir Essentiel
-                </Link>
-              </div>
-            </div>
-            {/* Pro */}
-            <div className="bg-white border border-[#E8E8E3] rounded-2xl p-7 flex flex-col transition-all duration-200 hover:scale-[1.03] hover:shadow-[0_8px_30px_rgba(108,71,255,0.12)]" style={{ minHeight: 440 }}>
-              <div className="flex-1 space-y-6">
-                <div>
-                  <div className="inline-flex items-center bg-[#F7F6F3] text-[#6B6B6B] text-xs font-semibold px-3 py-1 rounded-full border border-[#E8E8E3] mb-3">Pour aller plus loin</div>
-                  <h3 className="text-xl font-bold text-[#1A1A1A]">Pro</h3>
-                  <div className="mt-2">
-                    <span className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">59€</span>
-                    <span className="text-[#6B6B6B] text-sm"> / mois</span>
-                  </div>
-                  <p className="text-xs text-[#6B6B6B] mt-1">Sans engagement</p>
-                </div>
-                <ul className="space-y-2.5">
-                  {['Tout du plan Essentiel', 'Clients illimités', 'Conseiller IA Mistral 🇫🇷', 'Notifications push clients', 'Export données clients'].map(f => (
-                    <li key={f} className="flex items-center gap-2.5 text-sm text-[#1A1A1A]">
-                      <CheckIcon color="#6B6B6B" />{f}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="mt-6">
-                <Link href="/register?plan=pro" className="block w-full py-3 border border-[#E8E8E3] text-[#1A1A1A] font-semibold rounded-xl hover:bg-[#F7F6F3] transition-colors text-sm text-center">
-                  Choisir Pro
-                </Link>
-              </div>
-            </div>
-          </div>
+          <PricingCards />
         </div>
       </section>
 

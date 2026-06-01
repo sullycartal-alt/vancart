@@ -133,7 +133,7 @@ export default function StatsAnalyseClient({ primaryColor, period, loyaltyType, 
     <div className="space-y-8">
       {/* Header + tabs */}
       <div>
-        <h1 className="text-2xl font-bold text-[#1A1A1A]">Statistiques</h1>
+        <h1 className="text-2xl font-bold text-[#1A1A1A]">Tableau de bord</h1>
         <div className="mt-4 flex items-center gap-1 border-b border-[#E8E8E3]">
           {[
             { key: 'overview', label: 'Vue générale' },

@@ -119,7 +119,7 @@ export default function DashboardDemo() {
 
         {/* Footer */}
         <div className="text-center space-y-4">
-          <p className="text-xs text-gray-400">DÉMO — données fictives à titre illustratif</p>
+          <p className="text-xs text-gray-300">⚠️ test — données fictives</p>
           <Link
             href="/register"
             className="inline-flex items-center gap-1.5 px-6 py-3 bg-[#6C47FF] text-white font-semibold rounded-xl hover:bg-[#5835e0] transition-colors text-sm"

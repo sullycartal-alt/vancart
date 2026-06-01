@@ -8,21 +8,37 @@ import MobileNav from './MobileNav'
 import { createClient } from '@/lib/supabase/server'
 import { effectivePlan, type Plan } from '@/lib/plan-features'
 import { Suspense } from 'react'
+import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 
 const ADMIN_EMAIL = 'sullycartal@gmail.com'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const headersList = await headers()
+  const pathname = headersList.get('x-pathname') ?? ''
+  const isOnboarding = pathname.startsWith('/dashboard/onboarding')
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  const isAdmin = user?.email === ADMIN_EMAIL
+
+  if (!user) redirect('/login')
+
+  const isAdmin = user.email === ADMIN_EMAIL
 
   const { data: merchant } = await supabase
     .from('merchants')
-    .select('plan, trial_ends_at, primary_color')
-    .eq('user_id', user?.id ?? '')
+    .select('plan, trial_ends_at, primary_color, business_name')
+    .eq('user_id', user.id)
     .single()
 
-  const merchantColor = /^#[0-9a-fA-F]{6}$/.test(merchant?.primary_color ?? '') ? merchant!.primary_color : '#6C47FF'
+  // Redirect to onboarding if no merchant or commerce not yet named
+  if (!isOnboarding && (!merchant || !merchant.business_name?.trim())) {
+    redirect('/dashboard/onboarding')
+  }
+
+  const merchantColor = merchant?.primary_color && /^#[0-9a-fA-F]{6}$/.test(merchant.primary_color)
+    ? merchant.primary_color
+    : '#6C47FF'
 
   const plan = effectivePlan((merchant?.plan ?? 'free') as Plan, user?.email)
 

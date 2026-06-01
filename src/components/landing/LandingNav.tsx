@@ -11,11 +11,11 @@ const DISCOVER_LINKS = [
 
 const MOBILE_LINKS = [
   { href: '#comment-ca-marche', label: 'Comment ça marche' },
-  { href: '#tarifs', label: 'Tarifs' },
-  { href: '#faq', label: 'FAQ' },
   { href: '#fonctionnalites', label: 'Fonctionnalités' },
   { href: '#tableau-de-bord', label: 'Tableau de bord' },
+  { href: '#tarifs', label: 'Tarifs' },
   { href: '#roadmap', label: 'Roadmap' },
+  { href: '#faq', label: 'FAQ' },
 ]
 
 export default function LandingNav() {
@@ -104,14 +104,22 @@ export default function LandingNav() {
             Commencer gratuitement
           </Link>
 
-          {/* Mobile 3-dot menu */}
+          {/* Mobile hamburger menu */}
           <div ref={mobileRef} className="relative sm:hidden">
             <button
               onClick={() => setMobileOpen(o => !o)}
-              className="flex items-center justify-center w-9 h-9 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors text-xl leading-none"
-              aria-label="Menu"
+              className="p-2 rounded-md text-gray-600 hover:text-[#6C47FF] transition-colors"
+              aria-label={mobileOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
             >
-              ⋮
+              {mobileOpen ? (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              )}
             </button>
 
             {mobileOpen && (

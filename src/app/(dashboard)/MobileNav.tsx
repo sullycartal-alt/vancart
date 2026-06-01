@@ -2,11 +2,13 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import NavSettingsHint from './NavSettingsHint'
 
 interface Props {
   isAdmin: boolean
   plan: string
   primaryColor?: string
+  hasBusinessName?: boolean
 }
 
 const links = [
@@ -14,10 +16,9 @@ const links = [
   { href: '/dashboard/clients', label: 'Mes clients' },
   { href: '/dashboard/stats', label: 'Tableau de bord' },
   { href: '/dashboard/accompagnement', label: 'Accompagnement' },
-  { href: '/dashboard/settings', label: 'Mon commerce' },
 ]
 
-export default function MobileNav({ isAdmin, plan, primaryColor = '#6C47FF' }: Props) {
+export default function MobileNav({ isAdmin, plan, primaryColor = '#6C47FF', hasBusinessName = true }: Props) {
   const [open, setOpen] = useState(false)
   const close = () => setOpen(false)
 
@@ -66,6 +67,7 @@ export default function MobileNav({ isAdmin, plan, primaryColor = '#6C47FF' }: P
                   {label}
                 </Link>
               ))}
+              <NavSettingsHint hasBusinessName={hasBusinessName} variant="mobile" onNavigate={close} />
               {isAdmin && (
                 <Link href="/admin" onClick={close}
                   className="flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 font-medium text-sm hover:bg-red-50 transition-colors">

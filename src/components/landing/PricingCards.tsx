@@ -13,6 +13,8 @@ function CheckIcon({ color = '#6C47FF' }: { color?: string }) {
   )
 }
 
+const CONTACT_HREF = 'mailto:vancart@gmail.com?subject=Offre%20Sur%20mesure%20VanCart'
+
 const cards = [
   {
     key: 'decouverte',
@@ -58,6 +60,27 @@ const cards = [
     cta: 'Choisir Pro',
     ctaHref: '/register?plan=pro',
     ctaClass: 'block w-full py-3 border border-[#E8E8E3] text-[#1A1A1A] font-semibold rounded-xl hover:bg-[#F7F6F3] transition-colors text-sm text-center',
+    cardClass: 'bg-white border border-[#E8E8E3] rounded-2xl p-7 flex flex-col transition-all duration-200 hover:scale-[1.03] hover:shadow-[0_8px_30px_rgba(108,71,255,0.12)]',
+    popular: false,
+  },
+  {
+    key: 'sur-mesure',
+    badge: 'Intégration caisse',
+    title: 'Sur mesure',
+    price: 'Sur devis',
+    priceNote: 'Intégration caisse & accompagnement',
+    subNote: 'Pour les commerçants qui veulent automatiser la fidélité avec leur logiciel de caisse.',
+    features: [
+      'Intégration caisse disponible sur demande',
+      'Automatisation des points après achat',
+      'Accompagnement personnalisé',
+      'Import clients',
+      'Support prioritaire',
+    ],
+    featureColor: '#6C47FF' as string,
+    cta: 'Nous contacter',
+    ctaHref: CONTACT_HREF,
+    ctaClass: 'block w-full py-3 border border-[#6C47FF] text-[#6C47FF] font-semibold rounded-xl hover:bg-[#6C47FF]/5 transition-colors text-sm text-center',
     cardClass: 'bg-white border border-[#E8E8E3] rounded-2xl p-7 flex flex-col transition-all duration-200 hover:scale-[1.03] hover:shadow-[0_8px_30px_rgba(108,71,255,0.12)]',
     popular: false,
   },
@@ -118,7 +141,7 @@ export default function PricingCards() {
       </div>
 
       {/* Desktop: regular grid */}
-      <div className="hidden md:grid md:grid-cols-3 md:gap-6 md:items-stretch">
+      <div className="hidden md:grid md:grid-cols-2 xl:grid-cols-4 md:gap-6 md:items-stretch">
         {cards.map((card) => (
           <div
             key={card.key}

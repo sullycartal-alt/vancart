@@ -182,7 +182,7 @@ export default function MerchantForm({ merchant, onConfigChange, clientCount = 0
             >
               {logoUrl
                 // eslint-disable-next-line @next/next/no-img-element
-                ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain" />
+                ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain" loading="lazy" />
                 : <span className="text-2xl text-[#6B6B6B]">+</span>
               }
             </div>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useState } from 'react'
 
 const ITEMS = [
   '☕ Café Voltaire',
@@ -14,85 +14,88 @@ const ITEMS = [
   '🍦 Glacier Douceur',
   '🎨 Studio Beauté Léa',
 ]
+const N = ITEMS.length
 
 export default function ScrollingCarousel() {
-  const trackRef = useRef<HTMLDivElement>(null)
-  const rafRef = useRef<number>(0)
-  const containerRef = useRef<HTMLDivElement>(null)
+  const [center, setCenter] = useState(0)
+  const [tick, setTick] = useState(0)
 
-  // rAF loop to highlight center item
   useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
-
-    function tick() {
-      const rect = container!.getBoundingClientRect()
-      const centerX = rect.left + rect.width / 2
-      const items = container!.querySelectorAll<HTMLElement>('[data-item]')
-      let minDist = Infinity
-      let centerEl: HTMLElement | null = null
-
-      items.forEach(el => {
-        const r = el.getBoundingClientRect()
-        const dist = Math.abs(r.left + r.width / 2 - centerX)
-        if (dist < minDist) {
-          minDist = dist
-          centerEl = el
-        }
-      })
-
-      items.forEach(el => {
-        if (el === centerEl) {
-          el.style.opacity = '1'
-          el.style.transform = 'scale(1.08)'
-        } else {
-          el.style.opacity = '0.65'
-          el.style.transform = 'scale(1)'
-        }
-      })
-
-      rafRef.current = requestAnimationFrame(tick)
-    }
-
-    rafRef.current = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(rafRef.current)
+    const id = setInterval(() => {
+      setCenter(c => (c + 1) % N)
+      setTick(t => t + 1)
+    }, 2000)
+    return () => clearInterval(id)
   }, [])
 
-  // Duplicate items for seamless loop
-  const doubled = [...ITEMS, ...ITEMS]
+  const prev = (center - 1 + N) % N
+  const next = (center + 1) % N
 
   return (
-    <section className="py-10 bg-[#F7F6F3]">
+    <section className="py-10 bg-[#F7F6F3] overflow-hidden">
       <style>{`
-        @keyframes vc-scroll-left {
-          from { transform: translateX(0); }
-          to   { transform: translateX(-50%); }
+        @keyframes vc-slide-in {
+          from { opacity: 0; transform: translateX(36px); }
+          to   { opacity: 1; transform: translateX(0); }
         }
-        .vc-scroll-track {
-          animation: vc-scroll-left 30s linear infinite;
-          will-change: transform;
-        }
-        .vc-scroll-track:hover {
-          animation-play-state: paused;
-        }
-        [data-item] {
-          transition: transform 0.2s ease, opacity 0.2s ease;
-        }
+        .vc-row-enter { animation: vc-slide-in 0.4s ease forwards; }
       `}</style>
 
-      <div ref={containerRef} className="overflow-hidden">
-        <div ref={trackRef} className="vc-scroll-track flex gap-3" style={{ width: 'max-content' }}>
-          {doubled.map((item, i) => (
+      {/* Desktop: 3 badges, center highlighted, edge fade */}
+      <div
+        className="hidden sm:block"
+        style={{
+          maskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)',
+          WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)',
+        }}
+      >
+        <div key={tick} className="vc-row-enter flex items-center justify-center gap-6 py-5">
+          {[
+            { idx: prev, isCenter: false },
+            { idx: center, isCenter: true },
+            { idx: next, isCenter: false },
+          ].map(({ idx, isCenter }) => (
             <span
-              key={i}
-              data-item=""
-              className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-[#E8E8E3] rounded-full text-sm font-semibold text-[#1A1A1A] whitespace-nowrap flex-shrink-0 shadow-sm"
-              style={{ opacity: 0.65 }}
+              key={idx}
+              className="inline-flex items-center px-6 py-3 rounded-full whitespace-nowrap flex-shrink-0"
+              style={{
+                fontFamily: 'var(--font-jakarta, "Inter", sans-serif)',
+                fontSize: '1.125rem',
+                fontWeight: 600,
+                color: '#1A1A1A',
+                background: 'white',
+                border: isCenter ? '1.5px solid rgba(108,71,255,0.35)' : '1px solid #E8E8E3',
+                opacity: isCenter ? 1 : 0.5,
+                transform: isCenter ? 'scale(1.1)' : 'scale(1)',
+                transition: 'transform 0.4s ease, opacity 0.4s ease',
+                boxShadow: isCenter
+                  ? '0 4px 20px rgba(108,71,255,0.14)'
+                  : '0 1px 4px rgba(0,0,0,0.05)',
+              }}
             >
-              {item}
+              {ITEMS[idx]}
             </span>
           ))}
         </div>
+      </div>
+
+      {/* Mobile: single badge, slide in on change */}
+      <div className="sm:hidden flex items-center justify-center py-5">
+        <span
+          key={tick}
+          className="vc-row-enter inline-flex items-center px-6 py-3 rounded-full whitespace-nowrap"
+          style={{
+            fontFamily: 'var(--font-jakarta, "Inter", sans-serif)',
+            fontSize: '1.125rem',
+            fontWeight: 600,
+            color: '#1A1A1A',
+            background: 'white',
+            border: '1.5px solid rgba(108,71,255,0.35)',
+            boxShadow: '0 4px 20px rgba(108,71,255,0.14)',
+          }}
+        >
+          {ITEMS[center]}
+        </span>
       </div>
 
       <p className="text-center text-xs text-gray-300 mt-3">⚠️ test — données fictives</p>

@@ -125,7 +125,7 @@ export default async function StatsPage({ searchParams }: { searchParams: Promis
   if (!merchant) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-[#1A1A1A]">Statistiques</h1>
+        <h1 className="text-2xl font-bold text-[#1A1A1A]">Tableau de bord</h1>
         <div className="bg-white border border-[#E8E8E3] rounded-2xl p-8 text-center space-y-3">
           <p className="text-sm text-[#6B6B6B]">Configurez votre commerce pour voir vos statistiques.</p>
           <a href="/dashboard/settings" className="inline-block px-5 py-2.5 bg-[#6C47FF] text-white text-sm font-semibold rounded-xl hover:bg-[#5835e0] transition-colors">

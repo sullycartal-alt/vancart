@@ -1,8 +1,10 @@
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
 import PhoneParallax from './PhoneParallax'
 import PWARedirect from '@/components/pwa/PWARedirect'
-import ScrollingCarousel from '@/components/landing/ScrollingCarousel'
-import DashboardDemo from '@/components/landing/DashboardDemo'
+
+const ScrollingCarousel = dynamic(() => import('@/components/landing/ScrollingCarousel'), { ssr: false })
+const DashboardDemo = dynamic(() => import('@/components/landing/DashboardDemo'), { ssr: false })
 
 function CheckIcon({ color = '#6C47FF' }: { color?: string }) {
   return (
@@ -172,12 +174,12 @@ export default function Home() {
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <span className="text-xl font-bold text-[#6C47FF]">VanCart</span>
           <div className="hidden sm:flex items-center gap-5">
-            <a href="#fonctionnalites" className="text-sm text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors font-medium">Fonctionnalités</a>
             <a href="#comment-ca-marche" className="text-sm text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors font-medium">Comment ça marche</a>
+            <a href="#fonctionnalites" className="text-sm text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors font-medium">Fonctionnalités</a>
             <a href="#tableau-de-bord" className="text-sm text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors font-medium">Tableau de bord</a>
             <a href="#tarifs" className="text-sm text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors font-medium">Tarifs</a>
-            <a href="#roadmap" className="text-sm text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors font-medium">Roadmap</a>
             <a href="#faq" className="text-sm text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors font-medium">FAQ</a>
+            <a href="#roadmap" className="text-sm text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors font-medium">Roadmap</a>
           </div>
           <div className="flex items-center gap-3 sm:gap-4">
             <Link href="/login" className="hidden sm:inline text-sm text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors font-medium">Connexion</Link>
@@ -213,15 +215,27 @@ export default function Home() {
                   J&apos;ai déjà un compte
                 </Link>
               </div>
-              <div className="flex items-center gap-3 justify-center lg:justify-start">
-                <div className="flex -space-x-2 flex-shrink-0">
-                  {[...Array(4)].map((_, idx) => (
-                    <div key={idx} className="w-8 h-8 rounded-full border-2 border-white bg-[#E5E7EB] flex items-center justify-center text-sm flex-shrink-0">
-                      👤
-                    </div>
-                  ))}
+              <div className="flex flex-col items-center lg:items-start gap-1">
+                <div className="flex items-center gap-3">
+                  <div className="flex -space-x-2 flex-shrink-0">
+                    {[
+                      { initials: 'JD', bg: '#6C47FF' },
+                      { initials: 'ML', bg: '#10B981' },
+                      { initials: 'SC', bg: '#F59E0B' },
+                      { initials: 'AR', bg: '#EF4444' },
+                    ].map(({ initials, bg }) => (
+                      <div
+                        key={initials}
+                        className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0"
+                        style={{ backgroundColor: bg }}
+                      >
+                        {initials}
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-sm font-semibold text-[#1A1A1A]">+124 commerçants nous font confiance</p>
                 </div>
-                <p className="text-xs italic text-[#9CA3AF]">En attente de données</p>
+                <p className="text-[10px] text-gray-300">⚠️ test — données fictives</p>
               </div>
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-4 gap-y-1 text-xs text-[#6B6B6B]">
                 <span>✓ Sans engagement</span>

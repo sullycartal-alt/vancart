@@ -3,14 +3,15 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 
+const MAX_VAL = 31
 const BARS = [
-  { day: 'Lun', h: 45 },
-  { day: 'Mar', h: 72 },
-  { day: 'Mer', h: 53 },
-  { day: 'Jeu', h: 88 },
-  { day: 'Ven', h: 61 },
-  { day: 'Sam', h: 95 },
-  { day: 'Dim', h: 38 },
+  { day: 'Lun', value: 12, h: Math.round(12 / MAX_VAL * 100) },
+  { day: 'Mar', value: 19, h: Math.round(19 / MAX_VAL * 100) },
+  { day: 'Mer', value: 8,  h: Math.round(8  / MAX_VAL * 100) },
+  { day: 'Jeu', value: 24, h: Math.round(24 / MAX_VAL * 100) },
+  { day: 'Ven', value: 31, h: 100 },
+  { day: 'Sam', value: 17, h: Math.round(17 / MAX_VAL * 100) },
+  { day: 'Dim', value: 9,  h: Math.round(9  / MAX_VAL * 100) },
 ]
 
 const KPIS = [
@@ -95,15 +96,19 @@ export default function DashboardDemo() {
           <p className="text-xs font-semibold text-[#6B6B6B] uppercase tracking-wide mb-5">
             Activité des 7 derniers jours
           </p>
-          <div className="flex items-end gap-2" style={{ height: 96 }}>
-            {BARS.map(({ day, h }, i) => (
-              <div key={day} className="flex-1 flex flex-col items-center gap-2">
+          <div className="flex items-end gap-2" style={{ height: 120 }}>
+            {BARS.map(({ day, value, h }, i) => (
+              <div key={day} className="flex-1 flex flex-col items-center gap-1">
+                <span className="text-[10px] text-[#9CA3AF] font-semibold" style={{ minHeight: 14, lineHeight: '14px' }}>
+                  {active ? value : ''}
+                </span>
                 <div
                   className="w-full rounded-md"
                   style={{
                     height: active ? `${h}%` : '0%',
                     backgroundColor: '#6C47FF',
                     transition: `height 0.6s cubic-bezier(0.34,1.56,0.64,1) ${i * 60}ms`,
+                    flex: '0 0 auto',
                   }}
                 />
                 <span className="text-[10px] text-[#9CA3AF] font-medium">{day}</span>

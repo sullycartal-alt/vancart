@@ -6,6 +6,7 @@ import { createServiceClient } from '@/lib/supabase/service'
 const schema = z.object({
   prenom: z.string().min(1, 'Le prénom est requis.').max(80),
   commerce: z.string().min(1, 'Le nom du commerce est requis.').max(120),
+  adresse_commerce: z.string().min(1, "L'adresse du commerce est requise.").max(200),
   email: z.string().min(1, "L'email est requis.").email("L'adresse email n'est pas valide."),
   telephone: z.string().max(30).optional(),
   message: z.string().max(1000).optional(),
@@ -42,7 +43,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: firstError }, { status: 400 })
   }
 
-  const { prenom, commerce, email, telephone, message, campaign } = parsed.data
+  const { prenom, commerce, adresse_commerce, email, telephone, message, campaign } = parsed.data
 
   if (!process.env.RESEND_API_KEY) {
     console.log('[demo-contact] RESEND_API_KEY not set — skipping email')
@@ -81,6 +82,10 @@ export async function POST(request: NextRequest) {
           <tr>
             <td style="padding:10px 0;border-bottom:1px solid #f3f4f6;color:#6b7280;font-size:14px;vertical-align:top">Email</td>
             <td style="padding:10px 0;border-bottom:1px solid #f3f4f6;font-size:14px"><a href="mailto:${email}" style="color:#6C47FF;font-weight:600">${email}</a></td>
+          </tr>
+          <tr>
+            <td style="padding:10px 0;border-bottom:1px solid #f3f4f6;color:#6b7280;font-size:14px;vertical-align:top">Adresse</td>
+            <td style="padding:10px 0;border-bottom:1px solid #f3f4f6;color:#111827;font-size:14px">${adresse_commerce}</td>
           </tr>
           <tr>
             <td style="padding:10px 0;border-bottom:1px solid #f3f4f6;color:#6b7280;font-size:14px;vertical-align:top">Téléphone</td>
@@ -128,13 +133,23 @@ export async function POST(request: NextRequest) {
     console.error('[demo-contact] Resend failed:', err)
   }
 
-  if (campaign) {
-    try {
-      const service = createServiceClient()
+  // Persist lead + increment campaign counter
+  try {
+    const service = createServiceClient()
+    await service.from('prospection_leads').insert({
+      nom: prenom,
+      commerce,
+      adresse_commerce,
+      email,
+      telephone: telephone ?? null,
+      campaign_slug: campaign ?? null,
+      lu: false,
+    })
+    if (campaign) {
       await service.rpc('increment_leads_count', { campaign_slug: campaign })
-    } catch {
-      // Silently ignore — campaign slug may not exist
     }
+  } catch {
+    // Silently ignore DB errors — email was already sent
   }
 
   return NextResponse.json({ ok: true })

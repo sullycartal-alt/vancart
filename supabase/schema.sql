@@ -26,6 +26,7 @@ CREATE TABLE merchants (
 -- ALTER TABLE merchants ADD COLUMN IF NOT EXISTS loyalty_type TEXT NOT NULL DEFAULT 'stamps';
 -- ALTER TABLE merchants ADD COLUMN IF NOT EXISTS points_per_euro INTEGER DEFAULT 1;
 -- ALTER TABLE merchants ADD COLUMN IF NOT EXISTS points_required INTEGER DEFAULT 100;
+-- ALTER TABLE merchants ADD COLUMN IF NOT EXISTS average_ticket INTEGER;
 
 -- Customers table
 CREATE TABLE customers (

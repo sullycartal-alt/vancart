@@ -28,7 +28,8 @@ export function LogoMark({ size = 32 }: { size?: number }) {
 }
 
 // Lockup complet : cube + wordmark « VanCart ».
-export function LogoLockup({ size = 32 }: { size?: number }) {
+// `color` permet d'adapter le wordmark à un fond sombre (défaut : encre #15131A).
+export function LogoLockup({ size = 32, color = '#15131A' }: { size?: number; color?: string }) {
   return (
     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
       <LogoMark size={size} />
@@ -36,7 +37,7 @@ export function LogoLockup({ size = 32 }: { size?: number }) {
         style={{
           fontWeight: 800,
           letterSpacing: '-0.04em',
-          color: '#15131A',
+          color,
           fontSize: Math.round(size * 0.66),
           lineHeight: 1,
         }}

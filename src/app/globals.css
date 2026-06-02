@@ -5,11 +5,39 @@
   --foreground: #1A1A1A;
 }
 
+/* Landing v2 design tokens */
+:root {
+  --violet: #6C47FF;
+  --violet-deep: #5835E0;
+  --violet-light: #7C5CFC;
+  --violet-darkest: #5126C9;
+  --ink: #15131A;
+  --ink-soft: #5C5866;
+  --ink-faint: #9C97A6;
+  --bg: #F4F2EE;
+  --paper: #FBFAF8;
+  --line: #E4E0D8;
+  --amber: #F59E0B;
+  --green: #10B981;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-jakarta, Arial, Helvetica, sans-serif);
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-display: var(--font-grotesk, 'Space Grotesk', sans-serif);
+  --color-violet: #6C47FF;
+  --color-violet-deep: #5835E0;
+  --color-violet-light: #7C5CFC;
+  --color-ink: #15131A;
+  --color-ink-soft: #5C5866;
+  --color-ink-faint: #9C97A6;
+  --color-bg: #F4F2EE;
+  --color-paper: #FBFAF8;
+  --color-line: #E4E0D8;
+  --color-amber: #F59E0B;
+  --color-green: #10B981;
 
   --animate-fade-in: fade-in 0.3s ease-out both;
   --animate-slide-up: slide-up 0.4s cubic-bezier(0.16,1,0.3,1) both;
@@ -34,6 +62,25 @@
     60%  { transform: scale(1.1) rotate(2deg); }
     100% { transform: scale(1) rotate(0deg); opacity: 1; }
   }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(-3deg); }
+    50% { transform: translateY(-16px) rotate(-3deg); }
+  }
+  @keyframes floatb {
+    0%, 100% { transform: rotate(8deg) translate(40px, 30px); }
+    50% { transform: rotate(8deg) translate(40px, 16px); }
+  }
+  @keyframes marquee-scroll {
+    to { transform: translateX(-50%); }
+  }
+  @keyframes strike {
+    to { opacity: 1; }
+  }
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-floatb: floatb 6s ease-in-out infinite;
+  --animate-marquee: marquee-scroll 28s linear infinite;
+  --animate-strike: strike 0.6s 1s cubic-bezier(0.16,1,0.3,1) forwards;
 }
 
 html {
@@ -73,4 +120,42 @@ a, button {
 
 input, textarea, select {
   color-scheme: light;
+}
+
+/* Landing v2 base overrides */
+.font-display {
+  font-family: var(--font-display);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float, .animate-floatb, .animate-marquee {
+    animation: none !important;
+  }
+}
+
+/* Reveal scroll animation — only active when JS marks <html class="js"> */
+html.js .reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+}
+html.js .reveal.in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Warm paper grain overlay */
+.grain-overlay::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+}
+
+#comment, #produit, #tarifs {
+  scroll-margin-top: 80px;
 }

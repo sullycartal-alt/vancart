@@ -1,159 +1,80 @@
 'use client'
-
-import { useEffect, useRef, useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-
-const DISCOVER_LINKS = [
-  { href: '#fonctionnalites', label: 'Fonctionnalités' },
-  { href: '#tableau-de-bord', label: 'Tableau de bord' },
-  { href: '#roadmap', label: 'Roadmap' },
-]
-
-const MOBILE_LINKS = [
-  { href: '#comment-ca-marche', label: 'Comment ça marche' },
-  { href: '#fonctionnalites', label: 'Fonctionnalités' },
-  { href: '#tableau-de-bord', label: 'Tableau de bord' },
-  { href: '#tarifs', label: 'Tarifs' },
-  { href: '#roadmap', label: 'Roadmap' },
-  { href: '#faq', label: 'FAQ' },
-]
+import { LogoLockup } from '@/components/brand/Logo'
+import { ArrowRight, Menu, X } from 'lucide-react'
 
 export default function LandingNav() {
-  const [discoverOpen, setDiscoverOpen] = useState(false)
-  const [mobileOpen, setMobileOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  const [open, setOpen] = useState(false)
 
-  const discoverRef = useRef<HTMLDivElement>(null)
-  const mobileRef = useRef<HTMLDivElement>(null)
-
-  // Close menus on outside click
   useEffect(() => {
-    function handleMouseDown(e: MouseEvent) {
-      if (discoverRef.current && !discoverRef.current.contains(e.target as Node)) {
-        setDiscoverOpen(false)
-      }
-      if (mobileRef.current && !mobileRef.current.contains(e.target as Node)) {
-        setMobileOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleMouseDown)
-    return () => document.removeEventListener('mousedown', handleMouseDown)
+    const onScroll = () => setScrolled(window.scrollY > 10)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
   return (
-    <nav className="border-b border-[#E8E8E3] px-4 sm:px-6 py-4 bg-white sticky top-0 z-50">
-      <div className="max-w-5xl mx-auto flex items-center justify-between">
-        {/* Logo */}
-        <span className="text-xl font-bold text-[#6C47FF]">VanCart</span>
+    <nav
+      className="sticky top-0 z-50 transition-all duration-300"
+      style={{
+        background: 'color-mix(in srgb, var(--bg) 80%, transparent)',
+        backdropFilter: 'blur(14px)',
+        WebkitBackdropFilter: 'blur(14px)',
+        borderBottom: scrolled ? '1px solid var(--line)' : '1px solid transparent',
+      }}
+    >
+      <div className="max-w-[1200px] mx-auto px-8 flex items-center justify-between h-[74px]">
+        <Link href="/" className="flex items-center">
+          <LogoLockup size={32} />
+        </Link>
 
         {/* Desktop links */}
-        <div className="hidden sm:flex items-center gap-5">
-          <a href="#comment-ca-marche" className="text-sm font-medium text-gray-700 hover:text-[#6C47FF] transition-colors">
-            Comment ça marche
-          </a>
-
-          {/* Discover dropdown */}
-          <div ref={discoverRef} className="relative">
-            <button
-              onClick={() => setDiscoverOpen(o => !o)}
-              className="flex items-center gap-1 text-sm font-medium text-gray-700 hover:text-[#6C47FF] transition-colors"
-            >
-              Découvrir
-              <svg
-                className="w-3.5 h-3.5 transition-transform"
-                style={{ transform: discoverOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                fill="none" stroke="currentColor" viewBox="0 0 24 24"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-
-            {discoverOpen && (
-              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-48 bg-white rounded-xl shadow-lg border border-[#E8E8E3] py-1.5 z-50">
-                {DISCOVER_LINKS.map(({ href, label }) => (
-                  <a
-                    key={href}
-                    href={href}
-                    onClick={() => setDiscoverOpen(false)}
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#6C47FF] transition-colors"
-                  >
-                    {label}
-                  </a>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <a href="#tarifs" className="text-sm font-medium text-gray-700 hover:text-[#6C47FF] transition-colors">
-            Tarifs
-          </a>
-          <a href="#faq" className="text-sm font-medium text-gray-700 hover:text-[#6C47FF] transition-colors">
-            FAQ
-          </a>
+        <div className="hidden md:flex items-center gap-8">
+          <a href="#comment" className="text-[14.5px] font-medium text-[var(--ink-soft)] hover:text-[var(--ink)] transition-colors">Comment ça marche</a>
+          <a href="#produit" className="text-[14.5px] font-medium text-[var(--ink-soft)] hover:text-[var(--ink)] transition-colors">Le produit</a>
+          <a href="#tarifs" className="text-[14.5px] font-medium text-[var(--ink-soft)] hover:text-[var(--ink)] transition-colors">Tarifs</a>
         </div>
 
-        {/* Right side */}
-        <div className="flex items-center gap-3 sm:gap-4">
-          {/* Desktop CTA */}
-          <Link href="/login" className="hidden sm:inline text-sm font-medium text-gray-600 hover:text-[#6C47FF] transition-colors">
-            Connexion
-          </Link>
+        <div className="hidden md:flex items-center gap-5">
+          <Link href="/login" className="text-[14.5px] font-semibold text-[var(--ink)]">Connexion</Link>
           <Link
             href="/register"
-            className="hidden sm:inline text-sm font-semibold text-white bg-[#6C47FF] hover:bg-[#5835e0] px-4 py-2 rounded-xl transition-colors whitespace-nowrap"
+            className="inline-flex items-center gap-2 font-semibold text-[15px] text-white px-6 py-3 rounded-[13px] transition-all duration-200"
+            style={{ background: 'var(--violet)', boxShadow: '0 10px 24px -8px rgba(108,71,255,.6)' }}
           >
-            Commencer gratuitement
+            Créer ma carte <ArrowRight size={16} strokeWidth={1.9} />
           </Link>
-
-          {/* Mobile hamburger menu */}
-          <div ref={mobileRef} className="relative sm:hidden">
-            <button
-              onClick={() => setMobileOpen(o => !o)}
-              className="p-2 rounded-md text-gray-600 hover:text-[#6C47FF] transition-colors"
-              aria-label={mobileOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
-            >
-              {mobileOpen ? (
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              ) : (
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              )}
-            </button>
-
-            {mobileOpen && (
-              <div className="absolute top-full right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-[#E8E8E3] py-1.5 z-50">
-                {MOBILE_LINKS.map(({ href, label }) => (
-                  <a
-                    key={href}
-                    href={href}
-                    onClick={() => setMobileOpen(false)}
-                    className="block px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-[#6C47FF] transition-colors"
-                  >
-                    {label}
-                  </a>
-                ))}
-                <div className="my-1.5 border-t border-[#E8E8E3]" />
-                <Link
-                  href="/login"
-                  onClick={() => setMobileOpen(false)}
-                  className="block px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-[#6C47FF] transition-colors"
-                >
-                  Connexion
-                </Link>
-                <Link
-                  href="/register"
-                  onClick={() => setMobileOpen(false)}
-                  className="block mx-3 my-2 px-4 py-2.5 text-sm font-semibold text-white bg-[#6C47FF] hover:bg-[#5835e0] rounded-xl text-center transition-colors"
-                >
-                  Commencer gratuitement
-                </Link>
-              </div>
-            )}
-          </div>
         </div>
+
+        {/* Mobile hamburger */}
+        <button
+          className="md:hidden p-2 text-[var(--ink)]"
+          onClick={() => setOpen(v => !v)}
+          aria-label={open ? 'Fermer le menu' : 'Ouvrir le menu'}
+        >
+          {open ? <X size={22} strokeWidth={1.9} /> : <Menu size={22} strokeWidth={1.9} />}
+        </button>
       </div>
+
+      {/* Mobile drawer */}
+      {open && (
+        <div className="md:hidden px-8 pb-6 flex flex-col gap-4 border-t border-[var(--line)]" style={{ background: 'var(--bg)' }}>
+          <a href="#comment" onClick={() => setOpen(false)} className="text-[15px] font-medium text-[var(--ink-soft)] py-2">Comment ça marche</a>
+          <a href="#produit" onClick={() => setOpen(false)} className="text-[15px] font-medium text-[var(--ink-soft)] py-2">Le produit</a>
+          <a href="#tarifs" onClick={() => setOpen(false)} className="text-[15px] font-medium text-[var(--ink-soft)] py-2">Tarifs</a>
+          <hr style={{ borderColor: 'var(--line)' }} />
+          <Link href="/login" onClick={() => setOpen(false)} className="text-[15px] font-semibold text-[var(--ink)]">Connexion</Link>
+          <Link
+            href="/register"
+            onClick={() => setOpen(false)}
+            className="inline-flex items-center justify-center gap-2 font-semibold text-[15px] text-white px-6 py-3 rounded-[13px]"
+            style={{ background: 'var(--violet)' }}
+          >
+            Créer ma carte <ArrowRight size={16} strokeWidth={1.9} />
+          </Link>
+        </div>
+      )}
     </nav>
   )
 }

@@ -28,6 +28,7 @@ const merchantSchema = z.object({
   allow_multiple_stamps: z.boolean().optional(),
   min_minutes_between_stamps: z.number().int().min(0).max(1440).optional(),
   stamps_per_visit: z.number().int().min(1).max(10).optional(),
+  average_ticket: z.number().int().min(0).max(100000).nullable().optional(),
 })
 
 function sanitizeMerchantData<T extends Record<string, unknown>>(data: T): T {

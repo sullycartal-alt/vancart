@@ -81,22 +81,23 @@ export default function StatsClient({
       {/* Header + tabs */}
       <div>
         <h1 className="text-2xl font-bold text-[#1A1A1A]">Tableau de bord</h1>
-        <div className="mt-4 flex items-center gap-1 border-b border-[#E8E8E3]">
+        <div className="mt-4 flex items-center gap-1 border-b border-[#E8E8E3] overflow-x-auto">
           {[
             { key: 'overview', label: 'Vue générale' },
             { key: 'analyse', label: 'Analyse clients' },
+            { key: 'advanced', label: 'Stats avancées' },
           ].map(({ key, label }) => (
             <button
               key={key}
               onClick={() => updateParams({ tab: key === 'overview' ? undefined : key })}
-              className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px ${
+              className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px whitespace-nowrap ${
                 (key === 'overview' ? !searchParams.get('tab') || searchParams.get('tab') === 'overview' : searchParams.get('tab') === key)
                   ? 'border-[#6C47FF] text-[#6C47FF]'
                   : 'border-transparent text-[#6B6B6B] hover:text-[#1A1A1A]'
               }`}
             >
               {label}
-              {key === 'analyse' && plan === 'free' && (
+              {(key === 'analyse' || key === 'advanced') && plan === 'free' && (
                 <Lock size={12} strokeWidth={1.9} />
               )}
             </button>

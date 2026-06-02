@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { LogoLockup } from '@/components/brand/Logo'
+import { Settings, Target } from 'lucide-react'
 
 const ADMIN_EMAILS = ['sullycartal@gmail.com', 'audrey@vancart.fr']
 
@@ -17,12 +19,17 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-14 items-center">
             <div className="flex items-center gap-6">
-              <span className="text-sm font-bold text-red-400">⚙ Admin VanCart</span>
+              <span className="flex items-center gap-2">
+                <LogoLockup size={28} color="#ffffff" />
+                <span className="inline-flex items-center gap-1 text-xs font-bold text-red-400">
+                  <Settings size={13} strokeWidth={1.9} />Admin
+                </span>
+              </span>
               <Link href="/admin" className="text-sm text-gray-300 hover:text-white transition-colors">
                 Dashboard
               </Link>
-              <Link href="/admin/prospection" className="text-sm text-gray-300 hover:text-white transition-colors">
-                🎯 Prospection
+              <Link href="/admin/prospection" className="inline-flex items-center gap-1.5 text-sm text-gray-300 hover:text-white transition-colors">
+                <Target size={15} strokeWidth={1.9} />Prospection
               </Link>
             </div>
             <Link href="/dashboard" className="text-sm text-gray-400 hover:text-white transition-colors">

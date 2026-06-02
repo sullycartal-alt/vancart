@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useState } from 'react'
+import { Gift } from 'lucide-react'
 import QRScanner from './QRScanner'
 
 interface Merchant {
@@ -87,7 +88,7 @@ function PointsBar({ points, required, color }: { points: number; required: numb
 
 const inputClass = 'block w-full rounded-xl border border-[#E8E8E3] px-4 py-3 text-[#1A1A1A] bg-[#F7F6F3] focus:border-[#6C47FF] focus:outline-none focus:ring-2 focus:ring-[#6C47FF]/15 transition-all'
 
-const MEDALS = ['🥇', '🥈', '🥉']
+const MEDALS = ['1', '2', '3']
 
 function formatRelativeTime(isoString: string): string {
   const diff = Date.now() - new Date(isoString).getTime()
@@ -237,8 +238,8 @@ export default function StampClient({ merchant, stampsToday, stampsMonth, reward
   if (rewardValidated) {
     return (
       <div className="bg-white border border-amber-300 rounded-2xl p-6 sm:p-8 text-center space-y-6">
-        <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto text-3xl bg-amber-400">
-          🎁
+        <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto bg-amber-400">
+          <Gift size={32} strokeWidth={1.9} className="text-white" />
         </div>
         <div>
           <h2 className="text-xl font-bold text-[#1A1A1A]">Récompense validée !</h2>
@@ -263,7 +264,7 @@ export default function StampClient({ merchant, stampsToday, stampsMonth, reward
       <div className="bg-white border border-[#E8E8E3] rounded-2xl p-6 sm:p-8 text-center space-y-6">
         <div className="w-24 h-24 sm:w-20 sm:h-20 rounded-full flex items-center justify-center mx-auto text-4xl sm:text-3xl"
           style={{ backgroundColor: reward_pending ? '#f59e0b' : merchant.primary_color, color: 'white' }}>
-          {reward_pending ? '🎁' : '✓'}
+          {reward_pending ? <Gift size={32} strokeWidth={1.9} className="text-white" /> : '✓'}
         </div>
         {reward_pending ? (
           <div>
@@ -306,7 +307,7 @@ export default function StampClient({ merchant, stampsToday, stampsMonth, reward
     return (
       <div className="bg-white border-2 border-amber-400 rounded-2xl p-6 space-y-5">
         <div className="text-center">
-          <div className="text-4xl mb-3">🎁</div>
+          <div className="mb-3 flex justify-center"><Gift size={40} strokeWidth={1.9} className="text-amber-500" /></div>
           <h2 className="text-lg font-bold text-[#1A1A1A]">Valider la récompense de {pendingReward.firstName} ?</h2>
           <p className="text-sm text-[#6B6B6B] mt-1">Le compteur sera remis à zéro.</p>
         </div>
@@ -464,7 +465,7 @@ export default function StampClient({ merchant, stampsToday, stampsMonth, reward
             {topClients.map((client, i) => (
               <div key={client.phone} className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <span className="text-lg leading-none">{MEDALS[i]}</span>
+                  <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0" style={{ backgroundColor: merchant.primary_color }}>{MEDALS[i]}</span>
                   <div>
                     <p className="text-sm font-semibold text-[#1A1A1A]">{client.first_name}</p>
                     <p className="text-xs text-[#6B6B6B]">{client.phone}</p>

@@ -3,16 +3,16 @@
 import { useEffect, useState } from 'react'
 
 const ITEMS = [
-  '☕ Café Voltaire',
-  '🍕 Pizza Napoli',
-  '🥐 Boulangerie Martin',
-  '💈 Barber Shop Rex',
-  '🍜 Ramen Yuki',
-  '🧁 Pâtisserie Sucrée',
-  '🍺 Bar Le Central',
-  '🌿 Épicerie Bio Verde',
-  '🍦 Glacier Douceur',
-  '🎨 Studio Beauté Léa',
+  'Café Voltaire',
+  'Pizza Napoli',
+  'Boulangerie Martin',
+  'Barber Shop Rex',
+  'Ramen Yuki',
+  'Pâtisserie Sucrée',
+  'Bar Le Central',
+  'Épicerie Bio Verde',
+  'Glacier Douceur',
+  'Studio Beauté Léa',
 ]
 const N = ITEMS.length
 
@@ -98,7 +98,7 @@ export default function ScrollingCarousel() {
         </span>
       </div>
 
-      <p className="text-center text-xs text-gray-300 mt-3">⚠️ test — données fictives</p>
+      <p className="text-center text-xs text-gray-300 mt-3">test — données fictives</p>
     </section>
   )
 }

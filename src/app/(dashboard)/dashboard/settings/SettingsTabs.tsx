@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import { Store, Palette } from 'lucide-react'
 import MerchantForm from './MerchantForm'
 import CardDesignClient from '../ma-carte/CardDesignClient'
 import type { MerchantSharedConfig } from '@/types/merchant-config'
@@ -113,7 +114,7 @@ export default function SettingsTabs({ merchant, clientCount }: Props) {
               className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${tab === 'settings' ? 'shadow-sm text-white' : 'text-[#6B6B6B] hover:text-[#1A1A1A]'}`}
               style={tab === 'settings' ? { backgroundColor: activeColor } : {}}
             >
-              🏪 Infos commerce
+              <Store size={16} strokeWidth={1.9} className="inline-block mr-1" />Infos commerce
             </button>
             <button
               type="button"
@@ -121,7 +122,7 @@ export default function SettingsTabs({ merchant, clientCount }: Props) {
               className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${tab === 'card' ? 'shadow-sm text-white' : 'text-[#6B6B6B] hover:text-[#1A1A1A]'}`}
               style={tab === 'card' ? { backgroundColor: activeColor } : {}}
             >
-              🎨 Ma carte
+              <Palette size={16} strokeWidth={1.9} className="inline-block mr-1" />Ma carte
             </button>
           </div>
         )

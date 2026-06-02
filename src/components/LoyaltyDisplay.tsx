@@ -1,3 +1,5 @@
+import { PartyPopper } from 'lucide-react'
+
 interface LoyaltyDisplayProps {
   mode: 'stamps' | 'points'
   current: number
@@ -36,7 +38,7 @@ export default function LoyaltyDisplay({
         <span style={{ fontSize: 10, color: remaining > 0 ? mutedColor : fill, fontWeight: 500 }}>
           {remaining > 0
             ? `Encore ${remaining.toLocaleString('fr-FR')} pts pour ${rewardLabel ?? 'votre récompense'}`
-            : '🎉 Récompense débloquée !'}
+            : <><PartyPopper size={10} strokeWidth={1.9} style={{ display: 'inline-block', marginRight: 2, verticalAlign: 'middle' }} /> Récompense débloquée !</>}
         </span>
       </div>
     )

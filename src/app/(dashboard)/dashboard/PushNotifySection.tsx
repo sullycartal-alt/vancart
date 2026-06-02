@@ -1,10 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { Check } from 'lucide-react'
+import { Check, Bell } from 'lucide-react'
 
 export default function PushNotifySection({ merchantId }: { merchantId: string }) {
-  const [message, setMessage] = useState('☕ Revenez nous voir — votre récompense vous attend !')
+  const [message, setMessage] = useState('Revenez nous voir — votre récompense vous attend !')
   const [status, setStatus] = useState<{ sent: number; total: number } | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -36,7 +36,7 @@ export default function PushNotifySection({ merchantId }: { merchantId: string }
   return (
     <div className="bg-white border border-[#E8E8E3] rounded-2xl p-5 space-y-4">
       <div className="flex items-center gap-2">
-        <span className="text-xl">🔔</span>
+        <Bell size={20} strokeWidth={1.9} className="text-[#6C47FF]" />
         <h2 className="text-sm font-bold text-[#1A1A1A]">Notifier mes clients</h2>
       </div>
 

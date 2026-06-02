@@ -15,7 +15,7 @@ interface MerchantContext {
   loyalty_type?: string
 }
 
-const DEFAULT_WELCOME = "Bonjour ! Je suis votre conseiller fidélité VanCart 👋 Je suis là pour vous aider à créer le programme de fidélité idéal pour votre commerce. Pour commencer, pouvez-vous me dire quel type de commerce vous avez ? (bar, coffee shop, restaurant, autre)"
+const DEFAULT_WELCOME = "Bonjour ! Je suis votre conseiller fidélité VanCart. Je suis là pour vous aider à créer le programme de fidélité idéal pour votre commerce. Pour commencer, pouvez-vous me dire quel type de commerce vous avez ? (bar, coffee shop, restaurant, autre)"
 
 const DAILY_LIMIT = 30
 const LS_KEY = 'vancart_ai_usage'

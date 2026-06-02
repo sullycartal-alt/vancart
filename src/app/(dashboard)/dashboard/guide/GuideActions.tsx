@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { Clipboard } from 'lucide-react'
 
 interface Props {
   clientUrl: string
@@ -57,7 +58,7 @@ export default function GuideActions({ clientUrl, primaryColor, copyOnly }: Prop
         onClick={handleCopy}
         className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 border border-gray-200 rounded-lg bg-white hover:bg-gray-50 transition-colors"
       >
-        {copied ? '✓ Lien copié !' : '📋 Copier le lien client'}
+        {copied ? '✓ Lien copié !' : <><Clipboard size={16} strokeWidth={1.9} className="inline-block mr-1" />Copier le lien client</>}
       </button>
       <canvas ref={canvasRef} className="hidden" />
     </div>

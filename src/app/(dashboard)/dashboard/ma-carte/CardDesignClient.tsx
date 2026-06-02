@@ -2,6 +2,7 @@
 
 import { useCallback, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { Lock, WalletCards, Trophy, TriangleAlert, Palette, Smartphone } from 'lucide-react'
 import LoyaltyDisplay from '@/components/LoyaltyDisplay'
 import type { MerchantSharedConfig } from '@/types/merchant-config'
 import Toast from '@/components/Toast'
@@ -680,7 +681,7 @@ export default function CardDesignClient({
                   disabled={extracting}
                   className="flex items-center gap-2 text-xs text-[#6C47FF] font-medium hover:text-[#5835e0] disabled:opacity-50 transition-colors"
                 >
-                  <span>🎨</span>
+                  <Palette size={14} strokeWidth={1.9} className="text-[#6C47FF]" />
                   {extracting ? 'Extraction en cours…' : 'Couleurs suggérées depuis votre logo'}
                 </button>
                 {suggestedColors.length > 0 && (
@@ -709,9 +710,9 @@ export default function CardDesignClient({
               {hasClients && (
                 <span
                   title="Le mode de fidélité ne peut plus être modifié une fois vos premiers clients inscrits"
-                  className="cursor-help text-base leading-none"
+                  className="cursor-help"
                 >
-                  🔒
+                  <Lock size={14} strokeWidth={1.9} className="text-[#6B6B6B]" />
                 </span>
               )}
             </div>
@@ -731,13 +732,13 @@ export default function CardDesignClient({
                     : { backgroundColor: 'transparent', color: '#6B6B6B' }
                   }
                 >
-                  {type === 'stamps' ? '🎴 Tampons' : '🏆 Points'}
+                  {type === 'stamps' ? <><WalletCards size={14} strokeWidth={1.9} className="inline-block mr-1" />Tampons</> : <><Trophy size={14} strokeWidth={1.9} className="inline-block mr-1" />Points</>}
                 </button>
               ))}
             </div>
             {!hasClients && (
               <div className="flex items-start gap-2 rounded-xl border border-amber-200 bg-[#FFFBEB] px-4 py-3 mt-2">
-                <span className="text-base leading-none flex-shrink-0 mt-0.5">⚠️</span>
+                <TriangleAlert size={16} strokeWidth={1.9} className="text-amber-500 flex-shrink-0 mt-0.5" />
                 <p className="text-xs text-amber-800 leading-relaxed">
                   Choisissez bien votre mode de fidélité — il ne pourra plus être modifié une fois vos premiers clients inscrits. Les tampons sont recommandés pour les bars et restaurants, les points pour les commerces avec des achats de montants variables.
                 </p>
@@ -1028,7 +1029,7 @@ export default function CardDesignClient({
               onClick={() => setWalletTab('pwa')}
               className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg text-xs font-semibold transition-all ${walletTab === 'pwa' ? 'bg-white shadow-sm text-[#1A1A1A]' : 'text-[#6B6B6B] hover:text-[#1A1A1A]'}`}
             >
-              <span className="text-sm leading-none flex-shrink-0">📱</span>
+              <Smartphone size={14} strokeWidth={1.9} className="flex-shrink-0" />
               VanCart
             </button>
           </div>

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { TriangleAlert, WalletCards, Bell } from 'lucide-react'
 
 const PEEK = 72
 const FULL = 520
@@ -166,7 +167,7 @@ function PushButton({ merchantId }: { merchantId: string }) {
   if (permission === 'granted' && subscribed) {
     return (
       <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', textAlign: 'center', padding: '0 16px' }}>
-        🔔 Notifications activées
+        <Bell size={11} strokeWidth={1.9} style={{ display: 'inline-block', marginRight: 4, verticalAlign: 'middle' }} /> Notifications activées
       </p>
     )
   }
@@ -189,7 +190,7 @@ function PushButton({ merchantId }: { merchantId: string }) {
           opacity: loading ? 0.7 : 1,
         }}
       >
-        {loading ? '…' : '🔔 Activer les notifications'}
+        {loading ? '…' : <><Bell size={12} strokeWidth={1.9} style={{ display: 'inline-block', marginRight: 4, verticalAlign: 'middle' }} /> Activer les notifications</>}
       </button>
     </div>
   )
@@ -219,7 +220,7 @@ export default function WalletClient({ cards, error }: { cards: WalletCard[]; er
   if (error) {
     return (
       <div className="bg-white border border-[#E8E8E3] rounded-2xl p-8 text-center space-y-4">
-        <p className="text-2xl">⚠️</p>
+        <TriangleAlert size={28} strokeWidth={1.9} className="text-[#6B6B6B] mx-auto" />
         <p className="text-sm text-[#6B6B6B]">Impossible de charger vos cartes.</p>
         <button
           onClick={() => router.refresh()}
@@ -235,7 +236,7 @@ export default function WalletClient({ cards, error }: { cards: WalletCard[]; er
   if (cards.length === 0) {
     return (
       <div className="bg-white border border-[#E8E8E3] rounded-2xl p-8 text-center space-y-3">
-        <p className="text-2xl">🎴</p>
+        <WalletCards size={28} strokeWidth={1.9} className="text-[#6B6B6B] mx-auto" />
         <p className="text-sm text-[#6B6B6B]">Vous n&apos;avez pas encore de carte de fidélité.</p>
       </div>
     )

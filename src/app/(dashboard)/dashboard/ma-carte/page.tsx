@@ -11,7 +11,7 @@ export default async function MaCartePage() {
 
   const { data: merchant } = await supabase
     .from('merchants')
-    .select('id, business_name, primary_color, loyalty_rule, stamps_required, logo_url, description, loyalty_type, points_required, points_per_euro, hero_image_url, wallet_message, card_expiry_months, show_instagram_on_card, instagram_handle, banner_url')
+    .select('id, slug, business_name, primary_color, loyalty_rule, stamps_required, logo_url, description, loyalty_type, points_required, points_per_euro, hero_image_url, wallet_message, card_expiry_months, show_instagram_on_card, instagram_handle, banner_url')
     .eq('user_id', user.id)
     .single()
 
@@ -29,6 +29,7 @@ export default async function MaCartePage() {
     <CardDesignClient
       merchant={{
         id: merchant.id,
+        slug: merchant.slug,
         business_name: merchant.business_name ?? '',
         primary_color: merchant.primary_color ?? '#6C47FF',
         loyalty_rule: merchant.loyalty_rule ?? '',

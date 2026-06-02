@@ -141,6 +141,7 @@ export default function SettingsTabs({ merchant, clientCount }: Props) {
           hasClients={clientCount > 0}
           merchant={{
             id: merchant.id,
+            slug: merchant.slug,
             business_name: liveConfig.business_name,
             primary_color: liveConfig.primary_color,
             loyalty_rule: liveConfig.loyalty_rule,

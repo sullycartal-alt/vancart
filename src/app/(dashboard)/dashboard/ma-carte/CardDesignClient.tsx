@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Lock, WalletCards, Trophy, TriangleAlert, Palette, Smartphone } from 'lucide-react'
 import LoyaltyDisplay from '@/components/LoyaltyDisplay'
@@ -64,190 +64,179 @@ function darken(hex: string, pct = 22): string {
   return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, '0')}`
 }
 
-function QRPlaceholder({ color, size = 64 }: { color: string; size?: number }) {
+function RealQRCode({ url, size = 80 }: { url: string; size?: number }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  useEffect(() => {
+    let cancelled = false
+    import('qrcode').then((QRCode) => {
+      if (!cancelled && canvasRef.current) {
+        QRCode.toCanvas(canvasRef.current, url, {
+          width: size,
+          margin: 1,
+          color: { dark: '#1A1A1A', light: '#ffffff' },
+        })
+      }
+    })
+    return () => { cancelled = true }
+  }, [url, size])
   return (
-    <svg width={size} height={size} viewBox="0 0 64 64" fill="none" style={{ flexShrink: 0, minWidth: size, minHeight: size }}>
-      {/* corners */}
-      <rect x="2" y="2" width="18" height="18" rx="2" stroke={color} strokeWidth="3" fill="none"/>
-      <rect x="44" y="2" width="18" height="18" rx="2" stroke={color} strokeWidth="3" fill="none"/>
-      <rect x="2" y="44" width="18" height="18" rx="2" stroke={color} strokeWidth="3" fill="none"/>
-      <rect x="7" y="7" width="8" height="8" fill={color}/>
-      <rect x="49" y="7" width="8" height="8" fill={color}/>
-      <rect x="7" y="49" width="8" height="8" fill={color}/>
-      {/* data dots */}
-      <rect x="26" y="2" width="4" height="4" fill={color}/>
-      <rect x="32" y="2" width="4" height="4" fill={color}/>
-      <rect x="26" y="8" width="4" height="4" fill={color}/>
-      <rect x="38" y="8" width="4" height="4" fill={color}/>
-      <rect x="2" y="26" width="4" height="4" fill={color}/>
-      <rect x="8" y="32" width="4" height="4" fill={color}/>
-      <rect x="2" y="38" width="4" height="4" fill={color}/>
-      <rect x="26" y="26" width="4" height="4" fill={color}/>
-      <rect x="32" y="26" width="4" height="4" fill={color}/>
-      <rect x="38" y="26" width="4" height="4" fill={color}/>
-      <rect x="26" y="32" width="4" height="4" fill={color}/>
-      <rect x="32" y="38" width="4" height="4" fill={color}/>
-      <rect x="44" y="26" width="4" height="4" fill={color}/>
-      <rect x="50" y="32" width="4" height="4" fill={color}/>
-      <rect x="56" y="26" width="4" height="4" fill={color}/>
-      <rect x="44" y="38" width="4" height="4" fill={color}/>
-      <rect x="26" y="44" width="4" height="4" fill={color}/>
-      <rect x="32" y="50" width="4" height="4" fill={color}/>
-      <rect x="38" y="44" width="4" height="4" fill={color}/>
-      <rect x="44" y="50" width="4" height="4" fill={color}/>
-      <rect x="50" y="56" width="4" height="4" fill={color}/>
-    </svg>
+    <canvas
+      ref={canvasRef}
+      width={size}
+      height={size}
+      style={{ width: size, height: size, display: 'block', borderRadius: 4 }}
+    />
   )
 }
 
-function GoogleWalletPreview({ businessName, primaryColor, logoUrl, stampsRequired, loyaltyRule, loyaltyType, pointsRequired, heroImageUrl, walletMessage, cardExpiryMonths }: {
+function GoogleWalletPreview({ businessName, primaryColor, logoUrl, stampsRequired, loyaltyRule, loyaltyType, pointsRequired, heroImageUrl, walletMessage, cardExpiryMonths, qrUrl }: {
   businessName: string; primaryColor: string; logoUrl: string | null
   stampsRequired: number; loyaltyRule: string
   loyaltyType: 'stamps' | 'points'; pointsRequired?: number | null
   heroImageUrl?: string | null; walletMessage?: string | null; cardExpiryMonths?: number | null
+  qrUrl: string
 }) {
-  const dark = darken(primaryColor, 28)
   const isPoints = loyaltyType === 'points'
-  const target = isPoints ? (pointsRequired ?? 100) : stampsRequired
-  const current = Math.floor(target * 0.4)
+  const exampleStamps = 2
+  const examplePoints = 400
+  const pointsTarget = pointsRequired ?? 100
+  const pct = Math.min(100, Math.round((examplePoints / pointsTarget) * 100))
 
   const expiryDate = cardExpiryMonths
-    ? new Date(Date.now() + cardExpiryMonths * 30 * 24 * 60 * 60 * 1000).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
+    ? new Date(new Date().getTime() + cardExpiryMonths * 30 * 24 * 60 * 60 * 1000).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
     : null
 
   return (
     <div
       className="w-full rounded-2xl overflow-hidden shadow-2xl select-none"
-      style={{ background: `linear-gradient(145deg, ${primaryColor} 0%, ${dark} 100%)` }}
+      style={{ backgroundColor: primaryColor }}
     >
       {/* Hero image */}
       {heroImageUrl && (
-        <div className="w-full overflow-hidden" style={{ height: 80 }}>
+        <div className="w-full overflow-hidden" style={{ height: 72 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={heroImageUrl} alt="" className="w-full h-full object-cover opacity-80" loading="lazy" />
+          <img src={heroImageUrl} alt="" className="w-full h-full object-cover" loading="lazy" />
         </div>
       )}
 
-      <div className="relative flex flex-col justify-between p-5" style={{ aspectRatio: heroImageUrl ? undefined : '1.586', minHeight: heroImageUrl ? 200 : undefined }}>
-        {/* Decorative circles */}
-        <div style={{ position: 'absolute', top: -50, right: -30, width: 170, height: 170, borderRadius: '50%', background: 'rgba(255,255,255,0.06)', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', bottom: -40, left: -20, width: 130, height: 130, borderRadius: '50%', background: 'rgba(255,255,255,0.04)', pointerEvents: 'none' }} />
+      <div className="relative flex flex-col justify-between p-4" style={{ aspectRatio: heroImageUrl ? undefined : '1.6', minHeight: heroImageUrl ? 210 : undefined }}>
+        {/* Decorative circle */}
+        <div style={{ position: 'absolute', top: -50, right: -30, width: 160, height: 160, borderRadius: '50%', background: 'rgba(255,255,255,0.07)', pointerEvents: 'none' }} />
 
-        {/* Top row */}
-        <div className="relative flex items-center gap-3">
+        {/* Top row: logo + name */}
+        <div className="relative flex items-center gap-2.5">
           {logoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={logoUrl} alt="" className="w-10 h-10 rounded-full object-cover ring-2 ring-white/30 flex-shrink-0" loading="lazy" />
+            <img src={logoUrl} alt="" className="w-8 h-8 rounded-full object-cover ring-2 ring-white/25 flex-shrink-0" loading="lazy" />
           ) : (
-            <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-black flex-shrink-0" style={{ background: 'rgba(255,255,255,0.22)', color: 'white' }}>
+            <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0" style={{ background: 'rgba(255,255,255,0.25)', color: 'white' }}>
               {businessName.slice(0, 2).toUpperCase() || '?'}
             </div>
           )}
-          <div>
-            <p className="text-[10px] font-medium leading-none" style={{ color: 'rgba(255,255,255,0.55)' }}>[TESTS UNIQUEMENT]</p>
-            <p className="text-xs font-bold text-white mt-0.5 leading-tight">{businessName || 'Mon Commerce'}</p>
-          </div>
+          <span className="text-sm font-semibold text-white leading-tight truncate">{businessName || 'Mon Commerce'}</span>
         </div>
 
-        {/* Middle: loyalty rule + display */}
-        <div className="relative mt-3">
-          <p className="text-white font-bold leading-tight" style={{ fontSize: 'clamp(11px, 2.2vw, 18px)' }}>
-            {loyaltyRule || (isPoints ? `${target} points = 1 récompense` : `${stampsRequired} tampons = 1 récompense`)}
+        {/* Middle: loyalty rule big + stamps/points */}
+        <div className="relative">
+          <p className="text-white font-bold leading-snug" style={{ fontSize: 18 }}>
+            {loyaltyRule || (isPoints ? `${pointsTarget} points = 1 récompense` : `${stampsRequired} tampons = 1 récompense`)}
           </p>
           {walletMessage && (
             <p className="text-white/70 text-[11px] mt-1 leading-snug">{walletMessage}</p>
           )}
-          <div className="mt-2">
-            <LoyaltyDisplay
-              mode={loyaltyType}
-              current={current}
-              target={target}
-              primaryColor={primaryColor}
-              dark
-              rewardLabel="votre récompense"
-            />
+          <div className="mt-2.5">
+            {isPoints ? (
+              <div>
+                <div className="flex items-baseline justify-between mb-1">
+                  <span className="text-xs font-semibold text-white/85">Points</span>
+                  <span className="text-xs text-white/65">{examplePoints}/{pointsTarget} pts</span>
+                </div>
+                <div className="w-full rounded-full" style={{ height: 6, background: 'rgba(255,255,255,0.25)' }}>
+                  <div className="rounded-full bg-white" style={{ height: 6, width: `${pct}%` }} />
+                </div>
+              </div>
+            ) : (
+              <p className="text-sm font-semibold text-white/90">Tampons {exampleStamps}/{stampsRequired}</p>
+            )}
           </div>
         </div>
 
         {/* Bottom row: QR + member ID + expiry */}
-        <div className="relative flex items-end justify-between mt-3">
-          <div className="p-1.5 rounded-lg flex-shrink-0" style={{ background: 'rgba(255,255,255,0.92)' }}>
-            <QRPlaceholder color={primaryColor} size={48} />
+        <div className="relative flex items-end justify-between gap-3">
+          <div className="p-1.5 rounded-lg flex-shrink-0 bg-white">
+            <RealQRCode url={qrUrl} size={80} />
           </div>
-          <div className="text-right">
-            <p className="text-[9px] font-mono" style={{ color: 'rgba(255,255,255,0.4)' }}>MEMBRE • VC-0001042</p>
-            {expiryDate && (
-              <p className="text-[9px]" style={{ color: 'rgba(255,255,255,0.35)' }}>Expire {expiryDate}</p>
-            )}
-          </div>
+          <p className="text-[9px] font-mono text-right leading-relaxed" style={{ color: 'rgba(255,255,255,0.6)' }}>
+            MEMBRE · VC-0001042{expiryDate ? ` · Expire ${expiryDate}` : ''}
+          </p>
         </div>
       </div>
     </div>
   )
 }
 
-function AppleWalletPreview({ businessName, primaryColor, logoUrl, stampsRequired, loyaltyRule, loyaltyType, pointsRequired }: {
+function AppleWalletPreview({ businessName, primaryColor, logoUrl, stampsRequired, loyaltyRule, loyaltyType, pointsRequired, qrUrl }: {
   businessName: string; primaryColor: string; logoUrl: string | null
   stampsRequired: number; loyaltyRule: string
   loyaltyType: 'stamps' | 'points'; pointsRequired?: number | null
+  qrUrl: string
 }) {
   const isPoints = loyaltyType === 'points'
+  const exampleStamps = 2
+  const examplePoints = 400
   const target = isPoints ? (pointsRequired ?? 100) : stampsRequired
-  const current = Math.floor(target * 0.4)
+  const current = isPoints ? examplePoints : exampleStamps
+  const pct = Math.min(100, Math.round((current / target) * 100))
 
   return (
     <div
-      className="w-full rounded-2xl overflow-hidden shadow-2xl select-none bg-white"
-      style={{ aspectRatio: '1.586', border: '1px solid rgba(0,0,0,0.08)' }}
+      className="w-full rounded-2xl overflow-hidden shadow-lg select-none bg-white"
+      style={{ border: '1px solid rgba(0,0,0,0.08)' }}
     >
       {/* Header band */}
-      <div style={{ background: primaryColor, height: '36%', padding: '12px 16px', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ background: primaryColor, position: 'relative', overflow: 'hidden' }} className="px-4 py-3">
         <div style={{ position: 'absolute', top: -40, right: -20, width: 120, height: 120, borderRadius: '50%', background: 'rgba(255,255,255,0.08)' }} />
-        <div className="flex items-center justify-between h-full relative">
-          <div className="flex items-center gap-2.5">
+        <div className="flex items-center justify-between relative">
+          <div className="flex items-center gap-2.5 min-w-0">
             {logoUrl ? (
-              <img src={logoUrl} alt="" className="w-8 h-8 rounded-lg object-cover flex-shrink-0" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.2)' }} loading="lazy" />
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={logoUrl} alt="" className="w-7 h-7 rounded-md object-cover flex-shrink-0" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.2)' }} loading="lazy" />
             ) : (
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black flex-shrink-0" style={{ background: 'rgba(255,255,255,0.22)', color: 'white' }}>
+              <div className="w-7 h-7 rounded-md flex items-center justify-center text-[11px] font-black flex-shrink-0" style={{ background: 'rgba(255,255,255,0.25)', color: 'white' }}>
                 {businessName.slice(0, 2).toUpperCase() || '?'}
               </div>
             )}
-            <p className="text-sm font-bold text-white leading-tight">{businessName || 'Mon Commerce'}</p>
+            <p className="text-sm font-semibold text-white leading-tight truncate">{businessName || 'Mon Commerce'}</p>
           </div>
-          <p className="text-[10px] font-semibold text-white/70 text-right">Fidélité</p>
+          <p className="text-xs font-medium text-white/80 text-right flex-shrink-0 ml-2">Fidélité</p>
         </div>
       </div>
 
       {/* Body */}
-      <div style={{ height: '64%', padding: '12px 16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', background: '#FAFAF9' }}>
+      <div className="px-4 py-4 space-y-3.5" style={{ background: '#ffffff' }}>
         {/* Fields row */}
         <div className="flex gap-6">
-          <div>
+          <div className="flex-shrink-0">
             <p className="text-[9px] font-semibold uppercase tracking-wider text-[#9CA3AF]">{isPoints ? 'Points' : 'Tampons'}</p>
             <p className="text-xl font-black text-[#1A1A1A] leading-tight">{current}<span className="text-sm font-medium text-[#9CA3AF]">/{target}</span></p>
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-[9px] font-semibold uppercase tracking-wider text-[#9CA3AF]">Programme</p>
-            <p className="text-xs font-semibold text-[#1A1A1A] leading-tight truncate">{loyaltyRule || (isPoints ? `${target} points = 1 récompense` : `${stampsRequired} tampons = 1 récompense`)}</p>
+            <p className="text-xs font-semibold text-[#1A1A1A] leading-tight">{loyaltyRule || (isPoints ? `${target} points = 1 récompense` : `${stampsRequired} tampons = 1 récompense`)}</p>
           </div>
         </div>
 
-        {/* Loyalty display */}
-        <LoyaltyDisplay
-          mode={loyaltyType}
-          current={current}
-          target={target}
-          primaryColor={primaryColor}
-          dark={false}
-          rewardLabel="votre récompense"
-        />
+        {/* Progress bar */}
+        <div className="w-full rounded-full" style={{ height: 6, background: '#E5E7EB' }}>
+          <div className="rounded-full" style={{ height: 6, width: `${pct}%`, background: primaryColor }} />
+        </div>
 
         {/* QR + footer */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-end justify-between pt-0.5">
           <div className="flex-shrink-0">
-            <QRPlaceholder color="#1A1A1A" size={40} />
+            <RealQRCode url={qrUrl} size={70} />
           </div>
-          <p className="text-[8px] font-medium text-[#9CA3AF] text-right">VanCart · Fidélité digitale<br/>VC-0001042</p>
+          <p className="text-[8px] font-medium text-[#9CA3AF] text-right leading-relaxed">VanCart · Fidélité digitale<br/>VC-0001042</p>
         </div>
       </div>
     </div>
@@ -262,6 +251,7 @@ function PWAWalletPreview({
   stampsRequired,
   loyaltyType,
   pointsRequired,
+  qrUrl,
 }: {
   businessName: string
   primaryColor: string
@@ -270,16 +260,21 @@ function PWAWalletPreview({
   stampsRequired: number
   loyaltyType: 'stamps' | 'points'
   pointsRequired: number | null
+  qrUrl: string
 }) {
   const color = primaryColor || '#6C47FF'
   const isPoints = loyaltyType === 'points'
   const total = isPoints ? (pointsRequired ?? 100) : stampsRequired
-  const current = Math.floor(total * 0.4)
-  const pct = Math.min(100, Math.round((current / total) * 100))
+  const exampleStamps = 2
+  const examplePoints = 400
+  const current = isPoints ? examplePoints : exampleStamps
 
   return (
-    <div className="rounded-[18px] overflow-hidden select-none w-full" style={{ backgroundColor: color }}>
-      {/* Header 72px */}
+    <div
+      className="rounded-3xl overflow-hidden shadow-2xl select-none w-full"
+      style={{ background: `linear-gradient(135deg, ${color} 0%, ${color}cc 100%)` }}
+    >
+      {/* Header 72px — logo + name left, POINTS/TAMPONS value right */}
       <div className="flex items-center justify-between px-4" style={{ height: 72 }}>
         <div className="flex items-center gap-3 min-w-0">
           <div
@@ -309,10 +304,10 @@ function PWAWalletPreview({
         </div>
       </div>
 
-      {/* Banner 90px */}
+      {/* Banner — image or business name on a slightly darker block */}
       <div
         className="mx-3 flex items-center justify-center overflow-hidden"
-        style={{ height: 90, borderRadius: 10, backgroundColor: 'rgba(255,255,255,0.12)' }}
+        style={{ height: 90, borderRadius: 10, backgroundColor: darken(color, 14) }}
       >
         {bannerUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -325,54 +320,28 @@ function PWAWalletPreview({
       </div>
 
       {/* Card holder */}
-      <p style={{ fontSize: 11, textTransform: 'uppercase', color: 'rgba(255,255,255,0.6)', letterSpacing: '0.06em', margin: '10px 16px 6px' }}>
+      <p style={{ fontSize: 11, textTransform: 'uppercase', color: 'rgba(255,255,255,0.6)', letterSpacing: '0.06em', margin: '12px 16px 8px' }}>
         Carte de Jean
       </p>
 
-      {/* Stamps or points */}
-      <div className="px-4 space-y-2 mb-3">
-        {isPoints ? (
-          <>
-            <div className="w-full rounded-full" style={{ height: 4, backgroundColor: 'rgba(255,255,255,0.2)' }}>
-              <div className="rounded-full bg-white" style={{ height: 4, width: `${pct}%` }} />
-            </div>
-            <p className="text-center text-xs" style={{ color: 'rgba(255,255,255,0.7)' }}>{current} / {total} pts</p>
-          </>
-        ) : (
-          <>
-            <div className="flex flex-wrap gap-1.5 justify-center">
-              {Array.from({ length: Math.min(total, 12) }).map((_, i) => {
-                const filled = i < current
-                return (
-                  <div
-                    key={i}
-                    className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
-                    style={filled ? { backgroundColor: 'white' } : { border: '2px solid rgba(255,255,255,0.35)' }}
-                  >
-                    {filled && (
-                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                        <path d="M2 6.5L4.5 9L10 3" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    )}
-                  </div>
-                )
-              })}
-              {total > 12 && <span className="text-xs self-center" style={{ color: 'rgba(255,255,255,0.5)' }}>+{total - 12}</span>}
-            </div>
-            <div className="w-full rounded-full" style={{ height: 3, backgroundColor: 'rgba(255,255,255,0.2)' }}>
-              <div className="rounded-full bg-white" style={{ height: 3, width: `${pct}%` }} />
-            </div>
-            <p className="text-center text-xs" style={{ color: 'rgba(255,255,255,0.7)' }}>{current} / {total} tampons</p>
-          </>
-        )}
+      {/* Loyalty display — stamps circles or points bar (white on the card) */}
+      <div className="px-4 mb-4">
+        <LoyaltyDisplay
+          mode={loyaltyType}
+          current={current}
+          target={total}
+          primaryColor={color}
+          dark
+          rewardLabel="votre récompense"
+        />
       </div>
 
-      {/* QR placeholder */}
-      <div className="flex flex-col items-center gap-2 px-4 pb-5">
-        <div className="bg-white inline-flex items-center justify-center" style={{ borderRadius: 12, padding: 12 }}>
-          <QRPlaceholder color={color} size={80} />
+      {/* Real QR — centered on white rounded background */}
+      <div className="flex flex-col items-center gap-2 px-4 pb-6">
+        <div className="bg-white inline-flex items-center justify-center" style={{ borderRadius: 14, padding: 12 }}>
+          <RealQRCode url={qrUrl} size={120} />
         </div>
-        <p className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>••••••••—••••</p>
+        <p className="text-[11px]" style={{ color: 'rgba(255,255,255,0.6)' }}>Présentez ce code en caisse</p>
       </div>
     </div>
   )
@@ -380,6 +349,7 @@ function PWAWalletPreview({
 
 interface Merchant {
   id: string
+  slug: string
   business_name: string
   primary_color: string
   loyalty_rule: string
@@ -430,6 +400,9 @@ export default function CardDesignClient({
   const logoInputRef = useRef<HTMLInputElement>(null)
   const heroInputRef = useRef<HTMLInputElement>(null)
   const bannerInputRef = useRef<HTMLInputElement>(null)
+
+  // Public landing URL encoded in the card QR code (same as DashboardQR).
+  const qrUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? ''}/${merchant.slug}`
 
   async function handleLogoUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
@@ -587,6 +560,7 @@ export default function CardDesignClient({
     walletMessage: walletMessage || null,
     cardExpiryMonths,
     bannerUrl,
+    qrUrl,
   }
 
   const inputClass = 'block w-full rounded-xl border border-[#E8E8E3] px-4 py-3 text-sm text-[#1A1A1A] bg-white focus:border-[#6C47FF] focus:outline-none focus:ring-2 focus:ring-[#6C47FF]/15 transition-all'
@@ -1046,6 +1020,7 @@ export default function CardDesignClient({
                 stampsRequired={stampsRequired}
                 loyaltyType={loyaltyType}
                 pointsRequired={pointsRequired}
+                qrUrl={qrUrl}
               />
             )}
           </div>

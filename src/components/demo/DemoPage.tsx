@@ -197,6 +197,7 @@ interface FormState {
   adresse_commerce: string
   email: string
   telephone: string
+  logiciel_caisse: string
   message: string
 }
 
@@ -207,7 +208,7 @@ export default function DemoPage({ campaign }: Props) {
   const formRef = useRef<HTMLDivElement>(null)
   const [ctaVisible, setCtaVisible] = useState(true)
   const [carouselIndex, setCarouselIndex] = useState(0)
-  const [form, setForm] = useState<FormState>({ prenom: '', commerce: '', adresse_commerce: '', email: '', telephone: '', message: '' })
+  const [form, setForm] = useState<FormState>({ prenom: '', commerce: '', adresse_commerce: '', email: '', telephone: '', logiciel_caisse: '', message: '' })
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [confetti, setConfetti] = useState(false)
@@ -299,7 +300,7 @@ export default function DemoPage({ campaign }: Props) {
         </h1>
 
         <p className="mt-4 text-[#6B6B6B] leading-relaxed max-w-xs mx-auto" style={{ fontSize: 18 }}>
-          Une carte dans leur téléphone en 2 minutes.
+          Une carte dans leur téléphone en 2 minutes. Vos clients reçoivent leur carte en quelques secondes — sans télécharger d'application.
         </p>
 
         {/* Wallet card preview */}
@@ -445,7 +446,7 @@ export default function DemoPage({ campaign }: Props) {
       </section>
 
       {/* ═══════════════════════════════════════════════════════
-          D. FORM
+          E. FORM
       ═══════════════════════════════════════════════════════ */}
       <section ref={formRef} id="formulaire" className="bg-white py-12 px-5 scroll-mt-4">
         <div className="max-w-md mx-auto">
@@ -559,6 +560,28 @@ export default function DemoPage({ campaign }: Props) {
                 />
               </div>
 
+              {/* Logiciel de caisse */}
+              <div>
+                <label className="font-semibold text-[#1A1A1A] block mb-1.5" style={{ fontSize: 16 }}>
+                  Votre logiciel de caisse
+                </label>
+                <select
+                  value={form.logiciel_caisse}
+                  onChange={e => setForm(f => ({ ...f, logiciel_caisse: e.target.value }))}
+                  className={inputCls}
+                  style={{ minHeight: 52 }}
+                >
+                  <option value="">Sélectionner...</option>
+                  <option value="Je n'en utilise pas">Je n'en utilise pas</option>
+                  <option value="SumUp">SumUp</option>
+                  <option value="Zelty">Zelty</option>
+                  <option value="Tiller">Tiller</option>
+                  <option value="Lightspeed">Lightspeed</option>
+                  <option value="L'Addition">L'Addition</option>
+                  <option value="Autre">Autre</option>
+                </select>
+              </div>
+
               {/* Message */}
               <div>
                 <label className="font-semibold text-[#1A1A1A] block mb-1.5" style={{ fontSize: 16 }}>
@@ -586,7 +609,7 @@ export default function DemoPage({ campaign }: Props) {
                 className="w-full rounded-xl text-white font-bold active:scale-95 transition-all disabled:opacity-60"
                 style={{ backgroundColor: COLOR, minHeight: 56, fontSize: 18 }}
               >
-                {loading ? 'Envoi en cours…' : 'Je veux ma carte de fidélité →'}
+                {loading ? 'Envoi en cours…' : 'Je veux être contacté'}
               </button>
 
               <p className="text-center text-[#9CA3AF]" style={{ fontSize: 14 }}>
@@ -598,7 +621,7 @@ export default function DemoPage({ campaign }: Props) {
       </section>
 
       {/* ═══════════════════════════════════════════════════════
-          E. FOOTER
+          F. FOOTER
       ═══════════════════════════════════════════════════════ */}
       <footer className="bg-[#F7F6F3] border-t border-[#E8E8E3] py-6 text-center">
         <p className="text-[#9CA3AF]" style={{ fontSize: 13 }}>

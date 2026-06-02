@@ -1,16 +1,9 @@
 import type { Metadata } from 'next'
-import { Plus_Jakarta_Sans, Space_Grotesk } from 'next/font/google'
+import { Plus_Jakarta_Sans } from 'next/font/google'
 import './globals.css'
 import ProgressBar from '@/components/ProgressBar'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import ServiceWorkerManager from '@/components/pwa/ServiceWorkerManager'
-
-const grotesk = Space_Grotesk({
-  subsets: ['latin'],
-  weight: ['500', '600', '700'],
-  variable: '--font-grotesk',
-  display: 'swap',
-})
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -50,9 +43,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="fr" className={`${jakarta.variable} ${grotesk.variable} h-full antialiased`}>
+    <html lang="fr" className={`${jakarta.variable} h-full antialiased`}>
       <head>
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-72.png" />

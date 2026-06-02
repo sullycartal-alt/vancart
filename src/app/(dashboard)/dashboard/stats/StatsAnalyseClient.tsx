@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { ShieldCheck } from 'lucide-react'
 import type { Period } from './page'
 import type { Plan } from '@/lib/plan-features'
 
@@ -230,7 +231,7 @@ export default function StatsAnalyseClient({ primaryColor, period, loyaltyType, 
           </button>
         ) : (
           <span className="text-xs text-[#6B6B6B] bg-[#F7F6F3] border border-[#E8E8E3] px-3 py-2 rounded-xl">
-            🔒 Export CSV — Plan Essentiel+
+            <ShieldCheck size={14} strokeWidth={1.9} className="inline-block mr-1" />Export CSV — Plan Essentiel+
           </span>
         )}
       </div>

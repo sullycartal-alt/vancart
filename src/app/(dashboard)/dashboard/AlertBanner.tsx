@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { TriangleAlert } from 'lucide-react'
 
 interface Alert {
   id: string
@@ -27,7 +28,7 @@ export default function AlertBanner({ alerts }: { alerts: Alert[] }) {
 
   return (
     <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 flex items-start gap-3">
-      <span className="text-amber-500 text-lg flex-shrink-0 mt-0.5">⚠️</span>
+      <TriangleAlert size={20} strokeWidth={1.9} className="text-amber-500 flex-shrink-0 mt-0.5" />
       <div className="flex-1 min-w-0">
         <p className="text-sm font-semibold text-amber-800">Activité inhabituelle détectée</p>
         <p className="text-xs text-amber-700 mt-0.5">

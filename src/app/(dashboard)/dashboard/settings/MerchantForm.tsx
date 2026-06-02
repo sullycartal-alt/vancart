@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
 import { z } from 'zod'
+import { Trash2, TriangleAlert } from 'lucide-react'
 import QRCodeDisplay from './QRCodeDisplay'
 import type { MerchantSharedConfig } from '@/types/merchant-config'
 import Toast from '@/components/Toast'
@@ -358,7 +359,7 @@ export default function MerchantForm({ merchant, onConfigChange, clientCount = 0
             onClick={() => setShowResetModal(true)}
             className="w-full py-2.5 px-4 rounded-xl text-sm font-medium text-red-600 bg-white border border-red-200 hover:bg-red-50 transition-colors"
           >
-            🗑️ Supprimer mes données de test
+            <Trash2 size={16} strokeWidth={1.9} className="inline-block mr-1" />Supprimer mes données de test
           </button>
         )}
 
@@ -396,7 +397,7 @@ export default function MerchantForm({ merchant, onConfigChange, clientCount = 0
             className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl space-y-4"
             onClick={e => e.stopPropagation()}
           >
-            <div className="text-3xl text-center">⚠️</div>
+            <div className="flex justify-center"><TriangleAlert size={32} strokeWidth={1.9} className="text-amber-500" /></div>
             <h3 className="text-base font-bold text-[#1A1A1A] text-center">Supprimer les données de test ?</h3>
             <p className="text-sm text-[#6B6B6B] text-center leading-relaxed">
               Cette action supprimera tous vos clients et tampons. Votre carte et vos paramètres seront conservés. Continuer ?

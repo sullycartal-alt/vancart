@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
+import { Check } from 'lucide-react'
 
 const inputClass = 'block w-full rounded-xl border border-[#E8E8E3] px-4 py-3 text-sm text-[#1A1A1A] bg-[#F7F6F3] focus:border-[#6C47FF] focus:outline-none focus:ring-2 focus:ring-[#6C47FF]/15 transition-all'
 
@@ -45,7 +46,7 @@ export default function ForgotPasswordPage() {
         <div className="space-y-5">
           <div className="rounded-xl bg-green-50 border border-green-200 px-4 py-4 text-center">
             <p className="text-sm text-green-700 font-medium">
-              ✅ Email envoyé ! Vérifiez votre boîte mail et cliquez sur le lien pour réinitialiser votre mot de passe.
+              <Check size={16} strokeWidth={1.9} className="inline-block mr-1 text-green-600" />Email envoyé ! Vérifiez votre boîte mail et cliquez sur le lien pour réinitialiser votre mot de passe.
             </p>
           </div>
           <Link

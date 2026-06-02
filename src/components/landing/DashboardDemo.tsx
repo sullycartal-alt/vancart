@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import { Users, TrendingUp, RefreshCw, Gift } from 'lucide-react'
 
 const MAX_VAL = 31
 const BARS = [
@@ -14,11 +15,12 @@ const BARS = [
   { day: 'Dim', value: 9,  h: Math.round(9  / MAX_VAL * 100) },
 ]
 
-const KPIS = [
-  { icon: '👥', label: 'Clients actifs', value: 247, prefix: '', suffix: '' },
-  { icon: '📈', label: 'Nouveaux ce mois', value: 18, prefix: '+', suffix: '' },
-  { icon: '🔄', label: 'Taux de retour', value: 73, prefix: '', suffix: '%' },
-  { icon: '🎁', label: 'Récompenses utilisées', value: 41, prefix: '', suffix: '' },
+type KpiIcon = React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>
+const KPIS: { Icon: KpiIcon; label: string; value: number; prefix: string; suffix: string }[] = [
+  { Icon: Users, label: 'Clients actifs', value: 247, prefix: '', suffix: '' },
+  { Icon: TrendingUp, label: 'Nouveaux ce mois', value: 18, prefix: '+', suffix: '' },
+  { Icon: RefreshCw, label: 'Taux de retour', value: 73, prefix: '', suffix: '%' },
+  { Icon: Gift, label: 'Récompenses utilisées', value: 41, prefix: '', suffix: '' },
 ]
 
 function CountUp({ target, prefix, suffix, active }: { target: number; prefix: string; suffix: string; active: boolean }) {
@@ -80,9 +82,9 @@ export default function DashboardDemo() {
 
         {/* KPI grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
-          {KPIS.map(({ icon, label, value, prefix, suffix }) => (
+          {KPIS.map(({ Icon, label, value, prefix, suffix }) => (
             <div key={label} className="bg-white border border-[#E8E8E3] rounded-xl p-5 shadow-sm text-center space-y-1.5">
-              <p className="text-xl">{icon}</p>
+              <div className="flex justify-center"><Icon size={20} strokeWidth={1.9} className="text-[#6C47FF]" /></div>
               <p className="text-2xl font-black text-[#6C47FF]">
                 <CountUp target={value} prefix={prefix} suffix={suffix} active={active} />
               </p>
@@ -119,7 +121,7 @@ export default function DashboardDemo() {
 
         {/* Footer */}
         <div className="text-center space-y-4">
-          <p className="text-xs text-gray-300">⚠️ test — données fictives</p>
+          <p className="text-xs text-gray-300">test — données fictives</p>
           <Link
             href="/register"
             className="inline-flex items-center gap-1.5 px-6 py-3 bg-[#6C47FF] text-white font-semibold rounded-xl hover:bg-[#5835e0] transition-colors text-sm"

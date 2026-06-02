@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Sparkles, CircleArrowUp } from 'lucide-react'
 import { LogoLockup } from '@/components/brand/Logo'
 import LogoutButton from './LogoutButton'
 import GuideHelper from './GuideHelper'
@@ -61,7 +62,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       {plan === 'free' && trialDaysLeft === null && (
         <div className="border-b border-[#6C47FF]/20 bg-[#6C47FF]/8 py-2 px-4 text-center">
           <span className="text-sm text-[#6C47FF]">
-            ✨ Passez à Essentiel pour débloquer Google Wallet et les stats avancées{' '}
+            <Sparkles size={14} strokeWidth={1.9} className="inline-block mr-1 text-[#6C47FF]" />Passez à Essentiel pour débloquer Google Wallet et les stats avancées{' '}
             <a href="/dashboard/upgrade" className="font-semibold underline underline-offset-2 hover:text-[#5835e0] transition-colors">
               Voir les plans →
             </a>
@@ -100,7 +101,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
                     href="/dashboard/upgrade"
                     className="px-3 py-1.5 text-sm font-semibold text-[#6C47FF] bg-[#6C47FF]/10 rounded-xl hover:bg-[#6C47FF]/20 transition-colors"
                   >
-                    ⬆️ Upgrade
+                    <CircleArrowUp size={16} strokeWidth={1.9} className="inline-block mr-1" />Upgrade
                   </Link>
                 )}
                 <Link

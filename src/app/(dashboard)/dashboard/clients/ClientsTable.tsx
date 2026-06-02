@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { Bell, Gift, Flame, PartyPopper, Check, WalletCards, Trophy } from 'lucide-react'
 
 interface Client {
   id: string
@@ -56,7 +57,7 @@ function NotifyModal({
   onClose: () => void
 }) {
   const [message, setMessage] = useState(
-    `☕ Revenez nous voir, il vous reste ${target.left} ${target.unit} pour votre récompense !`
+    `Revenez nous voir, il vous reste ${target.left} ${target.unit} pour votre récompense !`
   )
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
 
@@ -88,8 +89,8 @@ function NotifyModal({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-bold text-[#1A1A1A]">
-            🔔 Notifier {target.firstName}
+          <h3 className="text-sm font-bold text-[#1A1A1A] flex items-center gap-1.5">
+            <Bell size={16} strokeWidth={1.9} className="text-[#6C47FF]" /> Notifier {target.firstName}
           </h3>
           <button onClick={onClose} className="text-[#6B6B6B] hover:text-[#1A1A1A] text-lg leading-none">×</button>
         </div>
@@ -103,7 +104,7 @@ function NotifyModal({
         />
 
         {status === 'sent' ? (
-          <p className="text-sm text-green-600 font-medium text-center">✅ Notification envoyée !</p>
+          <p className="text-sm text-green-600 font-medium text-center flex items-center justify-center gap-1"><Check size={16} strokeWidth={1.9} /> Notification envoyée !</p>
         ) : status === 'error' ? (
           <p className="text-sm text-red-500 text-center">Erreur — réessayez</p>
         ) : (
@@ -173,7 +174,7 @@ export default function ClientsTable({ clients, merchantId, subscribedCustomerId
   if (clients.length === 0) {
     return (
       <div className="bg-white border border-[#E8E8E3] rounded-2xl p-12 text-center">
-        <div className="text-4xl mb-3">👥</div>
+        <div className="text-4xl mb-3 flex justify-center"><WalletCards size={40} strokeWidth={1.9} className="text-[#6B6B6B]" /></div>
         <h3 className="text-lg font-semibold text-[#1A1A1A] mb-1">Aucun client encore</h3>
         <p className="text-sm text-[#6B6B6B]">
           Vos clients apparaîtront ici après leur premier scan de votre QR code.
@@ -203,7 +204,6 @@ export default function ClientsTable({ clients, merchantId, subscribedCustomerId
             const isRewardPending = current >= target
             const isAlmostFull = !isRewardPending && current === target - 1
             const unit = isPoints ? 'pts' : 'tampons'
-            const icon = isPoints ? '🏆' : '🎴'
             const canNotify = isPro && !!client.customer_id && subscribedSet.has(client.customer_id)
             return (
               <div key={client.id} className="px-4 py-4 space-y-3">
@@ -217,24 +217,24 @@ export default function ClientsTable({ clients, merchantId, subscribedCustomerId
                       <button
                         onClick={() => openNotify(client)}
                         title="Envoyer une notification push"
-                        className="flex-shrink-0 text-base leading-none text-[#6C47FF] hover:text-[#5835e0] transition-colors"
+                        className="flex-shrink-0 text-[#6C47FF] hover:text-[#5835e0] transition-colors"
                       >
-                        🔔
+                        <Bell size={16} strokeWidth={1.9} />
                       </button>
                     )}
                   </div>
                   <div className="flex-shrink-0">
                     {isRewardPending ? (
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-400">
-                        🎁 Récompense en attente
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-400">
+                        <Gift size={12} strokeWidth={1.9} /> Récompense en attente
                       </span>
                     ) : isAlmostFull ? (
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
-                        🔥 Presque !
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                        <Flame size={12} strokeWidth={1.9} /> Presque !
                       </span>
                     ) : client.rewards_unlocked > 0 ? (
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">
-                        🎉 {client.rewards_unlocked}
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">
+                        <PartyPopper size={12} strokeWidth={1.9} /> {client.rewards_unlocked}
                       </span>
                     ) : (
                       <span className="text-xs text-[#6B6B6B]">{formatDate(client.last_stamp_at)}</span>
@@ -243,8 +243,8 @@ export default function ClientsTable({ clients, merchantId, subscribedCustomerId
                 </div>
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-sm font-semibold" style={{ color: client.primaryColor }}>
-                      {icon} {current}/{target} {unit}
+                    <span className="text-sm font-semibold flex items-center gap-1" style={{ color: client.primaryColor }}>
+                      {isPoints ? <Trophy size={14} strokeWidth={1.9} /> : <WalletCards size={14} strokeWidth={1.9} />} {current}/{target} {unit}
                     </span>
                     <span className="text-xs text-[#6B6B6B]">{pct}%</span>
                   </div>
@@ -277,7 +277,6 @@ export default function ClientsTable({ clients, merchantId, subscribedCustomerId
               const pct = Math.min(100, Math.round((current / target) * 100))
               const isRewardPending = current >= target
               const isAlmostFull = !isRewardPending && current === target - 1
-              const icon = isPoints ? '🏆' : '🎴'
               const canNotify = isPro && !!client.customer_id && subscribedSet.has(client.customer_id)
               return (
                 <tr key={client.id} className="hover:bg-[#F7F6F3] transition-colors">
@@ -291,16 +290,16 @@ export default function ClientsTable({ clients, merchantId, subscribedCustomerId
                         <button
                           onClick={() => openNotify(client)}
                           title="Envoyer une notification push"
-                          className="text-base leading-none text-[#6C47FF] hover:text-[#5835e0] transition-colors"
+                          className="text-[#6C47FF] hover:text-[#5835e0] transition-colors"
                         >
-                          🔔
+                          <Bell size={16} strokeWidth={1.9} />
                         </button>
                       )}
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex-1 min-w-0">
-                      <span className="text-sm font-semibold text-[#1A1A1A]">{icon} {current}/{target}</span>
+                      <span className="text-sm font-semibold text-[#1A1A1A] flex items-center gap-1">{isPoints ? <Trophy size={14} strokeWidth={1.9} /> : <WalletCards size={14} strokeWidth={1.9} />} {current}/{target}</span>
                       <div className="w-full bg-[#F7F6F3] rounded-full h-1.5 mt-1.5">
                         <div className="h-1.5 rounded-full transition-all" style={{ width: `${pct}%`, backgroundColor: client.primaryColor }} />
                       </div>
@@ -309,11 +308,11 @@ export default function ClientsTable({ clients, merchantId, subscribedCustomerId
                   <td className="px-6 py-4 text-sm text-[#6B6B6B]">{formatDate(client.last_stamp_at)}</td>
                   <td className="px-6 py-4">
                     {isRewardPending ? (
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-400">🎁 Récompense en attente</span>
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-400"><Gift size={12} strokeWidth={1.9} /> Récompense en attente</span>
                     ) : isAlmostFull ? (
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">🔥 Presque !</span>
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200"><Flame size={12} strokeWidth={1.9} /> Presque !</span>
                     ) : client.rewards_unlocked > 0 ? (
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">🎉 {client.rewards_unlocked} récompense{client.rewards_unlocked > 1 ? 's' : ''}</span>
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200"><PartyPopper size={12} strokeWidth={1.9} /> {client.rewards_unlocked} récompense{client.rewards_unlocked > 1 ? 's' : ''}</span>
                     ) : (
                       <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-[#F7F6F3] text-[#6B6B6B] border border-[#E8E8E3]">En cours</span>
                     )}

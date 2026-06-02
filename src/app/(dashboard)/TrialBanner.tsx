@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { Gift } from 'lucide-react'
 
 const LS_KEY = 'vancart_banner_closed'
 
@@ -27,7 +28,7 @@ export default function TrialBanner({ daysLeft, endDate }: Props) {
   return (
     <div className="bg-amber-500 text-white text-sm px-4 py-2.5 flex items-center justify-center gap-3 flex-wrap">
       <span>
-        🎁 Essai gratuit —{' '}
+        <Gift size={16} strokeWidth={1.9} className="inline-block mr-1 flex-shrink-0" />Essai gratuit —{' '}
         <strong>{daysLeft} jour{daysLeft !== 1 ? 's' : ''} restant{daysLeft !== 1 ? 's' : ''}</strong>
         {endDate && ` · Expire le ${endDate}`}
       </span>

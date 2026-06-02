@@ -6,6 +6,7 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer,
 } from 'recharts'
+import { Lock } from 'lucide-react'
 import type { Period } from './page'
 
 const PERIOD_OPTIONS: { value: Period; label: string }[] = [
@@ -96,7 +97,7 @@ export default function StatsClient({
             >
               {label}
               {key === 'analyse' && plan === 'free' && (
-                <span className="text-xs">🔒</span>
+                <Lock size={12} strokeWidth={1.9} />
               )}
             </button>
           ))}

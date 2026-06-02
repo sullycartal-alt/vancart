@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { Rocket, Stamp } from 'lucide-react'
 import DashboardQR from './DashboardQR'
 import AlertBanner from './AlertBanner'
 import PushNotifySection from './PushNotifySection'
@@ -23,7 +24,7 @@ export default async function DashboardPage() {
       <div className="space-y-6">
         <h1 className="text-xl sm:text-2xl font-bold text-[#1A1A1A]">Tableau de bord</h1>
         <div className="bg-white border border-[#E8E8E3] rounded-2xl p-8 text-center space-y-4">
-          <div className="text-4xl">🚀</div>
+          <div className="flex justify-center mb-2"><Rocket size={40} strokeWidth={1.9} className="text-[#6C47FF]" /></div>
           <h2 className="text-lg font-bold text-[#1A1A1A]">Bienvenue sur VanCart !</h2>
           <p className="text-sm text-[#6B6B6B]">Configurez votre commerce pour démarrer votre programme de fidélité.</p>
           <Link
@@ -97,7 +98,7 @@ export default async function DashboardPage() {
           <p className="text-lg font-bold">Donner un tampon</p>
           <p className="text-sm mt-0.5 opacity-75">Scanner le QR code du client ou rechercher par téléphone</p>
         </div>
-        <span className="text-4xl">🪙</span>
+        <Stamp size={32} strokeWidth={1.9} className="text-white opacity-90" />
       </Link>
 
       {/* Stats row */}

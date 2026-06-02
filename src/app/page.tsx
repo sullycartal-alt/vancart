@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
+import { WalletCards, Trash2, Frown, BarChart3, Smartphone, RefreshCw, Trophy, Target, Rocket, BadgeCheck, Zap, ShieldCheck, MessageCircle, Check, X, Gift } from 'lucide-react'
 import PhoneParallax from './PhoneParallax'
 import PWARedirect from '@/components/pwa/PWARedirect'
 import LandingNav from '@/components/landing/LandingNav'
@@ -62,7 +63,7 @@ function PhoneMockup() {
                 </div>
               </div>
               <p style={{ fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.9)', margin: '0 0 10px', lineHeight: 1.3 }}>
-                ☕ 9 cafés achetés, 1 offert
+                9 cafés achetés, 1 offert
               </p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
                 {[0,1,2,3,4,5,6,7,8].map(i => (
@@ -102,7 +103,7 @@ function PhoneMockup() {
               boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
               border: '1px solid #f0f0f0',
             }}>
-              <div style={{ width: 32, height: 32, borderRadius: 10, background: '#6C47FF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 16 }}>🎉</div>
+              <div style={{ width: 32, height: 32, borderRadius: 10, background: '#6C47FF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Check size={16} strokeWidth={1.9} color="white" /></div>
               <div>
                 <p style={{ fontSize: 11, fontWeight: 700, color: '#1a1a1a', margin: 0, lineHeight: 1.3 }}>Tampon ajouté !</p>
                 <p style={{ fontSize: 10, color: '#6b6b6b', margin: 0, lineHeight: 1.3 }}>Plus que 4 pour votre café offert</p>
@@ -113,7 +114,7 @@ function PhoneMockup() {
           <div style={{ padding: '12px 16px 0' }}>
             <p style={{ fontSize: 10, fontWeight: 700, color: '#888', marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.5 }}>Votre récompense</p>
             <div style={{ background: '#F5F3FF', borderRadius: 12, padding: 12, display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ width: 36, height: 36, background: '#6C47FF', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, flexShrink: 0 }}>🎁</div>
+              <div style={{ width: 36, height: 36, background: '#6C47FF', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Gift size={18} strokeWidth={1.9} color="white" /></div>
               <div>
                 <p style={{ fontSize: 12, fontWeight: 700, color: '#1a1a1a', margin: 0 }}>1 café offert</p>
                 <p style={{ fontSize: 11, color: '#888', margin: 0 }}>Plus que 4 tampons</p>
@@ -173,7 +174,7 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-7 text-center lg:text-left">
               <div className="inline-flex items-center gap-2 bg-[#6C47FF]/10 text-[#6C47FF] text-xs font-semibold px-4 py-1.5 rounded-full border border-[#6C47FF]/15">
-                🎴 La carte de fidélité sans plastique, sans app
+                <WalletCards size={14} strokeWidth={1.9} className="flex-shrink-0" /> La carte de fidélité sans plastique, sans app
               </div>
               <h1 className="text-4xl sm:text-5xl font-bold text-[#1A1A1A] leading-tight">
                 Fidélisez vos clients.<br />
@@ -210,7 +211,7 @@ export default function Home() {
                   </div>
                   <p className="text-sm font-semibold text-[#1A1A1A]">+124 commerçants nous font confiance</p>
                 </div>
-                <p className="text-[10px] text-gray-300">⚠️ test — données fictives</p>
+                <p className="text-[10px] text-gray-300">test — données fictives</p>
               </div>
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-4 gap-y-1 text-xs text-[#6B6B6B]">
                 <span>✓ Sans engagement</span>
@@ -262,13 +263,13 @@ export default function Home() {
             Les cartes en plastique s&apos;égarent, s&apos;oublient, se froissent. Résultat : vos clients repartent les mains vides, et vous perdez leur fidélité.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 text-left">
-            {[
-              { icon: '🗑️', label: '73 % des cartes papier finissent à la poubelle dans le mois' },
-              { icon: '😤', label: 'Un client sur deux abandonne quand il oublie sa carte' },
-              { icon: '📊', label: 'Aucune donnée sur vos clients les plus fidèles' },
-            ].map(({ icon, label }) => (
+            {([
+              { Icon: Trash2, label: '73 % des cartes papier finissent à la poubelle dans le mois' },
+              { Icon: Frown, label: 'Un client sur deux abandonne quand il oublie sa carte' },
+              { Icon: BarChart3, label: 'Aucune donnée sur vos clients les plus fidèles' },
+            ] as { Icon: React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>; label: string }[]).map(({ Icon, label }) => (
               <div key={label} className="bg-[#F7F6F3] rounded-xl p-5 border border-[#E8E8E3] flex items-start gap-3">
-                <span className="text-2xl">{icon}</span>
+                <Icon size={24} strokeWidth={1.9} className="text-[#6C47FF] flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-[#6B6B6B] leading-relaxed">{label}</p>
               </div>
             ))}
@@ -378,25 +379,25 @@ export default function Home() {
             <h2 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">Une carte de fidélité toujours dans la poche de vos clients</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            {[
+            {([
               {
-                icon: '📱',
+                Icon: Smartphone,
                 title: 'Dans Apple & Google Wallet, sans installation',
                 desc: 'Le client scanne le QR code en caisse, la carte apparaît dans son portefeuille mobile. Aucun téléchargement, aucune friction.',
               },
               {
-                icon: '🔄',
+                Icon: RefreshCw,
                 title: 'Mise à jour en temps réel',
                 desc: 'Chaque tampon donné met automatiquement à jour la carte dans le Wallet du client.',
               },
               {
-                icon: '📊',
+                Icon: BarChart3,
                 title: 'Statistiques et données clients',
                 desc: 'Suivez vos clients les plus fidèles, votre taux de retour et l\'efficacité de votre programme depuis votre dashboard.',
               },
-            ].map(({ icon, title, desc }) => (
+            ] as { Icon: React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>; title: string; desc: string }[]).map(({ Icon, title, desc }) => (
               <div key={title} className="rounded-2xl border border-[#E8E8E3] bg-[#F7F6F3] p-7 shadow-sm hover:shadow-md transition-shadow space-y-3">
-                <div className="w-12 h-12 bg-[#6C47FF]/10 rounded-xl flex items-center justify-center text-2xl">{icon}</div>
+                <div className="w-12 h-12 bg-[#6C47FF]/10 rounded-xl flex items-center justify-center"><Icon size={24} strokeWidth={1.9} className="text-[#6C47FF]" /></div>
                 <h3 className="font-bold text-[#1A1A1A]">{title}</h3>
                 <p className="text-sm text-[#6B6B6B] leading-relaxed">{desc}</p>
               </div>
@@ -428,7 +429,7 @@ export default function Home() {
                     <h3 className="text-sm font-semibold text-[#6B6B6B] text-center">Carte papier</h3>
                     {features.map(({ feature, paper }) => (
                       <div key={feature} className="flex items-center gap-3">
-                        <span className="text-base flex-shrink-0">{paper ? '✅' : '❌'}</span>
+                        {paper ? <Check size={16} strokeWidth={1.9} className="text-green-500 flex-shrink-0" /> : <X size={16} strokeWidth={1.9} className="text-red-400 flex-shrink-0" />}
                         <p className="text-sm text-[#1A1A1A]">{feature}</p>
                       </div>
                     ))}
@@ -437,7 +438,7 @@ export default function Home() {
                     <h3 className="text-sm font-semibold text-[#6B6B6B] text-center">Application</h3>
                     {features.map(({ feature, app }) => (
                       <div key={feature} className="flex items-center gap-3">
-                        <span className="text-base flex-shrink-0">{app ? '✅' : '❌'}</span>
+                        {app ? <Check size={16} strokeWidth={1.9} className="text-green-500 flex-shrink-0" /> : <X size={16} strokeWidth={1.9} className="text-red-400 flex-shrink-0" />}
                         <p className="text-sm text-[#1A1A1A]">{feature}</p>
                       </div>
                     ))}
@@ -446,7 +447,7 @@ export default function Home() {
                     <h3 className="text-sm font-bold text-[#6C47FF] text-center">VanCart ✦</h3>
                     {features.map(({ feature, vancart }) => (
                       <div key={feature} className="flex items-center gap-3">
-                        <span className="text-base flex-shrink-0">{vancart ? '✅' : '❌'}</span>
+                        {vancart ? <Check size={16} strokeWidth={1.9} className="text-green-500 flex-shrink-0" /> : <X size={16} strokeWidth={1.9} className="text-red-400 flex-shrink-0" />}
                         <p className="text-sm text-[#1A1A1A]">{feature}</p>
                       </div>
                     ))}
@@ -468,10 +469,10 @@ export default function Home() {
                       {features.map(({ feature, paper, app, vancart }, i) => (
                         <tr key={feature} className={`border-b border-[#E8E8E3] last:border-0 ${i % 2 === 0 ? '' : 'bg-[#F7F6F3]/40'}`}>
                           <td className="px-5 py-3.5 text-sm text-[#1A1A1A] font-medium">{feature}</td>
-                          <td className="px-4 py-3.5 text-center text-lg">{paper ? '✅' : '❌'}</td>
-                          <td className="px-4 py-3.5 text-center text-lg">{app ? '✅' : '❌'}</td>
-                          <td className="px-4 py-3.5 text-center text-lg" style={{ background: '#6C47FF0D' }}>
-                            {vancart ? '✅' : '❌'}
+                          <td className="px-4 py-3.5 text-center">{paper ? <Check size={16} strokeWidth={1.9} className="text-green-500 mx-auto" /> : <X size={16} strokeWidth={1.9} className="text-red-400 mx-auto" />}</td>
+                          <td className="px-4 py-3.5 text-center">{app ? <Check size={16} strokeWidth={1.9} className="text-green-500 mx-auto" /> : <X size={16} strokeWidth={1.9} className="text-red-400 mx-auto" />}</td>
+                          <td className="px-4 py-3.5 text-center" style={{ background: '#6C47FF0D' }}>
+                            {vancart ? <Check size={16} strokeWidth={1.9} className="text-green-500 mx-auto" /> : <X size={16} strokeWidth={1.9} className="text-red-400 mx-auto" />}
                           </td>
                         </tr>
                       ))}
@@ -508,33 +509,33 @@ export default function Home() {
             <p className="text-[#6B6B6B] text-lg max-w-xl mx-auto">Nous travaillons sur des fonctionnalités encore plus puissantes pour fidéliser encore mieux vos clients.</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
+            {([
               {
-                icon: '🏆',
+                Icon: Trophy,
                 title: 'Cartes à paliers',
                 desc: 'Récompensez vos clients les plus fidèles avec un système de paliers progressifs. Points cumulables, récompenses croissantes, comme les grandes enseignes.',
                 badge: 'Plan Pro · Bientôt',
               },
               {
-                icon: '🎯',
+                Icon: Target,
                 title: 'Défis événementiels',
                 desc: 'Créez des challenges limités dans le temps. Le client le plus fidèle du mois remporte une récompense exceptionnelle.',
                 badge: 'Plan Pro · Bientôt',
               },
               {
-                icon: '📱',
+                Icon: Smartphone,
                 title: 'Notifications SMS',
                 desc: "Alertez vos clients quand leur récompense est débloquée ou lors d'une offre spéciale. Gardez le lien même après la visite.",
                 badge: 'Plan Pro · Bientôt',
               },
-            ].map(({ icon, title, desc, badge }) => (
+            ] as { Icon: React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>; title: string; desc: string; badge: string }[]).map(({ Icon, title, desc, badge }) => (
               <div key={title} className="bg-[#F7F6F3] border border-[#E8E8E3] rounded-2xl p-6 space-y-4 relative overflow-hidden">
                 <div className="absolute top-4 right-4">
                   <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#6C47FF]/10 text-[#6C47FF] border border-[#6C47FF]/15">
                     {badge}
                   </span>
                 </div>
-                <div className="w-12 h-12 bg-[#6C47FF]/8 rounded-2xl flex items-center justify-center text-2xl">{icon}</div>
+                <div className="w-12 h-12 bg-[#6C47FF]/8 rounded-2xl flex items-center justify-center"><Icon size={24} strokeWidth={1.9} className="text-[#6C47FF]" /></div>
                 <h3 className="font-bold text-[#1A1A1A] text-base pr-24">{title}</h3>
                 <p className="text-sm text-[#6B6B6B] leading-relaxed">{desc}</p>
               </div>
@@ -575,11 +576,11 @@ export default function Home() {
       {/* ── 12. Final CTA ────────────────────────────────────────────────── */}
       <section className="px-4 sm:px-6 py-20 bg-[#6C47FF] text-center">
         <div className="max-w-xl mx-auto space-y-6">
-          <div className="text-5xl">🚀</div>
+          <div className="flex justify-center"><Rocket size={48} strokeWidth={1.9} className="text-white" /></div>
           <h2 className="text-2xl sm:text-3xl font-bold text-white">Prêt à fidéliser plus de clients ?</h2>
           <p className="text-white/80 text-lg leading-relaxed">Créez votre carte de fidélité gratuitement et soyez opérationnel en 5 minutes.</p>
           <div className="inline-flex items-center gap-2 bg-white/15 text-white text-sm font-medium px-4 py-2 rounded-full border border-white/20">
-            🤝 Places limitées — RDV bilan offert à 30 jours
+            Places limitées — RDV bilan offert à 30 jours
           </div>
           <div>
             <Link href="/register" className="inline-block px-10 py-4 bg-white text-[#6C47FF] font-bold rounded-xl hover:bg-[#F7F6F3] transition-colors shadow-sm text-base">
@@ -594,14 +595,14 @@ export default function Home() {
       <footer className="border-t border-[#E8E8E3] bg-white px-4 sm:px-6 py-12">
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-10 pb-10 border-b border-[#E8E8E3]">
-            {[
-              { icon: '🆓', title: 'Gratuit pour commencer', desc: 'Aucune carte bancaire requise' },
-              { icon: '⚡', title: 'Mise en place en 5 minutes', desc: 'Simple, rapide, efficace' },
-              { icon: '🔒', title: 'Sécurisé et conforme RGPD', desc: 'Vos données sont protégées' },
-              { icon: '💬', title: 'Support réactif', desc: 'Une équipe à votre écoute' },
-            ].map(({ icon, title, desc }) => (
+            {([
+              { Icon: BadgeCheck, title: 'Gratuit pour commencer', desc: 'Aucune carte bancaire requise' },
+              { Icon: Zap, title: 'Mise en place en 5 minutes', desc: 'Simple, rapide, efficace' },
+              { Icon: ShieldCheck, title: 'Sécurisé et conforme RGPD', desc: 'Vos données sont protégées' },
+              { Icon: MessageCircle, title: 'Support réactif', desc: 'Une équipe à votre écoute' },
+            ] as { Icon: React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>; title: string; desc: string }[]).map(({ Icon, title, desc }) => (
               <div key={title} className="flex items-start gap-3">
-                <span className="text-2xl flex-shrink-0">{icon}</span>
+                <Icon size={24} strokeWidth={1.9} className="text-[#6C47FF] flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-sm font-semibold text-[#1A1A1A]">{title}</p>
                   <p className="text-xs text-[#6B6B6B] mt-0.5">{desc}</p>
@@ -618,7 +619,7 @@ export default function Home() {
               </p>
               <div className="flex items-center gap-2 pt-1">
                 <span className="inline-flex items-center gap-1.5 text-xs text-[#6B6B6B] bg-[#F7F6F3] border border-[#E8E8E3] px-2.5 py-1 rounded-full">
-                  🔒 Données hébergées en Europe 🇪🇺
+                  <ShieldCheck size={12} strokeWidth={1.9} className="inline-block mr-1" />Données hébergées en Europe 🇪🇺
                 </span>
               </div>
             </div>

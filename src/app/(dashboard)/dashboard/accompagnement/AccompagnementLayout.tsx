@@ -4,6 +4,7 @@ import { useState } from 'react'
 import ChatClient from './ChatClient'
 import UpgradeGate from '@/components/UpgradeGate'
 import { type Plan } from '@/lib/plan-features'
+import { MessageCircle, Target, BarChart3, Gift, Rocket, Smartphone, Sparkles } from 'lucide-react'
 
 interface MerchantContext {
   business_name?: string
@@ -13,9 +14,11 @@ interface MerchantContext {
   loyalty_type?: string
 }
 
+type TopicIcon = React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>
+
 interface Topic {
   id: string
-  icon: string
+  Icon: TopicIcon
   label: string
   welcome: string
 }
@@ -23,37 +26,37 @@ interface Topic {
 const TOPICS: Topic[] = [
   {
     id: 'general',
-    icon: '💬',
+    Icon: MessageCircle,
     label: 'Discuter librement',
-    welcome: "Bonjour ! Je suis votre conseiller fidélité VanCart 👋 Posez-moi n'importe quelle question sur votre programme, vos clients ou votre stratégie de fidélisation.",
+    welcome: "Bonjour ! Je suis votre conseiller fidélité VanCart. Posez-moi n'importe quelle question sur votre programme, vos clients ou votre stratégie de fidélisation.",
   },
   {
     id: 'programme',
-    icon: '🎯',
+    Icon: Target,
     label: 'Mon programme',
     welcome: "Parlons de votre programme de fidélité ! Je peux vous aider à choisir entre tampons et points, définir le bon nombre de tampons, rédiger votre règle de fidélité, ou optimiser vos récompenses.",
   },
   {
     id: 'resultats',
-    icon: '📊',
+    Icon: BarChart3,
     label: 'Mes résultats',
     welcome: "Analysons vos résultats ! Partagez-moi vos chiffres — nombre de clients, taux de retour, tampons distribués — et je vous aide à les interpréter et à identifier des axes d'amélioration.",
   },
   {
     id: 'recompenses',
-    icon: '🎁',
+    Icon: Gift,
     label: 'Récompenses',
     welcome: "Optimisons vos récompenses ! La bonne récompense peut doubler votre taux de fidélisation. Dites-moi ce que vous proposez actuellement et je vous suggèrerai des améliorations adaptées à votre commerce.",
   },
   {
     id: 'attirer',
-    icon: '🚀',
+    Icon: Rocket,
     label: 'Attirer des clients',
     welcome: "Parlons acquisition ! Je vais vous aider à trouver des stratégies concrètes pour attirer de nouveaux clients et les inciter à rejoindre votre programme de fidélité — sans budget publicitaire énorme.",
   },
   {
     id: 'digital',
-    icon: '📱',
+    Icon: Smartphone,
     label: 'Fidélité digitale',
     welcome: "La fidélité digitale, c'est votre avantage concurrentiel ! Je peux vous expliquer comment utiliser votre carte VanCart, les wallets Google et Apple, et comment communiquer efficacement avec vos clients.",
   },
@@ -89,7 +92,7 @@ export default function AccompagnementLayout({ plan, merchantContext, businessNa
                   : 'text-[#6B6B6B] hover:bg-[#F7F6F3] hover:text-[#1A1A1A]'
               }`}
             >
-              <span className="text-base leading-none">{topic.icon}</span>
+              <topic.Icon size={16} strokeWidth={1.9} className="flex-shrink-0" />
               <span className="leading-tight">{topic.label}</span>
             </button>
           ))}
@@ -118,7 +121,7 @@ export default function AccompagnementLayout({ plan, merchantContext, businessNa
                   : 'bg-[#F7F6F3] text-[#6B6B6B]'
               }`}
             >
-              <span>{topic.icon}</span>
+              <topic.Icon size={14} strokeWidth={1.9} className="flex-shrink-0" />
               <span>{topic.label}</span>
             </button>
           ))}
@@ -128,7 +131,7 @@ export default function AccompagnementLayout({ plan, merchantContext, businessNa
         <div className="flex-1 min-h-0 p-4 sm:p-5 flex flex-col gap-3">
           {businessName && (
             <div className="bg-[#6C47FF]/8 border border-[#6C47FF]/20 rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-shrink-0">
-              <span className="text-[#6C47FF] text-base">✨</span>
+              <Sparkles size={16} strokeWidth={1.9} className="text-[#6C47FF] flex-shrink-0" />
               <p className="text-sm text-[#6C47FF] font-medium">
                 L&apos;IA connaît votre commerce <strong>{businessName}</strong> et votre programme actuel.
               </p>

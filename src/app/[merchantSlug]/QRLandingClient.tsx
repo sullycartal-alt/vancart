@@ -4,6 +4,7 @@ import { useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { Target, Bookmark, WalletCards } from 'lucide-react'
 
 const customerSchema = z.object({
   phone: z.string().min(8, 'Numéro de téléphone invalide'),
@@ -248,7 +249,7 @@ export default function QRLandingClient({ merchant }: Props) {
 
           <div className="rounded-xl px-4 py-3 text-center" style={{ background: `${color}12` }}>
             <p className="text-sm font-semibold" style={{ color }}>
-              🎯 {merchant.stamps_required} tampon{merchant.stamps_required > 1 ? 's' : ''} pour votre récompense
+              <Target size={14} strokeWidth={1.9} className="inline-block mr-1" />{merchant.stamps_required} tampon{merchant.stamps_required > 1 ? 's' : ''} pour votre récompense
             </p>
           </div>
 
@@ -264,7 +265,7 @@ export default function QRLandingClient({ merchant }: Props) {
           >
             Voir ma carte →
           </a>
-          <p className="text-xs text-center text-gray-400">📌 Mettez cette page en favori</p>
+          <p className="text-xs text-center text-gray-400 flex items-center justify-center gap-1"><Bookmark size={12} strokeWidth={1.9} /> Mettez cette page en favori</p>
 
           {/* Wallet */}
           <a
@@ -330,7 +331,7 @@ export default function QRLandingClient({ merchant }: Props) {
           className="inline-flex items-center gap-2 mt-4 px-4 py-2 rounded-full text-sm font-semibold"
           style={{ background: 'rgba(255,255,255,0.18)', color: tc }}
         >
-          🎴 {merchant.loyalty_rule}
+          <WalletCards size={16} strokeWidth={1.9} className="flex-shrink-0" /> {merchant.loyalty_rule}
         </div>
 
         {/* Instagram */}

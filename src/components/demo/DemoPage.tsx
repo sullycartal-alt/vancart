@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import { Zap, Smartphone, Trophy, PartyPopper } from 'lucide-react'
 
 interface Props {
   campaign?: string
@@ -80,7 +81,7 @@ function WalletCard({ color = '#6C47FF' }: { color?: string }) {
         </div>
         <div>
           <p className="text-white/60 text-xs leading-none">Carte de fidélité</p>
-          <p className="text-white font-bold text-sm leading-tight mt-0.5">Café Demo ☕</p>
+          <p className="text-white font-bold text-sm leading-tight mt-0.5">Café Demo</p>
         </div>
         <div className="ml-auto">
           <div className="bg-white/10 rounded-lg px-2 py-0.5">
@@ -140,17 +141,17 @@ function WalletCard({ color = '#6C47FF' }: { color?: string }) {
 // ── Steps data ─────────────────────────────────────────────────────────────────
 const STEPS = [
   {
-    icon: '⚡',
+    Icon: Zap,
     title: 'Créez votre carte',
     desc: 'Nom, couleur, logo. C\'est tout.',
   },
   {
-    icon: '📱',
+    Icon: Smartphone,
     title: 'Posez le QR code en caisse',
     desc: 'Vos clients scannent, la carte apparaît dans leur téléphone.',
   },
   {
-    icon: '🏆',
+    Icon: Trophy,
     title: 'Ils reviennent',
     desc: 'Points, tampons, récompenses. Automatique.',
   },
@@ -337,7 +338,7 @@ export default function DemoPage({ campaign }: Props) {
             {STEPS.map((step, i) => (
               <div key={i} className="min-w-full px-2">
                 <div className="bg-[#F7F6F3] rounded-2xl p-7 text-center">
-                  <div style={{ fontSize: 52 }} className="mb-4 leading-none">{step.icon}</div>
+                  <div className="mb-4 flex justify-center"><step.Icon size={48} strokeWidth={1.9} style={{ color: COLOR }} /></div>
                   <h3 className="font-black text-[#1A1A1A] mb-2" style={{ fontSize: 20 }}>{step.title}</h3>
                   <p className="text-[#6B6B6B] leading-relaxed" style={{ fontSize: 17 }}>{step.desc}</p>
                 </div>
@@ -368,7 +369,7 @@ export default function DemoPage({ campaign }: Props) {
         <div className="hidden sm:grid sm:grid-cols-3 gap-4">
           {STEPS.map((step, i) => (
             <div key={i} className="bg-[#F7F6F3] rounded-2xl p-6 text-center">
-              <div style={{ fontSize: 44 }} className="mb-3 leading-none">{step.icon}</div>
+              <div className="mb-3 flex justify-center"><step.Icon size={40} strokeWidth={1.9} style={{ color: COLOR }} /></div>
               <h3 className="font-black text-[#1A1A1A] mb-1.5" style={{ fontSize: 18 }}>{step.title}</h3>
               <p className="text-[#6B6B6B] leading-relaxed" style={{ fontSize: 15 }}>{step.desc}</p>
             </div>
@@ -454,7 +455,7 @@ export default function DemoPage({ campaign }: Props) {
             className="font-black text-[#1A1A1A] text-center mb-2"
             style={{ fontSize: 'clamp(22px, 6vw, 28px)' }}
           >
-            Sullivan &amp; Audrey vous contactent sous 24h 🤝
+            Sullivan &amp; Audrey vous contactent sous 24h
           </h2>
           <p className="text-center text-[#6B6B6B] mb-8" style={{ fontSize: 16 }}>
             Gratuit · Sans engagement · 5 minutes pour tout configurer ensemble
@@ -462,7 +463,7 @@ export default function DemoPage({ campaign }: Props) {
 
           {success ? (
             <div className="text-center py-10 space-y-4">
-              <div style={{ fontSize: 64 }}>🎉</div>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}><PartyPopper size={64} strokeWidth={1.9} style={{ color: COLOR }} /></div>
               <h3 className="font-black text-[#1A1A1A]" style={{ fontSize: 22 }}>
                 Merci ! On vous recontacte très vite.
               </h3>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { Sparkles } from 'lucide-react'
 
 const getNudgeKey = () => `vancart_pro_nudge_${new Date().toISOString().slice(0, 7)}`
 
@@ -26,7 +27,7 @@ export default function ProNudge() {
     <div className="fixed bottom-20 right-6 z-40 max-w-xs bg-white border border-[#E8E8E3] rounded-2xl shadow-xl p-4 space-y-3 animate-fade-in">
       <div className="flex items-start justify-between gap-2">
         <p className="text-sm font-semibold text-[#1A1A1A]">
-          ✨ Passez au plan Pro
+          <Sparkles size={16} strokeWidth={1.9} className="inline-block mr-1 text-[#6C47FF]" />Passez au plan Pro
         </p>
         <button onClick={dismiss} className="text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors text-lg leading-none mt-0.5">×</button>
       </div>

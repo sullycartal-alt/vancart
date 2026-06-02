@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { CircleArrowUp } from 'lucide-react'
 import NavSettingsHint from './NavSettingsHint'
 
 interface Props {
@@ -77,7 +78,7 @@ export default function MobileNav({ isAdmin, plan, primaryColor = '#6C47FF', has
               {plan === 'free' && (
                 <Link href="/dashboard/upgrade" onClick={close}
                   className="flex items-center gap-3 px-4 py-3 rounded-xl text-[#6C47FF] font-medium text-sm bg-[#6C47FF]/8 hover:bg-[#6C47FF]/12 transition-colors">
-                  ⬆️ Upgrade vers Essentiel
+                  <CircleArrowUp size={16} strokeWidth={1.9} className="inline-block mr-1" />Upgrade vers Essentiel
                 </Link>
               )}
             </nav>

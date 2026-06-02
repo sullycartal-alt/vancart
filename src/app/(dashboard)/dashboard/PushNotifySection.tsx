@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { Check } from 'lucide-react'
 
 export default function PushNotifySection({ merchantId }: { merchantId: string }) {
   const [message, setMessage] = useState('☕ Revenez nous voir — votre récompense vous attend !')
@@ -58,7 +59,7 @@ export default function PushNotifySection({ merchantId }: { merchantId: string }
 
         {status && (
           <p className="text-sm text-green-600 font-medium">
-            ✅ Envoyée à {status.sent} client{status.sent !== 1 ? 's' : ''}
+            <Check size={16} strokeWidth={1.9} className="inline-block mr-1 text-green-600 flex-shrink-0" />Envoyée à {status.sent} client{status.sent !== 1 ? 's' : ''}
             {status.sent < status.total ? ` (${status.total - status.sent} échec${status.total - status.sent !== 1 ? 's' : ''})` : ''}
           </p>
         )}

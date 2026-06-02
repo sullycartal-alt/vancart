@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { LogoLockup } from '@/components/brand/Logo'
 import LogoutButton from './LogoutButton'
 import GuideHelper from './GuideHelper'
 import ProNudge from './ProNudge'
@@ -72,8 +73,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center gap-8">
-              <Link href="/dashboard" className="text-xl font-bold text-[#6C47FF]">
-                VanCart
+              <Link href="/dashboard" className="flex items-center">
+                <LogoLockup size={32} />
               </Link>
               <div className="hidden sm:flex items-center gap-6">
                 <Link prefetch href="/dashboard" className="text-sm text-[#6B6B6B] hover:text-[#1A1A1A] font-medium transition-colors">

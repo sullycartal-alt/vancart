@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import { LogoLockup } from '@/components/brand/Logo'
 
 const DISCOVER_LINKS = [
   { href: '#fonctionnalites', label: 'Fonctionnalités' },
@@ -43,7 +44,9 @@ export default function LandingNav() {
     <nav className="border-b border-[#E8E8E3] px-4 sm:px-6 py-4 bg-white sticky top-0 z-50">
       <div className="max-w-5xl mx-auto flex items-center justify-between">
         {/* Logo */}
-        <span className="text-xl font-bold text-[#6C47FF]">VanCart</span>
+        <Link href="/" className="flex items-center">
+          <LogoLockup size={30} />
+        </Link>
 
         {/* Desktop links */}
         <div className="hidden sm:flex items-center gap-5">

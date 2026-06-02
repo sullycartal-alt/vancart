@@ -16,6 +16,13 @@ export const metadata: Metadata = {
   title: { default: 'VanCart', template: '%s — VanCart' },
   description: 'Cartes de fidélité dématérialisées pour commerçants indépendants',
   manifest: '/manifest.webmanifest',
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+    ],
+    apple: '/icons/apple-touch-icon.png',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',

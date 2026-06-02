@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="78" height="78" viewBox="0 0 78 78" role="img" aria-label="VanCart">
+  
+  <g transform="translate(5,5)">
+    <polygon points="12,12 52,12 60,22 60,62 20,62 12,52" fill="#15131A"></polygon>
+  </g>
+  
+  <polygon points="20,22 12,12 12,52 20,62" fill="#ffffff" stroke="#15131A" stroke-width="4.5" stroke-linejoin="round"></polygon>
+  
+  <polygon points="20,22 60,22 52,12 12,12" fill="#ffffff" stroke="#15131A" stroke-width="4.5" stroke-linejoin="round"></polygon>
+  
+  <rect x="20" y="22" width="40" height="40" rx="3" fill="#ffffff" stroke="#15131A" stroke-width="4.5" stroke-linejoin="round"></rect>
+  
+  <path d="M29 40 L37.5 50 L53 30" fill="none" stroke="#6C47FF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>

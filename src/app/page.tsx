@@ -4,6 +4,7 @@ import PhoneParallax from './PhoneParallax'
 import PWARedirect from '@/components/pwa/PWARedirect'
 import LandingNav from '@/components/landing/LandingNav'
 import PricingCards from '@/components/landing/PricingCards'
+import { LogoLockup } from '@/components/brand/Logo'
 
 const ScrollingCarousel = dynamic(() => import('@/components/landing/ScrollingCarousel'))
 const DashboardDemo = dynamic(() => import('@/components/landing/DashboardDemo'))
@@ -611,7 +612,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
             <div className="space-y-3">
-              <span className="text-xl font-bold text-[#6C47FF]">VanCart</span>
+              <LogoLockup size={28} />
               <p className="text-sm text-[#6B6B6B] leading-relaxed">
                 La fidélité digitale pour les commerçants indépendants. Propulsé par une IA française 🇫🇷
               </p>

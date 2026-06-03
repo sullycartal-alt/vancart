@@ -1,94 +1,16 @@
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
-import { WalletCards, Trash2, Frown, BarChart3, Smartphone, RefreshCw, BadgeCheck, Zap, ShieldCheck, MessageCircle, Check, X, Gift, Rocket } from 'lucide-react'
+import { WalletCards, Trash2, Frown, BarChart3, Smartphone, RefreshCw, BadgeCheck, Zap, ShieldCheck, MessageCircle, Check, X, Rocket } from 'lucide-react'
 import PWARedirect from '@/components/pwa/PWARedirect'
 import LandingNav from '@/components/landing/LandingNav'
 import PricingCards from '@/components/landing/PricingCards'
 import { LogoLockup } from '@/components/brand/Logo'
+import { LandingHeroCards } from '@/components/landing/LandingHeroCards'
 
 const ScrollingCarousel = dynamic(() => import('@/components/landing/ScrollingCarousel'))
 const DashboardDemo = dynamic(() => import('@/components/landing/DashboardDemo'))
 
 
-function DashboardPreview() {
-  return (
-    <div className="relative select-none w-full max-w-md mx-auto lg:mx-0">
-      <div className="absolute -inset-6 bg-[#6C47FF]/6 rounded-3xl blur-2xl pointer-events-none" />
-      <div className="relative bg-white rounded-2xl border border-[#E8E8E3] overflow-hidden shadow-md">
-        {/* Header */}
-        <div className="px-5 py-3.5 border-b border-[#E8E8E3] flex items-center justify-between bg-white">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-[#6C47FF] flex items-center justify-center flex-shrink-0">
-              <span className="text-white text-[10px] font-bold">CA</span>
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-[#1A1A1A]">Café des Arts</p>
-              <p className="text-xs text-[#6B6B6B]">Dashboard fidélité</p>
-            </div>
-          </div>
-          <span className="text-[10px] font-semibold bg-green-50 text-green-600 px-2 py-0.5 rounded-full border border-green-100">En ligne</span>
-        </div>
-
-        {/* KPI grid */}
-        <div className="p-4 grid grid-cols-2 gap-3">
-          {[
-            { label: 'Clients fidèles', value: '124', sub: '+8 ce mois', color: '#6C47FF' },
-            { label: 'Taux de retour', value: '68%', sub: '+5 pts vs mois dernier', color: '#10B981' },
-            { label: 'Récompenses', value: '23', sub: 'distribuées ce mois', color: '#F59E0B' },
-            { label: 'Tampons cette sem.', value: '47', sub: 'vs 39 la semaine passée', color: '#6C47FF' },
-          ].map(({ label, value, sub, color }) => (
-            <div key={label} className="bg-[#F7F6F3] rounded-xl p-3.5 border border-[#E8E8E3]">
-              <p className="text-[10px] text-[#6B6B6B] mb-1">{label}</p>
-              <p className="text-2xl font-bold leading-none" style={{ color }}>{value}</p>
-              <p className="text-[10px] text-[#6B6B6B] mt-1 leading-snug">{sub}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Quick stamp row */}
-        <div className="px-4 pb-4">
-          <div className="bg-[#F7F6F3] rounded-xl p-3.5 border border-[#E8E8E3] flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="w-8 h-8 bg-[#6C47FF] rounded-lg flex items-center justify-center flex-shrink-0">
-                <Check size={14} strokeWidth={2.5} color="white" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs font-semibold text-[#1A1A1A]">Tamponner un client</p>
-                <p className="text-[10px] text-[#6B6B6B]">Saisir n° ou scanner le QR code</p>
-              </div>
-            </div>
-            <div className="w-7 h-7 bg-[#6C47FF] rounded-lg flex items-center justify-center flex-shrink-0">
-              <svg width="12" height="12" fill="none" stroke="white" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-              </svg>
-            </div>
-          </div>
-        </div>
-
-        {/* Loyalty card preview strip */}
-        <div className="px-4 pb-4">
-          <div className="rounded-xl overflow-hidden" style={{ background: 'linear-gradient(135deg, #7C5CFC 0%, #5835E0 100%)' }}>
-            <div className="px-4 py-3 flex items-center justify-between">
-              <div>
-                <p className="text-[10px] font-semibold text-white/70">Carte active · Marie L.</p>
-                <p className="text-sm font-bold text-white mt-0.5">5 / 9 tampons</p>
-              </div>
-              <div className="flex gap-1.5">
-                {[0,1,2,3,4,5,6,7,8].map(i => (
-                  <div key={i} style={{
-                    width: 14, height: 14, borderRadius: '50%',
-                    background: i < 5 ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.22)',
-                    border: i < 5 ? 'none' : '1px solid rgba(255,255,255,0.35)',
-                  }} />
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
 
 export default function Home() {
   return (
@@ -155,10 +77,8 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right: dashboard preview */}
-            <div className="hidden lg:block">
-              <DashboardPreview />
-            </div>
+            {/* Right: loyalty card stack */}
+            <LandingHeroCards />
           </div>
         </div>
       </section>

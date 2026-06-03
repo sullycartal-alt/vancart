@@ -1,163 +1,16 @@
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
-import { WalletCards, Trash2, Frown, BarChart3, Smartphone, RefreshCw, Trophy, Target, Rocket, BadgeCheck, Zap, ShieldCheck, MessageCircle, Check, X, Gift } from 'lucide-react'
-import PhoneParallax from './PhoneParallax'
+import { Trash2, Frown, BarChart3, Smartphone, RefreshCw, BadgeCheck, Zap, ShieldCheck, MessageCircle, Check, X, Rocket } from 'lucide-react'
 import PWARedirect from '@/components/pwa/PWARedirect'
 import LandingNav from '@/components/landing/LandingNav'
 import PricingCards from '@/components/landing/PricingCards'
 import { LogoLockup } from '@/components/brand/Logo'
+import LandingHero from '@/components/landing/LandingHero'
 
 const ScrollingCarousel = dynamic(() => import('@/components/landing/ScrollingCarousel'))
 const DashboardDemo = dynamic(() => import('@/components/landing/DashboardDemo'))
 
 
-function PhoneMockup() {
-  return (
-    <div className="relative flex items-center justify-center select-none">
-      <div style={{
-        position: 'absolute',
-        width: 400, height: 400,
-        background: 'radial-gradient(ellipse, rgba(108,71,255,0.12), transparent 70%)',
-        borderRadius: '50%',
-        pointerEvents: 'none',
-      }} />
-
-      <div style={{
-        width: 280,
-        background: '#1a1a1a',
-        borderRadius: 44,
-        padding: 6,
-        boxShadow: '0 0 0 1px #2a2a2a, 0 30px 60px rgba(0,0,0,0.25), 0 15px 30px rgba(108,71,255,0.12)',
-        position: 'relative',
-      }}>
-        <div style={{ position: 'absolute', right: -2, top: 100, width: 2, height: 60, background: '#2a2a2a', borderRadius: '0 3px 3px 0', boxShadow: '0 80px 0 #2a2a2a' }} />
-        <div style={{ position: 'absolute', left: -2, top: 80, width: 2, height: 35, background: '#2a2a2a', borderRadius: '3px 0 0 3px', boxShadow: '0 50px 0 #2a2a2a, 0 100px 0 #2a2a2a' }} />
-
-        <div style={{ background: '#f5f5f7', borderRadius: 38, overflow: 'hidden', minHeight: 520, position: 'relative' }}>
-          <div style={{ width: 90, height: 28, background: '#000', borderRadius: 14, position: 'absolute', top: 12, left: '50%', transform: 'translateX(-50%)', zIndex: 10 }} />
-
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px 6px', background: '#f5f5f7' }}>
-            <span style={{ fontSize: 13, fontWeight: 700, color: '#1a1a1a', letterSpacing: -0.3 }}>9:41</span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-              <svg width="17" height="12" viewBox="0 0 17 12" fill="none"><rect x="0" y="6" width="3" height="6" rx="1" fill="#1a1a1a"/><rect x="4.5" y="4" width="3" height="8" rx="1" fill="#1a1a1a"/><rect x="9" y="2" width="3" height="10" rx="1" fill="#1a1a1a"/><rect x="13.5" y="0" width="3" height="12" rx="1" fill="#1a1a1a"/></svg>
-              <svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M8 9.5c.7 0 1.2.5 1.2 1.2S8.7 12 8 12s-1.2-.5-1.2-1.2S7.3 9.5 8 9.5z" fill="#1a1a1a"/><path d="M4.8 7.2C5.7 6.4 6.8 6 8 6s2.3.4 3.2 1.2" stroke="#1a1a1a" strokeWidth="1.3" strokeLinecap="round" fill="none"/><path d="M2 4.4C3.5 3 5.7 2 8 2s4.5 1 6 2.4" stroke="#1a1a1a" strokeWidth="1.3" strokeLinecap="round" fill="none"/></svg>
-              <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x="0.5" y="0.5" width="21" height="11" rx="3.5" stroke="#1a1a1a" strokeOpacity="0.35"/><rect x="2" y="2" width="16" height="8" rx="2" fill="#1a1a1a"/><path d="M22.5 4v4a2 2 0 000-4z" fill="#1a1a1a" fillOpacity="0.4"/></svg>
-            </div>
-          </div>
-
-          <div style={{ padding: '4px 14px 16px' }}>
-            <div style={{
-              background: 'linear-gradient(135deg, #7C5CFC 0%, #5835E0 100%)',
-              borderRadius: 20,
-              padding: '14px 16px',
-              boxShadow: '0 8px 24px rgba(108,71,255,0.35)',
-              marginBottom: 10,
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-                <div style={{ width: 36, height: 36, borderRadius: 12, background: 'rgba(255,255,255,0.22)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <span style={{ fontSize: 11, fontWeight: 900, color: 'white', letterSpacing: -0.5 }}>CA</span>
-                </div>
-                <div>
-                  <p style={{ fontSize: 12, fontWeight: 700, color: 'white', margin: 0, lineHeight: 1.2 }}>Café des Arts</p>
-                  <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.65)', margin: 0 }}>Carte de fidélité</p>
-                </div>
-              </div>
-              <p style={{ fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.9)', margin: '0 0 10px', lineHeight: 1.3 }}>
-                9 cafés achetés, 1 offert
-              </p>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
-                {[0,1,2,3,4,5,6,7,8].map(i => (
-                  <div key={i} style={{
-                    width: 22, height: 22, borderRadius: '50%',
-                    background: i < 5 ? 'white' : 'rgba(255,255,255,0.18)',
-                    border: i < 5 ? 'none' : '1.5px solid rgba(255,255,255,0.35)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 11, color: i < 5 ? '#6C47FF' : 'transparent',
-                    fontWeight: 700,
-                  }}>
-                    {i < 5 ? '✓' : ''}
-                  </div>
-                ))}
-              </div>
-              <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.6)', margin: 0 }}>5 / 9 tampons</p>
-            </div>
-
-            <div style={{ display: 'flex', gap: 8, marginBottom: 10 }}>
-              <div style={{ flex: 1, border: '1px solid #e0e0e0', borderRadius: 12, padding: '8px 6px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, background: 'white' }}>
-                <svg width="12" height="12" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-                <span style={{ fontSize: 9, fontWeight: 600, color: '#1a1a1a' }}>Google Wallet</span>
-              </div>
-              <div style={{ flex: 1, borderRadius: 12, padding: '8px 6px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, background: '#1a1a1a' }}>
-                <svg width="10" height="12" viewBox="0 0 24 24" fill="white"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-                <span style={{ fontSize: 9, fontWeight: 600, color: 'white' }}>Apple Wallet</span>
-              </div>
-            </div>
-
-            <div style={{
-              background: 'white',
-              borderRadius: 14,
-              padding: '10px 12px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-              boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
-              border: '1px solid #f0f0f0',
-            }}>
-              <div style={{ width: 32, height: 32, borderRadius: 10, background: '#6C47FF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Check size={16} strokeWidth={1.9} color="white" /></div>
-              <div>
-                <p style={{ fontSize: 11, fontWeight: 700, color: '#1a1a1a', margin: 0, lineHeight: 1.3 }}>Tampon ajouté !</p>
-                <p style={{ fontSize: 10, color: '#6b6b6b', margin: 0, lineHeight: 1.3 }}>Plus que 4 pour votre café offert</p>
-              </div>
-            </div>
-          </div>
-
-          <div style={{ padding: '12px 16px 0' }}>
-            <p style={{ fontSize: 10, fontWeight: 700, color: '#888', marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.5 }}>Votre récompense</p>
-            <div style={{ background: '#F5F3FF', borderRadius: 12, padding: 12, display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ width: 36, height: 36, background: '#6C47FF', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}><Gift size={18} strokeWidth={1.9} color="white" /></div>
-              <div>
-                <p style={{ fontSize: 12, fontWeight: 700, color: '#1a1a1a', margin: 0 }}>1 café offert</p>
-                <p style={{ fontSize: 11, color: '#888', margin: 0 }}>Plus que 4 tampons</p>
-              </div>
-            </div>
-          </div>
-
-          <div style={{ padding: '12px 16px 16px', textAlign: 'center' }}>
-            <p style={{ fontSize: 10, color: '#888', marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.5, fontWeight: 700 }}>Présenter en caisse</p>
-            <div style={{ background: '#f8f8f8', borderRadius: 12, padding: 12, display: 'inline-block' }}>
-              <svg width="80" height="80" viewBox="0 0 80 80">
-                <rect width="80" height="80" fill="white"/>
-                <rect x="5" y="5" width="25" height="25" fill="none" stroke="#1a1a1a" strokeWidth="3"/>
-                <rect x="10" y="10" width="15" height="15" fill="#1a1a1a"/>
-                <rect x="50" y="5" width="25" height="25" fill="none" stroke="#1a1a1a" strokeWidth="3"/>
-                <rect x="55" y="10" width="15" height="15" fill="#1a1a1a"/>
-                <rect x="5" y="50" width="25" height="25" fill="none" stroke="#1a1a1a" strokeWidth="3"/>
-                <rect x="10" y="55" width="15" height="15" fill="#1a1a1a"/>
-                <rect x="35" y="35" width="5" height="5" fill="#1a1a1a"/>
-                <rect x="42" y="35" width="5" height="5" fill="#1a1a1a"/>
-                <rect x="49" y="35" width="5" height="5" fill="#1a1a1a"/>
-                <rect x="56" y="35" width="5" height="5" fill="#1a1a1a"/>
-                <rect x="35" y="42" width="5" height="5" fill="#1a1a1a"/>
-                <rect x="49" y="42" width="5" height="5" fill="#1a1a1a"/>
-                <rect x="35" y="49" width="5" height="5" fill="#1a1a1a"/>
-                <rect x="42" y="49" width="5" height="5" fill="#1a1a1a"/>
-                <rect x="56" y="49" width="5" height="5" fill="#1a1a1a"/>
-                <rect x="63" y="42" width="5" height="5" fill="#1a1a1a"/>
-                <rect x="63" y="56" width="5" height="5" fill="#1a1a1a"/>
-                <rect x="56" y="63" width="5" height="5" fill="#1a1a1a"/>
-                <rect x="42" y="56" width="5" height="5" fill="#1a1a1a"/>
-              </svg>
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', justifyContent: 'center', paddingBottom: 10, paddingTop: 4 }}>
-            <div style={{ width: 100, height: 4, background: '#c0c0c0', borderRadius: 4 }} />
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
 
 export default function Home() {
   return (
@@ -168,69 +21,7 @@ export default function Home() {
       <LandingNav />
 
       {/* ── 1. Hero ──────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-[#F7F6F3] px-4 sm:px-6 py-16 sm:py-24">
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#6C47FF]/5 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/3" />
-        <div className="relative max-w-5xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-7 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 bg-[#6C47FF]/10 text-[#6C47FF] text-xs font-semibold px-4 py-1.5 rounded-full border border-[#6C47FF]/15">
-                <WalletCards size={14} strokeWidth={1.9} className="flex-shrink-0" /> La carte de fidélité sans plastique, sans app
-              </div>
-              <h1 className="text-4xl sm:text-5xl font-bold text-[#1A1A1A] leading-tight">
-                Fidélisez vos clients.<br />
-                <span className="text-[#6C47FF]">Sans carte. Sans application.</span>
-              </h1>
-              <p className="text-lg text-[#6B6B6B] max-w-lg leading-relaxed">
-                VanCart génère un QR code unique pour votre commerce. Vos clients scannent, collectent des tampons digitaux et reçoivent leurs récompenses — directement dans leur portefeuille mobile.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
-                <Link href="/register" className="w-full sm:w-auto px-8 py-3.5 bg-[#6C47FF] text-white font-bold rounded-xl hover:bg-[#5835e0] transition-colors shadow-sm text-sm text-center">
-                  Créer mon compte gratuit →
-                </Link>
-                <Link href="/login" className="w-full sm:w-auto text-sm font-medium text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors text-center py-3.5">
-                  J&apos;ai déjà un compte
-                </Link>
-              </div>
-              <div className="flex flex-col items-center lg:items-start gap-1">
-                <div className="flex items-center gap-3">
-                  <div className="flex -space-x-2 flex-shrink-0">
-                    {[
-                      { initials: 'JD', bg: '#6C47FF' },
-                      { initials: 'ML', bg: '#10B981' },
-                      { initials: 'SC', bg: '#F59E0B' },
-                      { initials: 'AR', bg: '#EF4444' },
-                    ].map(({ initials, bg }) => (
-                      <div
-                        key={initials}
-                        className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0"
-                        style={{ backgroundColor: bg }}
-                      >
-                        {initials}
-                      </div>
-                    ))}
-                  </div>
-                  <p className="text-sm font-semibold text-[#1A1A1A]">+124 commerçants nous font confiance</p>
-                </div>
-                <p className="text-[10px] text-gray-300">test — données fictives</p>
-              </div>
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-4 gap-y-1 text-xs text-[#6B6B6B]">
-                <span>✓ Sans engagement</span>
-                <span className="hidden sm:inline text-[#E8E8E3]">·</span>
-                <span>✓ Installation en 5 minutes</span>
-                <span className="hidden sm:inline text-[#E8E8E3]">·</span>
-                <span>✓ Données hébergées en Europe 🇪🇺</span>
-                <span className="hidden sm:inline text-[#E8E8E3]">·</span>
-                <span>✓ Support réactif</span>
-              </div>
-            </div>
-            <div className="hidden lg:flex justify-center items-center" style={{ minHeight: 680 }}>
-              <PhoneParallax>
-                <PhoneMockup />
-              </PhoneParallax>
-            </div>
-          </div>
-        </div>
-      </section>
+      <LandingHero />
 
       {/* ── 2. Stats ─────────────────────────────────────────────────────── */}
       <section className="px-4 sm:px-6 py-16 bg-[#F7F6F3]">
@@ -277,7 +68,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── 5. Comment ça marche (mobile swipe) ──────────────────────────── */}
+      {/* ── 5. Comment ça marche ─────────────────────────────────────────── */}
       <section id="comment-ca-marche" className="px-4 sm:px-6 py-20 bg-[#F7F6F3]" style={{ scrollMarginTop: '80px' }}>
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12 space-y-3">
@@ -371,14 +162,19 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── 6. La solution ───────────────────────────────────────────────── */}
+      {/* ── 6. Pourquoi VanCart — features + comparison merged ───────────── */}
       <section id="fonctionnalites" className="px-4 sm:px-6 py-20 bg-white" style={{ scrollMarginTop: '80px' }}>
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12 space-y-3">
-            <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">La solution</p>
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">Une carte de fidélité toujours dans la poche de vos clients</h2>
+            <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">Pourquoi VanCart</p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">La fidélité, enfin accessible à tous</h2>
+            <p className="text-[#6B6B6B] text-base max-w-lg mx-auto leading-relaxed">
+              Une carte toujours dans la poche de vos clients, sans plastique ni application à installer.
+            </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+
+          {/* Feature cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-10">
             {([
               {
                 Icon: Smartphone,
@@ -393,27 +189,20 @@ export default function Home() {
               {
                 Icon: BarChart3,
                 title: 'Statistiques et données clients',
-                desc: 'Suivez vos clients les plus fidèles, votre taux de retour et l\'efficacité de votre programme depuis votre dashboard.',
+                desc: "Suivez vos clients les plus fidèles, votre taux de retour et l'efficacité de votre programme depuis votre dashboard.",
               },
             ] as { Icon: React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>; title: string; desc: string }[]).map(({ Icon, title, desc }) => (
-              <div key={title} className="rounded-2xl border border-[#E8E8E3] bg-[#F7F6F3] p-7 shadow-sm hover:shadow-md transition-shadow space-y-3">
-                <div className="w-12 h-12 bg-[#6C47FF]/10 rounded-xl flex items-center justify-center"><Icon size={24} strokeWidth={1.9} className="text-[#6C47FF]" /></div>
-                <h3 className="font-bold text-[#1A1A1A]">{title}</h3>
+              <div key={title} className="rounded-2xl border border-[#E8E8E3] bg-[#F7F6F3] p-6 shadow-sm hover:shadow-md transition-shadow space-y-3">
+                <div className="w-11 h-11 bg-[#6C47FF]/10 rounded-xl flex items-center justify-center">
+                  <Icon size={22} strokeWidth={1.9} className="text-[#6C47FF]" />
+                </div>
+                <h3 className="font-bold text-[#1A1A1A] text-sm leading-snug">{title}</h3>
                 <p className="text-sm text-[#6B6B6B] leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>
-        </div>
-      </section>
 
-      {/* ── 7. Pourquoi VanCart (comparison table, no "La différence") ──── */}
-      <section className="px-4 sm:px-6 py-20 bg-[#F7F6F3]">
-        <div className="max-w-3xl mx-auto">
-          <div className="text-center mb-12 space-y-3">
-            <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">Pourquoi VanCart</p>
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">La fidélité, enfin accessible à tous</h2>
-          </div>
-
+          {/* Comparison */}
           {(() => {
             const features = [
               { feature: 'Toujours dans la poche', paper: false, app: true, vancart: true },
@@ -424,8 +213,9 @@ export default function Home() {
             ]
             return (
               <>
-                <div className="sm:hidden space-y-4">
-                  <div className="bg-white border border-[#E8E8E3] rounded-2xl p-5 space-y-3">
+                {/* Mobile stacked cards */}
+                <div className="sm:hidden space-y-3">
+                  <div className="bg-[#F7F6F3] border border-[#E8E8E3] rounded-2xl p-5 space-y-3">
                     <h3 className="text-sm font-semibold text-[#6B6B6B] text-center">Carte papier</h3>
                     {features.map(({ feature, paper }) => (
                       <div key={feature} className="flex items-center gap-3">
@@ -434,8 +224,8 @@ export default function Home() {
                       </div>
                     ))}
                   </div>
-                  <div className="bg-white border border-[#E8E8E3] rounded-2xl p-5 space-y-3">
-                    <h3 className="text-sm font-semibold text-[#6B6B6B] text-center">Application</h3>
+                  <div className="bg-[#F7F6F3] border border-[#E8E8E3] rounded-2xl p-5 space-y-3">
+                    <h3 className="text-sm font-semibold text-[#6B6B6B] text-center">Application mobile</h3>
                     {features.map(({ feature, app }) => (
                       <div key={feature} className="flex items-center gap-3">
                         {app ? <Check size={16} strokeWidth={1.9} className="text-green-500 flex-shrink-0" /> : <X size={16} strokeWidth={1.9} className="text-red-400 flex-shrink-0" />}
@@ -443,7 +233,7 @@ export default function Home() {
                       </div>
                     ))}
                   </div>
-                  <div className="border-2 border-[#6C47FF]/30 rounded-2xl p-5 space-y-3" style={{ background: '#6C47FF0A' }}>
+                  <div className="border-2 border-[#6C47FF]/25 rounded-2xl p-5 space-y-3" style={{ background: '#6C47FF0A' }}>
                     <h3 className="text-sm font-bold text-[#6C47FF] text-center">VanCart ✦</h3>
                     {features.map(({ feature, vancart }) => (
                       <div key={feature} className="flex items-center gap-3">
@@ -453,21 +243,23 @@ export default function Home() {
                     ))}
                   </div>
                 </div>
-                <div className="hidden sm:block bg-white rounded-2xl border border-[#E8E8E3] overflow-hidden">
+
+                {/* Desktop table */}
+                <div className="hidden sm:block bg-[#F7F6F3] rounded-2xl border border-[#E8E8E3] overflow-hidden">
                   <table className="w-full">
                     <thead>
                       <tr className="border-b border-[#E8E8E3]">
                         <th className="px-5 py-4 text-left text-sm font-semibold text-[#6B6B6B] w-2/5"></th>
                         <th className="px-4 py-4 text-center text-sm font-semibold text-[#6B6B6B]">Carte papier</th>
                         <th className="px-4 py-4 text-center text-sm font-semibold text-[#6B6B6B]">Application</th>
-                        <th className="px-4 py-4 text-center rounded-t-none" style={{ background: '#6C47FF0D' }}>
+                        <th className="px-4 py-4 text-center" style={{ background: '#6C47FF0D' }}>
                           <span className="text-sm font-bold text-[#6C47FF]">VanCart ✦</span>
                         </th>
                       </tr>
                     </thead>
                     <tbody>
                       {features.map(({ feature, paper, app, vancart }, i) => (
-                        <tr key={feature} className={`border-b border-[#E8E8E3] last:border-0 ${i % 2 === 0 ? '' : 'bg-[#F7F6F3]/40'}`}>
+                        <tr key={feature} className={`border-b border-[#E8E8E3] last:border-0 ${i % 2 === 0 ? 'bg-white' : ''}`}>
                           <td className="px-5 py-3.5 text-sm text-[#1A1A1A] font-medium">{feature}</td>
                           <td className="px-4 py-3.5 text-center">{paper ? <Check size={16} strokeWidth={1.9} className="text-green-500 mx-auto" /> : <X size={16} strokeWidth={1.9} className="text-red-400 mx-auto" />}</td>
                           <td className="px-4 py-3.5 text-center">{app ? <Check size={16} strokeWidth={1.9} className="text-green-500 mx-auto" /> : <X size={16} strokeWidth={1.9} className="text-red-400 mx-auto" />}</td>
@@ -485,10 +277,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── 8. Dashboard demo (interactive) ──────────────────────────────── */}
+      {/* ── 7. Dashboard demo (interactive) ──────────────────────────────── */}
       <DashboardDemo />
 
-      {/* ── 9. Pricing ───────────────────────────────────────────────────── */}
+      {/* ── 8. Pricing ───────────────────────────────────────────────────── */}
       <section id="tarifs" className="px-4 sm:px-6 py-20 bg-[#F7F6F3]" style={{ scrollMarginTop: '80px' }}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12 space-y-3">
@@ -500,52 +292,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── 10. Roadmap ──────────────────────────────────────────────────── */}
-      <section id="roadmap" className="px-4 sm:px-6 py-20 bg-white" style={{ scrollMarginTop: '80px' }}>
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12 space-y-3">
-            <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">Roadmap</p>
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">Bientôt disponible</h2>
-            <p className="text-[#6B6B6B] text-lg max-w-xl mx-auto">Nous travaillons sur des fonctionnalités encore plus puissantes pour fidéliser encore mieux vos clients.</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {([
-              {
-                Icon: Trophy,
-                title: 'Cartes à paliers',
-                desc: 'Récompensez vos clients les plus fidèles avec un système de paliers progressifs. Points cumulables, récompenses croissantes, comme les grandes enseignes.',
-                badge: 'Plan Pro · Bientôt',
-              },
-              {
-                Icon: Target,
-                title: 'Défis événementiels',
-                desc: 'Créez des challenges limités dans le temps. Le client le plus fidèle du mois remporte une récompense exceptionnelle.',
-                badge: 'Plan Pro · Bientôt',
-              },
-              {
-                Icon: Smartphone,
-                title: 'Notifications SMS',
-                desc: "Alertez vos clients quand leur récompense est débloquée ou lors d'une offre spéciale. Gardez le lien même après la visite.",
-                badge: 'Plan Pro · Bientôt',
-              },
-            ] as { Icon: React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>; title: string; desc: string; badge: string }[]).map(({ Icon, title, desc, badge }) => (
-              <div key={title} className="bg-[#F7F6F3] border border-[#E8E8E3] rounded-2xl p-6 space-y-4 relative overflow-hidden">
-                <div className="absolute top-4 right-4">
-                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#6C47FF]/10 text-[#6C47FF] border border-[#6C47FF]/15">
-                    {badge}
-                  </span>
-                </div>
-                <div className="w-12 h-12 bg-[#6C47FF]/8 rounded-2xl flex items-center justify-center"><Icon size={24} strokeWidth={1.9} className="text-[#6C47FF]" /></div>
-                <h3 className="font-bold text-[#1A1A1A] text-base pr-24">{title}</h3>
-                <p className="text-sm text-[#6B6B6B] leading-relaxed">{desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── 11. FAQ ──────────────────────────────────────────────────────── */}
-      <section id="faq" className="px-4 sm:px-6 py-20 bg-[#F7F6F3]" style={{ scrollMarginTop: '80px' }}>
+      {/* ── 9. FAQ ───────────────────────────────────────────────────────── */}
+      <section id="faq" className="px-4 sm:px-6 py-20 bg-white" style={{ scrollMarginTop: '80px' }}>
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-12 space-y-3">
             <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">FAQ</p>
@@ -559,21 +307,21 @@ export default function Home() {
               { q: "Comment tamponne-t-on la carte d'un client ?", a: "Depuis votre dashboard, cliquez sur « Tamponner », saisissez le numéro de téléphone du client ou scannez sa carte. Le tampon s'ajoute instantanément." },
               { q: 'Les données de mes clients sont-elles sécurisées ?', a: "Oui. Vos données sont hébergées en Europe et ne sont jamais revendues. Nous respectons le RGPD et vous restez propriétaire de vos données." },
             ].map(({ q, a }) => (
-              <details key={q} className="group bg-white border border-[#E8E8E3] rounded-xl overflow-hidden">
+              <details key={q} className="group bg-[#F7F6F3] border border-[#E8E8E3] rounded-xl overflow-hidden">
                 <summary className="flex items-center justify-between px-5 py-4 cursor-pointer font-semibold text-[#1A1A1A] text-sm list-none">
                   {q}
                   <svg className="w-4 h-4 text-[#6B6B6B] transition-transform group-open:rotate-180 flex-shrink-0 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </summary>
-                <div className="px-5 pb-4 text-sm text-[#6B6B6B] leading-relaxed border-t border-[#E8E8E3] pt-3">{a}</div>
+                <div className="px-5 pb-4 text-sm text-[#6B6B6B] leading-relaxed border-t border-[#E8E8E3] pt-3 bg-white">{a}</div>
               </details>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── 12. Final CTA ────────────────────────────────────────────────── */}
+      {/* ── 10. Final CTA ────────────────────────────────────────────────── */}
       <section className="px-4 sm:px-6 py-20 bg-[#6C47FF] text-center">
         <div className="max-w-xl mx-auto space-y-6">
           <div className="flex justify-center"><Rocket size={48} strokeWidth={1.9} className="text-white" /></div>
@@ -591,7 +339,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── 13. Footer ───────────────────────────────────────────────────── */}
+      {/* ── 11. Footer ───────────────────────────────────────────────────── */}
       <footer className="border-t border-[#E8E8E3] bg-white px-4 sm:px-6 py-12">
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-10 pb-10 border-b border-[#E8E8E3]">
@@ -629,7 +377,6 @@ export default function Home() {
                 <li><a href="#fonctionnalites" className="hover:text-[#6C47FF] transition-colors">Fonctionnalités</a></li>
                 <li><a href="#tarifs" className="hover:text-[#6C47FF] transition-colors">Tarifs</a></li>
                 <li><a href="#faq" className="hover:text-[#6C47FF] transition-colors">FAQ</a></li>
-                <li><a href="#roadmap" className="hover:text-[#6C47FF] transition-colors">Roadmap</a></li>
               </ul>
             </div>
             <div className="space-y-3">

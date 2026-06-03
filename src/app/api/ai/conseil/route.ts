@@ -42,7 +42,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Mistral non configuré' }, { status: 501 })
   }
 
-  const { messages, merchantContext } = await request.json() as {
+  const { messages, merchantContext, systemPromptOverride } = await request.json() as {
     messages: { role: 'user' | 'model'; content: string }[]
     merchantContext?: {
       business_name?: string
@@ -51,6 +51,7 @@ export async function POST(request: Request) {
       points_required?: number | null
       loyalty_type?: string
     }
+    systemPromptOverride?: string
   }
 
   if (!messages?.length) {
@@ -58,7 +59,7 @@ export async function POST(request: Request) {
   }
 
   // Build context-aware system prompt
-  let systemPrompt = SYSTEM_PROMPT
+  let systemPrompt = systemPromptOverride ?? SYSTEM_PROMPT
   if (merchantContext?.business_name) {
     const isPoints = merchantContext.loyalty_type === 'points'
     const requiredCount = isPoints

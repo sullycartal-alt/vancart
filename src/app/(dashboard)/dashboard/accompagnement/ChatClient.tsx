@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import ReactMarkdown from 'react-markdown'
 
 interface Message {
   role: 'user' | 'model'
@@ -15,7 +16,7 @@ interface MerchantContext {
   loyalty_type?: string
 }
 
-const DEFAULT_WELCOME = "Bonjour ! Je suis votre conseiller fidélité VanCart. Je suis là pour vous aider à créer le programme de fidélité idéal pour votre commerce. Pour commencer, pouvez-vous me dire quel type de commerce vous avez ? (bar, coffee shop, restaurant, autre)"
+const DEFAULT_WELCOME = "Bonjour ! Je suis votre conseiller fidélité VanCart. Je suis là pour vous aider à créer le programme de fidélité idéal pour votre commerce. Pour commencer, pouvez-vous me dire quel type de commerce vous avez ?"
 
 const DAILY_LIMIT = 30
 const LS_KEY = 'vancart_ai_usage'
@@ -59,25 +60,53 @@ function AIAvatar() {
   )
 }
 
+function AIMessageContent({ content }: { content: string }) {
+  return (
+    <ReactMarkdown
+      components={{
+        p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+        strong: ({ children }) => <strong className="font-semibold text-[#1A1A1A]">{children}</strong>,
+        ul: ({ children }) => <ul className="list-disc list-outside ml-4 mb-2 space-y-0.5">{children}</ul>,
+        ol: ({ children }) => <ol className="list-decimal list-outside ml-4 mb-2 space-y-0.5">{children}</ol>,
+        li: ({ children }) => <li className="leading-snug">{children}</li>,
+        h2: ({ children }) => <h2 className="font-bold text-[#1A1A1A] text-sm mt-3 mb-1 first:mt-0">{children}</h2>,
+        h3: ({ children }) => <h3 className="font-semibold text-[#1A1A1A] text-sm mt-2 mb-0.5 first:mt-0">{children}</h3>,
+        code: ({ children }) => <code className="bg-[#F7F6F3] text-[#6C47FF] px-1 py-0.5 rounded text-xs font-mono">{children}</code>,
+        blockquote: ({ children }) => <blockquote className="border-l-2 border-[#6C47FF]/30 pl-3 italic text-[#6B6B6B] my-2">{children}</blockquote>,
+      }}
+    >
+      {content}
+    </ReactMarkdown>
+  )
+}
+
 function MessageBubble({ message }: { message: Message }) {
   const isUser = message.role === 'user'
   return (
     <div className={`flex items-end gap-2.5 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
       {!isUser && <AIAvatar />}
       <div
-        className={`max-w-[78%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${
+        className={`max-w-[78%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
           isUser
-            ? 'bg-[#6C47FF] text-white rounded-br-sm'
+            ? 'bg-[#6C47FF] text-white rounded-br-sm whitespace-pre-wrap'
             : 'bg-white border border-[#E8E8E3] text-[#1A1A1A] rounded-bl-sm'
         }`}
       >
-        {message.content}
+        {isUser ? message.content : <AIMessageContent content={message.content} />}
       </div>
     </div>
   )
 }
 
-export default function ChatClient({ merchantContext, initialWelcome }: { merchantContext: MerchantContext; initialWelcome?: string }) {
+export default function ChatClient({
+  merchantContext,
+  initialWelcome,
+  systemPrompt,
+}: {
+  merchantContext: MerchantContext
+  initialWelcome?: string
+  systemPrompt?: string
+}) {
   const [messages, setMessages] = useState<Message[]>([
     { role: 'model', content: initialWelcome ?? DEFAULT_WELCOME },
   ])
@@ -116,7 +145,11 @@ export default function ChatClient({ merchantContext, initialWelcome }: { mercha
       const res = await fetch('/api/ai/conseil', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: newMessages, merchantContext }),
+        body: JSON.stringify({
+          messages: newMessages,
+          merchantContext,
+          ...(systemPrompt ? { systemPromptOverride: systemPrompt } : {}),
+        }),
       })
       const data = await res.json()
       if (!res.ok) {
@@ -137,7 +170,6 @@ export default function ChatClient({ merchantContext, initialWelcome }: { mercha
     }
   }
 
-  // Auto-resize textarea
   function handleInput(e: React.ChangeEvent<HTMLTextAreaElement>) {
     setInput(e.target.value)
     const ta = textareaRef.current

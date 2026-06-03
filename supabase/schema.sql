@@ -27,6 +27,7 @@ CREATE TABLE merchants (
 -- ALTER TABLE merchants ADD COLUMN IF NOT EXISTS points_per_euro INTEGER DEFAULT 1;
 -- ALTER TABLE merchants ADD COLUMN IF NOT EXISTS points_required INTEGER DEFAULT 100;
 -- ALTER TABLE merchants ADD COLUMN IF NOT EXISTS average_ticket INTEGER;
+-- ALTER TABLE merchants ADD COLUMN IF NOT EXISTS merchant_color_2 TEXT; -- secondary gradient color for Cover card
 
 -- Customers table
 CREATE TABLE customers (

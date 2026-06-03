@@ -14,7 +14,7 @@ export default async function CartePage({ params }: Props) {
 
   const { data: card, error } = await service
     .from('loyalty_cards')
-    .select('id, stamps_count, points, rewards_unlocked, customer_id, merchant_id, merchants(business_name, logo_url, primary_color, loyalty_rule, stamps_required, loyalty_type, points_required), customers(first_name)')
+    .select('id, stamps_count, points, rewards_unlocked, customer_id, merchant_id, merchants(business_name, logo_url, primary_color, merchant_color_2, loyalty_rule, stamps_required, loyalty_type, points_required, banner_url), customers(first_name)')
     .eq('id', loyaltyCardId)
     .single()
 

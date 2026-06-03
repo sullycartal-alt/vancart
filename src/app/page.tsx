@@ -1,11 +1,11 @@
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
-import { WalletCards, Trash2, Frown, BarChart3, Smartphone, RefreshCw, BadgeCheck, Zap, ShieldCheck, MessageCircle, Check, X, Rocket } from 'lucide-react'
+import { Trash2, Frown, BarChart3, Smartphone, RefreshCw, BadgeCheck, Zap, ShieldCheck, MessageCircle, Check, X, Rocket } from 'lucide-react'
 import PWARedirect from '@/components/pwa/PWARedirect'
 import LandingNav from '@/components/landing/LandingNav'
 import PricingCards from '@/components/landing/PricingCards'
 import { LogoLockup } from '@/components/brand/Logo'
-import { LandingHeroCards } from '@/components/landing/LandingHeroCards'
+import LandingHero from '@/components/landing/LandingHero'
 
 const ScrollingCarousel = dynamic(() => import('@/components/landing/ScrollingCarousel'))
 const DashboardDemo = dynamic(() => import('@/components/landing/DashboardDemo'))
@@ -21,67 +21,7 @@ export default function Home() {
       <LandingNav />
 
       {/* ── 1. Hero ──────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-[#F7F6F3] px-4 sm:px-6 py-16 sm:py-24">
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#6C47FF]/5 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/3" />
-        <div className="relative max-w-5xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Left: copy */}
-            <div className="space-y-6 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 bg-[#6C47FF]/10 text-[#6C47FF] text-xs font-semibold px-4 py-1.5 rounded-full border border-[#6C47FF]/15">
-                <WalletCards size={14} strokeWidth={1.9} className="flex-shrink-0" /> La carte de fidélité sans plastique, sans app
-              </div>
-              <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 leading-tight">
-                La fidélité qui<br />
-                ne finit <span style={{ color: '#6C47FF', textDecoration: 'line-through', textDecorationColor: '#6C47FF' }}>pas à la poubelle.</span>
-              </h1>
-              <p className="text-lg text-[#6B6B6B] max-w-lg leading-relaxed">
-                VanCart génère un QR code unique pour votre commerce. Vos clients scannent, collectent des tampons digitaux et reçoivent leurs récompenses — directement dans leur portefeuille mobile.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
-                <Link href="/register" className="w-full sm:w-auto px-8 py-3.5 bg-[#6C47FF] text-white font-bold rounded-xl hover:bg-[#5835e0] transition-colors shadow-sm text-sm text-center">
-                  Créer mon compte gratuit →
-                </Link>
-                <Link href="/login" className="w-full sm:w-auto text-sm font-medium text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors text-center py-3.5">
-                  J&apos;ai déjà un compte
-                </Link>
-              </div>
-
-              {/* Trust line */}
-              <div className="flex flex-col items-center lg:items-start gap-2">
-                <div className="flex items-center gap-3">
-                  <div className="flex -space-x-2 flex-shrink-0">
-                    {[
-                      { initials: 'JD', bg: '#6C47FF' },
-                      { initials: 'ML', bg: '#10B981' },
-                      { initials: 'SC', bg: '#F59E0B' },
-                      { initials: 'AR', bg: '#EF4444' },
-                    ].map(({ initials, bg }) => (
-                      <div
-                        key={initials}
-                        className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center text-[10px] font-bold text-white flex-shrink-0"
-                        style={{ backgroundColor: bg }}
-                      >
-                        {initials}
-                      </div>
-                    ))}
-                  </div>
-                  <p className="text-sm font-semibold text-[#1A1A1A]">+124 commerçants nous font confiance</p>
-                </div>
-                <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-3 gap-y-1 text-xs text-[#6B6B6B]">
-                  <span>✓ Sans engagement</span>
-                  <span className="hidden sm:inline text-[#D1D5DB]">·</span>
-                  <span>✓ 5 minutes pour démarrer</span>
-                  <span className="hidden sm:inline text-[#D1D5DB]">·</span>
-                  <span>✓ Données hébergées en Europe 🇪🇺</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Right: loyalty card stack */}
-            <LandingHeroCards />
-          </div>
-        </div>
-      </section>
+      <LandingHero />
 
       {/* ── 2. Stats ─────────────────────────────────────────────────────── */}
       <section className="px-4 sm:px-6 py-16 bg-[#F7F6F3]">

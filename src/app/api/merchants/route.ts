@@ -29,6 +29,7 @@ const merchantSchema = z.object({
   min_minutes_between_stamps: z.number().int().min(0).max(1440).optional(),
   stamps_per_visit: z.number().int().min(1).max(10).optional(),
   average_ticket: z.number().int().min(0).max(100000).nullable().optional(),
+  merchant_color_2: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Must be a valid hex color').nullable().optional(),
 })
 
 function sanitizeMerchantData<T extends Record<string, unknown>>(data: T): T {

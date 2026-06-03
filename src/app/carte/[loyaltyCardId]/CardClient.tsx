@@ -2,17 +2,19 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
 import InstallBanner from '@/components/pwa/InstallBanner'
+import { LoyaltyCardCover } from '@/components/loyalty/LoyaltyCardCover'
 
 interface Merchant {
   business_name: string
   logo_url: string | null
   primary_color: string
+  merchant_color_2?: string | null
   loyalty_rule: string
   stamps_required: number
   loyalty_type?: string
   points_required?: number
+  banner_url?: string | null
 }
 
 interface CardData {
@@ -22,13 +24,6 @@ interface CardData {
   rewards_unlocked: number
   merchants: Merchant
   customers: { first_name: string }
-}
-
-function textColorFor(hex: string): string {
-  const r = parseInt(hex.slice(1, 3), 16)
-  const g = parseInt(hex.slice(3, 5), 16)
-  const b = parseInt(hex.slice(5, 7), 16)
-  return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.55 ? '#1f2937' : '#ffffff'
 }
 
 function QRCanvas({ value }: { value: string }) {
@@ -84,72 +79,6 @@ function ConfettiCanvas({ active, color }: { active: boolean; color: string }) {
   return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-[60]" />
 }
 
-function StampGrid({ count, total, color, newStampIdx }: {
-  count: number; total: number; color: string; newStampIdx: number | null
-}) {
-  const tc = textColorFor(color)
-  const display = Math.min(total, 20)
-  return (
-    <div className="space-y-3">
-      <div className="flex flex-wrap gap-2.5 justify-center">
-        {Array.from({ length: display }).map((_, i) => {
-          const filled = i < count
-          const isNew = newStampIdx === i
-          return (
-            <div
-              key={i}
-              className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-500"
-              style={filled
-                ? {
-                    backgroundColor: color,
-                    color: tc,
-                    boxShadow: isNew ? `0 0 16px ${color}90, 0 2px 8px ${color}60` : `0 2px 6px ${color}40`,
-                    transform: isNew ? 'scale(1.2)' : 'scale(1)',
-                    animation: isNew ? 'stamp-pop 0.45s cubic-bezier(0.16,1,0.3,1) both' : undefined,
-                  }
-                : {
-                    backgroundColor: '#F7F6F3',
-                    border: '2px dashed #E8E8E3',
-                    color: 'transparent',
-                  }}
-            >
-              {filled ? '✓' : '·'}
-            </div>
-          )
-        })}
-        {total > 20 && (
-          <div className="w-10 h-10 rounded-full flex items-center justify-center bg-[#F7F6F3] text-xs text-[#6B6B6B] font-medium">
-            +{total - 20}
-          </div>
-        )}
-      </div>
-      <p className="text-center text-sm text-[#6B6B6B]">
-        <span className="font-bold text-[#1A1A1A]">{count}</span>
-        <span style={{ color: '#C4C4C0' }}> / {total}</span>
-        {' '}tampons
-      </p>
-    </div>
-  )
-}
-
-function PointsBar({ count, total, color }: { count: number; total: number; color: string }) {
-  const pct = Math.min(100, Math.round((count / total) * 100))
-  return (
-    <div className="space-y-3">
-      <div className="flex items-end justify-between">
-        <div>
-          <span className="text-5xl font-bold tabular-nums" style={{ color }}>{count}</span>
-          <span className="text-2xl font-light pb-2" style={{ color: '#C4C4C0' }}> / {total}</span>
-        </div>
-        <span className="text-sm text-[#6B6B6B] pb-2">points</span>
-      </div>
-      <div className="w-full bg-[#F7F6F3] rounded-full h-3 overflow-hidden">
-        <div className="h-3 rounded-full transition-all duration-700 ease-out" style={{ width: `${pct}%`, backgroundColor: color }} />
-      </div>
-    </div>
-  )
-}
-
 function urlBase64ToUint8Array(base64String: string) {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
   const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
@@ -167,9 +96,9 @@ export default function CardClient({ initialCard, customerId, merchantId }: {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
   const [showCelebration, setShowCelebration] = useState(false)
   const [confettiActive, setConfettiActive] = useState(false)
-  const [newStampIdx, setNewStampIdx] = useState<number | null>(null)
   const [showRewardQR, setShowRewardQR] = useState(false)
   const [isStandalone, setIsStandalone] = useState(false)
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false)
   const prevCount = useRef(initialCard.stamps_count)
 
   useEffect(() => {
@@ -204,6 +133,7 @@ export default function CardClient({ initialCard, customerId, merchantId }: {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ customer_id: customerId, merchant_id: merchantId, subscription: sub.toJSON() }),
         })
+        setNotificationsEnabled(true)
       } catch { /* permission denied or unsupported — silent */ }
     })
   }, [customerId, merchantId])
@@ -221,11 +151,8 @@ export default function CardClient({ initialCard, customerId, merchantId }: {
           customers: Array.isArray(fresh.customers) ? fresh.customers[0] : fresh.customers,
         }
         const newCount = next.stamps_count
-        const req = next.merchants.stamps_required
         if (newCount > prevCount.current) {
-          const idx = Math.min(newCount, req) - 1
-          setNewStampIdx(idx)
-          setTimeout(() => setNewStampIdx(null), 1600)
+          const req = next.merchants.stamps_required
           if (newCount >= req) {
             setShowCelebration(true)
             setConfettiActive(true)
@@ -242,20 +169,18 @@ export default function CardClient({ initialCard, customerId, merchantId }: {
 
   const merchant = card.merchants
   const color = merchant.primary_color
-  const tc = textColorFor(color)
   const isPoints = merchant.loyalty_type === 'points'
   const count = isPoints ? (card.points ?? 0) : card.stamps_count
   const total = isPoints ? (merchant.points_required ?? 100) : merchant.stamps_required
   const isComplete = count >= total
-  const left = total - Math.min(count, total)
 
   return (
-    <div className="min-h-screen pb-8" style={{ background: `linear-gradient(160deg, ${color}18 0%, #f9fafb 60%)` }}>
+    <div className="min-h-screen pb-8" style={{ background: '#0F0D13' }}>
       <ConfettiCanvas active={confettiActive} color={color} />
 
       {/* Celebration overlay */}
       {showCelebration && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
           <div className="bg-white rounded-3xl shadow-2xl max-w-xs w-full p-8 text-center space-y-5" style={{ animation: 'celebrate 0.5s cubic-bezier(0.16,1,0.3,1) both' }}>
             <div className="text-6xl" style={{ animation: 'stamp-pop 0.6s 0.2s both' }}>🎉</div>
             <div>
@@ -283,7 +208,7 @@ export default function CardClient({ initialCard, customerId, merchantId }: {
         <div className="max-w-sm mx-auto px-4 pt-4">
           <button
             onClick={() => router.push('/wallet')}
-            className="flex items-center gap-1 text-sm text-gray-400 hover:text-gray-600 transition-colors"
+            className="flex items-center gap-1 text-sm text-[#79747F] hover:text-white transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -295,76 +220,25 @@ export default function CardClient({ initialCard, customerId, merchantId }: {
 
       <div className="max-w-sm mx-auto px-4 pt-6 space-y-4">
 
-        {/* Physical card */}
-        <div
-          className="rounded-3xl overflow-hidden shadow-2xl"
-          style={{ background: `linear-gradient(135deg, ${color} 0%, ${color}cc 100%)` }}
-        >
-          {/* Header */}
-          <div className="px-6 pt-7 pb-5 text-center">
-            {merchant.logo_url ? (
-              <Image
-                src={merchant.logo_url}
-                alt={merchant.business_name}
-                width={48}
-                height={48}
-                className="h-12 w-auto mx-auto mb-3 object-contain"
-                style={{ filter: tc === '#ffffff' ? 'brightness(0) invert(1)' : 'none' }}
-              />
-            ) : (
-              <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3" style={{ backgroundColor: `${tc}20` }}>
-                <span className="text-2xl font-bold" style={{ color: tc }}>{merchant.business_name.charAt(0).toUpperCase()}</span>
-              </div>
-            )}
-            <h1 className="text-xl font-bold tracking-tight" style={{ color: tc }}>{merchant.business_name}</h1>
-            <p className="text-xs mt-1 opacity-75" style={{ color: tc }}>{merchant.loyalty_rule}</p>
-            <div className="inline-flex items-center gap-1.5 mt-2.5 px-3 py-1 rounded-full text-xs font-medium" style={{ backgroundColor: `${tc}20`, color: tc }}>
-              Carte de {card.customers.first_name}
-            </div>
-          </div>
+        {/* Cover card — new design */}
+        <LoyaltyCardCover
+          merchantName={merchant.business_name}
+          merchantSubtitle={`Carte de ${card.customers.first_name}`}
+          merchantColor={color}
+          merchantColor2={merchant.merchant_color_2}
+          merchantCoverUrl={merchant.banner_url}
+          merchantLogoUrl={merchant.logo_url}
+          merchantInitials={merchant.business_name.slice(0, 2).toUpperCase()}
+          loyaltyMode={isPoints ? 'points' : 'stamps'}
+          currentValue={count}
+          targetValue={total}
+          rewardLabel={merchant.loyalty_rule}
+          cardId={card.id}
+          notificationsEnabled={notificationsEnabled}
+          isComplete={isComplete}
+        />
 
-          {/* Stamp / points area — glass panel */}
-          <div className="mx-4 mb-4 rounded-2xl p-5" style={{ backgroundColor: 'rgba(255,255,255,0.93)', backdropFilter: 'blur(12px)' }}>
-            {isPoints
-              ? <PointsBar count={count} total={total} color={color} />
-              : <StampGrid count={count} total={total} color={color} newStampIdx={newStampIdx} />
-            }
-          </div>
-
-          {/* Status bar */}
-          <div className="mx-4 mb-5 rounded-xl px-4 py-2.5 text-center" style={{ backgroundColor: `${tc}18` }}>
-            {(() => {
-              const unit = isPoints ? 'pt' : 'tampon'
-              const unitPlural = isPoints ? 'pts' : 'tampons'
-              const pct = Math.round((count / total) * 100)
-              let msg: string
-              if (isComplete) {
-                msg = '🎉 Récompense prête ! Montrez cette carte au commerçant.'
-              } else if (pct >= 95) {
-                msg = `😍 Plus que ${left} ${left === 1 ? unit : unitPlural}... votre récompense vous attend !`
-              } else if (pct >= 90) {
-                msg = `🚀 Ça sent la récompense, plus que ${left} ${left === 1 ? unit : unitPlural} !`
-              } else if (pct >= 80) {
-                msg = '💪 Vous y êtes presque, encore un effort !'
-              } else if (pct >= 70) {
-                msg = `🔥 C'est pour bientôt, plus que ${left} ${left === 1 ? unit : unitPlural} !`
-              } else if (pct >= 50) {
-                msg = '⚡ Vous êtes à mi-chemin, continuez !'
-              } else {
-                msg = `🎯 Plus que ${left} ${left === 1 ? unit : unitPlural} pour votre récompense`
-              }
-              return <p className="text-xs font-semibold" style={{ color: tc }}>{msg}</p>
-            })()}
-          </div>
-        </div>
-
-        {/* QR code */}
-        <div className="bg-white rounded-2xl shadow-sm p-5 text-center space-y-3">
-          <p className="text-sm font-semibold text-gray-800">Présentez ce QR code au commerçant</p>
-          <div className="flex justify-center"><QRCanvas value={card.id} /></div>
-        </div>
-
-        {/* Reward QR block — shown when card is complete */}
+        {/* Reward QR — shown when card is complete */}
         {isComplete && (
           <div className="border-2 border-amber-400 bg-amber-50 rounded-2xl p-5 text-center space-y-3" style={{ boxShadow: '0 0 0 4px #fef3c720' }}>
             <p className="text-base font-bold text-amber-800">🎁 Récompense prête !</p>
@@ -393,10 +267,10 @@ export default function CardClient({ initialCard, customerId, merchantId }: {
           </div>
         )}
 
-        {/* Google Wallet — prominent */}
+        {/* Google Wallet */}
         <a
           href={`/api/wallet/google?card_id=${card.id}`}
-          className="flex items-center justify-center gap-3 w-full py-3.5 rounded-2xl bg-white border border-[#E8E8E3] shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
+          className="flex items-center justify-center gap-3 w-full py-3.5 rounded-2xl bg-[#1C1A22] border border-[#2a2730] hover:bg-[#242130] transition-all active:scale-[0.98]"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -404,31 +278,43 @@ export default function CardClient({ initialCard, customerId, merchantId }: {
             <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
             <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
           </svg>
-          <span className="text-sm font-semibold text-[#1A1A1A]">Ajouter à Google Wallet</span>
+          <span className="text-sm font-semibold text-white">Ajouter à Google Wallet</span>
         </a>
 
-        <div className="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl bg-[#F7F6F3] border border-[#E8E8E3] cursor-not-allowed">
-          <span className="text-sm font-medium text-[#9CA3AF]">Apple Wallet — bientôt</span>
+        <div className="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl bg-[#1C1A22] border border-[#2a2730] cursor-not-allowed">
+          <span className="text-sm font-medium text-[#4a4758]">Apple Wallet — bientôt</span>
         </div>
 
         {/* Bookmark hint */}
-        <div className="rounded-2xl p-4 text-center" style={{ backgroundColor: `${color}10` }}>
+        <div className="rounded-2xl p-4 text-center" style={{ backgroundColor: `${color}14`, border: `1px solid ${color}25` }}>
           <p className="text-xs font-medium" style={{ color }}>📌 Mettez cette page en favori pour retrouver votre carte</p>
           {lastUpdated && (
-            <p className="text-xs mt-1 opacity-50" style={{ color }}>
+            <p className="text-xs mt-1" style={{ color, opacity: 0.5 }}>
               Mis à jour à {lastUpdated.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
             </p>
           )}
         </div>
 
         {card.rewards_unlocked > 0 && (
-          <p className="text-xs text-center text-[#9CA3AF]">
+          <p className="text-xs text-center" style={{ color: '#4a4758' }}>
             🏆 {card.rewards_unlocked} récompense{card.rewards_unlocked > 1 ? 's' : ''} obtenue{card.rewards_unlocked > 1 ? 's' : ''} au total
           </p>
         )}
       </div>
 
       <InstallBanner />
+
+      <style>{`
+        @keyframes celebrate {
+          from { opacity: 0; transform: scale(0.85) translateY(12px); }
+          to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @keyframes stamp-pop {
+          0% { transform: scale(0.4); opacity: 0; }
+          70% { transform: scale(1.2); }
+          100% { transform: scale(1); opacity: 1; }
+        }
+      `}</style>
     </div>
   )
 }

@@ -6,6 +6,7 @@ import LandingNav from '@/components/landing/LandingNav'
 import PricingCards from '@/components/landing/PricingCards'
 import { LogoLockup } from '@/components/brand/Logo'
 import LandingHero from '@/components/landing/LandingHero'
+import DemoCarousel from '@/components/landing/DemoCarousel'
 
 const ScrollingCarousel = dynamic(() => import('@/components/landing/ScrollingCarousel'))
 const DashboardDemo = dynamic(() => import('@/components/landing/DashboardDemo'))
@@ -23,7 +24,10 @@ export default function Home() {
       {/* ── 1. Hero ──────────────────────────────────────────────────────── */}
       <LandingHero />
 
-      {/* ── 2. Stats ─────────────────────────────────────────────────────── */}
+      {/* ── 2. Demo carousel ─────────────────────────────────────────────── */}
+      <DemoCarousel />
+
+      {/* ── 3. Stats ─────────────────────────────────────────────────────── */}
       <section className="px-4 sm:px-6 py-16 bg-[#F7F6F3]">
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">

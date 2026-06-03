@@ -22,7 +22,7 @@ function HeroCard() {
     <div
       style={{
         position: 'absolute',
-        top: 20,
+        top: 0,
         left: '50%',
         zIndex: 2,
         width: 320,
@@ -121,8 +121,8 @@ export default function LandingHero() {
     <section className="relative overflow-hidden bg-[#F7F6F3] px-4 sm:px-6 py-20">
       <style>{`
         @keyframes heroFloat {
-          0%, 100% { transform: translateX(-50%) rotate(-8deg) translateY(0px); }
-          50%      { transform: translateX(-50%) rotate(-8deg) translateY(-12px); }
+          0%, 100% { transform: translateX(-50%) rotate(8deg) translateY(0px); }
+          50%      { transform: translateX(-50%) rotate(8deg) translateY(-12px); }
         }
       `}</style>
 
@@ -210,7 +210,7 @@ export default function LandingHero() {
 
           {/* ── Right column ── */}
           <div className="hidden lg:flex justify-center">
-            <div style={{ position: 'relative', width: 520, height: 560 }}>
+            <div style={{ position: 'relative', width: 520, height: 620 }}>
               {/* Decorative blob */}
               <div
                 style={{
@@ -232,10 +232,10 @@ export default function LandingHero() {
               {/* Handwritten annotation */}
               <div style={{ position: 'absolute', bottom: 24, right: 0, textAlign: 'right', zIndex: 3 }}>
                 <svg width="60" height="40" style={{ marginLeft: 'auto', marginBottom: 4 }}>
-                  <path d="M 50 5 Q 20 10 10 35" stroke="#F97316" strokeWidth="2" fill="none" strokeLinecap="round" />
-                  <polygon points="8,35 14,30 16,38" fill="#F97316" />
+                  <path d="M 50 5 Q 20 10 10 35" stroke="#6C47FF" strokeWidth="2" fill="none" strokeLinecap="round" />
+                  <polygon points="8,35 14,30 16,38" fill="#6C47FF" />
                 </svg>
-                <p style={{ fontFamily: 'cursive', color: '#F97316', fontSize: 14, lineHeight: 1.4, maxWidth: 180 }}>
+                <p style={{ fontFamily: 'cursive', color: '#6C47FF', fontSize: 14, lineHeight: 1.4, maxWidth: 180 }}>
                   Toujours dans le<br />téléphone de vos clients !
                 </p>
               </div>

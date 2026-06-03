@@ -38,6 +38,7 @@ function HeroCard() {
         overflow: 'hidden',
         boxShadow: '0 32px 64px rgba(0,0,0,0.25)',
         animation: 'heroFloat 4s ease-in-out infinite',
+        display: 'block',
       }}
     >
       {/* ── Photo zone ── */}
@@ -48,6 +49,10 @@ function HeroCard() {
           backgroundImage: "url('/hero-cafe.svg')",
           backgroundSize: 'cover',
           backgroundPosition: 'center',
+          display: 'block',
+          margin: 0,
+          padding: 0,
+          border: 'none',
         }}
       >
         {/* Scrim for text legibility */}
@@ -86,14 +91,14 @@ function HeroCard() {
       </div>
 
       {/* ── Card body ── */}
-      <div style={{ background: '#15131A', padding: 16 }}>
+      <div style={{ backgroundColor: '#1A0F3C', padding: 16, margin: 0, border: 'none' }}>
         <p className="text-xs text-white/50 tracking-widest">TAMPONS</p>
         <div className="flex items-center justify-between mt-1">
           <p className="leading-none">
             <span className="text-4xl font-black text-white">5</span>
             <span className="text-xl text-white/50">/9</span>
           </p>
-          <span className="bg-[#F97316]/20 text-[#F97316] text-xs font-medium px-3 py-1 rounded-full">
+          <span className="bg-[#6C47FF]/20 text-[#6C47FF] text-xs font-medium px-3 py-1 rounded-full">
             🎁 1 café offert
           </span>
         </div>
@@ -105,7 +110,7 @@ function HeroCard() {
               key={i}
               className={
                 i < 5
-                  ? 'flex items-center justify-center rounded-full bg-[#F97316]'
+                  ? 'flex items-center justify-center rounded-full bg-[#6C47FF]'
                   : 'flex items-center justify-center rounded-full border-2 border-white/20 bg-transparent'
               }
               style={{ width: 24, height: 24 }}
@@ -172,7 +177,7 @@ export default function LandingHero() {
             <h1 className="text-5xl font-black text-gray-900 leading-tight">
               La fidélité qui ne finit
               <br />
-              <span style={{ color: '#F97316', textDecoration: 'line-through', textDecorationColor: '#F97316' }}>
+              <span style={{ color: '#6C47FF', textDecoration: 'line-through', textDecorationColor: '#6C47FF' }}>
                 pas à la poubelle.
               </span>
             </h1>
@@ -229,13 +234,13 @@ export default function LandingHero() {
             </div>
 
             {/* Trust indicators */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-3 pt-2">
+            <div className="grid grid-cols-2 gap-x-8 gap-y-3 mt-6">
               {TRUST.map(({ Icon, label, sub }) => (
-                <div key={label} className="flex items-start gap-2">
+                <div key={label} className="flex items-start gap-2" style={{ minWidth: 0 }}>
                   <Icon className="w-4 h-4 text-[#6C47FF] mt-0.5 flex-shrink-0" strokeWidth={1.9} />
-                  <div>
-                    <p className="text-sm font-semibold text-gray-900 whitespace-nowrap">{label}</p>
-                    <p className="text-xs text-gray-500 whitespace-nowrap">{sub}</p>
+                  <div style={{ minWidth: 0 }}>
+                    <p className="text-sm font-semibold text-gray-900">{label}</p>
+                    <p className="text-xs text-gray-500">{sub}</p>
                   </div>
                 </div>
               ))}
@@ -264,10 +269,10 @@ export default function LandingHero() {
               <HeroCard />
 
               {/* Handwritten annotation */}
-              <div style={{ position: 'absolute', bottom: 16, right: -16, textAlign: 'right', zIndex: 10 }}>
-                <svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginLeft: 'auto', display: 'block' }}>
-                  <path d="M 40 8 C 30 8, 10 20, 8 42" stroke="#6C47FF" strokeWidth="2" strokeLinecap="round" fill="none"/>
-                  <path d="M 4 40 L 8 42 L 10 38" stroke="#6C47FF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+              <div style={{ position: 'absolute', bottom: 80, right: -8, textAlign: 'right', zIndex: 10 }}>
+                <svg width="60" height="50" viewBox="0 0 60 50" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block', marginLeft: 'auto', marginBottom: 4 }}>
+                  <path d="M 50 45 C 40 30, 20 15, 5 8" stroke="#6C47FF" strokeWidth="2" strokeLinecap="round" fill="none"/>
+                  <path d="M 5 8 L 12 10 L 8 16" stroke="#6C47FF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
                 </svg>
                 <p style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', color: '#6C47FF', fontSize: 13, lineHeight: 1.4, maxWidth: 160 }}>
                   Toujours dans le<br/>téléphone de vos clients !

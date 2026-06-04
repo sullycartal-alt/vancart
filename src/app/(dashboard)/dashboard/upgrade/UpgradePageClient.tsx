@@ -8,6 +8,7 @@ interface Props {
 }
 
 const CONTACT = 'vancart@gmail.com'
+const CONTACT_HREF = 'mailto:vancart@gmail.com?subject=Offre%20Sur%20mesure%20VanCart'
 
 const DECOUVERTE_FEATURES = [
   '1 carte de fidélité',
@@ -19,7 +20,7 @@ const DECOUVERTE_FEATURES = [
 ]
 
 const ESSENTIAL_FEATURES = [
-  '1 carte de fidélité',
+  '1 programme de fidélité',
   "Jusqu'à 500 clients",
   'Stats avancées',
   'Support prioritaire',
@@ -28,9 +29,17 @@ const ESSENTIAL_FEATURES = [
 const PRO_FEATURES = [
   'Tout du plan Essentiel',
   'Clients illimités',
-  'Conseiller IA Mistral 🇫🇷',
+  'Assistant IA marketing',
   'Notifications push clients',
   'Export données clients',
+]
+
+const SUR_MESURE_FEATURES = [
+  'Intégration caisse disponible sur demande',
+  'Automatisation des points après achat',
+  'Accompagnement personnalisé',
+  'Import clients',
+  'Support prioritaire',
 ]
 
 function CheckIcon() {
@@ -84,7 +93,7 @@ export default function UpgradePageClient({ currentPlan }: Props) {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 max-w-6xl mx-auto">
 
         {/* Plan Découverte */}
         <div className={`bg-white rounded-2xl p-7 flex flex-col border relative ${isFree ? 'border-2 border-[#6C47FF]' : 'border-[#E8E8E3]'}`}>
@@ -225,6 +234,40 @@ export default function UpgradePageClient({ currentPlan }: Props) {
             ) : isPro ? 'Plan actuel' : 'Passer à Pro'}
           </button>
         </div>
+
+        {/* Plan Sur mesure */}
+        <div className="bg-white rounded-2xl p-7 flex flex-col border border-[#E8E8E3] relative">
+          <div className="flex-1 space-y-5 pt-2">
+            <div>
+              <div className="inline-flex items-center bg-[#F7F6F3] text-[#6B6B6B] text-xs font-semibold px-3 py-1 rounded-full border border-[#E8E8E3] mb-3">
+                Intégration caisse
+              </div>
+              <h2 className="text-xl font-bold text-[#1A1A1A]">Sur mesure</h2>
+              <div className="mt-1.5">
+                <span className="text-3xl font-bold text-[#1A1A1A]">Sur devis</span>
+              </div>
+              <p className="text-[#6B6B6B] text-xs mt-1">Intégration caisse & accompagnement</p>
+              <p className="text-[#6B6B6B] text-xs mt-0.5">Pour les commerçants qui veulent automatiser la fidélité avec leur logiciel de caisse.</p>
+            </div>
+
+            <ul className="space-y-2.5">
+              {SUR_MESURE_FEATURES.map(f => (
+                <li key={f} className="flex items-center gap-2.5 text-sm text-[#1A1A1A]">
+                  <CheckIcon />
+                  {f}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <a
+            href={CONTACT_HREF}
+            className="mt-6 w-full py-3 border border-[#6C47FF] text-[#6C47FF] font-semibold rounded-xl hover:bg-[#6C47FF]/5 transition-colors text-sm text-center"
+          >
+            Nous contacter
+          </a>
+        </div>
+
       </div>
 
       <p className="text-center text-sm text-[#6B6B6B]">

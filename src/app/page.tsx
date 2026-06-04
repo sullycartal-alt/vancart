@@ -286,7 +286,7 @@ export default function Home() {
 
       {/* ── 8. Pricing ───────────────────────────────────────────────────── */}
       <section id="tarifs" className="px-4 sm:px-6 py-20 bg-[#F7F6F3]" style={{ scrollMarginTop: '80px' }}>
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12 space-y-3">
             <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">Tarifs</p>
             <h2 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">Des tarifs simples et transparents</h2>

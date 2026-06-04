@@ -123,10 +123,13 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
   const [logoUploading, setLogoUploading] = useState(false)
   const [bannerUploading, setBannerUploading] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [savedZone, setSavedZone] = useState<string | null>(null)
+  const [saveError, setSaveError] = useState<string | null>(null)
   const [previewMode, setPreviewMode] = useState<'edit' | 'preview'>('edit')
 
   const logoInputRef = useRef<HTMLInputElement>(null)
   const bannerInputRef = useRef<HTMLInputElement>(null)
+  const saveTimeout = useRef<NodeJS.Timeout | null>(null)
 
   // Demo values for the preview
   const previewStamps = Math.min(5, stampsRequired)
@@ -148,12 +151,31 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
 
   async function saveField(fields: Record<string, unknown>) {
     setSaving(true)
-    await fetch('/api/merchants', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(fields),
-    })
-    setSaving(false)
+    try {
+      const res = await fetch('/api/merchants', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(fields),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        console.error('saveField error:', data)
+        setSaveError(JSON.stringify(data))
+      } else {
+        setSaveError(null)
+      }
+    } catch (e) {
+      console.error('saveField exception:', e)
+    } finally {
+      setSaving(false)
+      setSavedZone(Object.keys(fields)[0])
+      setTimeout(() => setSavedZone(null), 2000)
+    }
+  }
+
+  function saveFieldDebounced(fields: Record<string, unknown>) {
+    if (saveTimeout.current) clearTimeout(saveTimeout.current)
+    saveTimeout.current = setTimeout(() => saveField(fields), 800)
   }
 
   async function handleLogoUpload(e: React.ChangeEvent<HTMLInputElement>) {
@@ -192,11 +214,11 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
   const btnSave = 'w-full mt-4 py-2.5 text-sm font-semibold text-white rounded-lg transition-colors'
 
   return (
-    <div className="px-6 py-8 max-w-6xl mx-auto bg-[#F7F6F3] min-h-screen">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+    <div className="h-screen overflow-hidden flex flex-col bg-[#F7F6F3]" style={{ maxHeight: '100vh' }}>
+      <div className="flex-1 overflow-hidden grid grid-cols-1 lg:grid-cols-2 gap-12 px-6 py-6 max-w-6xl mx-auto w-full">
 
         {/* ── Left column ── */}
-        <div>
+        <div className="overflow-y-auto pr-2" style={{ maxHeight: 'calc(100vh - 80px)' }}>
           <h1 className="text-2xl font-bold text-gray-900">Ma carte de fidélité</h1>
           <p className="text-sm text-gray-500 mt-1">Cliquez sur chaque zone de la carte pour la personnaliser.</p>
 
@@ -309,16 +331,13 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
                     <div className="flex items-center gap-3 flex-wrap">
                       {PRESET_COLORS.map(hex => (
                         <button
-                          key={hex} type="button" onClick={() => setColor(hex)}
+                          key={hex} type="button" onClick={() => { setColor(hex); saveFieldDebounced({ primary_color: hex }) }}
                           className="w-8 h-8 rounded-full border-2 transition-all hover:scale-110 flex-shrink-0"
                           style={{ backgroundColor: hex, borderColor: color === hex ? '#1A1A1A' : 'transparent', boxShadow: color === hex ? '0 0 0 2px white inset' : 'none' }}
                         />
                       ))}
-                      <input type="color" value={color} onChange={e => setColor(e.target.value)} className="w-8 h-8 rounded-lg border border-gray-200 cursor-pointer p-0.5" title="Couleur personnalisée" />
+                      <input type="color" value={color} onChange={e => { setColor(e.target.value); saveFieldDebounced({ primary_color: e.target.value }) }} className="w-8 h-8 rounded-lg border border-gray-200 cursor-pointer p-0.5" title="Couleur personnalisée" />
                     </div>
-                    <button type="button" onClick={() => saveField({ primary_color: color })} className={btnSave} style={{ backgroundColor: color }}>
-                      Enregistrer
-                    </button>
                   </div>
                 )}
 
@@ -448,13 +467,19 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
                   </div>
                 )}
 
+                {saveError && (
+                  <div className="mt-2 text-xs text-red-500 bg-red-50 rounded-lg px-3 py-2">
+                    Erreur : {saveError}
+                  </div>
+                )}
+
               </div>
             )}
           </div>
         </div>
 
         {/* ── Right column: interactive card ── */}
-        <div className="lg:sticky lg:top-8 flex flex-col items-center gap-4">
+        <div className="flex flex-col items-center justify-start gap-4" style={{ position: 'sticky', top: 0, maxHeight: 'calc(100vh - 80px)', overflow: 'hidden' }}>
           <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1 w-fit mx-auto">
             <button
               onClick={() => setPreviewMode('edit')}

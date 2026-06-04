@@ -46,8 +46,8 @@ function ZoneOverlay({ zoneId, label, activeZone, setActiveZone, hidden }: {
       className={hidden ? '' : 'group hover:bg-[#6C47FF]/10 hover:border-[#6C47FF]'}
     >
       {!hidden && (
-        <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-[#6C47FF] text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1">
-          <span>+</span><span>{label}</span>
+        <div className={`transition-opacity bg-[#6C47FF] text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1 ${hidden ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+          <span>+</span> <span>{label}</span>
         </div>
       )}
     </div>
@@ -146,6 +146,27 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
   ]
   const completedCount = steps.filter(s => s.done).length
   const nextStep = steps.find(s => !s.done)
+
+  const handleSaveAll = async () => {
+    setSaving(true)
+    await fetch('/api/merchants', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        primary_color: color,
+        logo_url: logoUrl,
+        banner_url: bannerUrl,
+        loyalty_type: loyaltyType,
+        stamps_required: stampsRequired,
+        points_required: pointsRequired,
+        points_per_euro: pointsPerEuro,
+        loyalty_rule: loyaltyRule,
+      }),
+    })
+    setSaving(false)
+    setSavedZone('all')
+    setTimeout(() => setSavedZone(null), 2000)
+  }
 
   async function saveField(fields: Record<string, unknown>) {
     setSaving(true)
@@ -253,6 +274,49 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
               ))}
             </div>
           </div>
+
+          {/* Recap block when complete */}
+          {completedCount === 6 && (
+            <div className="mt-2 bg-white rounded-xl border border-[#6C47FF]/20 shadow-sm overflow-hidden">
+              <div className="bg-[#6C47FF] px-4 py-3 flex items-center gap-2">
+                <span className="text-white text-sm font-semibold">🎉 Votre carte est prête !</span>
+              </div>
+              <div className="p-4 space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Commerce</span>
+                  <span className="font-medium text-gray-900">{businessName}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Programme</span>
+                  <span className="font-medium text-gray-900">{loyaltyType === 'stamps' ? `${stampsRequired} tampons` : `${pointsRequired} points`}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Récompense</span>
+                  <span className="font-medium text-gray-900">{loyaltyRule}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-500">Couleur</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 rounded-full border border-gray-200" style={{ backgroundColor: color }} />
+                    <span className="font-medium text-gray-900">{color}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="px-4 pb-4">
+                <button
+                  onClick={handleSaveAll}
+                  disabled={saving}
+                  className="w-full bg-[#6C47FF] hover:bg-[#5835FF] text-white font-semibold py-3 rounded-xl text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
+                >
+                  {saving ? (
+                    <><svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg> Enregistrement...</>
+                  ) : (
+                    <><Check className="w-4 h-4" /> Enregistrer ma carte</>
+                  )}
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Contextual panel */}
           <div className="mt-6">
@@ -560,22 +624,22 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
 
       </div>
 
-      {/* Save indicator */}
-      {(saving || savedZone) && (
-        <div style={{ position: 'fixed', bottom: 24, right: 24, zIndex: 50 }}>
+      {/* Fixed save button — bottom left */}
+      <div className="fixed bottom-6 left-6 z-50">
+        <button
+          onClick={handleSaveAll}
+          disabled={saving}
+          className="bg-[#6C47FF] hover:bg-[#5835FF] text-white text-sm font-semibold px-5 py-2.5 rounded-full shadow-lg transition-colors flex items-center gap-2 disabled:opacity-60"
+        >
           {saving ? (
-            <div className="bg-white border border-gray-200 shadow-lg text-gray-600 text-sm px-4 py-2 rounded-full flex items-center gap-2">
-              <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
-              Enregistrement...
-            </div>
+            <><svg className="animate-spin w-3.5 h-3.5" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg> Enregistrement...</>
+          ) : savedZone ? (
+            <><Check className="w-3.5 h-3.5" /> Enregistré !</>
           ) : (
-            <div className="bg-[#6C47FF] text-white text-sm px-4 py-2 rounded-full shadow-lg flex items-center gap-2">
-              <Check size={14} strokeWidth={3} />
-              Enregistré !
-            </div>
+            <><Check className="w-3.5 h-3.5" /> Enregistrer</>
           )}
-        </div>
-      )}
+        </button>
+      </div>
     </div>
   )
 }

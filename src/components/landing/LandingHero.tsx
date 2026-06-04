@@ -36,22 +36,31 @@ function HeroCard() {
       <div
         style={{
           position: 'relative',
-          height: 160,
-          backgroundImage: "url('https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=640&q=80')",
+          height: 200,
+          backgroundImage: "url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=80')",
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
       >
+        {/* Scrim for text legibility */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'linear-gradient(to bottom, transparent 30%, rgba(0,0,0,0.65) 100%)',
+          }}
+        />
+
         {/* "Votre photo" badge */}
         <div
           className="absolute top-3 right-3 inline-flex items-center gap-1.5 text-white text-xs font-medium px-3 py-1.5 rounded-full"
-          style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(6px)' }}
+          style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(6px)', zIndex: 1 }}
         >
           📷 Votre photo
         </div>
 
         {/* Logo + merchant name */}
-        <div className="absolute bottom-3 left-3 flex items-center gap-2.5">
+        <div className="absolute bottom-3 left-3 flex items-center gap-2.5" style={{ zIndex: 1 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=80&q=80"

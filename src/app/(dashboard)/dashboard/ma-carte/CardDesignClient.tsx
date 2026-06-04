@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { CheckCircle, Circle, ImagePlus, Store, Check } from 'lucide-react'
+import { CheckCircle, Circle, ImagePlus, Store, Check, X, ChevronRight } from 'lucide-react'
 
 const PRESET_COLORS = ['#6C47FF', '#FF6B35', '#10B981', '#F59E0B', '#EF4444', '#1A1A2E']
 
@@ -21,30 +21,35 @@ interface Merchant {
 
 type ActiveZone = 'color' | 'logo' | 'banner' | 'loyalty' | 'reward' | null
 
-function ZoneOverlay({ zoneId, label, activeZone, setActiveZone }: {
+function ZoneOverlay({ zoneId, label, activeZone, setActiveZone, hidden }: {
   zoneId: string
   label: string
   activeZone: ActiveZone
   setActiveZone: (z: ActiveZone) => void
+  hidden?: boolean
 }) {
   const isActive = activeZone === zoneId
   return (
     <div
-      onClick={(e) => { e.stopPropagation(); setActiveZone(zoneId as ActiveZone) }}
+      onClick={(e) => { if (hidden) return; e.stopPropagation(); setActiveZone(zoneId as ActiveZone) }}
       style={{
         position: 'absolute', inset: 0, zIndex: 10,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        backgroundColor: isActive ? 'rgba(108,71,255,0.15)' : 'transparent',
-        border: isActive ? '2px solid #6C47FF' : '2px solid transparent',
+        backgroundColor: hidden ? 'transparent' : isActive ? 'rgba(108,71,255,0.15)' : 'transparent',
+        border: hidden ? '2px solid transparent' : isActive ? '2px solid #6C47FF' : '2px solid transparent',
         borderRadius: 'inherit',
         transition: 'all 0.15s ease',
-        cursor: 'pointer',
+        cursor: hidden ? 'default' : 'pointer',
+        pointerEvents: hidden ? 'none' : 'auto',
+        opacity: hidden ? 0 : 1,
       }}
-      className="group hover:bg-[#6C47FF]/10 hover:border-[#6C47FF]"
+      className={hidden ? '' : 'group hover:bg-[#6C47FF]/10 hover:border-[#6C47FF]'}
     >
-      <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-[#6C47FF] text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1">
-        <span>+</span><span>{label}</span>
-      </div>
+      {!hidden && (
+        <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-[#6C47FF] text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1">
+          <span>+</span><span>{label}</span>
+        </div>
+      )}
     </div>
   )
 }
@@ -119,6 +124,7 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
   const [bannerUploading, setBannerUploading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [savedZone, setSavedZone] = useState<string | null>(null)
+  const [previewMode, setPreviewMode] = useState<'edit' | 'preview'>('edit')
 
   const logoInputRef = useRef<HTMLInputElement>(null)
   const bannerInputRef = useRef<HTMLInputElement>(null)
@@ -138,8 +144,8 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
     { id: 'loyalty' as const, label: 'Règle de fidélité', done: stampsRequired > 0 || (pointsRequired ?? 0) > 0 },
     { id: 'reward' as const, label: 'Nom de la récompense', done: !!loyaltyRule && loyaltyRule !== 'Achetez 10, le suivant est offert' },
   ]
-  const doneCount = steps.filter(s => s.done).length
-  const progressPct = Math.round((doneCount / steps.length) * 100)
+  const completedCount = steps.filter(s => s.done).length
+  const nextStep = steps.find(s => !s.done)
 
   async function saveField(fields: Record<string, unknown>) {
     setSaving(true)
@@ -188,41 +194,63 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
   const inputClass = 'w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#6C47FF] focus:border-transparent outline-none'
   const btnSave = 'w-full mt-4 py-2.5 text-sm font-semibold text-white rounded-lg transition-colors'
 
-  function StepItem({ step }: { step: typeof steps[number] }) {
-    const clickable = step.id !== 'name'
-    return (
-      <div
-        className={`flex items-center gap-3 ${clickable ? 'cursor-pointer group' : ''}`}
-        onClick={() => clickable && setActiveZone(step.id as ActiveZone)}
-      >
-        {step.done
-          ? <CheckCircle className="w-5 h-5 text-[#6C47FF] flex-shrink-0" />
-          : <Circle className={`w-5 h-5 flex-shrink-0 ${clickable ? 'group-hover:text-[#6C47FF] transition-colors' : ''} text-gray-300`} />
-        }
-        <span className={`text-sm font-medium ${clickable ? 'group-hover:text-[#6C47FF] transition-colors' : ''} text-gray-700`}>
-          {step.label}
-        </span>
-      </div>
-    )
-  }
-
   return (
     <div className="px-6 py-8 max-w-6xl mx-auto bg-[#F7F6F3] min-h-screen">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
 
         {/* ── Left column ── */}
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Construisez votre carte</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Ma carte de fidélité</h1>
           <p className="text-sm text-gray-500 mt-1">Cliquez sur chaque zone de la carte pour la personnaliser.</p>
 
-          <div className="mt-6 space-y-3">
-            {steps.map(step => <StepItem key={step.id} step={step} />)}
-          </div>
+          <div className="mt-6 mb-6">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-semibold text-[#6C47FF]">
+                {completedCount === 6 ? '🎉 Carte complète !' : `${completedCount} / 6 étapes`}
+              </span>
+              <span className="text-xs text-gray-400">{Math.round((completedCount / 6) * 100)}%</span>
+            </div>
+            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-[#6C47FF] rounded-full transition-all duration-500"
+                style={{ width: `${(completedCount / 6) * 100}%` }}
+              />
+            </div>
 
-          <div className="mt-4">
-            <p className="text-xs text-gray-500 mb-1.5">{doneCount} / 6 étapes complétées</p>
-            <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
-              <div className="h-full bg-[#6C47FF] rounded-full transition-all duration-500" style={{ width: `${progressPct}%` }} />
+            {nextStep && (
+              <button
+                onClick={() => setActiveZone(nextStep.id as typeof activeZone)}
+                className="mt-4 w-full flex items-center justify-between bg-[#F0EDFF] hover:bg-[#E8E3FF] border border-[#6C47FF]/20 rounded-xl px-4 py-3 transition-colors group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-[#6C47FF] flex items-center justify-center flex-shrink-0">
+                    <span className="text-white text-sm">→</span>
+                  </div>
+                  <div className="text-left">
+                    <div className="text-xs text-[#6C47FF] font-semibold uppercase tracking-wide">Prochaine étape</div>
+                    <div className="text-sm font-semibold text-gray-900">{nextStep.label}</div>
+                  </div>
+                </div>
+                <ChevronRight className="w-4 h-4 text-[#6C47FF] group-hover:translate-x-1 transition-transform" />
+              </button>
+            )}
+
+            <div className="mt-4 space-y-2">
+              {steps.map(step => (
+                <button
+                  key={step.id}
+                  onClick={() => setActiveZone(step.id as typeof activeZone)}
+                  className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors text-left"
+                >
+                  {step.done
+                    ? <CheckCircle className="w-4 h-4 text-[#6C47FF] flex-shrink-0" />
+                    : <Circle className="w-4 h-4 text-gray-300 flex-shrink-0" />
+                  }
+                  <span className={`text-sm ${step.done ? 'text-gray-400 line-through' : 'text-gray-700 font-medium'}`}>
+                    {step.label}
+                  </span>
+                </button>
+              ))}
             </div>
           </div>
 
@@ -233,7 +261,13 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
                 👆 Cliquez sur une zone de la carte pour la modifier
               </p>
             ) : (
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 relative">
+                <button
+                  onClick={() => setActiveZone(null)}
+                  className="absolute top-4 right-4 w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                >
+                  <X className="w-4 h-4 text-gray-500" />
+                </button>
 
                 {/* Panel: color */}
                 {activeZone === 'color' && (
@@ -282,22 +316,6 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
                       </div>
                       <input ref={logoInputRef} type="file" accept="image/jpeg,image/png,image/webp" onChange={handleLogoUpload} className="hidden" />
                     </label>
-                    {/* Color picker also accessible from logo panel */}
-                    <div className="pt-3 border-t border-gray-100 space-y-2">
-                      <p className="text-sm font-semibold text-gray-900">Couleur principale</p>
-                      <div className="flex items-center gap-2 flex-wrap">
-                        {PRESET_COLORS.map(hex => (
-                          <button key={hex} type="button" onClick={() => setColor(hex)}
-                            className="w-7 h-7 rounded-full border-2 transition-all hover:scale-110 flex-shrink-0"
-                            style={{ backgroundColor: hex, borderColor: color === hex ? '#1A1A1A' : 'transparent', boxShadow: color === hex ? '0 0 0 2px white inset' : 'none' }}
-                          />
-                        ))}
-                        <input type="color" value={color} onChange={e => setColor(e.target.value)} className="w-7 h-7 rounded-lg border border-gray-200 cursor-pointer p-0.5" />
-                      </div>
-                      <button type="button" onClick={() => saveField({ primary_color: color })} className="text-xs text-[#6C47FF] font-medium hover:underline">
-                        Enregistrer la couleur
-                      </button>
-                    </div>
                   </div>
                 )}
 
@@ -404,6 +422,20 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
 
         {/* ── Right column: interactive card ── */}
         <div className="lg:sticky lg:top-8 flex flex-col items-center gap-4">
+          <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1 w-fit mx-auto">
+            <button
+              onClick={() => setPreviewMode('edit')}
+              className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${previewMode === 'edit' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+            >
+              ✏️ Édition
+            </button>
+            <button
+              onClick={() => setPreviewMode('preview')}
+              className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${previewMode === 'preview' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+            >
+              👁 Aperçu réel
+            </button>
+          </div>
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Aperçu en temps réel</p>
 
           <div
@@ -451,7 +483,7 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
                   </div>
                 </div>
               </div>
-              <ZoneOverlay zoneId="logo" label="Changer le logo" activeZone={activeZone} setActiveZone={setActiveZone} />
+              <ZoneOverlay zoneId="logo" label="Changer le logo" activeZone={activeZone} setActiveZone={setActiveZone} hidden={previewMode === 'preview'} />
             </div>
 
             {/* Zone 2 — Banner */}
@@ -469,7 +501,7 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
                 </div>
               )}
               <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 80, background: 'linear-gradient(to top, rgba(0,0,0,0.5), transparent)' }} />
-              <ZoneOverlay zoneId="banner" label="Changer la photo" activeZone={activeZone} setActiveZone={setActiveZone} />
+              <ZoneOverlay zoneId="banner" label="Changer la photo" activeZone={activeZone} setActiveZone={setActiveZone} hidden={previewMode === 'preview'} />
             </div>
 
             {/* Zone 3 — Client info: split into left (loyalty) + right (reward) */}
@@ -478,7 +510,7 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
               <div style={{ position: 'relative', flex: 1, padding: '14px 0 14px 16px' }}>
                 <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 9, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 2 }}>CARTE DE</div>
                 <div style={{ color: 'white', fontWeight: 700, fontSize: 16 }}>Marie Laurent</div>
-                <ZoneOverlay zoneId="loyalty" label="Modifier la fidélité" activeZone={activeZone} setActiveZone={setActiveZone} />
+                <ZoneOverlay zoneId="loyalty" label="Modifier la fidélité" activeZone={activeZone} setActiveZone={setActiveZone} hidden={previewMode === 'preview'} />
               </div>
               {/* Right: reward info */}
               <div style={{ position: 'relative', flex: 1, padding: '14px 16px 14px 8px', textAlign: 'right' }}>
@@ -489,12 +521,12 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
                 <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: 12, fontStyle: 'italic' }}>
                   🎁 {loyaltyRule || 'Votre récompense'}
                 </div>
-                <ZoneOverlay zoneId="reward" label="Modifier la récompense" activeZone={activeZone} setActiveZone={setActiveZone} />
+                <ZoneOverlay zoneId="reward" label="Modifier la récompense" activeZone={activeZone} setActiveZone={setActiveZone} hidden={previewMode === 'preview'} />
               </div>
             </div>
 
             {/* Zone 4 — QR */}
-            <div style={{ backgroundColor: color, padding: 16, borderTop: '2px solid rgba(255,255,255,0.15)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+            <div style={{ position: 'relative', backgroundColor: color, padding: 16, borderTop: '2px solid rgba(255,255,255,0.15)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
               <div style={{ borderRadius: 12, padding: 10, backgroundColor: 'white', lineHeight: 0 }}>
                 <InlineQR />
               </div>
@@ -504,6 +536,22 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
               <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 10, textAlign: 'center' }}>
                 ID : 1a4f8c · e291 · 3b72
               </div>
+              {previewMode === 'edit' && (
+                <div
+                  style={{
+                    position: 'absolute', bottom: 8, right: 8,
+                    backgroundColor: 'rgba(255,255,255,0.2)',
+                    backdropFilter: 'blur(4px)',
+                    borderRadius: 8, padding: '4px 8px',
+                    color: 'white', fontSize: 11, fontWeight: 600,
+                    cursor: 'pointer', zIndex: 10,
+                  }}
+                  onClick={() => setActiveZone('color')}
+                >
+                  🎨 Couleur
+                </div>
+              )}
+              <ZoneOverlay zoneId="color" label="Couleur" activeZone={activeZone} setActiveZone={setActiveZone} hidden={previewMode === 'preview'} />
             </div>
           </div>
 

@@ -7,7 +7,6 @@ import { LogoLockup } from '@/components/brand/Logo'
 const DISCOVER_LINKS = [
   { href: '#fonctionnalites', label: 'Fonctionnalités' },
   { href: '#tableau-de-bord', label: 'Tableau de bord' },
-  { href: '#roadmap', label: 'Roadmap' },
 ]
 
 const MOBILE_LINKS = [
@@ -15,7 +14,6 @@ const MOBILE_LINKS = [
   { href: '#fonctionnalites', label: 'Fonctionnalités' },
   { href: '#tableau-de-bord', label: 'Tableau de bord' },
   { href: '#tarifs', label: 'Tarifs' },
-  { href: '#roadmap', label: 'Roadmap' },
   { href: '#faq', label: 'FAQ' },
 ]
 

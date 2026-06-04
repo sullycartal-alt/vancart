@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { CheckCircle, Circle, ImagePlus, Store, Camera, Check } from 'lucide-react'
+import { CheckCircle, Circle, ImagePlus, Store, Check } from 'lucide-react'
 
 const PRESET_COLORS = ['#6C47FF', '#FF6B35', '#10B981', '#F59E0B', '#EF4444', '#1A1A2E']
 
@@ -30,7 +30,7 @@ function ZoneOverlay({ zoneId, label, activeZone, setActiveZone }: {
   const isActive = activeZone === zoneId
   return (
     <div
-      onClick={() => setActiveZone(zoneId as ActiveZone)}
+      onClick={(e) => { e.stopPropagation(); setActiveZone(zoneId as ActiveZone) }}
       style={{
         position: 'absolute', inset: 0, zIndex: 10,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -51,7 +51,7 @@ function ZoneOverlay({ zoneId, label, activeZone, setActiveZone }: {
 
 function InlineQR() {
   return (
-    <svg width="80" height="80" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
+    <svg width="90" height="90" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
       <rect width="56" height="56" fill="white"/>
       <rect x="2" y="2" width="16" height="16" fill="#111" rx="1"/>
       <rect x="4" y="4" width="12" height="12" fill="white" rx="1"/>
@@ -123,13 +123,20 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
   const logoInputRef = useRef<HTMLInputElement>(null)
   const bannerInputRef = useRef<HTMLInputElement>(null)
 
+  // Demo values for the preview
+  const previewStamps = Math.min(5, stampsRequired)
+  const previewPoints = Math.round(pointsRequired * 0.6)
+  const remaining = loyaltyType === 'stamps'
+    ? stampsRequired - previewStamps
+    : pointsRequired - previewPoints
+
   const steps = [
-    { id: 'color', label: 'Couleur principale', done: !!color && color !== '#000000' },
-    { id: 'logo', label: 'Logo de votre commerce', done: !!logoUrl },
-    { id: 'banner', label: 'Photo de votre commerce', done: !!bannerUrl },
-    { id: 'name', label: 'Nom du commerce', done: !!businessName },
-    { id: 'loyalty', label: 'Règle de fidélité', done: stampsRequired > 0 || (pointsRequired ?? 0) > 0 },
-    { id: 'reward', label: 'Nom de la récompense', done: !!loyaltyRule && loyaltyRule !== 'Achetez 10, le suivant est offert' },
+    { id: 'color' as const, label: 'Couleur principale', done: !!color && color !== '#000000' },
+    { id: 'logo' as const, label: 'Logo de votre commerce', done: !!logoUrl },
+    { id: 'banner' as const, label: 'Photo de votre commerce', done: !!bannerUrl },
+    { id: 'name' as const, label: 'Nom du commerce', done: !!businessName },
+    { id: 'loyalty' as const, label: 'Règle de fidélité', done: stampsRequired > 0 || (pointsRequired ?? 0) > 0 },
+    { id: 'reward' as const, label: 'Nom de la récompense', done: !!loyaltyRule && loyaltyRule !== 'Achetez 10, le suivant est offert' },
   ]
   const doneCount = steps.filter(s => s.done).length
   const progressPct = Math.round((doneCount / steps.length) * 100)
@@ -181,6 +188,24 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
   const inputClass = 'w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-[#6C47FF] focus:border-transparent outline-none'
   const btnSave = 'w-full mt-4 py-2.5 text-sm font-semibold text-white rounded-lg transition-colors'
 
+  function StepItem({ step }: { step: typeof steps[number] }) {
+    const clickable = step.id !== 'name'
+    return (
+      <div
+        className={`flex items-center gap-3 ${clickable ? 'cursor-pointer group' : ''}`}
+        onClick={() => clickable && setActiveZone(step.id as ActiveZone)}
+      >
+        {step.done
+          ? <CheckCircle className="w-5 h-5 text-[#6C47FF] flex-shrink-0" />
+          : <Circle className={`w-5 h-5 flex-shrink-0 ${clickable ? 'group-hover:text-[#6C47FF] transition-colors' : ''} text-gray-300`} />
+        }
+        <span className={`text-sm font-medium ${clickable ? 'group-hover:text-[#6C47FF] transition-colors' : ''} text-gray-700`}>
+          {step.label}
+        </span>
+      </div>
+    )
+  }
+
   return (
     <div className="px-6 py-8 max-w-6xl mx-auto bg-[#F7F6F3] min-h-screen">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
@@ -190,31 +215,18 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
           <h1 className="text-2xl font-bold text-gray-900">Construisez votre carte</h1>
           <p className="text-sm text-gray-500 mt-1">Cliquez sur chaque zone de la carte pour la personnaliser.</p>
 
-          {/* Checklist */}
           <div className="mt-6 space-y-3">
-            {steps.map(step => (
-              <div key={step.id} className="flex items-center gap-3">
-                {step.done
-                  ? <CheckCircle className="w-5 h-5 text-[#6C47FF] flex-shrink-0" />
-                  : <Circle className="w-5 h-5 text-gray-300 flex-shrink-0" />
-                }
-                <span className="text-sm font-medium text-gray-700">{step.label}</span>
-              </div>
-            ))}
+            {steps.map(step => <StepItem key={step.id} step={step} />)}
           </div>
 
-          {/* Progress bar */}
           <div className="mt-4">
             <p className="text-xs text-gray-500 mb-1.5">{doneCount} / 6 étapes complétées</p>
             <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-[#6C47FF] rounded-full transition-all duration-500"
-                style={{ width: `${progressPct}%` }}
-              />
+              <div className="h-full bg-[#6C47FF] rounded-full transition-all duration-500" style={{ width: `${progressPct}%` }} />
             </div>
           </div>
 
-          {/* Contextual edit panel */}
+          {/* Contextual panel */}
           <div className="mt-6">
             {activeZone === null ? (
               <p className="text-sm text-gray-400 text-center py-8">
@@ -230,33 +242,62 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
                     <div className="flex items-center gap-3 flex-wrap">
                       {PRESET_COLORS.map(hex => (
                         <button
-                          key={hex}
-                          type="button"
-                          onClick={() => setColor(hex)}
+                          key={hex} type="button" onClick={() => setColor(hex)}
                           className="w-8 h-8 rounded-full border-2 transition-all hover:scale-110 flex-shrink-0"
-                          style={{
-                            backgroundColor: hex,
-                            borderColor: color === hex ? '#1A1A1A' : 'transparent',
-                            boxShadow: color === hex ? '0 0 0 2px white inset' : 'none',
-                          }}
+                          style={{ backgroundColor: hex, borderColor: color === hex ? '#1A1A1A' : 'transparent', boxShadow: color === hex ? '0 0 0 2px white inset' : 'none' }}
                         />
                       ))}
-                      <input
-                        type="color"
-                        value={color}
-                        onChange={e => setColor(e.target.value)}
-                        className="w-8 h-8 rounded-lg border border-gray-200 cursor-pointer p-0.5"
-                        title="Couleur personnalisée"
-                      />
+                      <input type="color" value={color} onChange={e => setColor(e.target.value)} className="w-8 h-8 rounded-lg border border-gray-200 cursor-pointer p-0.5" title="Couleur personnalisée" />
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => saveField({ primary_color: color })}
-                      className={btnSave}
-                      style={{ backgroundColor: color }}
-                    >
+                    <button type="button" onClick={() => saveField({ primary_color: color })} className={btnSave} style={{ backgroundColor: color }}>
                       Enregistrer
                     </button>
+                  </div>
+                )}
+
+                {/* Panel: logo */}
+                {activeZone === 'logo' && (
+                  <div className="space-y-3">
+                    <p className="font-semibold text-gray-900">Logo de votre commerce</p>
+                    <p className="text-xs text-gray-400">Format carré recommandé, max 2 Mo</p>
+                    <label className="block cursor-pointer">
+                      <div className="bg-[#F7F6F3] border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-[#6C47FF] transition-colors">
+                        {logoUploading ? (
+                          <div className="flex flex-col items-center gap-2">
+                            <div className="w-6 h-6 border-2 border-[#6C47FF] border-t-transparent rounded-full animate-spin" />
+                            <span className="text-sm text-gray-500">Envoi en cours...</span>
+                          </div>
+                        ) : logoUrl ? (
+                          <div className="flex flex-col items-center gap-2">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={logoUrl} alt="" className="w-16 h-16 object-cover rounded-xl border border-gray-200" />
+                            <span className="text-sm text-[#6C47FF] font-medium">Changer le logo</span>
+                          </div>
+                        ) : (
+                          <div className="flex flex-col items-center gap-2">
+                            <ImagePlus className="w-8 h-8 text-gray-400" strokeWidth={1.5} />
+                            <span className="text-sm text-gray-500">Cliquez pour uploader</span>
+                          </div>
+                        )}
+                      </div>
+                      <input ref={logoInputRef} type="file" accept="image/jpeg,image/png,image/webp" onChange={handleLogoUpload} className="hidden" />
+                    </label>
+                    {/* Color picker also accessible from logo panel */}
+                    <div className="pt-3 border-t border-gray-100 space-y-2">
+                      <p className="text-sm font-semibold text-gray-900">Couleur principale</p>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {PRESET_COLORS.map(hex => (
+                          <button key={hex} type="button" onClick={() => setColor(hex)}
+                            className="w-7 h-7 rounded-full border-2 transition-all hover:scale-110 flex-shrink-0"
+                            style={{ backgroundColor: hex, borderColor: color === hex ? '#1A1A1A' : 'transparent', boxShadow: color === hex ? '0 0 0 2px white inset' : 'none' }}
+                          />
+                        ))}
+                        <input type="color" value={color} onChange={e => setColor(e.target.value)} className="w-7 h-7 rounded-lg border border-gray-200 cursor-pointer p-0.5" />
+                      </div>
+                      <button type="button" onClick={() => saveField({ primary_color: color })} className="text-xs text-[#6C47FF] font-medium hover:underline">
+                        Enregistrer la couleur
+                      </button>
+                    </div>
                   </div>
                 )}
 
@@ -290,51 +331,15 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
                   </div>
                 )}
 
-                {/* Panel: logo */}
-                {activeZone === 'logo' && (
-                  <div className="space-y-3">
-                    <p className="font-semibold text-gray-900">Logo de votre commerce</p>
-                    <p className="text-xs text-gray-400">Format carré recommandé, max 2 Mo</p>
-                    <label className="block cursor-pointer">
-                      <div className="bg-[#F7F6F3] border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-[#6C47FF] transition-colors">
-                        {logoUploading ? (
-                          <div className="flex flex-col items-center gap-2">
-                            <div className="w-6 h-6 border-2 border-[#6C47FF] border-t-transparent rounded-full animate-spin" />
-                            <span className="text-sm text-gray-500">Envoi en cours...</span>
-                          </div>
-                        ) : logoUrl ? (
-                          <div className="flex flex-col items-center gap-2">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img src={logoUrl} alt="" className="w-16 h-16 object-cover rounded-xl border border-gray-200" />
-                            <span className="text-sm text-[#6C47FF] font-medium">Changer le logo</span>
-                          </div>
-                        ) : (
-                          <div className="flex flex-col items-center gap-2">
-                            <ImagePlus className="w-8 h-8 text-gray-400" strokeWidth={1.5} />
-                            <span className="text-sm text-gray-500">Cliquez pour uploader</span>
-                          </div>
-                        )}
-                      </div>
-                      <input ref={logoInputRef} type="file" accept="image/jpeg,image/png,image/webp" onChange={handleLogoUpload} className="hidden" />
-                    </label>
-                  </div>
-                )}
-
                 {/* Panel: loyalty */}
                 {activeZone === 'loyalty' && (
                   <div className="space-y-4">
                     <p className="font-semibold text-gray-900">Règle de fidélité</p>
                     <div className="flex rounded-xl border border-gray-200 bg-[#F7F6F3] p-1 gap-1">
                       {(['stamps', 'points'] as const).map(type => (
-                        <button
-                          key={type}
-                          type="button"
-                          onClick={() => setLoyaltyType(type)}
+                        <button key={type} type="button" onClick={() => setLoyaltyType(type)}
                           className="flex-1 py-1.5 rounded-lg text-sm font-medium transition-all"
-                          style={loyaltyType === type
-                            ? { backgroundColor: color, color: 'white' }
-                            : { backgroundColor: 'transparent', color: '#6B7280' }
-                          }
+                          style={loyaltyType === type ? { backgroundColor: color, color: 'white' } : { backgroundColor: 'transparent', color: '#6B7280' }}
                         >
                           {type === 'stamps' ? 'Tampons' : 'Points'}
                         </button>
@@ -343,11 +348,7 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
                     {loyaltyType === 'stamps' ? (
                       <div className="space-y-1.5">
                         <label className="text-sm font-medium text-gray-700">Tampons pour une récompense</label>
-                        <input
-                          type="number"
-                          min={1}
-                          max={30}
-                          value={stampsRequired}
+                        <input type="number" min={1} max={30} value={stampsRequired}
                           onChange={e => setStampsRequired(Math.min(30, Math.max(1, Number(e.target.value))))}
                           className={inputClass}
                         />
@@ -356,31 +357,23 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
                       <div className="space-y-3">
                         <div className="space-y-1.5">
                           <label className="text-sm font-medium text-gray-700">Points par euro dépensé</label>
-                          <input
-                            type="number"
-                            min={1}
-                            value={pointsPerEuro}
+                          <input type="number" min={1} value={pointsPerEuro}
                             onChange={e => setPointsPerEuro(Math.max(1, Number(e.target.value)))}
                             className={inputClass}
                           />
                         </div>
                         <div className="space-y-1.5">
                           <label className="text-sm font-medium text-gray-700">Points pour une récompense</label>
-                          <input
-                            type="number"
-                            min={1}
-                            value={pointsRequired}
+                          <input type="number" min={1} value={pointsRequired}
                             onChange={e => setPointsRequired(Math.max(1, Number(e.target.value)))}
                             className={inputClass}
                           />
                         </div>
                       </div>
                     )}
-                    <button
-                      type="button"
+                    <button type="button"
                       onClick={() => saveField({ loyalty_type: loyaltyType, stamps_required: stampsRequired, points_required: pointsRequired, points_per_euro: pointsPerEuro })}
-                      className={btnSave}
-                      style={{ backgroundColor: color }}
+                      className={btnSave} style={{ backgroundColor: color }}
                     >
                       Enregistrer
                     </button>
@@ -392,18 +385,12 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
                   <div className="space-y-3">
                     <p className="font-semibold text-gray-900">Votre récompense</p>
                     <p className="text-sm text-gray-500">Ce texte apparaît sur la carte de vos clients.</p>
-                    <input
-                      type="text"
-                      placeholder="Ex : 1 café offert, 10% de réduction..."
-                      value={loyaltyRule}
-                      onChange={e => setLoyaltyRule(e.target.value)}
+                    <input type="text" placeholder="Ex : 1 café offert, 10% de réduction..."
+                      value={loyaltyRule} onChange={e => setLoyaltyRule(e.target.value)}
                       className={inputClass}
                     />
-                    <button
-                      type="button"
-                      onClick={() => saveField({ loyalty_rule: loyaltyRule })}
-                      className={btnSave}
-                      style={{ backgroundColor: color }}
+                    <button type="button" onClick={() => saveField({ loyalty_rule: loyaltyRule })}
+                      className={btnSave} style={{ backgroundColor: color }}
                     >
                       Enregistrer
                     </button>
@@ -421,122 +408,102 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
 
           <div
             style={{
-              width: 340,
-              borderRadius: 24,
+              width: 360,
+              borderRadius: 20,
               overflow: 'hidden',
-              boxShadow: '0 24px 60px rgba(0,0,0,0.18)',
-              position: 'relative',
-              cursor: 'pointer',
+              boxShadow: '0 24px 60px rgba(0,0,0,0.2)',
               fontFamily: 'var(--font-jakarta), "Plus Jakarta Sans", sans-serif',
               flexShrink: 0,
             }}
           >
-            {/* Zone bannière */}
-            <div
-              style={{
-                height: 180,
-                position: 'relative',
-                backgroundImage: bannerUrl ? `url(${bannerUrl})` : undefined,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                background: bannerUrl ? undefined : `linear-gradient(135deg, ${color} 0%, ${color}99 100%)`,
-              }}
-            >
-              {/* Scrim */}
-              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.6) 100%)', zIndex: 1 }} />
-
-              {/* Badge photo */}
-              <div style={{ position: 'absolute', top: 12, right: 12, zIndex: 5 }}
-                className="bg-black/40 backdrop-blur-sm text-white text-xs px-2.5 py-1 rounded-full flex items-center gap-1"
+            {/* Zone 1 — Header */}
+            <div style={{ position: 'relative', borderRadius: '0' }}>
+              <div
+                style={{
+                  backgroundColor: color,
+                  height: 64,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '0 16px',
+                }}
               >
-                <Camera className="w-3 h-3" />
-                Votre photo
-              </div>
-
-              {/* Logo + name */}
-              <div style={{ position: 'absolute', bottom: 12, left: 16, zIndex: 5, display: 'flex', alignItems: 'center', gap: 10 }}>
                 {logoUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={logoUrl} alt="" style={{ width: 44, height: 44, borderRadius: 10, objectFit: 'cover', border: '2px solid rgba(255,255,255,0.3)', flexShrink: 0 }} />
+                  <img src={logoUrl} style={{ width: 38, height: 38, borderRadius: 8, objectFit: 'cover', backgroundColor: 'white', flexShrink: 0 }} alt="" />
                 ) : (
-                  <div style={{ width: 44, height: 44, borderRadius: 10, background: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <div style={{ width: 38, height: 38, borderRadius: 8, backgroundColor: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     <Store className="w-5 h-5 text-white" strokeWidth={1.5} />
                   </div>
                 )}
-                <div>
-                  <p style={{ color: 'white', fontWeight: 700, fontSize: 15, lineHeight: 1.2 }}>{businessName || 'Mon Commerce'}</p>
-                  <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 11 }}>Programme de fidélité</p>
+                <div style={{ color: 'white', fontWeight: 700, fontSize: 15, textAlign: 'center', flex: 1, padding: '0 12px' }}>
+                  {businessName || 'Mon Commerce'}
+                </div>
+                <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                  <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 9, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                    {loyaltyType === 'stamps' ? 'TAMPONS' : 'POINTS'}
+                  </div>
+                  <div style={{ color: 'white', fontWeight: 800, fontSize: 20, lineHeight: 1 }}>
+                    {loyaltyType === 'stamps'
+                      ? <>{previewStamps}<span style={{ fontSize: 12, fontWeight: 400, opacity: 0.7 }}>/{stampsRequired}</span></>
+                      : previewPoints
+                    }
+                  </div>
                 </div>
               </div>
+              <ZoneOverlay zoneId="logo" label="Changer le logo" activeZone={activeZone} setActiveZone={setActiveZone} />
+            </div>
 
+            {/* Zone 2 — Banner */}
+            <div style={{ position: 'relative', overflow: 'hidden', height: 200 }}>
+              {bannerUrl ? (
+                <div style={{ height: 200, backgroundImage: `url('${bannerUrl}')`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
+              ) : (
+                <div style={{
+                  height: 200,
+                  background: `linear-gradient(160deg, ${color}CC 0%, ${color}44 100%)`,
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8,
+                }}>
+                  <ImagePlus style={{ width: 40, height: 40, color: 'rgba(255,255,255,0.3)' }} strokeWidth={1.5} />
+                  <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12 }}>Votre photo</span>
+                </div>
+              )}
+              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 80, background: 'linear-gradient(to top, rgba(0,0,0,0.5), transparent)' }} />
               <ZoneOverlay zoneId="banner" label="Changer la photo" activeZone={activeZone} setActiveZone={setActiveZone} />
             </div>
 
-            {/* Zone couleur + fidélité */}
-            <div style={{ backgroundColor: color, padding: '14px 16px', position: 'relative' }}>
-              <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 600 }}>
-                {loyaltyType === 'stamps' ? 'Tampons' : 'Points'}
-              </p>
-              <p style={{ color: 'white', fontWeight: 900, fontSize: 30, lineHeight: 1.1, marginTop: 2 }}>
-                {loyaltyType === 'stamps' ? stampsRequired : pointsRequired}
-              </p>
-              {loyaltyType === 'stamps' && (
-                <div style={{ display: 'flex', gap: 5, marginTop: 10, flexWrap: 'wrap' }}>
-                  {Array.from({ length: Math.min(stampsRequired, 12) }).map((_, i) => (
-                    <div
-                      key={i}
-                      style={{
-                        width: 26,
-                        height: 26,
-                        borderRadius: '50%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        background: i < 5 ? 'white' : 'transparent',
-                        border: i < 5 ? 'none' : '2px solid rgba(255,255,255,0.3)',
-                        flexShrink: 0,
-                      }}
-                    >
-                      {i < 5 && <Check size={13} strokeWidth={3} style={{ color }} />}
-                    </div>
-                  ))}
+            {/* Zone 3 — Client info: split into left (loyalty) + right (reward) */}
+            <div style={{ backgroundColor: color, display: 'flex' }}>
+              {/* Left: loyalty info */}
+              <div style={{ position: 'relative', flex: 1, padding: '14px 0 14px 16px' }}>
+                <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 9, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 2 }}>CARTE DE</div>
+                <div style={{ color: 'white', fontWeight: 700, fontSize: 16 }}>Marie Laurent</div>
+                <ZoneOverlay zoneId="loyalty" label="Modifier la fidélité" activeZone={activeZone} setActiveZone={setActiveZone} />
+              </div>
+              {/* Right: reward info */}
+              <div style={{ position: 'relative', flex: 1, padding: '14px 16px 14px 8px', textAlign: 'right' }}>
+                <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 9, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 2 }}>PROCHAINE RÉCOMPENSE</div>
+                <div style={{ color: 'white', fontWeight: 700, fontSize: 13 }}>
+                  {remaining} {loyaltyType === 'stamps' ? `tampon${remaining > 1 ? 's' : ''}` : 'points'} avant
                 </div>
-              )}
-              <ZoneOverlay zoneId="loyalty" label="Modifier la règle" activeZone={activeZone} setActiveZone={setActiveZone} />
+                <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: 12, fontStyle: 'italic' }}>
+                  🎁 {loyaltyRule || 'Votre récompense'}
+                </div>
+                <ZoneOverlay zoneId="reward" label="Modifier la récompense" activeZone={activeZone} setActiveZone={setActiveZone} />
+              </div>
             </div>
 
-            {/* Zone récompense */}
-            <div style={{ backgroundColor: color, padding: '10px 16px', position: 'relative', borderTop: '1px solid rgba(255,255,255,0.12)' }}>
-              <span
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  background: 'rgba(255,255,255,0.15)',
-                  color: 'white',
-                  fontSize: 12,
-                  fontWeight: 500,
-                  padding: '6px 12px',
-                  borderRadius: 20,
-                }}
-              >
-                🎁 {loyaltyRule || 'Votre récompense'}
-              </span>
-              <ZoneOverlay zoneId="reward" label="Modifier la récompense" activeZone={activeZone} setActiveZone={setActiveZone} />
-            </div>
-
-            {/* Zone client */}
-            <div style={{ backgroundColor: 'white', padding: '14px 16px' }}>
-              <p style={{ color: '#9CA3AF', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 600 }}>Carte de</p>
-              <p style={{ color: '#111827', fontWeight: 700, fontSize: 17, marginTop: 2 }}>Marie Laurent</p>
-            </div>
-
-            {/* Zone QR */}
-            <div style={{ backgroundColor: 'white', padding: '14px 16px', borderTop: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <div style={{ borderRadius: 8, border: '1px solid #E5E7EB', padding: 4 }}>
+            {/* Zone 4 — QR */}
+            <div style={{ backgroundColor: color, padding: 16, borderTop: '2px solid rgba(255,255,255,0.15)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+              <div style={{ borderRadius: 12, padding: 10, backgroundColor: 'white', lineHeight: 0 }}>
                 <InlineQR />
               </div>
-              <p style={{ color: '#6B7280', fontSize: 11, marginTop: 8, textAlign: 'center' }}>Présentez ce QR code en caisse</p>
+              <div style={{ color: 'rgba(255,255,255,0.9)', fontSize: 12, fontWeight: 600, textAlign: 'center' }}>
+                Présentez ce QR code en caisse
+              </div>
+              <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 10, textAlign: 'center' }}>
+                ID : 1a4f8c · e291 · 3b72
+              </div>
             </div>
           </div>
 

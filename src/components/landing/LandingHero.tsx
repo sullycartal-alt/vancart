@@ -10,6 +10,14 @@ const BULLETS = [
   'Plus de cartes perdues, plus de clients fidélisés',
 ]
 
+const AVATARS = [
+  { initials: 'JD', color: '#6C47FF' },
+  { initials: 'ML', color: '#F97316' },
+  { initials: 'SC', color: '#10B981' },
+  { initials: 'AR', color: '#F59E0B' },
+  { initials: 'PB', color: '#EF4444' },
+]
+
 const TRUST = [
   { Icon: Clock, label: '5 minutes', sub: 'pour démarrer' },
   { Icon: Lock, label: 'Sans engagement', sub: 'Annulez quand vous voulez' },
@@ -37,9 +45,7 @@ function HeroCard() {
         style={{
           position: 'relative',
           height: 200,
-          backgroundImage: "url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=80')",
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          background: 'linear-gradient(135deg, #6C47FF 0%, #9B7FFF 50%, #C4B0FF 100%)',
         }}
       >
         {/* Scrim for text legibility */}
@@ -145,7 +151,8 @@ export default function LandingHero() {
             </div>
 
             <h1 className="text-5xl font-black text-gray-900 leading-tight">
-              La fidélité qui ne finit{' '}
+              La fidélité qui ne finit
+              <br />
               <span style={{ color: '#F97316', textDecoration: 'line-through', textDecorationColor: '#F97316' }}>
                 pas à la poubelle.
               </span>
@@ -186,16 +193,15 @@ export default function LandingHero() {
 
             {/* Social proof */}
             <div className="flex items-center gap-3 justify-center lg:justify-start">
-              <div className="flex -space-x-2 flex-shrink-0">
-                {[1, 2, 3, 4, 5].map((n) => (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    key={n}
-                    src={`https://i.pravatar.cc/40?img=${n}`}
-                    alt=""
-                    className="rounded-full border-2 border-white"
-                    style={{ width: 36, height: 36, objectFit: 'cover' }}
-                  />
+              <div className="flex flex-shrink-0" style={{ gap: 0 }}>
+                {AVATARS.map(({ initials, color }, i) => (
+                  <div
+                    key={initials}
+                    className="flex items-center justify-center rounded-full border-2 border-white text-white text-xs font-bold flex-shrink-0"
+                    style={{ width: 36, height: 36, backgroundColor: color, marginLeft: i === 0 ? 0 : -8 }}
+                  >
+                    {initials}
+                  </div>
                 ))}
               </div>
               <p className="text-sm text-gray-500 max-w-xs text-left">
@@ -204,13 +210,13 @@ export default function LandingHero() {
             </div>
 
             {/* Trust indicators */}
-            <div className="flex flex-wrap gap-8 justify-center lg:justify-start pt-2">
+            <div className="grid grid-cols-4 gap-4 pt-2">
               {TRUST.map(({ Icon, label, sub }) => (
-                <div key={label} className="flex items-center gap-2.5">
-                  <Icon size={22} strokeWidth={1.9} className="text-[#6C47FF] flex-shrink-0" />
-                  <div className="text-left leading-tight">
-                    <p className="text-sm font-bold text-gray-900">{label}</p>
-                    <p className="text-xs text-gray-500">{sub}</p>
+                <div key={label} className="flex items-center gap-2">
+                  <Icon size={16} strokeWidth={1.9} className="text-[#6C47FF] flex-shrink-0" />
+                  <div className="leading-tight">
+                    <p className="text-sm font-semibold text-gray-900 whitespace-nowrap">{label}</p>
+                    <p className="text-xs text-gray-500 whitespace-nowrap">{sub}</p>
                   </div>
                 </div>
               ))}

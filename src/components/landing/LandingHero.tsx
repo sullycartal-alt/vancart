@@ -45,7 +45,7 @@ function HeroCard() {
         style={{
           position: 'relative',
           height: 200,
-          backgroundImage: "url('https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Cafe_de_Flore_Paris_2008.jpg/800px-Cafe_de_Flore_Paris_2008.jpg')",
+          backgroundImage: "url('/hero-cafe.svg')",
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}

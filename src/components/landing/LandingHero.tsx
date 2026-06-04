@@ -270,11 +270,11 @@ export default function LandingHero() {
 
               {/* Handwritten annotation */}
               <div style={{ position: 'absolute', bottom: 80, right: -8, textAlign: 'right', zIndex: 10 }}>
-                <svg width="60" height="50" viewBox="0 0 60 50" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block', marginLeft: 'auto', marginBottom: 4 }}>
-                  <path d="M 50 45 C 40 30, 20 15, 5 8" stroke="#6C47FF" strokeWidth="2" strokeLinecap="round" fill="none"/>
-                  <path d="M 5 8 L 12 10 L 8 16" stroke="#6C47FF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                <svg width="70" height="60" viewBox="0 0 70 60" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block', marginLeft: 'auto', marginBottom: 6 }}>
+                  <path d="M 60 50 C 55 35, 35 15, 10 5" stroke="#6C47FF" strokeWidth="1.5" strokeLinecap="round" fill="none" strokeDasharray="none"/>
+                  <path d="M 10 5 Q 14 11 18 9" stroke="#6C47FF" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
                 </svg>
-                <p style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', color: '#6C47FF', fontSize: 13, lineHeight: 1.4, maxWidth: 160 }}>
+                <p style={{ fontFamily: 'var(--font-jakarta), "Plus Jakarta Sans", sans-serif', fontStyle: 'italic', color: '#6C47FF', fontSize: 13, lineHeight: 1.4, maxWidth: 160 }}>
                   Toujours dans le<br/>téléphone de vos clients !
                 </p>
               </div>

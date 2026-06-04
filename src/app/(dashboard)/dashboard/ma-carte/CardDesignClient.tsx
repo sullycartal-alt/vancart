@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { CheckCircle, Circle, ImagePlus, Store, Check, X, ChevronRight } from 'lucide-react'
+import { CheckCircle, Circle, ImagePlus, Store, X, ChevronRight } from 'lucide-react'
 
 const PRESET_COLORS = ['#6C47FF', '#FF6B35', '#10B981', '#F59E0B', '#EF4444', '#1A1A2E']
 
@@ -46,7 +46,7 @@ function ZoneOverlay({ zoneId, label, activeZone, setActiveZone, hidden }: {
       className={hidden ? '' : 'group hover:bg-[#6C47FF]/10 hover:border-[#6C47FF]'}
     >
       {!hidden && (
-        <div className={`transition-opacity bg-[#6C47FF] text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1 ${hidden ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+        <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-[#6C47FF] text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1">
           <span>+</span> <span>{label}</span>
         </div>
       )}
@@ -123,7 +123,6 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
   const [logoUploading, setLogoUploading] = useState(false)
   const [bannerUploading, setBannerUploading] = useState(false)
   const [saving, setSaving] = useState(false)
-  const [savedZone, setSavedZone] = useState<string | null>(null)
   const [previewMode, setPreviewMode] = useState<'edit' | 'preview'>('edit')
 
   const logoInputRef = useRef<HTMLInputElement>(null)
@@ -147,27 +146,6 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
   const completedCount = steps.filter(s => s.done).length
   const nextStep = steps.find(s => !s.done)
 
-  const handleSaveAll = async () => {
-    setSaving(true)
-    await fetch('/api/merchants', {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        primary_color: color,
-        logo_url: logoUrl,
-        banner_url: bannerUrl,
-        loyalty_type: loyaltyType,
-        stamps_required: stampsRequired,
-        points_required: pointsRequired,
-        points_per_euro: pointsPerEuro,
-        loyalty_rule: loyaltyRule,
-      }),
-    })
-    setSaving(false)
-    setSavedZone('all')
-    setTimeout(() => setSavedZone(null), 2000)
-  }
-
   async function saveField(fields: Record<string, unknown>) {
     setSaving(true)
     await fetch('/api/merchants', {
@@ -176,8 +154,6 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
       body: JSON.stringify(fields),
     })
     setSaving(false)
-    setSavedZone(Object.keys(fields)[0])
-    setTimeout(() => setSavedZone(null), 2000)
   }
 
   async function handleLogoUpload(e: React.ChangeEvent<HTMLInputElement>) {
@@ -302,18 +278,11 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
                   </div>
                 </div>
               </div>
-              <div className="px-4 pb-4">
-                <button
-                  onClick={handleSaveAll}
-                  disabled={saving}
-                  className="w-full bg-[#6C47FF] hover:bg-[#5835FF] text-white font-semibold py-3 rounded-xl text-sm transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
-                >
-                  {saving ? (
-                    <><svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg> Enregistrement...</>
-                  ) : (
-                    <><Check className="w-4 h-4" /> Enregistrer ma carte</>
-                  )}
-                </button>
+              <div className="px-4 pb-4 pt-2 flex items-center gap-2 text-xs text-gray-400">
+                <svg className="w-3.5 h-3.5 text-[#10B981] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+                Chaque modification est enregistrée automatiquement
               </div>
             </div>
           )}
@@ -624,22 +593,6 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
 
       </div>
 
-      {/* Fixed save button — bottom left */}
-      <div className="fixed bottom-6 left-6 z-50">
-        <button
-          onClick={handleSaveAll}
-          disabled={saving}
-          className="bg-[#6C47FF] hover:bg-[#5835FF] text-white text-sm font-semibold px-5 py-2.5 rounded-full shadow-lg transition-colors flex items-center gap-2 disabled:opacity-60"
-        >
-          {saving ? (
-            <><svg className="animate-spin w-3.5 h-3.5" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg> Enregistrement...</>
-          ) : savedZone ? (
-            <><Check className="w-3.5 h-3.5" /> Enregistré !</>
-          ) : (
-            <><Check className="w-3.5 h-3.5" /> Enregistrer</>
-          )}
-        </button>
-      </div>
     </div>
   )
 }

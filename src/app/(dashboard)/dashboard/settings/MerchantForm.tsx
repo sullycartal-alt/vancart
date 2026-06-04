@@ -65,9 +65,6 @@ function generateSlug(name: string): string {
 
 export default function MerchantForm({ merchant, onConfigChange, clientCount = 0 }: Props) {
   const router = useRouter()
-  const [logoUrl, setLogoUrl] = useState<string | null>(merchant?.logo_url ?? null)
-  const [logoUploading, setLogoUploading] = useState(false)
-  const [logoError, setLogoError] = useState<string | null>(null)
   const [savedMerchant, setSavedMerchant] = useState<Merchant | null>(merchant)
   const [allowMultipleStamps, setAllowMultipleStamps] = useState(merchant?.allow_multiple_stamps ?? true)
   const [stampsPerVisit, setStampsPerVisit] = useState(merchant?.stamps_per_visit ?? 1)
@@ -75,7 +72,6 @@ export default function MerchantForm({ merchant, onConfigChange, clientCount = 0
   const [showResetModal, setShowResetModal] = useState(false)
   const [resetting, setResetting] = useState(false)
   const [resetDone, setResetDone] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? ''
   const onConfigChangeRef = useRef(onConfigChange)
   onConfigChangeRef.current = onConfigChange
@@ -112,31 +108,12 @@ export default function MerchantForm({ merchant, onConfigChange, clientCount = 0
     })
   }, [businessName, description])
 
-  async function handleLogoChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (!file) return
-    setLogoUploading(true)
-    setLogoError(null)
-    const formData = new FormData()
-    formData.append('file', file)
-    const res = await fetch('/api/upload/logo', { method: 'POST', body: formData })
-    const data = await res.json()
-    if (!res.ok) {
-      setLogoError(data.error ?? "Erreur lors de l'upload")
-    } else {
-      setLogoUrl(data.url)
-      onConfigChangeRef.current?.({ logo_url: data.url })
-    }
-    setLogoUploading(false)
-  }
-
   async function onSubmit(data: FormData) {
     const res = await fetch('/api/merchants', {
       method: savedMerchant ? 'PATCH' : 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         ...data,
-        logo_url: logoUrl,
         description: data.description || null,
         instagram_handle: data.instagram_handle || null,
         city: data.city || null,
@@ -176,36 +153,6 @@ export default function MerchantForm({ merchant, onConfigChange, clientCount = 0
   return (
     <div className="space-y-8">
       <form onSubmit={handleSubmit(onSubmit)} className="bg-white border border-[#E8E8E3] rounded-2xl p-6 space-y-6">
-
-        {/* Logo */}
-        <div>
-          <label className="block text-sm font-medium text-[#1A1A1A] mb-2">Logo du commerce</label>
-          <div className="flex items-center gap-4">
-            <div
-              className="w-20 h-20 rounded-xl border-2 border-dashed border-[#E8E8E3] flex items-center justify-center overflow-hidden bg-[#F7F6F3] cursor-pointer hover:border-[#6C47FF] transition-colors"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              {logoUrl
-                // eslint-disable-next-line @next/next/no-img-element
-                ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain" loading="lazy" />
-                : <span className="text-2xl text-[#6B6B6B]">+</span>
-              }
-            </div>
-            <div>
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={logoUploading}
-                className="text-sm text-[#6C47FF] hover:text-[#5835e0] font-medium disabled:opacity-50 transition-colors"
-              >
-                {logoUploading ? 'Upload en cours...' : logoUrl ? 'Changer le logo' : 'Choisir un logo'}
-              </button>
-              <p className="text-xs text-[#6B6B6B] mt-1">PNG, JPG, SVG — max 2 Mo</p>
-              {logoError && <p className="text-xs text-red-600 mt-1">{logoError}</p>}
-            </div>
-          </div>
-          <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleLogoChange} />
-        </div>
 
         {/* Nom */}
         <div>
@@ -365,17 +312,17 @@ export default function MerchantForm({ merchant, onConfigChange, clientCount = 0
 
         <button
           type="submit"
-          disabled={isSubmitting || logoUploading}
+          disabled={isSubmitting}
           className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-semibold text-white active:scale-[0.98] transition-all shadow-sm disabled:opacity-60 disabled:cursor-not-allowed hover:opacity-90"
           style={{ backgroundColor: 'var(--merchant-color, #6C47FF)' }}
         >
-          {(isSubmitting || logoUploading) && (
+          {isSubmitting && (
             <svg className="animate-spin h-4 w-4 text-white shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
             </svg>
           )}
-          {logoUploading ? 'Upload du logo…' : isSubmitting ? 'Enregistrement…' : savedMerchant ? 'Mettre à jour' : 'Créer ma carte de fidélité'}
+          {isSubmitting ? 'Enregistrement…' : savedMerchant ? 'Mettre à jour' : 'Créer ma carte de fidélité'}
         </button>
       </form>
 

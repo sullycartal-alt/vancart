@@ -1,22 +1,33 @@
-import { Check } from 'lucide-react'
+import { Store, ImagePlus } from 'lucide-react'
+
+export interface LoyaltyCardMockupProps {
+  primaryColor?: string
+  logoUrl?: string
+  bannerUrl?: string
+  businessName?: string
+  loyaltyType?: 'stamps' | 'points'
+  stampsRequired?: number
+  pointsRequired?: number
+  pointsPerEuro?: number
+  loyaltyRule?: string
+  clientName?: string
+  currentStamps?: number
+  currentPoints?: number
+}
 
 function InlineQR() {
   return (
-    <svg width="160" height="160" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
+    <svg width="90" height="90" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
       <rect width="56" height="56" fill="white"/>
-      {/* TL finder */}
       <rect x="2" y="2" width="16" height="16" fill="#111" rx="1"/>
       <rect x="4" y="4" width="12" height="12" fill="white" rx="1"/>
       <rect x="7" y="7" width="6" height="6" fill="#111"/>
-      {/* TR finder */}
       <rect x="38" y="2" width="16" height="16" fill="#111" rx="1"/>
       <rect x="40" y="4" width="12" height="12" fill="white" rx="1"/>
       <rect x="43" y="7" width="6" height="6" fill="#111"/>
-      {/* BL finder */}
       <rect x="2" y="38" width="16" height="16" fill="#111" rx="1"/>
       <rect x="4" y="40" width="12" height="12" fill="white" rx="1"/>
       <rect x="7" y="43" width="6" height="6" fill="#111"/>
-      {/* Data dots */}
       <rect x="21" y="2" width="3" height="3" fill="#111"/>
       <rect x="26" y="2" width="3" height="3" fill="#111"/>
       <rect x="31" y="4" width="2" height="2" fill="#111"/>
@@ -59,162 +70,151 @@ function InlineQR() {
   )
 }
 
-export default function LoyaltyCardMockup() {
-  const filledStamps = 5
-  const totalStamps = 9
+export default function LoyaltyCardMockup(props: LoyaltyCardMockupProps) {
+  const {
+    primaryColor = '#6C47FF',
+    logoUrl,
+    bannerUrl,
+    businessName = 'Votre commerce',
+    loyaltyType = 'stamps',
+    stampsRequired = 9,
+    pointsRequired = 100,
+    loyaltyRule = '1 café offert',
+    clientName = 'Marie Laurent',
+    currentStamps = 5,
+    currentPoints = 60,
+  } = props
+
+  const remaining = loyaltyType === 'stamps'
+    ? stampsRequired - currentStamps
+    : pointsRequired - currentPoints
 
   return (
     <div
       style={{
-        width: 390,
-        borderRadius: 24,
+        width: 360,
+        borderRadius: 20,
         overflow: 'hidden',
-        boxShadow: '0 32px 80px rgba(0,0,0,0.3)',
+        boxShadow: '0 24px 60px rgba(0,0,0,0.2)',
         fontFamily: 'var(--font-jakarta), "Plus Jakarta Sans", sans-serif',
-        backgroundColor: '#6C47FF',
         flexShrink: 0,
       }}
     >
-      {/* Header strip — logo left, stamp count right */}
+      {/* ZONE 1 — Header */}
       <div
         style={{
-          padding: '20px 20px 16px',
+          backgroundColor: primaryColor,
+          height: 64,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
+          padding: '0 16px',
         }}
       >
-        <div className="flex items-center gap-3">
+        {/* Logo */}
+        {logoUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={logoUrl} style={{ width: 38, height: 38, borderRadius: 8, objectFit: 'cover', backgroundColor: 'white', flexShrink: 0 }} alt="" />
+        ) : (
+          <div style={{ width: 38, height: 38, borderRadius: 8, backgroundColor: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <Store className="w-5 h-5 text-white" strokeWidth={1.5} />
+          </div>
+        )}
+
+        {/* Business name */}
+        <div style={{ color: 'white', fontWeight: 700, fontSize: 15, textAlign: 'center', flex: 1, padding: '0 12px' }}>
+          {businessName}
+        </div>
+
+        {/* Counter */}
+        {loyaltyType === 'stamps' ? (
+          <div style={{ textAlign: 'right', flexShrink: 0 }}>
+            <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 9, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}>TAMPONS</div>
+            <div style={{ color: 'white', fontWeight: 800, fontSize: 20, lineHeight: 1 }}>
+              {currentStamps}<span style={{ fontSize: 12, fontWeight: 400, opacity: 0.7 }}>/{stampsRequired}</span>
+            </div>
+          </div>
+        ) : (
+          <div style={{ textAlign: 'right', flexShrink: 0 }}>
+            <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 9, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}>POINTS</div>
+            <div style={{ color: 'white', fontWeight: 800, fontSize: 20, lineHeight: 1 }}>{currentPoints}</div>
+          </div>
+        )}
+      </div>
+
+      {/* ZONE 2 — Banner */}
+      <div style={{ position: 'relative', overflow: 'hidden', height: 200 }}>
+        {bannerUrl ? (
+          <div style={{ height: 200, backgroundImage: `url('${bannerUrl}')`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
+        ) : (
           <div
             style={{
-              width: 44,
-              height: 44,
-              borderRadius: 10,
-              background: 'rgba(255,255,255,0.15)',
-              border: '1.5px solid rgba(255,255,255,0.3)',
+              height: 200,
+              background: `linear-gradient(160deg, ${primaryColor}CC 0%, ${primaryColor}44 100%)`,
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              flexShrink: 0,
+              gap: 8,
             }}
           >
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M17 8h1a4 4 0 0 1 0 8h-1"/>
-              <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/>
-              <line x1="6" x2="6" y1="2" y2="4"/>
-              <line x1="10" x2="10" y1="2" y2="4"/>
-              <line x1="14" x2="14" y1="2" y2="4"/>
-            </svg>
+            <ImagePlus style={{ width: 40, height: 40, color: 'rgba(255,255,255,0.3)' }} strokeWidth={1.5} />
+            <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12 }}>Votre photo</span>
           </div>
-          <p style={{ color: 'white', fontWeight: 700, fontSize: 15, lineHeight: 1.2 }}>
-            Café des Arts
-          </p>
-        </div>
-        <div style={{ textAlign: 'right' }}>
-          <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 11, letterSpacing: '0.12em', fontWeight: 600 }}>
-            TAMPONS
-          </p>
-          <p style={{ color: 'white', fontWeight: 800, fontSize: 26, lineHeight: 1 }}>
-            {filledStamps}
-            <span style={{ fontWeight: 400, fontSize: 18, color: 'rgba(255,255,255,0.5)' }}>/{totalStamps}</span>
-          </p>
-        </div>
+        )}
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 80, background: 'linear-gradient(to top, rgba(0,0,0,0.5), transparent)' }} />
       </div>
 
-      {/* Full-width photo banner */}
+      {/* ZONE 3 — Client info */}
       <div
         style={{
-          height: 200,
-          backgroundImage: "url('/hero-cafe.svg')",
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          position: 'relative',
-          margin: '0 0',
-        }}
-      >
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.05), rgba(0,0,0,0.45))' }} />
-        <div style={{ position: 'absolute', bottom: 12, left: 16, zIndex: 1 }}>
-          <span
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              background: 'rgba(108,71,255,0.85)',
-              backdropFilter: 'blur(6px)',
-              color: 'white',
-              fontSize: 12,
-              fontWeight: 600,
-              padding: '6px 12px',
-              borderRadius: 20,
-            }}
-          >
-            🎁 1 café offert à {totalStamps} tampons
-          </span>
-        </div>
-      </div>
-
-      {/* Info row — client name left, progress right */}
-      <div
-        style={{
-          padding: '16px 20px',
+          backgroundColor: primaryColor,
+          padding: '14px 16px',
           display: 'flex',
-          alignItems: 'flex-start',
+          alignItems: 'center',
           justifyContent: 'space-between',
         }}
       >
         <div>
-          <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: 11, letterSpacing: '0.12em', fontWeight: 600 }}>
-            CARTE DE
-          </p>
-          <p style={{ color: 'white', fontWeight: 700, fontSize: 18, lineHeight: 1.2, marginTop: 2 }}>
-            Marie Laurent
-          </p>
+          <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 9, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 2 }}>CARTE DE</div>
+          <div style={{ color: 'white', fontWeight: 700, fontSize: 16 }}>{clientName}</div>
         </div>
-        <div style={{ textAlign: 'right' }}>
-          <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: 11, letterSpacing: '0.12em', fontWeight: 600 }}>
-            PROGRESSION
-          </p>
-          <div style={{ display: 'flex', gap: 5, marginTop: 6, justifyContent: 'flex-end' }}>
-            {Array.from({ length: totalStamps }).map((_, i) => (
-              <div
-                key={i}
-                style={{
-                  width: 22,
-                  height: 22,
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  background: i < filledStamps ? 'white' : 'transparent',
-                  border: i < filledStamps ? 'none' : '1.5px solid rgba(255,255,255,0.3)',
-                  flexShrink: 0,
-                }}
-              >
-                {i < filledStamps && (
-                  <Check size={12} strokeWidth={3} style={{ color: '#6C47FF' }} />
-                )}
-              </div>
-            ))}
-          </div>
+        <div style={{ textAlign: 'right', maxWidth: 160 }}>
+          <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 9, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 2 }}>PROCHAINE RÉCOMPENSE</div>
+          {loyaltyType === 'stamps' ? (
+            <div style={{ color: 'white', fontWeight: 700, fontSize: 13 }}>
+              {remaining} tampon{remaining > 1 ? 's' : ''} avant
+            </div>
+          ) : (
+            <div style={{ color: 'white', fontWeight: 700, fontSize: 13 }}>
+              {remaining} points avant
+            </div>
+          )}
+          <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: 12, fontStyle: 'italic' }}>🎁 {loyaltyRule}</div>
         </div>
       </div>
 
-      {/* QR code zone — white card, centered */}
+      {/* ZONE 4 — QR code */}
       <div
         style={{
-          margin: '4px 20px 20px',
-          background: 'white',
-          borderRadius: 16,
-          padding: '20px 0 16px',
+          backgroundColor: primaryColor,
+          padding: 16,
+          borderTop: '2px solid rgba(255,255,255,0.15)',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: 8,
+          gap: 10,
         }}
       >
-        <InlineQR />
-        <p style={{ color: '#9CA3AF', fontSize: 12, letterSpacing: '0.05em' }}>1a4f8c · e291 · 3b72</p>
-        <p style={{ color: '#6B7280', fontSize: 11, marginTop: -4 }}>Présentez ce code en caisse</p>
+        <div style={{ borderRadius: 12, padding: 10, backgroundColor: 'white', lineHeight: 0 }}>
+          <InlineQR />
+        </div>
+        <div style={{ color: 'rgba(255,255,255,0.9)', fontSize: 12, fontWeight: 600, textAlign: 'center' }}>
+          Présentez ce QR code en caisse
+        </div>
+        <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 10, textAlign: 'center' }}>
+          ID : 1a4f8c · e291 · 3b72
+        </div>
       </div>
     </div>
   )

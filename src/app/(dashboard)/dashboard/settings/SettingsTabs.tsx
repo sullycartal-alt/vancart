@@ -137,8 +137,6 @@ export default function SettingsTabs({ merchant, clientCount }: Props) {
       ) : (merchant?.business_name?.trim()) ? (
         <CardDesignClient
           key={`${merchant.id}-v${cardInitVersion}`}
-          hideTitle
-          hasClients={clientCount > 0}
           merchant={{
             id: merchant.id,
             slug: merchant.slug,
@@ -147,18 +145,11 @@ export default function SettingsTabs({ merchant, clientCount }: Props) {
             loyalty_rule: liveConfig.loyalty_rule,
             stamps_required: liveConfig.stamps_required,
             logo_url: liveConfig.logo_url,
-            description: liveConfig.description,
             loyalty_type: liveConfig.loyalty_type,
             points_required: liveConfig.points_required,
             points_per_euro: liveConfig.points_per_euro,
-            hero_image_url: liveConfig.hero_image_url ?? null,
-            wallet_message: liveConfig.wallet_message ?? null,
-            card_expiry_months: liveConfig.card_expiry_months ?? null,
-            show_instagram_on_card: liveConfig.show_instagram_on_card ?? false,
-            instagram_handle: liveConfig.instagram_handle ?? null,
             banner_url: liveConfig.banner_url ?? null,
           }}
-          onConfigChange={updateLiveConfig}
         />
       ) : (
         <p className="text-sm text-[#6B6B6B]">Configurez d&apos;abord votre commerce pour personnaliser votre carte.</p>

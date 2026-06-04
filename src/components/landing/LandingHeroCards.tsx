@@ -27,7 +27,7 @@ const CARDS = [
     reward: 'Brunch offert',
     shortId: '230a68…581a',
     layer: 2,
-    style: { top: 16, right: 8, transform: 'rotate(-2deg)', zIndex: 2, opacity: 0.85 },
+    style: { top: 40, right: 8, transform: 'rotate(-2deg)', zIndex: 2, opacity: 0.85 },
   },
   {
     name: 'Le Zinc',
@@ -41,7 +41,7 @@ const CARDS = [
     reward: 'Verre offert',
     shortId: 'b7e2a1…49c3',
     layer: 1,
-    style: { top: 32, right: 0, transform: 'rotate(-5deg)', zIndex: 1, opacity: 0.7 },
+    style: { top: 80, right: 0, transform: 'rotate(-5deg)', zIndex: 1, opacity: 0.7 },
   },
 ] as const
 
@@ -324,7 +324,7 @@ export function LandingHeroCards() {
         }
       `}</style>
 
-      <div style={{ position: 'relative', width: 380, height: 500 }}>
+      <div style={{ position: 'relative', width: 380, height: 560 }}>
         {/* Render in reverse order so card 1 (top) is last in DOM */}
         {[...CARDS].reverse().map((card) => (
           <div

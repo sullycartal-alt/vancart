@@ -30,9 +30,9 @@ export default function Home() {
               <div className="inline-flex items-center gap-2 bg-[#6C47FF]/10 text-[#6C47FF] text-xs font-semibold px-4 py-1.5 rounded-full border border-[#6C47FF]/15">
                 <WalletCards size={14} strokeWidth={1.9} className="flex-shrink-0" /> La carte de fidélité sans plastique, sans app
               </div>
-              <h1 className="text-4xl sm:text-5xl font-bold text-[#1A1A1A] leading-tight">
-                Fidélisez vos clients.<br />
-                <span className="text-[#6C47FF]">Sans carte. Sans application.</span>
+              <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 leading-tight">
+                La fidélité qui<br />
+                ne finit <span style={{ color: '#6C47FF', textDecoration: 'line-through', textDecorationColor: '#6C47FF' }}>pas à la poubelle.</span>
               </h1>
               <p className="text-lg text-[#6B6B6B] max-w-lg leading-relaxed">
                 VanCart génère un QR code unique pour votre commerce. Vos clients scannent, collectent des tampons digitaux et reçoivent leurs récompenses — directement dans leur portefeuille mobile.

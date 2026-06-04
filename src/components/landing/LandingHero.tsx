@@ -45,7 +45,9 @@ function HeroCard() {
         style={{
           position: 'relative',
           height: 200,
-          background: 'linear-gradient(135deg, #6C47FF 0%, #9B7FFF 50%, #C4B0FF 100%)',
+          backgroundImage: "url('https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Cafe_de_Flore_Paris_2008.jpg/800px-Cafe_de_Flore_Paris_2008.jpg')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
         }}
       >
         {/* Scrim for text legibility */}
@@ -67,12 +69,15 @@ function HeroCard() {
 
         {/* Logo + merchant name */}
         <div className="absolute bottom-3 left-3 flex items-center gap-2.5" style={{ zIndex: 1 }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=80&q=80"
-            alt="Café des Arts"
-            style={{ width: 46, height: 46, borderRadius: 10, objectFit: 'cover', border: '2px solid white' }}
-          />
+          <div style={{ width: 46, height: 46, borderRadius: 10, border: '2px solid white', background: '#1a1a1a', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M17 8h1a4 4 0 0 1 0 8h-1"/>
+              <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/>
+              <line x1="6" x2="6" y1="2" y2="4"/>
+              <line x1="10" x2="10" y1="2" y2="4"/>
+              <line x1="14" x2="14" y1="2" y2="4"/>
+            </svg>
+          </div>
           <div className="flex flex-col">
             <span className="text-white font-bold text-base leading-tight">Café des Arts</span>
             <span className="text-white/70 text-xs">Carte de Marie L.</span>
@@ -114,12 +119,26 @@ function HeroCard() {
 
         {/* QR + text */}
         <div className="flex items-center gap-3">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="https://api.qrserver.com/v1/create-qr-code/?size=72x72&data=vancart-demo&bgcolor=ffffff"
-            alt="QR code"
-            style={{ width: 64, height: 64, borderRadius: 8 }}
-          />
+          <div style={{ width: 64, height: 64, borderRadius: 8, background: 'white', padding: 4, flexShrink: 0 }}>
+            <svg width="56" height="56" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
+              <rect width="56" height="56" fill="white"/>
+              {/* TL finder */}
+              <rect x="2" y="2" width="16" height="16" fill="#111" rx="1"/><rect x="4" y="4" width="12" height="12" fill="white" rx="1"/><rect x="7" y="7" width="6" height="6" fill="#111"/>
+              {/* TR finder */}
+              <rect x="38" y="2" width="16" height="16" fill="#111" rx="1"/><rect x="40" y="4" width="12" height="12" fill="white" rx="1"/><rect x="43" y="7" width="6" height="6" fill="#111"/>
+              {/* BL finder */}
+              <rect x="2" y="38" width="16" height="16" fill="#111" rx="1"/><rect x="4" y="40" width="12" height="12" fill="white" rx="1"/><rect x="7" y="43" width="6" height="6" fill="#111"/>
+              {/* Data */}
+              <rect x="21" y="2" width="3" height="3" fill="#111"/><rect x="26" y="2" width="3" height="3" fill="#111"/><rect x="31" y="4" width="2" height="2" fill="#111"/>
+              <rect x="21" y="7" width="2" height="2" fill="#111"/><rect x="25" y="6" width="3" height="3" fill="#111"/><rect x="30" y="8" width="3" height="2" fill="#111"/>
+              <rect x="21" y="13" width="3" height="2" fill="#111"/><rect x="27" y="12" width="2" height="3" fill="#111"/>
+              <rect x="21" y="21" width="2" height="2" fill="#111"/><rect x="25" y="21" width="3" height="3" fill="#111"/><rect x="30" y="21" width="2" height="2" fill="#111"/><rect x="34" y="22" width="3" height="2" fill="#111"/><rect x="38" y="21" width="2" height="3" fill="#111"/><rect x="43" y="21" width="3" height="2" fill="#111"/><rect x="49" y="22" width="2" height="2" fill="#111"/>
+              <rect x="21" y="26" width="3" height="2" fill="#111"/><rect x="27" y="25" width="2" height="3" fill="#111"/><rect x="32" y="26" width="3" height="2" fill="#111"/><rect x="37" y="25" width="2" height="3" fill="#111"/><rect x="41" y="26" width="3" height="2" fill="#111"/><rect x="46" y="25" width="2" height="3" fill="#111"/>
+              <rect x="21" y="32" width="2" height="3" fill="#111"/><rect x="26" y="31" width="3" height="2" fill="#111"/><rect x="31" y="32" width="2" height="3" fill="#111"/><rect x="35" y="31" width="3" height="3" fill="#111"/><rect x="41" y="32" width="2" height="2" fill="#111"/><rect x="46" y="31" width="2" height="3" fill="#111"/>
+              <rect x="21" y="38" width="3" height="2" fill="#111"/><rect x="26" y="39" width="2" height="2" fill="#111"/><rect x="31" y="38" width="3" height="3" fill="#111"/><rect x="36" y="39" width="2" height="2" fill="#111"/><rect x="41" y="38" width="3" height="2" fill="#111"/><rect x="46" y="39" width="2" height="3" fill="#111"/>
+              <rect x="21" y="44" width="2" height="3" fill="#111"/><rect x="26" y="43" width="3" height="3" fill="#111"/><rect x="32" y="44" width="2" height="2" fill="#111"/><rect x="37" y="43" width="3" height="3" fill="#111"/><rect x="43" y="44" width="2" height="2" fill="#111"/>
+            </svg>
+          </div>
           <div className="flex flex-col gap-0.5">
             <span className="text-white font-semibold text-sm">Présentez ce QR code</span>
             <span className="text-white/50 text-xs">à chaque passage en caisse</span>
@@ -167,7 +186,7 @@ export default function LandingHero() {
               {BULLETS.map((b) => (
                 <li key={b} className="flex items-start gap-3">
                   <span
-                    className="flex items-center justify-center rounded-full bg-[#F97316] flex-shrink-0 mt-0.5"
+                    className="flex items-center justify-center rounded-full bg-[#6C47FF] flex-shrink-0 mt-0.5"
                     style={{ width: 22, height: 22 }}
                   >
                     <Check size={13} strokeWidth={3} className="text-white" />
@@ -210,11 +229,11 @@ export default function LandingHero() {
             </div>
 
             {/* Trust indicators */}
-            <div className="grid grid-cols-4 gap-4 pt-2">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-3 pt-2">
               {TRUST.map(({ Icon, label, sub }) => (
-                <div key={label} className="flex items-center gap-2">
-                  <Icon size={16} strokeWidth={1.9} className="text-[#6C47FF] flex-shrink-0" />
-                  <div className="leading-tight">
+                <div key={label} className="flex items-start gap-2">
+                  <Icon className="w-4 h-4 text-[#6C47FF] mt-0.5 flex-shrink-0" strokeWidth={1.9} />
+                  <div>
                     <p className="text-sm font-semibold text-gray-900 whitespace-nowrap">{label}</p>
                     <p className="text-xs text-gray-500 whitespace-nowrap">{sub}</p>
                   </div>
@@ -233,7 +252,7 @@ export default function LandingHero() {
                   width: 420,
                   height: 420,
                   borderRadius: '50%',
-                  background: '#FFF0E8',
+                  background: '#EDE9FF',
                   top: '50%',
                   left: '50%',
                   transform: 'translate(-50%, -50%)',
@@ -245,13 +264,13 @@ export default function LandingHero() {
               <HeroCard />
 
               {/* Handwritten annotation */}
-              <div style={{ position: 'absolute', bottom: 24, right: 0, textAlign: 'right', zIndex: 3 }}>
-                <svg width="60" height="40" style={{ marginLeft: 'auto', marginBottom: 4 }}>
-                  <path d="M 50 5 Q 20 10 10 35" stroke="#6C47FF" strokeWidth="2" fill="none" strokeLinecap="round" />
-                  <polygon points="8,35 14,30 16,38" fill="#6C47FF" />
+              <div style={{ position: 'absolute', bottom: 16, right: -16, textAlign: 'right', zIndex: 10 }}>
+                <svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginLeft: 'auto', display: 'block' }}>
+                  <path d="M 40 8 C 30 8, 10 20, 8 42" stroke="#6C47FF" strokeWidth="2" strokeLinecap="round" fill="none"/>
+                  <path d="M 4 40 L 8 42 L 10 38" stroke="#6C47FF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
                 </svg>
-                <p style={{ fontFamily: 'cursive', color: '#6C47FF', fontSize: 14, lineHeight: 1.4, maxWidth: 180 }}>
-                  Toujours dans le<br />téléphone de vos clients !
+                <p style={{ fontFamily: 'Georgia, serif', fontStyle: 'italic', color: '#6C47FF', fontSize: 13, lineHeight: 1.4, maxWidth: 160 }}>
+                  Toujours dans le<br/>téléphone de vos clients !
                 </p>
               </div>
             </div>

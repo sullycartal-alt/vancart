@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import Link from 'next/link'
+import EditCardClient from './EditCardClient'
 
 export const dynamic = 'force-dynamic'
 
@@ -9,15 +9,29 @@ export default async function EditCartePage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
+  const { data: merchant } = await supabase
+    .from('merchants')
+    .select('id, slug, business_name, primary_color, loyalty_rule, stamps_required, loyalty_type, points_required, points_per_euro, logo_url, banner_url')
+    .eq('user_id', user.id)
+    .single()
+
+  if (!merchant) redirect('/dashboard/ma-carte')
+
   return (
-    <div className="min-h-screen bg-[#F7F6F3] flex flex-col items-center justify-center px-4">
-      <div className="bg-white border border-[#E8E8E3] rounded-2xl p-10 max-w-md w-full text-center space-y-4">
-        <h1 className="text-2xl font-bold text-[#1A1A1A]">Modifier ma carte</h1>
-        <p className="text-[#6B6B6B] text-sm">Cette page est en cours de construction. Revenez bientôt !</p>
-        <Link href="/dashboard/ma-carte" className="inline-block mt-2 text-sm font-semibold text-[#6C47FF] hover:underline">
-          ← Retour à ma carte
-        </Link>
-      </div>
-    </div>
+    <EditCardClient
+      merchant={{
+        id: merchant.id,
+        slug: merchant.slug,
+        business_name: merchant.business_name ?? '',
+        primary_color: merchant.primary_color ?? '#6C47FF',
+        loyalty_rule: merchant.loyalty_rule ?? '',
+        stamps_required: merchant.stamps_required ?? 9,
+        loyalty_type: (merchant.loyalty_type ?? 'stamps') as 'stamps' | 'points',
+        points_required: merchant.points_required ?? null,
+        points_per_euro: merchant.points_per_euro ?? null,
+        logo_url: merchant.logo_url ?? null,
+        banner_url: merchant.banner_url ?? null,
+      }}
+    />
   )
 }

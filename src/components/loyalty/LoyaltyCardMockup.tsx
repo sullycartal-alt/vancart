@@ -22,7 +22,7 @@ export interface LoyaltyCardMockupProps {
 
 function InlineQR() {
   return (
-    <svg width="90" height="90" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
+    <svg width="120" height="120" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
       <rect width="56" height="56" fill="white"/>
       <rect x="2" y="2" width="16" height="16" fill="#111" rx="1"/>
       <rect x="4" y="4" width="12" height="12" fill="white" rx="1"/>

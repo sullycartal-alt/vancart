@@ -7,6 +7,19 @@ import LoyaltyCardMockup from '@/components/loyalty/LoyaltyCardMockup'
 
 const PRESET_COLORS = ['#6C47FF', '#FF6B35', '#10B981', '#F59E0B', '#EF4444', '#1A1A2E']
 
+const ONBOARDING_PRESETS = [
+  { name: 'Minuit',      hex: '#1A1A2E' },
+  { name: 'Marine',      hex: '#0D2137' },
+  { name: 'Forêt',       hex: '#1B4332' },
+  { name: 'Bordeaux',    hex: '#6B1A2A' },
+  { name: 'Ardoise',     hex: '#2D3A3A' },
+  { name: 'Terracotta',  hex: '#C1440E' },
+  { name: 'Ocre',        hex: '#B5860D' },
+  { name: 'Indigo',      hex: '#3730A3' },
+  { name: 'Prune',       hex: '#4A1942' },
+  { name: 'Anthracite',  hex: '#1C1C1E' },
+]
+
 interface Merchant {
   id: string
   slug: string
@@ -214,6 +227,7 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
                 bannerUrl={bannerUrl || undefined}
                 currentStamps={5}
                 currentPoints={Math.round((pointsRequired || 100) * 0.6)}
+                cardId={merchant.id}
                 width={340}
               />
               <a
@@ -379,29 +393,36 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
 
             {/* Step 3 — Color */}
             {currentStep === 3 && (
-              <div className="space-y-4">
-                <label className="text-sm font-medium text-[#1A1A1A]">Choisissez une couleur</label>
-                <div className="flex items-center gap-3 flex-wrap">
-                  {PRESET_COLORS.map(hex => (
-                    <button
-                      key={hex} type="button" onClick={() => setColor(hex)}
-                      className="w-10 h-10 rounded-full border-2 transition-all hover:scale-110 flex-shrink-0"
-                      style={{
-                        backgroundColor: hex,
-                        borderColor: color === hex ? '#1A1A1A' : 'transparent',
-                        boxShadow: color === hex ? '0 0 0 2px white inset' : 'none',
-                      }}
-                    />
-                  ))}
-                  <input
-                    type="color" value={color} onChange={e => setColor(e.target.value)}
-                    className="w-10 h-10 rounded-xl border border-[#E8E8E3] cursor-pointer p-0.5"
-                    title="Couleur personnalisée"
-                  />
+              <div className="space-y-5">
+                {/* Preset grid 5×2 */}
+                <div>
+                  <label className="text-sm font-medium text-[#1A1A1A] block mb-3">Couleurs recommandées</label>
+                  <div className="grid grid-cols-5 gap-3">
+                    {ONBOARDING_PRESETS.map(({ name, hex }) => (
+                      <button
+                        key={hex} type="button" title={name}
+                        onClick={() => setColor(hex)}
+                        className={`w-9 h-9 rounded-full transition-all hover:scale-110 flex-shrink-0 ${color === hex ? 'ring-2 ring-offset-2 ring-[#6C47FF]' : ''}`}
+                        style={{ backgroundColor: hex }}
+                        aria-label={name}
+                      />
+                    ))}
+                  </div>
                 </div>
-                <p className="text-sm text-[#6B6B6B]">
-                  Couleur sélectionnée : <span className="font-semibold" style={{ color }}>{color}</span>
-                </p>
+
+                {/* Custom color picker */}
+                <div>
+                  <label className="text-sm font-medium text-[#1A1A1A] block mb-2">Couleur personnalisée</label>
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="color" value={color} onChange={e => setColor(e.target.value)}
+                      className="w-10 h-10 rounded-xl border border-[#E8E8E3] cursor-pointer p-0.5"
+                    />
+                    <span className="text-sm text-[#6B6B6B]">
+                      Sélectionnée : <span className="font-semibold" style={{ color }}>{color}</span>
+                    </span>
+                  </div>
+                </div>
               </div>
             )}
 

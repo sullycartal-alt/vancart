@@ -18,6 +18,7 @@ interface Merchant {
   points_required: number | null
   logo_url: string | null
   banner_url: string | null
+  plan: string | null
 }
 
 export interface WalletCard {
@@ -219,8 +220,8 @@ export default function WalletClient({ cards, error }: { cards: WalletCard[]; er
               currentPoints={isPoints ? (card.points ?? 0) : 0}
             />
 
-            {/* Push notifications — visible when expanded */}
-            {isOpen && (
+            {/* Push notifications — Pro plan only, visible when expanded */}
+            {merchant.plan === 'pro' && isOpen && (
               <div style={{ padding: '8px 16px 16px', backgroundColor: color }}>
                 <PushButton merchantId={merchant.id} />
               </div>

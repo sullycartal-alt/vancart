@@ -32,7 +32,7 @@ export default function ScrollingCarousel() {
   const next = (center + 1) % N
 
   return (
-    <section className="py-10 bg-[#F7F6F3] overflow-hidden">
+    <section className="w-full bg-[#6C47FF] py-3 overflow-hidden">
       <style>{`
         @keyframes vc-slide-in {
           from { opacity: 0; transform: translateX(36px); }
@@ -41,15 +41,15 @@ export default function ScrollingCarousel() {
         .vc-row-enter { animation: vc-slide-in 0.4s ease forwards; }
       `}</style>
 
-      {/* Desktop: 3 badges, center highlighted, edge fade */}
-      <div
-        className="hidden sm:block"
-        style={{
-          maskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)',
-          WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)',
-        }}
-      >
-        <div key={tick} className="vc-row-enter flex items-center justify-center gap-6 py-5">
+      {/* Desktop: label + 3 badges */}
+      <div className="hidden sm:flex items-center justify-center gap-0">
+        <span className="text-xs font-medium text-white/70 whitespace-nowrap mr-4">
+          Ils font confiance à VanCart ·
+        </span>
+        <div
+          key={tick}
+          className="vc-row-enter flex items-center gap-4"
+        >
           {[
             { idx: prev, isCenter: false },
             { idx: center, isCenter: true },
@@ -57,20 +57,12 @@ export default function ScrollingCarousel() {
           ].map(({ idx, isCenter }) => (
             <span
               key={idx}
-              className="inline-flex items-center px-6 py-3 rounded-full whitespace-nowrap flex-shrink-0"
+              className="inline-flex items-center px-4 py-1.5 rounded-full whitespace-nowrap flex-shrink-0 text-sm font-semibold text-white transition-all duration-400"
               style={{
-                fontFamily: 'var(--font-jakarta, "Inter", sans-serif)',
-                fontSize: '1.125rem',
-                fontWeight: 600,
-                color: '#1A1A1A',
-                background: 'white',
-                border: isCenter ? '1.5px solid rgba(108,71,255,0.35)' : '1px solid #E8E8E3',
-                opacity: isCenter ? 1 : 0.5,
-                transform: isCenter ? 'scale(1.1)' : 'scale(1)',
-                transition: 'transform 0.4s ease, opacity 0.4s ease',
-                boxShadow: isCenter
-                  ? '0 4px 20px rgba(108,71,255,0.14)'
-                  : '0 1px 4px rgba(0,0,0,0.05)',
+                background: 'rgba(255,255,255,0.15)',
+                border: isCenter ? '1px solid rgba(255,255,255,0.5)' : '1px solid rgba(255,255,255,0.2)',
+                opacity: isCenter ? 1 : 0.6,
+                transform: isCenter ? 'scale(1.05)' : 'scale(1)',
               }}
             >
               {ITEMS[idx]}
@@ -79,26 +71,19 @@ export default function ScrollingCarousel() {
         </div>
       </div>
 
-      {/* Mobile: single badge, slide in on change */}
-      <div className="sm:hidden flex items-center justify-center py-5">
+      {/* Mobile: single badge */}
+      <div className="sm:hidden flex items-center justify-center">
         <span
           key={tick}
-          className="vc-row-enter inline-flex items-center px-6 py-3 rounded-full whitespace-nowrap"
+          className="vc-row-enter inline-flex items-center px-4 py-1.5 rounded-full whitespace-nowrap text-sm font-semibold text-white"
           style={{
-            fontFamily: 'var(--font-jakarta, "Inter", sans-serif)',
-            fontSize: '1.125rem',
-            fontWeight: 600,
-            color: '#1A1A1A',
-            background: 'white',
-            border: '1.5px solid rgba(108,71,255,0.35)',
-            boxShadow: '0 4px 20px rgba(108,71,255,0.14)',
+            background: 'rgba(255,255,255,0.15)',
+            border: '1px solid rgba(255,255,255,0.3)',
           }}
         >
           {ITEMS[center]}
         </span>
       </div>
-
-      <p className="text-center text-xs text-gray-300 mt-3">test — données fictives</p>
     </section>
   )
 }

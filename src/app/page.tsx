@@ -6,7 +6,6 @@ import LandingNav from '@/components/landing/LandingNav'
 import PricingCards from '@/components/landing/PricingCards'
 import { LogoLockup } from '@/components/brand/Logo'
 import LandingHero from '@/components/landing/LandingHero'
-import DemoCarousel from '@/components/landing/DemoCarousel'
 
 const ScrollingCarousel = dynamic(() => import('@/components/landing/ScrollingCarousel'))
 const DashboardDemo = dynamic(() => import('@/components/landing/DashboardDemo'))
@@ -24,8 +23,8 @@ export default function Home() {
       {/* ── 1. Hero ──────────────────────────────────────────────────────── */}
       <LandingHero />
 
-      {/* ── 2. Demo carousel ─────────────────────────────────────────────── */}
-      <DemoCarousel />
+      {/* ── 2. Scrolling merchants bar ───────────────────────────────────── */}
+      <ScrollingCarousel />
 
       {/* ── 3. Stats ─────────────────────────────────────────────────────── */}
       <section className="px-4 sm:px-6 py-16 bg-[#F7F6F3]">
@@ -45,9 +44,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* ── 3. Scrolling carousel ─────────────────────────────────────────── */}
-      <ScrollingCarousel />
 
       {/* ── 4. Problem ───────────────────────────────────────────────────── */}
       <section className="px-4 sm:px-6 py-20 bg-white">

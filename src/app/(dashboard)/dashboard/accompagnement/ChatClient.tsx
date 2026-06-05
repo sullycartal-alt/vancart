@@ -219,7 +219,7 @@ export default function ChatClient({
       </div>
 
       {/* Input */}
-      <div className="px-4 py-4 border-t border-[#E8E8E3] bg-white">
+      <div className="px-4 py-4 border-t border-[#E8E8E3] bg-white flex-shrink-0 min-h-[80px]">
         {dailyCount >= DAILY_LIMIT ? (
           <div className="text-center text-sm text-[#6B6B6B] py-2">
             Limite quotidienne atteinte. Revenez demain !
@@ -235,7 +235,7 @@ export default function ChatClient({
               rows={1}
               disabled={loading}
               className="flex-1 resize-none rounded-xl border border-[#E8E8E3] bg-[#F7F6F3] px-4 py-3 text-sm text-[#1A1A1A] placeholder-[#6B6B6B] focus:border-[#6C47FF] focus:outline-none focus:ring-2 focus:ring-[#6C47FF]/15 transition-all disabled:opacity-50"
-              style={{ minHeight: '44px', maxHeight: '120px', fontSize: '16px' }}
+              style={{ minHeight: '48px', maxHeight: '120px', fontSize: '16px' }}
             />
             <button
               onClick={sendMessage}

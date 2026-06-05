@@ -121,7 +121,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
               >
                 Tamponner
               </Link>
-              <LogoutButton />
+              <div className="hidden sm:block"><LogoutButton /></div>
               <MobileNav isAdmin={isAdmin} plan={plan} primaryColor={merchantColor} hasBusinessName={!!merchant.business_name?.trim()} />
             </div>
           </div>

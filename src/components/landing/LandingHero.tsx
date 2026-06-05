@@ -189,6 +189,7 @@ export default function LandingHero() {
                   loyaltyRule={heroMerchant.loyaltyRule}
                   clientName="Marie Laurent"
                   bannerUrl="/hero-cafe.svg"
+                  staticQrUrl="/qr-demo.png"
                 />
               </div>
 

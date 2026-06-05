@@ -165,7 +165,7 @@ export default function ClientsTable({ clients, merchantId, subscribedCustomerId
     const left = Math.max(0, target - current)
     setNotifyTarget({
       customerId: client.customer_id,
-      firstName: client.customers.first_name,
+      firstName: client.customers?.first_name ?? '—',
       left,
       unit: isPoints ? 'points' : 'tampons',
     })
@@ -210,8 +210,8 @@ export default function ClientsTable({ clients, merchantId, subscribedCustomerId
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2 min-w-0">
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold text-[#1A1A1A]">{client.customers.first_name}</p>
-                      <p className="text-xs text-[#6B6B6B] mt-0.5">{client.customers.phone}</p>
+                      <p className="text-sm font-semibold text-[#1A1A1A]">{client.customers?.first_name ?? '—'}</p>
+                      <p className="text-xs text-[#6B6B6B] mt-0.5">{client.customers?.phone ?? '—'}</p>
                     </div>
                     {canNotify && (
                       <button
@@ -283,8 +283,8 @@ export default function ClientsTable({ clients, merchantId, subscribedCustomerId
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
                       <div>
-                        <p className="text-sm font-semibold text-[#1A1A1A]">{client.customers.first_name}</p>
-                        <p className="text-xs text-[#6B6B6B]">{client.customers.phone}</p>
+                        <p className="text-sm font-semibold text-[#1A1A1A]">{client.customers?.first_name ?? '—'}</p>
+                        <p className="text-xs text-[#6B6B6B]">{client.customers?.phone ?? '—'}</p>
                       </div>
                       {canNotify && (
                         <button

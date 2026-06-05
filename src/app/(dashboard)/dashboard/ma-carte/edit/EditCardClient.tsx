@@ -130,12 +130,20 @@ export default function EditCardClient({ merchant }: { merchant: Merchant }) {
     <div className="min-h-screen bg-[#F7F6F3]">
       {/* Header */}
       <div className="max-w-5xl mx-auto px-4 pt-8 pb-2">
-        <Link
-          href="/dashboard/ma-carte"
-          className="inline-flex items-center gap-1.5 text-sm text-[#6B6B6B] hover:text-[#1A1A1A] transition-colors mb-6"
-        >
-          ← Retour à ma carte
-        </Link>
+        <div className="flex items-center gap-4 mb-6">
+          <Link
+            href="/dashboard/ma-carte"
+            className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-[#6C47FF] transition-colors"
+          >
+            ← Ma carte
+          </Link>
+          <Link
+            href="/dashboard/settings?tab=settings"
+            className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-[#6C47FF] transition-colors"
+          >
+            ← Infos commerce
+          </Link>
+        </div>
         <h1 className="text-2xl font-bold text-[#1A1A1A]">Modifier ma carte</h1>
         <p className="text-sm text-[#6B6B6B] mt-1">Les modifications sont sauvegardées automatiquement.</p>
       </div>

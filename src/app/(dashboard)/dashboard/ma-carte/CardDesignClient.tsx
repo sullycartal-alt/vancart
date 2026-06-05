@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { ImagePlus, ChevronLeft } from 'lucide-react'
 import LoyaltyCardMockup from '@/components/loyalty/LoyaltyCardMockup'
 
@@ -213,6 +214,12 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
       <div className="min-h-screen bg-[#F7F6F3] py-10 px-4">
         <div className="max-w-5xl mx-auto">
           <div className="mb-8">
+            <Link
+              href="/dashboard/settings?tab=settings"
+              className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-[#6C47FF] transition-colors mb-4"
+            >
+              <ChevronLeft size={14} />Infos commerce
+            </Link>
             <h1 className="text-2xl font-bold text-[#1A1A1A]">Ma carte de fidélité</h1>
             <p className="text-sm text-[#6B6B6B] mt-1">Votre carte est active. Vos clients peuvent scanner votre QR code.</p>
           </div>

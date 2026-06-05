@@ -17,6 +17,7 @@ export interface LoyaltyCardMockupProps {
   currentStamps?: number
   currentPoints?: number
   cardId?: string
+  staticQrUrl?: string
   width?: number | string
 }
 
@@ -59,6 +60,7 @@ export default function LoyaltyCardMockup(props: LoyaltyCardMockupProps) {
     currentStamps = 5,
     currentPoints = 60,
     cardId,
+    staticQrUrl,
     width = 360,
   } = props
 
@@ -180,8 +182,8 @@ export default function LoyaltyCardMockup(props: LoyaltyCardMockupProps) {
         </div>
       </div>
 
-      {/* ZONE 4 — QR code (only rendered when cardId is available) */}
-      {cardId && (
+      {/* ZONE 4 — QR code */}
+      {(cardId || staticQrUrl) && (
         <div
           style={{
             backgroundColor: primaryColor,
@@ -195,15 +197,22 @@ export default function LoyaltyCardMockup(props: LoyaltyCardMockupProps) {
         >
           <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <div style={{ borderRadius: 16, backgroundColor: 'white', lineHeight: 0, width: 180, height: 180, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto' }}>
-              <CardQR value={cardId} />
+              {cardId ? (
+                <CardQR value={cardId} />
+              ) : (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={staticQrUrl} alt="" style={{ width: 160, height: 160, objectFit: 'contain' }} />
+              )}
             </div>
           </div>
           <div style={{ color: 'rgba(255,255,255,0.9)', fontSize: 12, fontWeight: 600, textAlign: 'center' }}>
             Présentez ce QR code en caisse
           </div>
-          <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 10, textAlign: 'center' }}>
-            {`ID : ${cardId.slice(0, 8)}…`}
-          </div>
+          {cardId && (
+            <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 10, textAlign: 'center' }}>
+              {`ID : ${cardId.slice(0, 8)}…`}
+            </div>
+          )}
         </div>
       )}
     </div>

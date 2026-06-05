@@ -6,6 +6,7 @@ import LandingNav from '@/components/landing/LandingNav'
 import PricingCards from '@/components/landing/PricingCards'
 import { LogoLockup } from '@/components/brand/Logo'
 import LandingHero from '@/components/landing/LandingHero'
+import DemoCarousel from '@/components/landing/DemoCarousel'
 
 const ScrollingCarousel = dynamic(() => import('@/components/landing/ScrollingCarousel'))
 const DashboardDemo = dynamic(() => import('@/components/landing/DashboardDemo'))
@@ -26,7 +27,12 @@ export default function Home() {
       {/* ── 2. Scrolling merchants bar ───────────────────────────────────── */}
       <ScrollingCarousel />
 
-      {/* ── 3. Stats ─────────────────────────────────────────────────────── */}
+      {/* ── 3. Demo carousel / Comment ça marche ─────────────────────────── */}
+      <div id="comment-ca-marche" style={{ scrollMarginTop: '80px' }}>
+        <DemoCarousel />
+      </div>
+
+      {/* ── 4. Stats ─────────────────────────────────────────────────────── */}
       <section className="px-4 sm:px-6 py-16 bg-[#F7F6F3]">
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
@@ -62,100 +68,6 @@ export default function Home() {
               <div key={label} className="bg-[#F7F6F3] rounded-xl p-5 border border-[#E8E8E3] flex items-start gap-3">
                 <Icon size={24} strokeWidth={1.9} className="text-[#6C47FF] flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-[#6B6B6B] leading-relaxed">{label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── 5. Comment ça marche ─────────────────────────────────────────── */}
-      <section id="comment-ca-marche" className="px-4 sm:px-6 py-20 bg-[#F7F6F3]" style={{ scrollMarginTop: '80px' }}>
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12 space-y-3">
-            <p className="text-[#6C47FF] font-semibold text-sm uppercase tracking-wide">Comment ça marche</p>
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">Opérationnel en 5 minutes</h2>
-          </div>
-
-          {/* Mobile: horizontal scroll snapping */}
-          <div
-            className="md:hidden overflow-x-auto pb-4"
-            style={{ scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none' }}
-          >
-            <div className="flex gap-4" style={{ width: 'max-content', paddingLeft: 4, paddingRight: 4 }}>
-              {[
-                {
-                  step: '01',
-                  icon: (<svg className="w-12 h-12 text-[#6C47FF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 22V12h6v10" /></svg>),
-                  title: 'Créez votre compte',
-                  desc: "Inscrivez-vous en 2 minutes, configurez votre commerce aux couleurs de votre marque.",
-                },
-                {
-                  step: '02',
-                  icon: (<svg className="w-12 h-12 text-[#6C47FF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" /><rect x="14" y="3" width="7" height="7" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" /><rect x="3" y="14" width="7" height="7" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14 14h3v3m0 4h4m-4 0v-4m4-4v4" /></svg>),
-                  title: 'Posez votre QR code en caisse',
-                  desc: "Téléchargez et imprimez votre QR code unique, posez-le sur votre comptoir.",
-                },
-                {
-                  step: '03',
-                  icon: (<svg className="w-12 h-12 text-[#6C47FF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7h8M8 11h5" /><rect x="7" y="14" width="10" height="5" rx="1" strokeWidth={1.5} /></svg>),
-                  title: 'Vos clients scannent',
-                  desc: "Ils scannent, reçoivent leur carte dans Google ou Apple Wallet instantanément.",
-                },
-                {
-                  step: '04',
-                  icon: (<svg className="w-12 h-12 text-[#6C47FF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" /><polyline points="16 7 22 7 22 13" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" /></svg>),
-                  title: 'Fidélisez et analysez',
-                  desc: "Tamponnez en un clic, suivez vos stats et regardez votre clientèle fidèle grandir.",
-                },
-              ].map(({ step, icon, title, desc }) => (
-                <div
-                  key={step}
-                  className="flex flex-col items-center text-center bg-white rounded-2xl p-8 border border-[#E8E8E3] space-y-3 flex-shrink-0"
-                  style={{ width: 280, scrollSnapAlign: 'center' }}
-                >
-                  <span className="text-xs font-bold text-[#6C47FF] uppercase tracking-widest">Étape {step}</span>
-                  <div className="w-16 h-16 bg-[#6C47FF]/10 rounded-2xl flex items-center justify-center">{icon}</div>
-                  <h3 className="font-bold text-[#1A1A1A] text-base">{title}</h3>
-                  <p className="text-sm text-[#6B6B6B] leading-relaxed">{desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-          <p className="md:hidden text-center text-xs text-gray-400 mt-2">← Faites défiler →</p>
-
-          {/* Desktop: 2×2 grid */}
-          <div className="hidden md:grid grid-cols-2 gap-6">
-            {[
-              {
-                step: '01',
-                icon: (<svg className="w-12 h-12 text-[#6C47FF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 22V12h6v10" /></svg>),
-                title: 'Créez votre compte',
-                desc: "Inscrivez-vous en 2 minutes, configurez votre commerce aux couleurs de votre marque.",
-              },
-              {
-                step: '02',
-                icon: (<svg className="w-12 h-12 text-[#6C47FF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" /><rect x="14" y="3" width="7" height="7" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" /><rect x="3" y="14" width="7" height="7" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14 14h3v3m0 4h4m-4 0v-4m4-4v4" /></svg>),
-                title: 'Posez votre QR code en caisse',
-                desc: "Téléchargez et imprimez votre QR code unique, posez-le sur votre comptoir.",
-              },
-              {
-                step: '03',
-                icon: (<svg className="w-12 h-12 text-[#6C47FF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7h8M8 11h5" /><rect x="7" y="14" width="10" height="5" rx="1" strokeWidth={1.5} /></svg>),
-                title: 'Vos clients scannent',
-                desc: "Ils scannent, reçoivent leur carte dans Google ou Apple Wallet instantanément.",
-              },
-              {
-                step: '04',
-                icon: (<svg className="w-12 h-12 text-[#6C47FF]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" /><polyline points="16 7 22 7 22 13" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" /></svg>),
-                title: 'Fidélisez et analysez',
-                desc: "Tamponnez en un clic, suivez vos stats et regardez votre clientèle fidèle grandir.",
-              },
-            ].map(({ step, icon, title, desc }) => (
-              <div key={step} className="flex flex-col items-center text-center bg-white rounded-2xl p-8 border border-[#E8E8E3] space-y-3">
-                <span className="text-xs font-bold text-[#6C47FF] uppercase tracking-widest">Étape {step}</span>
-                <div className="w-16 h-16 bg-[#6C47FF]/10 rounded-2xl flex items-center justify-center">{icon}</div>
-                <h3 className="font-bold text-[#1A1A1A] text-base">{title}</h3>
-                <p className="text-sm text-[#6B6B6B] leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>

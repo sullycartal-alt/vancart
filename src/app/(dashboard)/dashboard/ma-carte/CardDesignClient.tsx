@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { ImagePlus, ChevronLeft } from 'lucide-react'
+import { ImagePlus, ChevronLeft, Target, Star, Check, PartyPopper } from 'lucide-react'
 import LoyaltyCardMockup from '@/components/loyalty/LoyaltyCardMockup'
 
 const PRESET_COLORS = ['#6C47FF', '#FF6B35', '#10B981', '#F59E0B', '#EF4444', '#1A1A2E']
@@ -236,7 +236,7 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
                 href="/dashboard/ma-carte/edit"
                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-[#E8E8E3] rounded-xl text-sm font-semibold text-[#1A1A1A] hover:bg-[#F7F6F3] transition-colors shadow-sm"
               >
-                ✏️ Modifier ma carte
+                Modifier ma carte
               </a>
             </div>
             <div className="bg-white border border-[#E8E8E3] rounded-2xl p-6 space-y-1">
@@ -245,8 +245,8 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
                 { label: 'Commerce', value: businessName },
                 { label: 'Programme', value: loyaltyType === 'stamps' ? `${stampsRequired} tampons` : `${pointsRequired} points` },
                 { label: 'Récompense', value: loyaltyRule },
-                { label: 'Logo', value: logoUrl ? '✓ Importé' : '—' },
-                { label: 'Bannière', value: bannerUrl ? '✓ Importée' : '—' },
+                { label: 'Logo', value: logoUrl ? 'Importé' : '—' },
+                { label: 'Bannière', value: bannerUrl ? 'Importée' : '—' },
               ].map(({ label, value }) => (
                 <div key={label} className="flex items-center justify-between py-2.5 border-b border-[#F7F6F3] last:border-0 text-sm">
                   <span className="text-[#6B6B6B]">{label}</span>
@@ -284,8 +284,8 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
               {[
                 { label: 'Programme', value: loyaltyType === 'stamps' ? `${stampsRequired} tampons` : `${pointsRequired} points` },
                 { label: 'Récompense', value: loyaltyRule },
-                { label: 'Logo', value: logoUrl ? '✓ Importé' : '—' },
-                { label: 'Bannière', value: bannerUrl ? '✓ Importée' : '—' },
+                { label: 'Logo', value: logoUrl ? 'Importé' : '—' },
+                { label: 'Bannière', value: bannerUrl ? 'Importée' : '—' },
                 { label: 'Commerce', value: businessName },
               ].map(({ label, value }) => (
                 <div key={label} className="flex items-center justify-between py-2.5 border-b border-[#F7F6F3] last:border-0">
@@ -309,7 +309,7 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
               disabled={saving}
               className="w-full py-4 bg-[#6C47FF] hover:bg-[#5835e0] text-white font-bold text-base rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {saving ? 'Enregistrement…' : 'Enregistrer ma carte 🎉'}
+              {saving ? 'Enregistrement…' : <span className="inline-flex items-center gap-2">Enregistrer ma carte <PartyPopper className="size-4" strokeWidth={1.9} /></span>}
             </button>
           </div>
           <div className="order-first lg:order-last flex justify-center">{cardPreview}</div>
@@ -353,7 +353,7 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
                       className="flex-1 py-2 rounded-lg text-sm font-medium transition-all"
                       style={loyaltyType === type ? { backgroundColor: color, color: 'white' } : { color: '#6B7280' }}
                     >
-                      {type === 'stamps' ? '🎯 Tampons' : '⭐ Points'}
+                      {type === 'stamps' ? <span className="inline-flex items-center gap-1.5"><Target className="size-4" strokeWidth={1.9} />Tampons</span> : <span className="inline-flex items-center gap-1.5"><Star className="size-4" strokeWidth={1.9} />Points</span>}
                     </button>
                   ))}
                 </div>
@@ -454,7 +454,7 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
                   </div>
                   <input ref={logoInputRef} type="file" accept="image/jpeg,image/png,image/webp" onChange={handleLogoUpload} className="hidden" />
                 </label>
-                {logoUrl && <p className="text-xs text-green-600 font-medium">✓ Logo enregistré</p>}
+                {logoUrl && <p className="text-xs text-green-600 font-medium flex items-center gap-1"><Check className="size-3" strokeWidth={2} /> Logo enregistré</p>}
               </div>
             )}
 
@@ -484,7 +484,7 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
                   </div>
                   <input ref={bannerInputRef} type="file" accept="image/*" onChange={handleBannerUpload} className="hidden" />
                 </label>
-                {bannerUrl && <p className="text-xs text-green-600 font-medium">✓ Photo enregistrée</p>}
+                {bannerUrl && <p className="text-xs text-green-600 font-medium flex items-center gap-1"><Check className="size-3" strokeWidth={2} /> Photo enregistrée</p>}
               </div>
             )}
 

@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { Store, Palette } from 'lucide-react'
 
 export default function CommerceTabBar() {
   const pathname = usePathname()
@@ -23,7 +24,7 @@ export default function CommerceTabBar() {
               : { color: '#6B6B6B', backgroundColor: 'transparent' }
             }
           >
-            🏪 Infos commerce
+            <Store className="size-4 inline-block mr-1.5" strokeWidth={1.9} />Infos commerce
           </Link>
           <Link
             href="/dashboard/ma-carte"
@@ -33,7 +34,7 @@ export default function CommerceTabBar() {
               : { color: '#6B6B6B', backgroundColor: 'transparent' }
             }
           >
-            🎨 Ma carte
+            <Palette className="size-4 inline-block mr-1.5" strokeWidth={1.9} />Ma carte
           </Link>
         </div>
       </div>

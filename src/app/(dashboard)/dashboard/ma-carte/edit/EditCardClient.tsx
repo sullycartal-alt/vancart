@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react'
 import Link from 'next/link'
-import { ImagePlus, Check } from 'lucide-react'
+import { ImagePlus, Check, Target, Star } from 'lucide-react'
 import LoyaltyCardMockup from '@/components/loyalty/LoyaltyCardMockup'
 
 const PRESET_COLORS = [
@@ -205,7 +205,7 @@ export default function EditCardClient({ merchant }: { merchant: Merchant }) {
                   className="flex-1 py-2 rounded-lg text-sm font-medium transition-all"
                   style={loyaltyType === type ? { backgroundColor: color, color: 'white' } : { color: '#6B7280' }}
                 >
-                  {type === 'stamps' ? '🎯 Tampons' : '⭐ Points'}
+                  {type === 'stamps' ? <span className="inline-flex items-center gap-1.5"><Target className="size-4" strokeWidth={1.9} />Tampons</span> : <span className="inline-flex items-center gap-1.5"><Star className="size-4" strokeWidth={1.9} />Points</span>}
                 </button>
               ))}
             </div>
@@ -336,7 +336,7 @@ export default function EditCardClient({ merchant }: { merchant: Merchant }) {
       {toast && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-[#1A1A1A] text-white text-sm font-medium px-5 py-3 rounded-2xl shadow-xl">
           <Check size={16} strokeWidth={2.5} className="text-green-400" />
-          Sauvegardé ✓
+          Sauvegardé
         </div>
       )}
     </div>

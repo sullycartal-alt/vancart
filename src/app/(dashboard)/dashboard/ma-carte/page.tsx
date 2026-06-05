@@ -15,7 +15,7 @@ export default async function MaCartePage() {
     .eq('user_id', user.id)
     .single()
 
-  if (!merchant || !merchant.business_name?.trim()) redirect('/dashboard/settings')
+  if (!merchant) redirect('/dashboard/settings')
 
   return (
     <CardDesignClient

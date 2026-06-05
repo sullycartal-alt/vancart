@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Store, ImagePlus } from 'lucide-react'
 
 export interface LoyaltyCardMockupProps {
@@ -117,6 +117,9 @@ export default function LoyaltyCardMockup(props: LoyaltyCardMockupProps) {
     width = 360,
   } = props
 
+  const [bannerError, setBannerError] = useState(false)
+  useEffect(() => { setBannerError(false) }, [bannerUrl])
+
   const remaining = loyaltyType === 'stamps'
     ? stampsRequired - currentStamps
     : pointsRequired - currentPoints
@@ -176,8 +179,14 @@ export default function LoyaltyCardMockup(props: LoyaltyCardMockupProps) {
 
       {/* ZONE 2 — Banner */}
       <div style={{ position: 'relative', overflow: 'hidden', height: 200 }}>
-        {bannerUrl ? (
-          <div style={{ height: 200, backgroundImage: `url('${bannerUrl}')`, backgroundSize: 'cover', backgroundPosition: 'center' }} />
+        {bannerUrl && !bannerError ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={bannerUrl}
+            alt=""
+            onError={() => setBannerError(true)}
+            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+          />
         ) : (
           <div
             style={{
@@ -239,7 +248,7 @@ export default function LoyaltyCardMockup(props: LoyaltyCardMockupProps) {
         }}
       >
         <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <div style={{ borderRadius: 12, backgroundColor: 'white', lineHeight: 0, width: 200, height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ borderRadius: 16, backgroundColor: 'white', lineHeight: 0, width: 180, height: 180, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto' }}>
             {cardId ? <CardQR value={cardId} /> : <InlineQR />}
           </div>
         </div>

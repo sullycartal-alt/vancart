@@ -1,5 +1,9 @@
+'use client'
+
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Check, Clock, Lock, ShieldCheck, Headphones } from 'lucide-react'
+import LoyaltyCardMockup from '@/components/loyalty/LoyaltyCardMockup'
 
 // ── Hero section — single floating loyalty card + handwritten annotation ──────
 
@@ -25,143 +29,38 @@ const TRUST = [
   { Icon: Headphones, label: 'Support disponible', sub: '7j/7' },
 ]
 
-function HeroCard() {
-  return (
-    <div
-      style={{
-        position: 'absolute',
-        top: 0,
-        left: '50%',
-        zIndex: 2,
-        width: 320,
-        borderRadius: 20,
-        overflow: 'hidden',
-        boxShadow: '0 32px 64px rgba(0,0,0,0.25)',
-        animation: 'heroFloat 4s ease-in-out infinite',
-        display: 'block',
-      }}
-    >
-      {/* ── Photo zone ── */}
-      <div
-        style={{
-          position: 'relative',
-          height: 200,
-          backgroundImage: "url('/hero-cafe.svg')",
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          display: 'block',
-          margin: 0,
-          padding: 0,
-          border: 'none',
-        }}
-      >
-        {/* Scrim for text legibility */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            background: 'linear-gradient(to bottom, transparent 30%, rgba(0,0,0,0.65) 100%)',
-          }}
-        />
-
-        {/* "Votre photo" badge */}
-        <div
-          className="absolute top-3 right-3 inline-flex items-center gap-1.5 text-white text-xs font-medium px-3 py-1.5 rounded-full"
-          style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(6px)', zIndex: 1 }}
-        >
-          📷 Votre photo
-        </div>
-
-        {/* Logo + merchant name */}
-        <div className="absolute bottom-3 left-3 flex items-center gap-2.5" style={{ zIndex: 1 }}>
-          <div style={{ width: 46, height: 46, borderRadius: 10, border: '2px solid white', background: '#1a1a1a', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M17 8h1a4 4 0 0 1 0 8h-1"/>
-              <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/>
-              <line x1="6" x2="6" y1="2" y2="4"/>
-              <line x1="10" x2="10" y1="2" y2="4"/>
-              <line x1="14" x2="14" y1="2" y2="4"/>
-            </svg>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-white font-bold text-base leading-tight">Café des Arts</span>
-            <span className="text-white/70 text-xs">Carte de Marie L.</span>
-          </div>
-        </div>
-      </div>
-
-      {/* ── Card body ── */}
-      <div style={{ backgroundColor: '#1A0F3C', padding: 16, margin: 0, border: 'none' }}>
-        <p className="text-xs text-white/50 tracking-widest">TAMPONS</p>
-        <div className="flex items-center justify-between mt-1">
-          <p className="leading-none">
-            <span className="text-4xl font-black text-white">5</span>
-            <span className="text-xl text-white/50">/9</span>
-          </p>
-          <span className="bg-[#6C47FF]/20 text-[#6C47FF] text-xs font-medium px-3 py-1 rounded-full">
-            🎁 1 café offert
-          </span>
-        </div>
-
-        {/* Stamps row */}
-        <div className="flex gap-1.5 mt-4">
-          {Array.from({ length: 9 }).map((_, i) => (
-            <div
-              key={i}
-              className={
-                i < 5
-                  ? 'flex items-center justify-center rounded-full bg-[#6C47FF]'
-                  : 'flex items-center justify-center rounded-full border-2 border-white/20 bg-transparent'
-              }
-              style={{ width: 24, height: 24 }}
-            >
-              {i < 5 && <Check size={13} strokeWidth={3} className="text-white" />}
-            </div>
-          ))}
-        </div>
-
-        <div className="border-t border-white/10 my-3" />
-
-        {/* QR + text */}
-        <div className="flex items-center gap-3">
-          <div style={{ width: 64, height: 64, borderRadius: 8, background: 'white', padding: 4, flexShrink: 0 }}>
-            <svg width="56" height="56" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
-              <rect width="56" height="56" fill="white"/>
-              {/* TL finder */}
-              <rect x="2" y="2" width="16" height="16" fill="#111" rx="1"/><rect x="4" y="4" width="12" height="12" fill="white" rx="1"/><rect x="7" y="7" width="6" height="6" fill="#111"/>
-              {/* TR finder */}
-              <rect x="38" y="2" width="16" height="16" fill="#111" rx="1"/><rect x="40" y="4" width="12" height="12" fill="white" rx="1"/><rect x="43" y="7" width="6" height="6" fill="#111"/>
-              {/* BL finder */}
-              <rect x="2" y="38" width="16" height="16" fill="#111" rx="1"/><rect x="4" y="40" width="12" height="12" fill="white" rx="1"/><rect x="7" y="43" width="6" height="6" fill="#111"/>
-              {/* Data */}
-              <rect x="21" y="2" width="3" height="3" fill="#111"/><rect x="26" y="2" width="3" height="3" fill="#111"/><rect x="31" y="4" width="2" height="2" fill="#111"/>
-              <rect x="21" y="7" width="2" height="2" fill="#111"/><rect x="25" y="6" width="3" height="3" fill="#111"/><rect x="30" y="8" width="3" height="2" fill="#111"/>
-              <rect x="21" y="13" width="3" height="2" fill="#111"/><rect x="27" y="12" width="2" height="3" fill="#111"/>
-              <rect x="21" y="21" width="2" height="2" fill="#111"/><rect x="25" y="21" width="3" height="3" fill="#111"/><rect x="30" y="21" width="2" height="2" fill="#111"/><rect x="34" y="22" width="3" height="2" fill="#111"/><rect x="38" y="21" width="2" height="3" fill="#111"/><rect x="43" y="21" width="3" height="2" fill="#111"/><rect x="49" y="22" width="2" height="2" fill="#111"/>
-              <rect x="21" y="26" width="3" height="2" fill="#111"/><rect x="27" y="25" width="2" height="3" fill="#111"/><rect x="32" y="26" width="3" height="2" fill="#111"/><rect x="37" y="25" width="2" height="3" fill="#111"/><rect x="41" y="26" width="3" height="2" fill="#111"/><rect x="46" y="25" width="2" height="3" fill="#111"/>
-              <rect x="21" y="32" width="2" height="3" fill="#111"/><rect x="26" y="31" width="3" height="2" fill="#111"/><rect x="31" y="32" width="2" height="3" fill="#111"/><rect x="35" y="31" width="3" height="3" fill="#111"/><rect x="41" y="32" width="2" height="2" fill="#111"/><rect x="46" y="31" width="2" height="3" fill="#111"/>
-              <rect x="21" y="38" width="3" height="2" fill="#111"/><rect x="26" y="39" width="2" height="2" fill="#111"/><rect x="31" y="38" width="3" height="3" fill="#111"/><rect x="36" y="39" width="2" height="2" fill="#111"/><rect x="41" y="38" width="3" height="2" fill="#111"/><rect x="46" y="39" width="2" height="3" fill="#111"/>
-              <rect x="21" y="44" width="2" height="3" fill="#111"/><rect x="26" y="43" width="3" height="3" fill="#111"/><rect x="32" y="44" width="2" height="2" fill="#111"/><rect x="37" y="43" width="3" height="3" fill="#111"/><rect x="43" y="44" width="2" height="2" fill="#111"/>
-            </svg>
-          </div>
-          <div className="flex flex-col gap-0.5">
-            <span className="text-white font-semibold text-sm">Présentez ce QR code</span>
-            <span className="text-white/50 text-xs">à chaque passage en caisse</span>
-            <span className="text-white/30 text-xs">ID : 1a4f8c...e291</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 export default function LandingHero() {
+  const [heroMerchant, setHeroMerchant] = useState({
+    primaryColor: '#6C47FF',
+    businessName: 'Café des Arts',
+    loyaltyType: 'stamps' as 'stamps' | 'points',
+    stampsRequired: 9,
+    loyaltyRule: '1 café offert',
+  })
+
+  useEffect(() => {
+    fetch('/api/public/hero-merchant')
+      .then(r => r.json())
+      .then(data => {
+        if (data?.business_name) {
+          setHeroMerchant({
+            primaryColor: data.primary_color || '#6C47FF',
+            businessName: data.business_name,
+            loyaltyType: data.loyalty_type || 'stamps',
+            stampsRequired: data.stamps_required || 9,
+            loyaltyRule: data.loyalty_rule || '1 café offert',
+          })
+        }
+      })
+      .catch(() => {})
+  }, [])
+
   return (
     <section className="relative overflow-hidden bg-[#F7F6F3] px-4 sm:px-6 py-20">
       <style>{`
         @keyframes heroFloat {
-          0%, 100% { transform: translateX(-50%) rotate(8deg) translateY(0px); }
-          50%      { transform: translateX(-50%) rotate(8deg) translateY(-12px); }
+          0%, 100% { transform: rotate(8deg) translateY(0px); }
+          50%      { transform: rotate(8deg) translateY(-12px); }
         }
       `}</style>
 
@@ -266,7 +165,25 @@ export default function LandingHero() {
               />
 
               {/* Floating card */}
-              <HeroCard />
+              <div style={{
+                position: 'relative',
+                zIndex: 2,
+                transform: 'rotate(8deg)',
+                animation: 'heroFloat 4s ease-in-out infinite',
+                filter: 'drop-shadow(0 32px 64px rgba(0,0,0,0.25))',
+                flexShrink: 0,
+              }}>
+                <LoyaltyCardMockup
+                  primaryColor={heroMerchant.primaryColor}
+                  businessName={heroMerchant.businessName}
+                  loyaltyType={heroMerchant.loyaltyType}
+                  stampsRequired={heroMerchant.stampsRequired}
+                  currentStamps={5}
+                  loyaltyRule={heroMerchant.loyaltyRule}
+                  clientName="Marie Laurent"
+                  bannerUrl="/hero-cafe.svg"
+                />
+              </div>
 
               {/* Handwritten annotation */}
               <div style={{ position: 'absolute', bottom: 80, right: -8, textAlign: 'right', zIndex: 10 }}>

@@ -3,13 +3,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import InstallBanner from '@/components/pwa/InstallBanner'
-import { LoyaltyCardCover } from '@/components/loyalty/LoyaltyCardCover'
+import LoyaltyCardMockup from '@/components/loyalty/LoyaltyCardMockup'
 
 interface Merchant {
   business_name: string
   logo_url: string | null
   primary_color: string
-  merchant_color_2?: string | null
   loyalty_rule: string
   stamps_required: number
   loyalty_type?: string
@@ -98,7 +97,7 @@ export default function CardClient({ initialCard, customerId, merchantId }: {
   const [confettiActive, setConfettiActive] = useState(false)
   const [showRewardQR, setShowRewardQR] = useState(false)
   const [isStandalone, setIsStandalone] = useState(false)
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false)
+
   const prevCount = useRef(initialCard.stamps_count)
 
   useEffect(() => {
@@ -133,7 +132,7 @@ export default function CardClient({ initialCard, customerId, merchantId }: {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ customer_id: customerId, merchant_id: merchantId, subscription: sub.toJSON() }),
         })
-        setNotificationsEnabled(true)
+        /* subscription saved */
       } catch { /* permission denied or unsupported — silent */ }
     })
   }, [customerId, merchantId])
@@ -220,22 +219,21 @@ export default function CardClient({ initialCard, customerId, merchantId }: {
 
       <div className="max-w-sm mx-auto px-4 pt-6 space-y-4">
 
-        {/* Cover card — new design */}
-        <LoyaltyCardCover
-          merchantName={merchant.business_name}
-          merchantSubtitle={`Carte de ${card.customers.first_name}`}
-          merchantColor={color}
-          merchantColor2={merchant.merchant_color_2}
-          merchantCoverUrl={merchant.banner_url}
-          merchantLogoUrl={merchant.logo_url}
-          merchantInitials={merchant.business_name.slice(0, 2).toUpperCase()}
-          loyaltyMode={isPoints ? 'points' : 'stamps'}
-          currentValue={count}
-          targetValue={total}
-          rewardLabel={merchant.loyalty_rule}
+        {/* Cover card */}
+        <LoyaltyCardMockup
           cardId={card.id}
-          notificationsEnabled={notificationsEnabled}
-          isComplete={isComplete}
+          width="100%"
+          primaryColor={color}
+          businessName={merchant.business_name}
+          logoUrl={merchant.logo_url ?? undefined}
+          bannerUrl={merchant.banner_url ?? undefined}
+          loyaltyType={isPoints ? 'points' : 'stamps'}
+          stampsRequired={merchant.stamps_required}
+          pointsRequired={merchant.points_required ?? 100}
+          loyaltyRule={merchant.loyalty_rule}
+          clientName={card.customers.first_name}
+          currentStamps={isPoints ? 0 : card.stamps_count}
+          currentPoints={isPoints ? (card.points ?? 0) : 0}
         />
 
         {/* Reward QR — shown when card is complete */}

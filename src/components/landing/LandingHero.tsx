@@ -52,9 +52,12 @@ export default function LandingHero() {
             loyaltyRule: data.loyalty_rule || '1 café offert',
           })
         }
+        const img = new Image()
+        img.src = '/hero-cafe.svg'
+        img.onload = () => setIsLoading(false)
+        img.onerror = () => setIsLoading(false)
       })
-      .catch(() => {})
-      .finally(() => setIsLoading(false))
+      .catch(() => setIsLoading(false))
   }, [])
 
   return (
@@ -168,7 +171,7 @@ export default function LandingHero() {
 
               {/* Floating card */}
               <div
-                className={`transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+                className={`transition-opacity duration-150 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
                 style={{
                   position: 'relative',
                   zIndex: 2,

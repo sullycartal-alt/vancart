@@ -2,8 +2,10 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { CircleArrowUp } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { CircleArrowUp, LogOut } from 'lucide-react'
 import NavSettingsHint from './NavSettingsHint'
+import { createClient } from '@/lib/supabase/client'
 
 interface Props {
   isAdmin: boolean
@@ -22,6 +24,15 @@ const links = [
 export default function MobileNav({ isAdmin, plan, primaryColor = '#6C47FF', hasBusinessName = true }: Props) {
   const [open, setOpen] = useState(false)
   const close = () => setOpen(false)
+  const router = useRouter()
+  const supabase = createClient()
+
+  async function handleLogout() {
+    close()
+    await supabase.auth.signOut()
+    router.push('/login')
+    router.refresh()
+  }
 
   return (
     <>
@@ -82,6 +93,17 @@ export default function MobileNav({ isAdmin, plan, primaryColor = '#6C47FF', has
                 </Link>
               )}
             </nav>
+
+            {/* Logout */}
+            <div className="px-4 pt-2 pb-1 border-t border-[#E8E8E3] mt-1">
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-[#6B6B6B] font-medium text-sm hover:bg-[#F7F6F3] transition-colors"
+              >
+                <LogOut size={16} strokeWidth={1.9} />
+                Déconnexion
+              </button>
+            </div>
 
             {/* CTA Tamponner */}
             <div className="px-4 pb-5 pt-2">

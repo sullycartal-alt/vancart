@@ -1,3 +1,6 @@
+'use client'
+
+import { useEffect, useRef } from 'react'
 import { Store, ImagePlus } from 'lucide-react'
 
 export interface LoyaltyCardMockupProps {
@@ -13,6 +16,8 @@ export interface LoyaltyCardMockupProps {
   clientName?: string
   currentStamps?: number
   currentPoints?: number
+  cardId?: string
+  width?: number | string
 }
 
 function InlineQR() {
@@ -70,6 +75,31 @@ function InlineQR() {
   )
 }
 
+function CardQR({ value }: { value: string }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  useEffect(() => {
+    let cancelled = false
+    import('qrcode').then((QRCode) => {
+      if (!cancelled && canvasRef.current) {
+        QRCode.toCanvas(canvasRef.current, value, {
+          width: 90,
+          margin: 1,
+          color: { dark: '#111827', light: '#ffffff' },
+        })
+      }
+    })
+    return () => { cancelled = true }
+  }, [value])
+  return (
+    <canvas
+      ref={canvasRef}
+      width={90}
+      height={90}
+      style={{ display: 'block', borderRadius: 4, width: 90, height: 90 }}
+    />
+  )
+}
+
 export default function LoyaltyCardMockup(props: LoyaltyCardMockupProps) {
   const {
     primaryColor = '#6C47FF',
@@ -83,6 +113,8 @@ export default function LoyaltyCardMockup(props: LoyaltyCardMockupProps) {
     clientName = 'Marie Laurent',
     currentStamps = 5,
     currentPoints = 60,
+    cardId,
+    width = 360,
   } = props
 
   const remaining = loyaltyType === 'stamps'
@@ -92,7 +124,7 @@ export default function LoyaltyCardMockup(props: LoyaltyCardMockupProps) {
   return (
     <div
       style={{
-        width: 360,
+        width,
         borderRadius: 20,
         overflow: 'hidden',
         boxShadow: '0 24px 60px rgba(0,0,0,0.2)',
@@ -207,13 +239,13 @@ export default function LoyaltyCardMockup(props: LoyaltyCardMockupProps) {
         }}
       >
         <div style={{ borderRadius: 12, padding: 10, backgroundColor: 'white', lineHeight: 0 }}>
-          <InlineQR />
+          {cardId ? <CardQR value={cardId} /> : <InlineQR />}
         </div>
         <div style={{ color: 'rgba(255,255,255,0.9)', fontSize: 12, fontWeight: 600, textAlign: 'center' }}>
           Présentez ce QR code en caisse
         </div>
         <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 10, textAlign: 'center' }}>
-          ID : 1a4f8c · e291 · 3b72
+          {cardId ? `ID : ${cardId.slice(0, 8)}…` : 'ID : 1a4f8c · e291 · 3b72'}
         </div>
       </div>
     </div>

@@ -70,10 +70,15 @@ export default async function DashboardPage() {
   const plan = effectivePlan((merchant.plan ?? 'free') as Plan, user.email)
   const qrUrl = `${process.env.NEXT_PUBLIC_APP_URL}/${merchant.slug}`
 
+  const brandColor = merchant.primary_color && merchant.primary_color !== '#000000'
+    ? merchant.primary_color
+    : '#6C47FF'
+
   const activeAlerts = (alertsData ?? []).map(a => ({ id: a.id, message: a.message, triggered_at: a.triggered_at as string }))
 
   return (
     <div className="space-y-6">
+      <div style={{ height: 3, backgroundColor: brandColor, borderRadius: '0 0 4px 4px', marginBottom: 24 }} />
       {activeAlerts.length > 0 && <AlertBanner alerts={activeAlerts} />}
       <div className="flex items-start justify-between gap-3">
         <div>
@@ -92,7 +97,7 @@ export default async function DashboardPage() {
       <Link
         href="/dashboard/stamp"
         className="flex items-center justify-between text-white rounded-2xl p-6 transition-opacity hover:opacity-90 shadow-sm"
-        style={{ backgroundColor: merchant.primary_color }}
+        style={{ backgroundColor: brandColor }}
       >
         <div>
           <p className="text-lg font-bold">Donner un tampon</p>
@@ -121,7 +126,7 @@ export default async function DashboardPage() {
       <DashboardQR
         url={qrUrl}
         businessName={merchant.business_name}
-        color={merchant.primary_color}
+        color={brandColor}
       />
 
       {/* Push notifications — Pro only */}

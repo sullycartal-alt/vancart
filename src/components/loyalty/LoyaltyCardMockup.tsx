@@ -239,7 +239,7 @@ export default function LoyaltyCardMockup(props: LoyaltyCardMockupProps) {
         }}
       >
         <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <div style={{ borderRadius: 12, padding: 10, backgroundColor: 'white', lineHeight: 0, minWidth: 180, margin: '0 auto' }}>
+          <div style={{ borderRadius: 12, padding: 10, backgroundColor: 'white', lineHeight: 0, width: 180, height: 180, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {cardId ? <CardQR value={cardId} /> : <InlineQR />}
           </div>
         </div>

@@ -7,7 +7,7 @@ import {
   PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts'
-import { Zap, WalletCards, Check, Trophy, BarChart3, Store, Gift, Rocket, Trash2, Flame, Target, BookmarkCheck, AlertTriangle, ClipboardList, TrendingUp, Mail, User, Phone, MapPin, Clipboard } from 'lucide-react'
+import { Zap, WalletCards, Check, Trophy, BarChart3, Store, Gift, Rocket, Trash2, Flame, AlertTriangle, ClipboardList, TrendingUp, Mail, User, Phone, MapPin, Clipboard } from 'lucide-react'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -311,13 +311,13 @@ function MerchantsTab({
                 <h4 className="text-xs font-bold uppercase tracking-wider text-[#6B6B6B] mb-3">Coordonnées</h4>
                 <div className="space-y-2 text-sm">
                   {[
-                    { icon: '📧', label: drawer.email || 'Non renseigné' },
-                    { icon: '👤', label: drawer.owner_name || 'Non renseigné' },
-                    { icon: '📞', label: drawer.phone || 'Non renseigné' },
-                    { icon: '📍', label: drawer.address || 'Non renseigné' },
-                  ].map(({ icon, label }) => (
-                    <div key={icon} className="flex items-start gap-2.5 py-1.5 border-b border-[#F7F6F3]">
-                      <span className="text-base leading-5 flex-shrink-0">{icon}</span>
+                    { Icon: Mail, label: drawer.email || 'Non renseigné' },
+                    { Icon: User, label: drawer.owner_name || 'Non renseigné' },
+                    { Icon: Phone, label: drawer.phone || 'Non renseigné' },
+                    { Icon: MapPin, label: drawer.address || 'Non renseigné' },
+                  ].map(({ Icon, label }) => (
+                    <div key={label} className="flex items-start gap-2.5 py-1.5 border-b border-[#F7F6F3]">
+                      <Icon size={15} strokeWidth={1.9} className="text-[#6B6B6B] flex-shrink-0 mt-0.5" />
                       <span className={label === 'Non renseigné' ? 'text-[#9CA3AF] italic' : 'text-[#1A1A1A] break-all'}>{label}</span>
                     </div>
                   ))}
@@ -345,15 +345,15 @@ function MerchantsTab({
             <div className="p-6 border-t border-[#E8E8E3] flex gap-3">
               <button
                 onClick={() => copyEmail(drawer.email)}
-                className="flex-1 py-2.5 text-sm rounded-xl border border-[#E8E8E3] text-[#6B6B6B] hover:bg-[#F7F6F3] transition-colors"
+                className="flex-1 py-2.5 text-sm rounded-xl border border-[#E8E8E3] text-[#6B6B6B] hover:bg-[#F7F6F3] transition-colors flex items-center justify-center gap-1.5"
               >
-                {copied === drawer.email ? '✓ Copié' : '📋 Copier email'}
+                {copied === drawer.email ? <><Check size={13} strokeWidth={2} />Copié</> : <><Clipboard size={13} strokeWidth={1.9} />Copier email</>}
               </button>
               <button
                 onClick={() => { setDrawer(null); setDeleteModal({ id: drawer.id, name: drawer.business_name }) }}
-                className="flex-1 py-2.5 text-sm rounded-xl border border-red-200 text-red-600 hover:bg-red-50 transition-colors"
+                className="flex-1 py-2.5 text-sm rounded-xl border border-red-200 text-red-600 hover:bg-red-50 transition-colors flex items-center justify-center gap-1.5"
               >
-                🗑 Supprimer
+                <Trash2 size={13} strokeWidth={1.9} />Supprimer
               </button>
             </div>
           </div>
@@ -424,11 +424,13 @@ function MerchantsTab({
 
 // ─── Alertes Tab ──────────────────────────────────────────────────────────────
 
-const ALERT_ICONS: Record<Alert['type'], string> = {
-  inactive_14d: '😴',
-  no_clients: '👥',
-  ready_to_reward: '🎁',
-  slow_start: '🚀',
+type LucideIconComponent = React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>
+
+const ALERT_ICONS: Record<Alert['type'], LucideIconComponent> = {
+  inactive_14d: Flame,
+  no_clients: Store,
+  ready_to_reward: Gift,
+  slow_start: Rocket,
 }
 
 function AlertesTab({ alerts }: { alerts: Alert[] }) {
@@ -471,26 +473,28 @@ function AlertesTab({ alerts }: { alerts: Alert[] }) {
 
       {visible.length === 0 ? (
         <div className="bg-white border border-[#E8E8E3] rounded-2xl p-12 text-center">
-          <p className="text-4xl mb-3">✅</p>
+          <Check size={40} strokeWidth={1.9} className="text-green-500 mx-auto mb-3" />
           <p className="text-sm font-semibold text-[#1A1A1A]">Tout va bien !</p>
           <p className="text-xs text-[#6B6B6B] mt-1">Aucune alerte à traiter</p>
         </div>
       ) : (
         <div className="space-y-3">
-          {visible.map(alert => (
+          {visible.map(alert => {
+            const AlertIcon = ALERT_ICONS[alert.type]
+            return (
             <div
               key={alert.id}
               className={`bg-white border rounded-2xl p-4 flex items-start gap-4 ${
                 alert.level === 'urgent' ? 'border-red-200' : 'border-[#E8E8E3]'
               }`}
             >
-              <span className="text-xl flex-shrink-0 mt-0.5">{ALERT_ICONS[alert.type]}</span>
+              <AlertIcon size={20} strokeWidth={1.9} className={`flex-shrink-0 mt-0.5 ${alert.level === 'urgent' ? 'text-red-600' : 'text-amber-500'}`} />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap mb-1">
                   <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
                     alert.level === 'urgent' ? 'bg-red-50 text-red-700' : 'bg-amber-50 text-amber-700'
                   }`}>
-                    {alert.level === 'urgent' ? '🔴 Urgent' : '🟡 Attention'}
+                    {alert.level === 'urgent' ? 'Urgent' : 'Attention'}
                   </span>
                   <span className="text-xs font-semibold text-[#1A1A1A]">{alert.merchant_name}</span>
                 </div>
@@ -500,10 +504,10 @@ function AlertesTab({ alerts }: { alerts: Alert[] }) {
                 onClick={() => dismiss(alert.id)}
                 className="flex-shrink-0 text-xs text-[#6B6B6B] hover:text-[#1A1A1A] border border-[#E8E8E3] px-3 py-1.5 rounded-xl hover:bg-[#F7F6F3] transition-colors whitespace-nowrap"
               >
-                ✓ Traité
+                <Check size={12} strokeWidth={2} className="inline-block mr-1" />Traité
               </button>
             </div>
-          ))}
+          )})}
         </div>
       )}
     </div>
@@ -512,10 +516,10 @@ function AlertesTab({ alerts }: { alerts: Alert[] }) {
 
 // ─── Activité Tab ─────────────────────────────────────────────────────────────
 
-const EVENT_ICONS: Record<ActivityEvent['type'], string> = {
-  new_merchant: '🏪',
-  new_client: '👤',
-  stamp: '✅',
+const EVENT_ICONS: Record<ActivityEvent['type'], LucideIconComponent> = {
+  new_merchant: Store,
+  new_client: User,
+  stamp: Check,
 }
 
 function ActiviteTab({ activityEvents }: { activityEvents: ActivityEvent[] }) {
@@ -532,16 +536,19 @@ function ActiviteTab({ activityEvents }: { activityEvents: ActivityEvent[] }) {
       ) : (
         <>
           <div className="divide-y divide-[#E8E8E3]">
-            {activityEvents.slice(0, shown).map(event => (
+            {activityEvents.slice(0, shown).map(event => {
+              const EventIcon = EVENT_ICONS[event.type]
+              return (
               <div key={event.id} className="flex items-center gap-4 px-5 py-3.5">
-                <span className="text-lg flex-shrink-0">{EVENT_ICONS[event.type]}</span>
+                <EventIcon size={18} strokeWidth={1.9} className="text-[#6C47FF] flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="text-xs text-[#6B6B6B]">{event.description}</p>
                   <p className="text-sm font-semibold text-[#1A1A1A] truncate">{event.merchant_name}</p>
                 </div>
                 <span className="text-xs text-[#6B6B6B] whitespace-nowrap flex-shrink-0">{timeAgo(event.timestamp)}</span>
               </div>
-            ))}
+              )
+            })}
           </div>
 
           {shown < activityEvents.length && (
@@ -692,12 +699,12 @@ export default function AdminClient({
 }: Props) {
   const [activeTab, setActiveTab] = useState<Tab>('overview')
 
-  const TABS: { id: Tab; label: string; icon: string; count?: number }[] = [
-    { id: 'overview', label: 'Vue globale', icon: '📊' },
-    { id: 'merchants', label: 'Merchants', icon: '🏪', count: merchantRows.length },
-    { id: 'alertes', label: 'Alertes', icon: '⚠️', count: alerts.length },
-    { id: 'activite', label: 'Activité', icon: '📋' },
-    { id: 'metriques', label: 'Métriques', icon: '📈' },
+  const TABS: { id: Tab; label: string; Icon: LucideIconComponent; count?: number }[] = [
+    { id: 'overview', label: 'Vue globale', Icon: BarChart3 },
+    { id: 'merchants', label: 'Merchants', Icon: Store, count: merchantRows.length },
+    { id: 'alertes', label: 'Alertes', Icon: AlertTriangle, count: alerts.length },
+    { id: 'activite', label: 'Activité', Icon: ClipboardList },
+    { id: 'metriques', label: 'Métriques', Icon: TrendingUp },
   ]
 
   return (
@@ -719,7 +726,7 @@ export default function AdminClient({
                 : 'border-transparent text-[#6B6B6B] hover:text-[#1A1A1A]'
             }`}
           >
-            <span className="text-base leading-none">{tab.icon}</span>
+            <tab.Icon size={15} strokeWidth={1.9} className="flex-shrink-0" />
             <span>{tab.label}</span>
             {typeof tab.count === 'number' && tab.count > 0 && (
               <span className={`text-xs px-1.5 py-0.5 rounded-full font-semibold ${

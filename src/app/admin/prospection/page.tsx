@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import QRCode from 'qrcode'
+import { Target, MapPin, Trash2, Link2, QrCode, Download, Bell, Phone, Check } from 'lucide-react'
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://vancart.vercel.app'
 
@@ -51,8 +52,8 @@ function adminBadge(adminName: string) {
 
 function leadsBadge(count: number) {
   if (count === 0) return { label: 'Aucun lead', bg: '#F7F6F3', color: '#6B6B6B' }
-  if (count <= 3) return { label: `🟡 ${count} lead${count > 1 ? 's' : ''}`, bg: '#FEF9C3', color: '#854D0E' }
-  return { label: `🟢 ${count} leads`, bg: '#DCFCE7', color: '#166534' }
+  if (count <= 3) return { label: `${count} lead${count > 1 ? 's' : ''}`, bg: '#FEF9C3', color: '#854D0E' }
+  return { label: `${count} leads`, bg: '#DCFCE7', color: '#166534' }
 }
 
 function QRModal({ url, nom, onClose }: { url: string; nom: string; onClose: () => void }) {
@@ -103,9 +104,9 @@ function QRModal({ url, nom, onClose }: { url: string; nom: string; onClose: () 
         <div className="flex flex-col gap-2">
           <button
             onClick={download}
-            className="w-full py-3 bg-[#6C47FF] text-white text-sm font-bold rounded-xl hover:bg-[#5835e0] transition-colors"
+            className="w-full py-3 bg-[#6C47FF] text-white text-sm font-bold rounded-xl hover:bg-[#5835e0] transition-colors flex items-center justify-center gap-2"
           >
-            ⬇️ Télécharger PNG
+            <Download size={16} strokeWidth={1.9} />Télécharger PNG
           </button>
           <button
             onClick={onClose}
@@ -247,11 +248,11 @@ export default function AdminProspectionPage() {
         <div className="flex gap-1 bg-[#F7F6F3] rounded-xl p-1">
           <button
             onClick={() => setTab('campagnes')}
-            className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-colors ${
+            className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-colors flex items-center justify-center gap-1.5 ${
               tab === 'campagnes' ? 'bg-white text-[#1A1A1A] shadow-sm' : 'text-[#6B6B6B] hover:text-[#1A1A1A]'
             }`}
           >
-            🎯 Campagnes
+            <Target size={15} strokeWidth={1.9} />Campagnes
           </button>
           <button
             onClick={() => setTab('leads')}
@@ -259,7 +260,7 @@ export default function AdminProspectionPage() {
               tab === 'leads' ? 'bg-white text-[#1A1A1A] shadow-sm' : 'text-[#6B6B6B] hover:text-[#1A1A1A]'
             }`}
           >
-            📬 Leads
+            <Bell size={15} strokeWidth={1.9} />Leads
             {unreadCount > 0 && (
               <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#6C47FF] text-white font-bold" style={{ fontSize: 11 }}>
                 {unreadCount}
@@ -299,7 +300,7 @@ export default function AdminProspectionPage() {
               )}
               {error && (
                 <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
-                  ⚠️ {error}
+                  {error}
                 </div>
               )}
               {error?.includes('does not exist') && (
@@ -319,7 +320,7 @@ export default function AdminProspectionPage() {
               </div>
             ) : campaigns.length === 0 ? (
               <div className="bg-white border border-[#E8E8E3] rounded-2xl p-10 text-center">
-                <div className="text-4xl mb-3">🎯</div>
+                <Target size={40} strokeWidth={1.9} className="text-[#6C47FF] mx-auto mb-3" />
                 <p className="text-sm text-[#6B6B6B]">
                   Aucune campagne. Créez votre première ci-dessus.
                 </p>
@@ -367,10 +368,10 @@ export default function AdminProspectionPage() {
                         {isOwn && (
                           <button
                             onClick={() => deleteCampaign(campaign.id)}
-                            className="flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-lg text-[#9CA3AF] hover:text-red-500 hover:bg-red-50 transition-colors text-base"
+                            className="flex-shrink-0 w-9 h-9 flex items-center justify-center rounded-lg text-[#9CA3AF] hover:text-red-500 hover:bg-red-50 transition-colors"
                             aria-label="Supprimer"
                           >
-                            🗑️
+                            <Trash2 size={16} strokeWidth={1.9} />
                           </button>
                         )}
                       </div>
@@ -381,14 +382,14 @@ export default function AdminProspectionPage() {
                           className="flex-1 flex items-center justify-center gap-1.5 border border-[#E8E8E3] text-[#6B6B6B] font-semibold rounded-xl hover:border-[#6C47FF]/40 transition-colors text-sm"
                           style={{ minHeight: 44 }}
                         >
-                          🔗 Ouvrir
+                          <Link2 size={15} strokeWidth={1.9} />Ouvrir
                         </button>
                         <button
                           onClick={() => setQrModal(campaign)}
                           className="flex-1 flex items-center justify-center gap-1.5 border border-[#E8E8E3] text-[#6B6B6B] font-semibold rounded-xl hover:border-[#6C47FF]/40 transition-colors text-sm"
                           style={{ minHeight: 44 }}
                         >
-                          📱 QR Code
+                          <QrCode size={15} strokeWidth={1.9} />QR Code
                         </button>
                       </div>
                     </div>
@@ -426,7 +427,7 @@ export default function AdminProspectionPage() {
               </div>
             ) : leads.length === 0 ? (
               <div className="bg-white border border-[#E8E8E3] rounded-2xl p-10 text-center">
-                <div className="text-4xl mb-3">📬</div>
+                <Bell size={40} strokeWidth={1.9} className="text-[#6C47FF] mx-auto mb-3" />
                 <p className="text-sm text-[#6B6B6B]">
                   Aucune soumission reçue pour le moment.
                 </p>
@@ -455,7 +456,7 @@ export default function AdminProspectionPage() {
                         </div>
                         <p className="text-sm font-semibold text-[#1A1A1A] mt-0.5">{lead.commerce}</p>
                         {lead.adresse_commerce && (
-                          <p className="text-xs text-[#6B6B6B] mt-0.5">📍 {lead.adresse_commerce}</p>
+                          <p className="text-xs text-[#6B6B6B] mt-0.5 flex items-center gap-1"><MapPin size={11} strokeWidth={1.9} className="flex-shrink-0" />{lead.adresse_commerce}</p>
                         )}
                         <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1">
                           {lead.email && (
@@ -464,8 +465,8 @@ export default function AdminProspectionPage() {
                             </a>
                           )}
                           {lead.telephone && (
-                            <a href={`tel:${lead.telephone}`} className="text-xs text-[#6B6B6B]">
-                              📞 {lead.telephone}
+                            <a href={`tel:${lead.telephone}`} className="text-xs text-[#6B6B6B] flex items-center gap-0.5">
+                              <Phone size={11} strokeWidth={1.9} className="flex-shrink-0" />{lead.telephone}
                             </a>
                           )}
                         </div>
@@ -479,9 +480,9 @@ export default function AdminProspectionPage() {
                       {!lead.lu && (
                         <button
                           onClick={() => markLeadAsRead(lead.id)}
-                          className="flex-shrink-0 px-3 py-1.5 border border-[#E8E8E3] text-[#6B6B6B] text-xs font-semibold rounded-lg hover:bg-[#F7F6F3] transition-colors whitespace-nowrap"
+                          className="flex-shrink-0 px-3 py-1.5 border border-[#E8E8E3] text-[#6B6B6B] text-xs font-semibold rounded-lg hover:bg-[#F7F6F3] transition-colors whitespace-nowrap flex items-center gap-1"
                         >
-                          ✓ Lu
+                          <Check size={12} strokeWidth={2} />Lu
                         </button>
                       )}
                     </div>

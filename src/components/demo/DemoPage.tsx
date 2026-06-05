@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { Zap, Smartphone, Trophy, PartyPopper } from 'lucide-react'
+import { Zap, Smartphone, Trophy, PartyPopper, Check } from 'lucide-react'
 
 interface Props {
   campaign?: string
@@ -106,7 +106,7 @@ function WalletCard({ color = '#6C47FF' }: { color?: string }) {
                   : { border: '2px solid rgba(255,255,255,0.3)', color: 'rgba(255,255,255,0.4)' }
               }
             >
-              {i < stampsDone ? '✓' : ''}
+              {i < stampsDone ? <Check size={12} strokeWidth={2.5} /> : ''}
             </div>
           ))}
         </div>
@@ -423,7 +423,7 @@ export default function DemoPage({ campaign }: Props) {
               <ul className="flex-1 space-y-2">
                 {plan.features.map((f, j) => (
                   <li key={j} className="flex items-center gap-2 text-[#1A1A1A]" style={{ fontSize: 15 }}>
-                    <span className="flex-shrink-0 font-bold" style={{ color: COLOR }}>✓</span>
+                    <Check size={15} strokeWidth={2} className="flex-shrink-0" style={{ color: COLOR }} />
                     {f}
                   </li>
                 ))}

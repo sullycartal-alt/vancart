@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import InstallBanner from '@/components/pwa/InstallBanner'
 import LoyaltyCardMockup from '@/components/loyalty/LoyaltyCardMockup'
+import { PartyPopper, Bookmark, Trophy, Gift } from 'lucide-react'
 
 interface Merchant {
   business_name: string
@@ -181,7 +182,9 @@ export default function CardClient({ initialCard, customerId, merchantId }: {
       {showCelebration && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
           <div className="bg-white rounded-3xl shadow-2xl max-w-xs w-full p-8 text-center space-y-5" style={{ animation: 'celebrate 0.5s cubic-bezier(0.16,1,0.3,1) both' }}>
-            <div className="text-6xl" style={{ animation: 'stamp-pop 0.6s 0.2s both' }}>🎉</div>
+            <div className="flex justify-center" style={{ animation: 'stamp-pop 0.6s 0.2s both' }}>
+              <PartyPopper size={60} strokeWidth={1.9} className="text-[#6C47FF]" />
+            </div>
             <div>
               <h2 className="text-xl font-bold text-gray-900">Félicitations !</h2>
               <p className="text-gray-500 mt-1 text-sm">Votre récompense est débloquée !</p>
@@ -239,7 +242,7 @@ export default function CardClient({ initialCard, customerId, merchantId }: {
         {/* Reward QR — shown when card is complete */}
         {isComplete && (
           <div className="border-2 border-amber-400 bg-amber-50 rounded-2xl p-5 text-center space-y-3" style={{ boxShadow: '0 0 0 4px #fef3c720' }}>
-            <p className="text-base font-bold text-amber-800">🎁 Récompense prête !</p>
+            <p className="text-base font-bold text-amber-800 flex items-center justify-center gap-1.5"><Gift size={18} strokeWidth={1.9} />Récompense prête !</p>
             <p className="text-sm text-amber-700">{merchant.loyalty_rule}</p>
             {showRewardQR ? (
               <div className="space-y-3">
@@ -285,7 +288,7 @@ export default function CardClient({ initialCard, customerId, merchantId }: {
 
         {/* Bookmark hint */}
         <div className="rounded-2xl p-4 text-center" style={{ backgroundColor: `${color}14`, border: `1px solid ${color}25` }}>
-          <p className="text-xs font-medium" style={{ color }}>📌 Mettez cette page en favori pour retrouver votre carte</p>
+          <p className="text-xs font-medium flex items-center justify-center gap-1.5" style={{ color }}><Bookmark size={13} strokeWidth={1.9} />Mettez cette page en favori pour retrouver votre carte</p>
           {lastUpdated && (
             <p className="text-xs mt-1" style={{ color, opacity: 0.5 }}>
               Mis à jour à {lastUpdated.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
@@ -294,8 +297,8 @@ export default function CardClient({ initialCard, customerId, merchantId }: {
         </div>
 
         {card.rewards_unlocked > 0 && (
-          <p className="text-xs text-center" style={{ color: '#4a4758' }}>
-            🏆 {card.rewards_unlocked} récompense{card.rewards_unlocked > 1 ? 's' : ''} obtenue{card.rewards_unlocked > 1 ? 's' : ''} au total
+          <p className="text-xs text-center flex items-center justify-center gap-1" style={{ color: '#4a4758' }}>
+            <Trophy size={13} strokeWidth={1.9} />{card.rewards_unlocked} récompense{card.rewards_unlocked > 1 ? 's' : ''} obtenue{card.rewards_unlocked > 1 ? 's' : ''} au total
           </p>
         )}
       </div>

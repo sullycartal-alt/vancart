@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import SettingsTabs from './SettingsTabs'
@@ -32,7 +33,9 @@ export default async function SettingsPage() {
         </p>
       </div>
 
-      <SettingsTabs merchant={merchant} clientCount={effectiveClientCount} />
+      <Suspense fallback={null}>
+        <SettingsTabs merchant={merchant} clientCount={effectiveClientCount} />
+      </Suspense>
     </div>
   )
 }

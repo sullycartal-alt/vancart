@@ -5,7 +5,19 @@ import Link from 'next/link'
 import { ImagePlus, Check } from 'lucide-react'
 import LoyaltyCardMockup from '@/components/loyalty/LoyaltyCardMockup'
 
-const PRESET_COLORS = ['#6C47FF', '#FF6B35', '#10B981', '#F59E0B', '#EF4444', '#1A1A2E']
+const PRESET_COLORS = [
+  { name: 'VanCart',     hex: '#6C47FF' },
+  { name: 'Minuit',      hex: '#1A1A2E' },
+  { name: 'Marine',      hex: '#0D2137' },
+  { name: 'Forêt',       hex: '#1B4332' },
+  { name: 'Bordeaux',    hex: '#6B1A2A' },
+  { name: 'Ardoise',     hex: '#2D3A3A' },
+  { name: 'Terracotta',  hex: '#C1440E' },
+  { name: 'Ocre',        hex: '#B5860D' },
+  { name: 'Indigo',      hex: '#3730A3' },
+  { name: 'Prune',       hex: '#4A1942' },
+  { name: 'Anthracite',  hex: '#1C1C1E' },
+]
 
 interface Merchant {
   id: string
@@ -134,27 +146,40 @@ export default function EditCardClient({ merchant }: { merchant: Merchant }) {
         <div className="order-last lg:order-first space-y-5">
 
           {/* Color */}
-          <div className="bg-white border border-[#E8E8E3] rounded-2xl p-5 space-y-3">
+          <div className="bg-white border border-[#E8E8E3] rounded-2xl p-5 space-y-4">
             <label className={labelClass}>Couleur principale</label>
-            <div className="flex items-center gap-3 flex-wrap">
-              {PRESET_COLORS.map(hex => (
-                <button
-                  key={hex} type="button"
-                  onClick={() => { setColor(hex); triggerSave({ primary_color: hex }) }}
-                  className="w-9 h-9 rounded-full border-2 transition-all hover:scale-110 flex-shrink-0"
-                  style={{
-                    backgroundColor: hex,
-                    borderColor: color === hex ? '#1A1A1A' : 'transparent',
-                    boxShadow: color === hex ? '0 0 0 2px white inset' : 'none',
-                  }}
+            <div>
+              <p className="text-xs text-gray-500 mb-2">Couleurs suggérées</p>
+              <div className="grid grid-cols-6 gap-2">
+                {PRESET_COLORS.map(({ name, hex }) => (
+                  <button
+                    key={hex} type="button" title={name}
+                    onClick={() => { setColor(hex); triggerSave({ primary_color: hex }) }}
+                    className="w-9 h-9 flex-shrink-0 transition-all hover:scale-110"
+                    style={{
+                      backgroundColor: hex,
+                      borderRadius: '50%',
+                      cursor: 'pointer',
+                      outline: color === hex ? '3px solid #6C47FF' : 'none',
+                      outlineOffset: '2px',
+                    }}
+                    aria-label={name}
+                  />
+                ))}
+              </div>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 mb-2">Couleur personnalisée</p>
+              <div className="flex items-center gap-3">
+                <input
+                  type="color" value={color}
+                  onChange={e => { setColor(e.target.value); triggerSave({ primary_color: e.target.value }) }}
+                  className="w-9 h-9 rounded-xl border border-[#E8E8E3] cursor-pointer p-0.5"
                 />
-              ))}
-              <input
-                type="color" value={color}
-                onChange={e => { setColor(e.target.value); triggerSave({ primary_color: e.target.value }) }}
-                className="w-9 h-9 rounded-xl border border-[#E8E8E3] cursor-pointer p-0.5"
-                title="Couleur personnalisée"
-              />
+                <span className="text-sm text-[#6B6B6B]">
+                  Sélectionnée : <span className="font-semibold" style={{ color }}>{color}</span>
+                </span>
+              </div>
             </div>
           </div>
 
@@ -298,6 +323,7 @@ export default function EditCardClient({ merchant }: { merchant: Merchant }) {
             bannerUrl={bannerUrl || undefined}
             currentStamps={5}
             currentPoints={Math.round((pointsRequired || 100) * 0.6)}
+            cardId={merchant.id}
             width={320}
           />
           {saving && (

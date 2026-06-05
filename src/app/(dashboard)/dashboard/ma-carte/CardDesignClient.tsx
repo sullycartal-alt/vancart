@@ -8,6 +8,7 @@ import LoyaltyCardMockup from '@/components/loyalty/LoyaltyCardMockup'
 const PRESET_COLORS = ['#6C47FF', '#FF6B35', '#10B981', '#F59E0B', '#EF4444', '#1A1A2E']
 
 const ONBOARDING_PRESETS = [
+  { name: 'VanCart',     hex: '#6C47FF' },
   { name: 'Minuit',      hex: '#1A1A2E' },
   { name: 'Marine',      hex: '#0D2137' },
   { name: 'Forêt',       hex: '#1B4332' },
@@ -397,7 +398,7 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
                 {/* Preset grid 5×2 */}
                 <div>
                   <label className="text-sm font-medium text-[#1A1A1A] block mb-3">Couleurs recommandées</label>
-                  <div className="grid grid-cols-5 gap-3">
+                  <div className="grid grid-cols-6 gap-3">
                     {ONBOARDING_PRESETS.map(({ name, hex }) => (
                       <button
                         key={hex} type="button" title={name}

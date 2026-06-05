@@ -41,7 +41,7 @@ export default async function WalletPage() {
   const { data: cards, error: cardsError } = await service
     .from('loyalty_cards')
     .select(
-      'id, stamps_count, points, rewards_unlocked, customers(first_name), merchants(id, business_name, primary_color, loyalty_rule, stamps_required, loyalty_type, points_required, logo_url)'
+      'id, stamps_count, points, rewards_unlocked, customers(first_name), merchants(id, business_name, primary_color, loyalty_rule, stamps_required, loyalty_type, points_required, logo_url, plan)'
     )
     .eq('customer_id', customerId)
     .order('created_at', { ascending: false })
@@ -77,6 +77,7 @@ export default async function WalletPage() {
       loyalty_type: string | null
       points_required: number | null
       logo_url: string | null
+      plan: string | null
     } | null
     const customer = (Array.isArray(c.customers) ? c.customers[0] : c.customers) as {
       first_name: string
@@ -98,6 +99,7 @@ export default async function WalletPage() {
         points_required: m?.points_required ?? null,
         logo_url: m?.logo_url ?? null,
         banner_url: bannerMap[merchantId] ?? null,
+        plan: m?.plan ?? null,
       },
     }
   })

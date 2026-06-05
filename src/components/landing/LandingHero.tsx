@@ -119,6 +119,8 @@ export default function LandingHero() {
               </span>
             </div>
 
+            <a href="#comment-ca-marche" className="text-sm text-gray-500 hover:text-[#6C47FF] underline underline-offset-2 transition-colors text-center lg:text-left block">Voir comment ça marche →</a>
+
             {/* Social proof */}
             <div className="flex items-center gap-3 justify-center lg:justify-start">
               <div className="flex flex-shrink-0" style={{ gap: 0 }}>

@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { LogoLockup } from '@/components/brand/Logo'
 import { Settings, Target } from 'lucide-react'
+import AdminMobileNav from './AdminMobileNav'
 
 const ADMIN_EMAILS = ['sullycartal@gmail.com', 'audrey@vancart.fr']
 
@@ -25,16 +26,21 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                   <Settings size={13} strokeWidth={1.9} />Admin
                 </span>
               </span>
-              <Link href="/admin" className="text-sm text-gray-300 hover:text-white transition-colors">
-                Dashboard
-              </Link>
-              <Link href="/admin/prospection" className="inline-flex items-center gap-1.5 text-sm text-gray-300 hover:text-white transition-colors">
-                <Target size={15} strokeWidth={1.9} />Prospection
-              </Link>
+              <div className="hidden sm:flex items-center gap-6">
+                <Link href="/admin" className="text-sm text-gray-300 hover:text-white transition-colors">
+                  Dashboard
+                </Link>
+                <Link href="/admin/prospection" className="inline-flex items-center gap-1.5 text-sm text-gray-300 hover:text-white transition-colors">
+                  <Target size={15} strokeWidth={1.9} />Prospection
+                </Link>
+              </div>
             </div>
-            <Link href="/dashboard" className="text-sm text-gray-400 hover:text-white transition-colors">
-              ← Retour app
-            </Link>
+            <div className="flex items-center gap-2">
+              <Link href="/dashboard" className="hidden sm:block text-sm text-gray-400 hover:text-white transition-colors">
+                ← Retour app
+              </Link>
+              <AdminMobileNav />
+            </div>
           </div>
         </div>
       </nav>

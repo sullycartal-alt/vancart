@@ -215,11 +215,11 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
   const btnSave = 'w-full mt-4 py-2.5 text-sm font-semibold text-white rounded-lg transition-colors'
 
   return (
-    <div className="h-screen overflow-hidden flex flex-col bg-[#F7F6F3]" style={{ maxHeight: '100vh' }}>
-      <div className="flex-1 overflow-hidden grid grid-cols-1 lg:grid-cols-2 gap-12 px-6 py-6 max-w-6xl mx-auto w-full">
+    <div className="lg:h-screen lg:overflow-hidden flex flex-col bg-[#F7F6F3]">
+      <div className="flex-1 lg:overflow-hidden grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12 px-4 lg:px-6 py-6 max-w-6xl mx-auto w-full">
 
         {/* ── Left column ── */}
-        <div className="overflow-y-auto pr-2" style={{ maxHeight: 'calc(100vh - 80px)' }}>
+        <div className="lg:overflow-y-auto pr-2 order-last lg:order-first lg:max-h-[calc(100vh-80px)]">
           <h1 className="text-2xl font-bold text-gray-900">Ma carte de fidélité</h1>
           <p className="text-sm text-gray-500 mt-1">Cliquez sur chaque zone de la carte pour la personnaliser.</p>
 
@@ -478,7 +478,7 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
         </div>
 
         {/* ── Right column: interactive card ── */}
-        <div className="flex flex-col items-center justify-start gap-4" style={{ position: 'sticky', top: 0, maxHeight: 'calc(100vh - 80px)', overflow: 'hidden' }}>
+        <div className="flex flex-col items-center justify-start gap-4 order-first lg:order-last lg:sticky lg:top-0 lg:max-h-[calc(100vh-80px)] lg:overflow-hidden">
           <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1 w-fit mx-auto">
             <button
               onClick={() => setPreviewMode('edit')}

@@ -8,6 +8,7 @@ import ToastListener from './ToastListener'
 import TrialBanner from './TrialBanner'
 import MobileNav from './MobileNav'
 import NavSettingsHint from './NavSettingsHint'
+import CommerceTabBar from './CommerceTabBar'
 import { createClient } from '@/lib/supabase/server'
 import { effectivePlan, type Plan } from '@/lib/plan-features'
 import { Suspense } from 'react'
@@ -127,6 +128,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
           </div>
         </div>
       </nav>
+
+      <CommerceTabBar />
 
       <main className="flex-1 max-w-7xl w-full mx-auto py-6 px-4 sm:px-6 lg:px-8 animate-fade-in">
         {children}

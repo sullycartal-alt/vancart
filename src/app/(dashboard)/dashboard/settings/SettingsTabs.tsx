@@ -59,14 +59,9 @@ function merchantToConfig(m: Merchant): MerchantSharedConfig {
 export default function SettingsTabs({ merchant, clientCount }: Props) {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const [tab, setTab] = useState<'settings' | 'card'>(() => {
-    if (typeof window === 'undefined') return 'settings'
-    const fromUrl = searchParams.get('tab')
-    if (fromUrl === 'settings' || fromUrl === 'card') return fromUrl
-    const fromStorage = localStorage.getItem('moncommerce_tab')
-    if (fromStorage === 'settings' || fromStorage === 'card') return fromStorage
-    return 'settings'
-  })
+  const [tab, setTab] = useState<'settings' | 'card'>(() =>
+    searchParams.get('tab') === 'card' ? 'card' : 'settings'
+  )
   const [cardInitVersion, setCardInitVersion] = useState(0)
   const [liveConfig, setLiveConfig] = useState<MerchantSharedConfig>(
     merchant ? merchantToConfig(merchant) : {
@@ -110,7 +105,6 @@ export default function SettingsTabs({ merchant, clientCount }: Props) {
       setCardInitVersion(v => v + 1)
     }
     setTab(newTab)
-    localStorage.setItem('moncommerce_tab', newTab)
     const params = new URLSearchParams(searchParams.toString())
     if (newTab === 'settings') {
       params.delete('tab')

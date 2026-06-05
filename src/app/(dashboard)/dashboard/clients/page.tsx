@@ -4,6 +4,8 @@ import { redirect } from 'next/navigation'
 import { effectivePlan, type Plan } from '@/lib/plan-features'
 import ClientsTable from './ClientsTable'
 
+export const dynamic = 'force-dynamic'
+
 export default async function ClientsPage() {
   const supabase = await createClient()
   const {

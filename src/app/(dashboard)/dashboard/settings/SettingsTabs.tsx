@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { Store, Palette } from 'lucide-react'
 import MerchantForm from './MerchantForm'
 import CardDesignClient from '../ma-carte/CardDesignClient'
@@ -56,7 +57,11 @@ function merchantToConfig(m: Merchant): MerchantSharedConfig {
 }
 
 export default function SettingsTabs({ merchant, clientCount }: Props) {
-  const [tab, setTab] = useState<'settings' | 'card'>('settings')
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const [tab, setTab] = useState<'settings' | 'card'>(() =>
+    searchParams.get('tab') === 'card' ? 'card' : 'settings'
+  )
   const [cardInitVersion, setCardInitVersion] = useState(0)
   const [liveConfig, setLiveConfig] = useState<MerchantSharedConfig>(
     merchant ? merchantToConfig(merchant) : {
@@ -100,6 +105,13 @@ export default function SettingsTabs({ merchant, clientCount }: Props) {
       setCardInitVersion(v => v + 1)
     }
     setTab(newTab)
+    const params = new URLSearchParams(searchParams.toString())
+    if (newTab === 'settings') {
+      params.delete('tab')
+    } else {
+      params.set('tab', newTab)
+    }
+    router.replace(`?${params.toString()}`, { scroll: false })
   }
 
   return (

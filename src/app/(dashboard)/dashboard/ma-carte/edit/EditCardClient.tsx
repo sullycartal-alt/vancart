@@ -6,6 +6,7 @@ import { ImagePlus, Check } from 'lucide-react'
 import LoyaltyCardMockup from '@/components/loyalty/LoyaltyCardMockup'
 
 const PRESET_COLORS = [
+  { name: 'VanCart',     hex: '#6C47FF' },
   { name: 'Minuit',      hex: '#1A1A2E' },
   { name: 'Marine',      hex: '#0D2137' },
   { name: 'Forêt',       hex: '#1B4332' },
@@ -149,7 +150,7 @@ export default function EditCardClient({ merchant }: { merchant: Merchant }) {
             <label className={labelClass}>Couleur principale</label>
             <div>
               <p className="text-xs text-gray-500 mb-2">Couleurs suggérées</p>
-              <div className="grid grid-cols-5 gap-2">
+              <div className="grid grid-cols-6 gap-2">
                 {PRESET_COLORS.map(({ name, hex }) => (
                   <button
                     key={hex} type="button" title={name}

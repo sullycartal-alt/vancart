@@ -88,7 +88,7 @@ export default async function AdminPage() {
 
   const mrr = merchants.reduce((s, m) => {
     if (m.plan === 'essentiel') return s + 29
-    if (m.plan === 'pro') return s + 59
+    if (m.plan === 'pro') return s + 49
     return s
   }, 0)
 

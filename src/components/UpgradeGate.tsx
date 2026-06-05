@@ -11,7 +11,7 @@ const PLAN_LABELS: Record<'essential' | 'pro', string> = {
 
 const PLAN_PRICES: Record<'essential' | 'pro', string> = {
   essential: '29€/mois',
-  pro: '59€/mois',
+  pro: '49€/mois',
 }
 
 const FEATURE_META: Record<string, { label: string; description: string; benefits: string[] }> = {

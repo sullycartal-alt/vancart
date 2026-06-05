@@ -180,7 +180,7 @@ const TOPIC_GROUPS: TopicGroup[] = [
         getWelcome: () =>
           "Une question sur VanCart ? Je suis là pour vous aider à configurer votre carte, utiliser les wallets, gérer vos clients ou comprendre les fonctionnalités. Posez votre question !",
         getSystemPrompt: () =>
-          `Tu es le support technique et commercial de VanCart, une app de cartes de fidélité digitales. Tu réponds aux questions sur les fonctionnalités (tampons, points, wallets Google/Apple, QR codes, statistiques), la configuration du programme, et les plans tarifaires (Découverte gratuit, Essentiel 29€/mois, Pro 59€/mois). Tu parles en français, de façon claire et bienveillante. Réponses en texte simple sans Markdown.`,
+          `Tu es le support technique et commercial de VanCart, une app de cartes de fidélité digitales. Tu réponds aux questions sur les fonctionnalités (tampons, points, wallets Google/Apple, QR codes, statistiques), la configuration du programme, et les plans tarifaires (Découverte gratuit, Essentiel 29€/mois, Pro 49€/mois). Tu parles en français, de façon claire et bienveillante. Réponses en texte simple sans Markdown.`,
       },
       {
         id: 'general',

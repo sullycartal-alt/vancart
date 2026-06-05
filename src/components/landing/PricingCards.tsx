@@ -51,7 +51,7 @@ const cards = [
     key: 'pro',
     badge: 'Pour aller plus loin',
     title: 'Pro',
-    price: '59€',
+    price: '49€',
     priceSuffix: ' / mois',
     priceNote: 'Sans engagement',
     subNote: null,

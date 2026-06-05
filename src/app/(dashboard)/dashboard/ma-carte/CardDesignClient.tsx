@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { CheckCircle, Circle, ImagePlus, Store, X, ChevronRight } from 'lucide-react'
+import { CheckCircle, Circle, ImagePlus, Store, X, ChevronRight, ChevronDown } from 'lucide-react'
 
 const PRESET_COLORS = ['#6C47FF', '#FF6B35', '#10B981', '#F59E0B', '#EF4444', '#1A1A2E']
 
@@ -126,6 +126,7 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
   const [savedZone, setSavedZone] = useState<string | null>(null)
   const [saveError, setSaveError] = useState<string | null>(null)
   const [previewMode, setPreviewMode] = useState<'edit' | 'preview'>('edit')
+  const [showRecap, setShowRecap] = useState(false)
 
   const logoInputRef = useRef<HTMLInputElement>(null)
   const bannerInputRef = useRef<HTMLInputElement>(null)
@@ -273,39 +274,48 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
             </div>
           </div>
 
-          {/* Recap block when complete */}
+          {/* Recap toggle when complete */}
           {completedCount === 6 && (
-            <div className="mt-2 bg-white rounded-xl border border-[#6C47FF]/20 shadow-sm overflow-hidden">
-              <div className="bg-[#6C47FF] px-4 py-3 flex items-center gap-2">
-                <span className="text-white text-sm font-semibold">🎉 Votre carte est prête !</span>
-              </div>
-              <div className="p-4 space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Commerce</span>
-                  <span className="font-medium text-gray-900">{businessName}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Programme</span>
-                  <span className="font-medium text-gray-900">{loyaltyType === 'stamps' ? `${stampsRequired} tampons` : `${pointsRequired} points`}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Récompense</span>
-                  <span className="font-medium text-gray-900">{loyaltyRule}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-500">Couleur</span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-5 h-5 rounded-full border border-gray-200" style={{ backgroundColor: color }} />
-                    <span className="font-medium text-gray-900">{color}</span>
+            <div className="mt-4">
+              <button
+                onClick={() => setShowRecap(prev => !prev)}
+                className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl border border-[#6C47FF]/30 bg-[#F0EDFF] hover:bg-[#E8E3FF] transition-colors"
+              >
+                <span className="text-sm font-semibold text-[#6C47FF]">🎉 Récapitulatif de votre carte</span>
+                <ChevronDown className={`w-4 h-4 text-[#6C47FF] transition-transform ${showRecap ? 'rotate-180' : ''}`} />
+              </button>
+
+              {showRecap && (
+                <div className="mt-2 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                  <div className="p-4 space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Commerce</span>
+                      <span className="font-medium text-gray-900">{businessName}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Programme</span>
+                      <span className="font-medium text-gray-900">{loyaltyType === 'stamps' ? `${stampsRequired} tampons` : `${pointsRequired} points`}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Récompense</span>
+                      <span className="font-medium text-gray-900">{loyaltyRule}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-500">Couleur</span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 rounded-full border border-gray-200" style={{ backgroundColor: color }} />
+                        <span className="font-medium text-gray-900">{color}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="px-4 pb-3 flex items-center gap-2 text-xs text-gray-400 border-t border-gray-100 pt-3">
+                    <svg className="w-3.5 h-3.5 text-[#10B981] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Chaque modification est enregistrée automatiquement
                   </div>
                 </div>
-              </div>
-              <div className="px-4 pb-4 pt-2 flex items-center gap-2 text-xs text-gray-400">
-                <svg className="w-3.5 h-3.5 text-[#10B981] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-                Chaque modification est enregistrée automatiquement
-              </div>
+              )}
             </div>
           )}
 
@@ -407,7 +417,7 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
                     <p className="font-semibold text-gray-900">Règle de fidélité</p>
                     <div className="flex rounded-xl border border-gray-200 bg-[#F7F6F3] p-1 gap-1">
                       {(['stamps', 'points'] as const).map(type => (
-                        <button key={type} type="button" onClick={() => setLoyaltyType(type)}
+                        <button key={type} type="button" onClick={() => { setLoyaltyType(type); saveFieldDebounced({ loyalty_type: type, stamps_required: stampsRequired, points_required: pointsRequired, points_per_euro: pointsPerEuro }) }}
                           className="flex-1 py-1.5 rounded-lg text-sm font-medium transition-all"
                           style={loyaltyType === type ? { backgroundColor: color, color: 'white' } : { backgroundColor: 'transparent', color: '#6B7280' }}
                         >
@@ -419,7 +429,7 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
                       <div className="space-y-1.5">
                         <label className="text-sm font-medium text-gray-700">Tampons pour une récompense</label>
                         <input type="number" min={1} max={30} value={stampsRequired}
-                          onChange={e => setStampsRequired(Math.min(30, Math.max(1, Number(e.target.value))))}
+                          onChange={e => { const v = Math.min(30, Math.max(1, Number(e.target.value))); setStampsRequired(v); saveFieldDebounced({ loyalty_type: loyaltyType, stamps_required: v, points_required: pointsRequired, points_per_euro: pointsPerEuro }) }}
                           className={inputClass}
                         />
                       </div>
@@ -428,25 +438,19 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
                         <div className="space-y-1.5">
                           <label className="text-sm font-medium text-gray-700">Points par euro dépensé</label>
                           <input type="number" min={1} value={pointsPerEuro}
-                            onChange={e => setPointsPerEuro(Math.max(1, Number(e.target.value)))}
+                            onChange={e => { const v = Math.max(1, Number(e.target.value)); setPointsPerEuro(v); saveFieldDebounced({ loyalty_type: loyaltyType, stamps_required: stampsRequired, points_required: pointsRequired, points_per_euro: v }) }}
                             className={inputClass}
                           />
                         </div>
                         <div className="space-y-1.5">
                           <label className="text-sm font-medium text-gray-700">Points pour une récompense</label>
                           <input type="number" min={1} value={pointsRequired}
-                            onChange={e => setPointsRequired(Math.max(1, Number(e.target.value)))}
+                            onChange={e => { const v = Math.max(1, Number(e.target.value)); setPointsRequired(v); saveFieldDebounced({ loyalty_type: loyaltyType, stamps_required: stampsRequired, points_required: v, points_per_euro: pointsPerEuro }) }}
                             className={inputClass}
                           />
                         </div>
                       </div>
                     )}
-                    <button type="button"
-                      onClick={() => saveField({ loyalty_type: loyaltyType, stamps_required: stampsRequired, points_required: pointsRequired, points_per_euro: pointsPerEuro })}
-                      className={btnSave} style={{ backgroundColor: color }}
-                    >
-                      Enregistrer
-                    </button>
                   </div>
                 )}
 
@@ -456,14 +460,9 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
                     <p className="font-semibold text-gray-900">Votre récompense</p>
                     <p className="text-sm text-gray-500">Ce texte apparaît sur la carte de vos clients.</p>
                     <input type="text" placeholder="Ex : 1 café offert, 10% de réduction..."
-                      value={loyaltyRule} onChange={e => setLoyaltyRule(e.target.value)}
+                      value={loyaltyRule} onChange={e => { setLoyaltyRule(e.target.value); saveFieldDebounced({ loyalty_rule: e.target.value }) }}
                       className={inputClass}
                     />
-                    <button type="button" onClick={() => saveField({ loyalty_rule: loyaltyRule })}
-                      className={btnSave} style={{ backgroundColor: color }}
-                    >
-                      Enregistrer
-                    </button>
                   </div>
                 )}
 

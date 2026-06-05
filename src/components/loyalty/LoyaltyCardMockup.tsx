@@ -82,7 +82,7 @@ function CardQR({ value }: { value: string }) {
     import('qrcode').then((QRCode) => {
       if (!cancelled && canvasRef.current) {
         QRCode.toCanvas(canvasRef.current, value, {
-          width: 90,
+          width: 160,
           margin: 1,
           color: { dark: '#111827', light: '#ffffff' },
         })
@@ -93,9 +93,9 @@ function CardQR({ value }: { value: string }) {
   return (
     <canvas
       ref={canvasRef}
-      width={90}
-      height={90}
-      style={{ display: 'block', borderRadius: 4, width: 90, height: 90 }}
+      width={160}
+      height={160}
+      style={{ display: 'block', borderRadius: 4, width: 160, height: 160 }}
     />
   )
 }

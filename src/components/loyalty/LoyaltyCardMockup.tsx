@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { Store, ImagePlus } from 'lucide-react'
+import { Store, ImagePlus, Gift } from 'lucide-react'
 
 export interface LoyaltyCardMockupProps {
   primaryColor?: string
@@ -178,7 +178,7 @@ export default function LoyaltyCardMockup(props: LoyaltyCardMockupProps) {
               {remaining} points avant
             </div>
           )}
-          <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: 12, fontStyle: 'italic' }}>🎁 {loyaltyRule}</div>
+          <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: 12, fontStyle: 'italic', display: 'flex', alignItems: 'center', gap: 4, justifyContent: 'flex-end' }}><Gift style={{ width: 12, height: 12, flexShrink: 0 }} strokeWidth={1.9} />{loyaltyRule}</div>
         </div>
       </div>
 

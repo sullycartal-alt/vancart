@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { Zap, Smartphone, Trophy, PartyPopper } from 'lucide-react'
+import { Zap, Smartphone, Trophy, PartyPopper, Check } from 'lucide-react'
+import LoyaltyCardMockup from '@/components/loyalty/LoyaltyCardMockup'
 
 interface Props {
   campaign?: string
@@ -66,77 +67,6 @@ function ConfettiCanvas({ active }: { active: boolean }) {
 }
 
 // ── Wallet preview card ────────────────────────────────────────────────────────
-function WalletCard({ color = '#6C47FF' }: { color?: string }) {
-  const stampsTotal = 8
-  const stampsDone = 3
-  return (
-    <div
-      className="w-full rounded-2xl overflow-hidden shadow-2xl select-none mx-auto"
-      style={{ maxWidth: 320, background: `linear-gradient(145deg, ${color} 0%, #4a2dbf 100%)` }}
-    >
-      {/* Header */}
-      <div className="flex items-center gap-3 px-5 pt-5 pb-3">
-        <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white font-black text-sm flex-shrink-0">
-          CA
-        </div>
-        <div>
-          <p className="text-white/60 text-xs leading-none">Carte de fidélité</p>
-          <p className="text-white font-bold text-sm leading-tight mt-0.5">Café Demo</p>
-        </div>
-        <div className="ml-auto">
-          <div className="bg-white/10 rounded-lg px-2 py-0.5">
-            <p className="text-white/80 text-[10px] font-semibold">MEMBRE</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Stamps grid */}
-      <div className="px-5 pb-3">
-        <p className="text-white/60 text-xs mb-2.5">
-          {stampsDone}/{stampsTotal} tampons — encore {stampsTotal - stampsDone} pour votre récompense
-        </p>
-        <div className="flex gap-1">
-          {Array.from({ length: stampsTotal }).map((_, i) => (
-            <div
-              key={i}
-              className="w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs"
-              style={
-                i < stampsDone
-                  ? { background: 'rgba(255,255,255,0.9)', color: color }
-                  : { border: '2px solid rgba(255,255,255,0.3)', color: 'rgba(255,255,255,0.4)' }
-              }
-            >
-              {i < stampsDone ? '✓' : ''}
-            </div>
-          ))}
-        </div>
-        {/* Progress bar */}
-        <div className="mt-3 h-1.5 bg-white/20 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-white rounded-full transition-all"
-            style={{ width: `${(stampsDone / stampsTotal) * 100}%` }}
-          />
-        </div>
-      </div>
-
-      {/* Footer */}
-      <div className="flex items-center justify-between px-5 py-3 border-t border-white/10">
-        <div className="flex items-center gap-1.5">
-          <svg width="20" height="20" viewBox="0 0 64 64" fill="none">
-            <rect x="2" y="2" width="16" height="16" rx="2" stroke="rgba(255,255,255,0.6)" strokeWidth="3" fill="none"/>
-            <rect x="46" y="2" width="16" height="16" rx="2" stroke="rgba(255,255,255,0.6)" strokeWidth="3" fill="none"/>
-            <rect x="2" y="46" width="16" height="16" rx="2" stroke="rgba(255,255,255,0.6)" strokeWidth="3" fill="none"/>
-            <rect x="6" y="6" width="8" height="8" fill="rgba(255,255,255,0.6)"/>
-            <rect x="50" y="6" width="8" height="8" fill="rgba(255,255,255,0.6)"/>
-            <rect x="6" y="50" width="8" height="8" fill="rgba(255,255,255,0.6)"/>
-          </svg>
-          <span className="text-white/60 text-[10px] font-medium">Scanner en caisse</span>
-        </div>
-        <p className="text-white/30 text-[9px] font-mono">VC-DEMO</p>
-      </div>
-    </div>
-  )
-}
 
 // ── Steps data ─────────────────────────────────────────────────────────────────
 const STEPS = [
@@ -181,13 +111,31 @@ const PLANS = [
   },
   {
     name: 'Pro',
-    price: '59€',
+    price: '49€',
     period: '/mois',
     sub: 'Sans engagement',
     features: ['Clients illimités', 'Conseiller IA Mistral 🇫🇷', 'Notifications push', 'Export données'],
     cta: 'Choisir Pro',
     highlight: false,
     badge: null,
+    ctaHref: undefined,
+  },
+  {
+    name: 'Sur mesure',
+    price: 'Sur devis',
+    period: '',
+    sub: 'Intégration caisse & accompagnement',
+    features: [
+      'Intégration caisse sur demande',
+      'Automatisation des points après achat',
+      'Accompagnement personnalisé',
+      'Import clients',
+      'Support prioritaire',
+    ],
+    cta: 'Nous contacter',
+    highlight: false,
+    badge: 'Intégration caisse',
+    ctaHref: 'mailto:vancart@gmail.com?subject=Offre%20Sur%20mesure%20VanCart',
   },
 ]
 
@@ -305,8 +253,17 @@ export default function DemoPage({ campaign }: Props) {
         </p>
 
         {/* Wallet card preview */}
-        <div className="mt-8 px-2">
-          <WalletCard color={COLOR} />
+        <div className="mt-8 px-2 flex justify-center">
+          <LoyaltyCardMockup
+            primaryColor={COLOR}
+            businessName="Café Demo"
+            loyaltyType="stamps"
+            stampsRequired={8}
+            currentStamps={3}
+            loyaltyRule="1 café offert"
+            staticQrUrl="/qr-demo.png"
+            width={320}
+          />
         </div>
 
         {/* Spacer so sticky CTA doesn't cover content */}
@@ -423,24 +380,41 @@ export default function DemoPage({ campaign }: Props) {
               <ul className="flex-1 space-y-2">
                 {plan.features.map((f, j) => (
                   <li key={j} className="flex items-center gap-2 text-[#1A1A1A]" style={{ fontSize: 15 }}>
-                    <span className="flex-shrink-0 font-bold" style={{ color: COLOR }}>✓</span>
+                    <Check size={15} strokeWidth={2} className="flex-shrink-0" style={{ color: COLOR }} />
                     {f}
                   </li>
                 ))}
               </ul>
-              <button
-                onClick={scrollToForm}
-                className="w-full rounded-xl font-bold active:scale-95 transition-transform"
-                style={{
-                  minHeight: 52,
-                  fontSize: 16,
-                  ...(plan.highlight
-                    ? { backgroundColor: COLOR, color: 'white' }
-                    : { border: `1.5px solid ${COLOR}`, color: COLOR, background: 'transparent' }),
-                }}
-              >
-                {plan.cta}
-              </button>
+              {'ctaHref' in plan && plan.ctaHref ? (
+                <a
+                  href={plan.ctaHref}
+                  className="w-full rounded-xl font-bold active:scale-95 transition-transform flex items-center justify-center"
+                  style={{
+                    minHeight: 52,
+                    fontSize: 16,
+                    border: `1.5px solid ${COLOR}`,
+                    color: COLOR,
+                    background: 'transparent',
+                    textDecoration: 'none',
+                  }}
+                >
+                  {plan.cta}
+                </a>
+              ) : (
+                <button
+                  onClick={scrollToForm}
+                  className="w-full rounded-xl font-bold active:scale-95 transition-transform"
+                  style={{
+                    minHeight: 52,
+                    fontSize: 16,
+                    ...(plan.highlight
+                      ? { backgroundColor: COLOR, color: 'white' }
+                      : { border: `1.5px solid ${COLOR}`, color: COLOR, background: 'transparent' }),
+                  }}
+                >
+                  {plan.cta}
+                </button>
+              )}
             </div>
           ))}
         </div>

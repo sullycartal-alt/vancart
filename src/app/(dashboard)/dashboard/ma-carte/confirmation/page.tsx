@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import LoyaltyCardMockup from '@/components/loyalty/LoyaltyCardMockup'
+import { PartyPopper } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -51,7 +52,7 @@ export default async function ConfirmationPage() {
 
         {/* Title */}
         <div>
-          <h1 className="text-3xl font-black text-[#1A1A1A]">Votre carte est prête ! 🎉</h1>
+          <h1 className="text-3xl font-black text-[#1A1A1A] flex items-center justify-center gap-3">Votre carte est prête ! <PartyPopper size={28} strokeWidth={1.9} className="text-[#6C47FF]" /></h1>
           <p className="text-[#6B6B6B] mt-3 text-base">
             Vos clients peuvent maintenant recevoir leur carte directement dans leur téléphone.
           </p>

@@ -7,6 +7,7 @@ import {
   PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts'
+import { Zap, WalletCards, Check, Trophy, BarChart3, Store, Gift, Rocket, Trash2, Flame, Target, BookmarkCheck, AlertTriangle, ClipboardList, TrendingUp, Mail, User, Phone, MapPin, Clipboard } from 'lucide-react'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -94,11 +95,13 @@ function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: '2-digit' })
 }
 
-function KPICard({ label, value, icon, sub }: { label: string; value: string | number; icon: string; sub?: string }) {
+type LucideIcon = React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>
+
+function KPICard({ label, value, icon: Icon, sub }: { label: string; value: string | number; icon: LucideIcon; sub?: string }) {
   return (
     <div className="bg-white border border-[#E8E8E3] rounded-xl p-5 flex flex-col gap-1.5">
       <div className="flex items-center gap-2">
-        <span className="text-lg leading-none">{icon}</span>
+        <Icon size={18} strokeWidth={1.9} className="text-[#6C47FF] flex-shrink-0" />
         <span className="text-xs font-semibold text-[#6B6B6B] uppercase tracking-wide leading-tight">{label}</span>
       </div>
       <span className="text-2xl font-bold text-[#1A1A1A]">{value}</span>
@@ -114,9 +117,9 @@ function PlanBadge({ plan }: { plan: string | null }) {
 }
 
 function HealthBadge({ status }: { status: 'active' | 'at_risk' | 'inactive' }) {
-  if (status === 'active') return <span className="inline-flex items-center gap-1 text-xs font-medium text-green-700 bg-green-50 px-2 py-0.5 rounded-full border border-green-200">🟢 Actif</span>
-  if (status === 'at_risk') return <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">🟡 À risque</span>
-  return <span className="inline-flex items-center gap-1 text-xs font-medium text-red-700 bg-red-50 px-2 py-0.5 rounded-full border border-red-200">🔴 Inactif</span>
+  if (status === 'active') return <span className="inline-flex items-center gap-1 text-xs font-medium text-green-700 bg-green-50 px-2 py-0.5 rounded-full border border-green-200"><span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block" /> Actif</span>
+  if (status === 'at_risk') return <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200"><span className="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block" /> À risque</span>
+  return <span className="inline-flex items-center gap-1 text-xs font-medium text-red-700 bg-red-50 px-2 py-0.5 rounded-full border border-red-200"><span className="w-1.5 h-1.5 rounded-full bg-red-500 inline-block" /> Inactif</span>
 }
 
 // ─── Overview Tab ─────────────────────────────────────────────────────────────
@@ -129,12 +132,12 @@ function OverviewTab({
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-4">
-        <KPICard icon="⚡" label="Commerçants actifs" value={kpis.activeMerchants} sub="30 derniers jours" />
-        <KPICard icon="🆕" label="Nouveaux ce mois" value={kpis.newThisMonth} />
-        <KPICard icon="🎴" label="Cartes clients" value={kpis.totalCards.toLocaleString('fr-FR')} />
-        <KPICard icon="✅" label="Activité totale" value={kpis.totalActivity.toLocaleString('fr-FR')} sub="tampons + points" />
-        <KPICard icon="🏆" label="Récompenses" value={kpis.totalRewards.toLocaleString('fr-FR')} />
-        <KPICard icon="💶" label="MRR potentiel" value={`${kpis.mrr.toLocaleString('fr-FR')} €`} />
+        <KPICard icon={Zap} label="Commerçants actifs" value={kpis.activeMerchants} sub="30 derniers jours" />
+        <KPICard icon={Store} label="Nouveaux ce mois" value={kpis.newThisMonth} />
+        <KPICard icon={WalletCards} label="Cartes clients" value={kpis.totalCards.toLocaleString('fr-FR')} />
+        <KPICard icon={Check} label="Activité totale" value={kpis.totalActivity.toLocaleString('fr-FR')} sub="tampons + points" />
+        <KPICard icon={Trophy} label="Récompenses" value={kpis.totalRewards.toLocaleString('fr-FR')} />
+        <KPICard icon={BarChart3} label="MRR potentiel" value={`${kpis.mrr.toLocaleString('fr-FR')} €`} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -284,8 +287,8 @@ function MerchantsTab({
               <div className="flex items-center gap-2 flex-wrap">
                 <PlanBadge plan={drawer.plan} />
                 <HealthBadge status={drawer.status} />
-                <span className="text-xs text-[#6B6B6B] px-2 py-0.5 rounded-full bg-[#F7F6F3] border border-[#E8E8E3]">
-                  {drawer.loyalty_type === 'points' ? '🏆 Points' : '🎴 Tampons'}
+                <span className="inline-flex items-center gap-1 text-xs text-[#6B6B6B] px-2 py-0.5 rounded-full bg-[#F7F6F3] border border-[#E8E8E3]">
+                  {drawer.loyalty_type === 'points' ? <><Trophy size={12} strokeWidth={1.9} /> Points</> : <><WalletCards size={12} strokeWidth={1.9} /> Tampons</>}
                 </span>
               </div>
 

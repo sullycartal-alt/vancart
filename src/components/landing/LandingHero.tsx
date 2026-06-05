@@ -37,8 +37,6 @@ export default function LandingHero() {
     stampsRequired: 9,
     loyaltyRule: '1 café offert',
   })
-  const [isLoading, setIsLoading] = useState(true)
-
   useEffect(() => {
     fetch('/api/public/hero-merchant')
       .then(r => r.json())
@@ -52,12 +50,8 @@ export default function LandingHero() {
             loyaltyRule: data.loyalty_rule || '1 café offert',
           })
         }
-        const img = new Image()
-        img.src = '/hero-cafe.svg'
-        img.onload = () => setIsLoading(false)
-        img.onerror = () => setIsLoading(false)
       })
-      .catch(() => setIsLoading(false))
+      .catch(() => {})
   }, [])
 
   return (
@@ -155,7 +149,7 @@ export default function LandingHero() {
 
           {/* ── Right column ── */}
           <div className="hidden lg:flex justify-center">
-            <div style={{ position: 'relative', width: 520, height: 620 }}>
+            <div style={{ position: 'relative', width: 520, height: 620, marginLeft: 40 }}>
               {/* Decorative blob */}
               <div
                 style={{
@@ -173,7 +167,7 @@ export default function LandingHero() {
 
               {/* Floating card */}
               <div
-                className={`transition-opacity duration-150 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+                className="opacity-100"
                 style={{
                   position: 'relative',
                   zIndex: 2,

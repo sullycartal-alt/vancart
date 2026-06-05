@@ -37,6 +37,7 @@ export default function LandingHero() {
     stampsRequired: 9,
     loyaltyRule: '1 café offert',
   })
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     fetch('/api/public/hero-merchant')
@@ -53,6 +54,7 @@ export default function LandingHero() {
         }
       })
       .catch(() => {})
+      .finally(() => setIsLoading(false))
   }, [])
 
   return (
@@ -165,14 +167,16 @@ export default function LandingHero() {
               />
 
               {/* Floating card */}
-              <div style={{
-                position: 'relative',
-                zIndex: 2,
-                transform: 'rotate(8deg)',
-                animation: 'heroFloat 4s ease-in-out infinite',
-                filter: 'drop-shadow(0 32px 64px rgba(0,0,0,0.25))',
-                flexShrink: 0,
-              }}>
+              <div
+                className={`transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+                style={{
+                  position: 'relative',
+                  zIndex: 2,
+                  transform: 'rotate(8deg)',
+                  animation: 'heroFloat 4s ease-in-out infinite',
+                  filter: 'drop-shadow(0 32px 64px rgba(0,0,0,0.25))',
+                  flexShrink: 0,
+                }}>
                 <LoyaltyCardMockup
                   primaryColor={heroMerchant.primaryColor}
                   businessName={heroMerchant.businessName}

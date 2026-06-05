@@ -202,6 +202,7 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
       bannerUrl={bannerUrl || undefined}
       currentStamps={5}
       currentPoints={Math.round((pointsRequired || 100) * 0.6)}
+      cardId={merchant.id}
       width={320}
     />
   )

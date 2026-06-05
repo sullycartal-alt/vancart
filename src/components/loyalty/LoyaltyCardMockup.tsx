@@ -20,61 +20,6 @@ export interface LoyaltyCardMockupProps {
   width?: number | string
 }
 
-function InlineQR() {
-  return (
-    <svg width="120" height="120" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
-      <rect width="56" height="56" fill="white"/>
-      <rect x="2" y="2" width="16" height="16" fill="#111" rx="1"/>
-      <rect x="4" y="4" width="12" height="12" fill="white" rx="1"/>
-      <rect x="7" y="7" width="6" height="6" fill="#111"/>
-      <rect x="38" y="2" width="16" height="16" fill="#111" rx="1"/>
-      <rect x="40" y="4" width="12" height="12" fill="white" rx="1"/>
-      <rect x="43" y="7" width="6" height="6" fill="#111"/>
-      <rect x="2" y="38" width="16" height="16" fill="#111" rx="1"/>
-      <rect x="4" y="40" width="12" height="12" fill="white" rx="1"/>
-      <rect x="7" y="43" width="6" height="6" fill="#111"/>
-      <rect x="21" y="2" width="3" height="3" fill="#111"/>
-      <rect x="26" y="2" width="3" height="3" fill="#111"/>
-      <rect x="31" y="4" width="2" height="2" fill="#111"/>
-      <rect x="21" y="7" width="2" height="2" fill="#111"/>
-      <rect x="25" y="6" width="3" height="3" fill="#111"/>
-      <rect x="30" y="8" width="3" height="2" fill="#111"/>
-      <rect x="21" y="13" width="3" height="2" fill="#111"/>
-      <rect x="27" y="12" width="2" height="3" fill="#111"/>
-      <rect x="21" y="21" width="2" height="2" fill="#111"/>
-      <rect x="25" y="21" width="3" height="3" fill="#111"/>
-      <rect x="30" y="21" width="2" height="2" fill="#111"/>
-      <rect x="34" y="22" width="3" height="2" fill="#111"/>
-      <rect x="38" y="21" width="2" height="3" fill="#111"/>
-      <rect x="43" y="21" width="3" height="2" fill="#111"/>
-      <rect x="49" y="22" width="2" height="2" fill="#111"/>
-      <rect x="21" y="26" width="3" height="2" fill="#111"/>
-      <rect x="27" y="25" width="2" height="3" fill="#111"/>
-      <rect x="32" y="26" width="3" height="2" fill="#111"/>
-      <rect x="37" y="25" width="2" height="3" fill="#111"/>
-      <rect x="41" y="26" width="3" height="2" fill="#111"/>
-      <rect x="46" y="25" width="2" height="3" fill="#111"/>
-      <rect x="21" y="32" width="2" height="3" fill="#111"/>
-      <rect x="26" y="31" width="3" height="2" fill="#111"/>
-      <rect x="31" y="32" width="2" height="3" fill="#111"/>
-      <rect x="35" y="31" width="3" height="3" fill="#111"/>
-      <rect x="41" y="32" width="2" height="2" fill="#111"/>
-      <rect x="46" y="31" width="2" height="3" fill="#111"/>
-      <rect x="21" y="38" width="3" height="2" fill="#111"/>
-      <rect x="26" y="39" width="2" height="2" fill="#111"/>
-      <rect x="31" y="38" width="3" height="3" fill="#111"/>
-      <rect x="36" y="39" width="2" height="2" fill="#111"/>
-      <rect x="41" y="38" width="3" height="2" fill="#111"/>
-      <rect x="46" y="39" width="2" height="3" fill="#111"/>
-      <rect x="21" y="44" width="2" height="3" fill="#111"/>
-      <rect x="26" y="43" width="3" height="3" fill="#111"/>
-      <rect x="32" y="44" width="2" height="2" fill="#111"/>
-      <rect x="37" y="43" width="3" height="3" fill="#111"/>
-      <rect x="43" y="44" width="2" height="2" fill="#111"/>
-    </svg>
-  )
-}
-
 function CardQR({ value }: { value: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   useEffect(() => {
@@ -235,30 +180,32 @@ export default function LoyaltyCardMockup(props: LoyaltyCardMockupProps) {
         </div>
       </div>
 
-      {/* ZONE 4 — QR code */}
-      <div
-        style={{
-          backgroundColor: primaryColor,
-          padding: 16,
-          borderTop: '2px solid rgba(255,255,255,0.15)',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: 10,
-        }}
-      >
-        <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <div style={{ borderRadius: 16, backgroundColor: 'white', lineHeight: 0, width: 180, height: 180, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto' }}>
-            {cardId ? <CardQR value={cardId} /> : <InlineQR />}
+      {/* ZONE 4 — QR code (only rendered when cardId is available) */}
+      {cardId && (
+        <div
+          style={{
+            backgroundColor: primaryColor,
+            padding: 16,
+            borderTop: '2px solid rgba(255,255,255,0.15)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 10,
+          }}
+        >
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <div style={{ borderRadius: 16, backgroundColor: 'white', lineHeight: 0, width: 180, height: 180, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto' }}>
+              <CardQR value={cardId} />
+            </div>
+          </div>
+          <div style={{ color: 'rgba(255,255,255,0.9)', fontSize: 12, fontWeight: 600, textAlign: 'center' }}>
+            Présentez ce QR code en caisse
+          </div>
+          <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 10, textAlign: 'center' }}>
+            {`ID : ${cardId.slice(0, 8)}…`}
           </div>
         </div>
-        <div style={{ color: 'rgba(255,255,255,0.9)', fontSize: 12, fontWeight: 600, textAlign: 'center' }}>
-          Présentez ce QR code en caisse
-        </div>
-        <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 10, textAlign: 'center' }}>
-          {cardId ? `ID : ${cardId.slice(0, 8)}…` : 'ID : 1a4f8c · e291 · 3b72'}
-        </div>
-      </div>
+      )}
     </div>
   )
 }

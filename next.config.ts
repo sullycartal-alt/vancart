@@ -48,6 +48,12 @@ const nextConfig: NextConfig = {
           { key: 'Content-Type', value: 'application/manifest+json' },
         ],
       },
+      {
+        source: '/caisse-manifest.json',
+        headers: [
+          { key: 'Content-Type', value: 'application/manifest+json' },
+        ],
+      },
     ]
   },
 }

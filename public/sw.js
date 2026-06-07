@@ -51,6 +51,12 @@ function isNavigationRequest(request) {
   return request.mode === 'navigate'
 }
 
+// Routes that must always reach the network untouched (no interception, no cache)
+const BYPASS_ROUTES = ['/caisse/', '/wallet/']
+function isBypassRoute(url) {
+  return BYPASS_ROUTES.some((route) => url.pathname.includes(route))
+}
+
 async function networkFirst(request, cacheName, timeoutMs = 5000) {
   const cache = await caches.open(cacheName)
   const controller = new AbortController()
@@ -135,6 +141,9 @@ self.addEventListener('fetch', (event) => {
   }
 
   if (url.origin !== self.location.origin) return
+
+  // Let standalone-mode routes (caisse, wallet) pass straight through to the network
+  if (isBypassRoute(url)) return
 
   if (isApiRequest(url)) {
     event.respondWith(networkFirst(event.request, DYNAMIC_CACHE, 5000))

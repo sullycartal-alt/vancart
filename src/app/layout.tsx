@@ -19,9 +19,32 @@ const grotesk = Space_Grotesk({
   display: 'swap',
 })
 
+const SITE_URL = 'https://vancart.vercel.app'
+
 export const metadata: Metadata = {
-  title: { default: 'VanCart', template: '%s — VanCart' },
-  description: 'Cartes de fidélité dématérialisées pour commerçants indépendants',
+  title: {
+    default: 'VanCart — Carte de fidélité digitale pour commerçants indépendants',
+    template: '%s — VanCart',
+  },
+  description: "Créez votre carte de fidélité en 5 minutes. Vos clients la reçoivent dans Google Wallet et Apple Wallet, sans télécharger d'app. Gratuit pour démarrer.",
+  keywords: ['carte de fidélité digitale', 'fidélité commerçant', 'Google Wallet', 'Apple Wallet', 'QR code fidélité', 'SaaS fidélité'],
+  robots: { index: true, follow: true },
+  alternates: { canonical: SITE_URL },
+  openGraph: {
+    title: 'VanCart — Carte de fidélité digitale pour commerçants indépendants',
+    description: "Créez votre carte de fidélité en 5 minutes. Vos clients la reçoivent dans Google Wallet et Apple Wallet, sans télécharger d'app. Gratuit pour démarrer.",
+    url: SITE_URL,
+    siteName: 'VanCart',
+    type: 'website',
+    images: [
+      { url: `${SITE_URL}/icons/icon-512.png`, width: 512, height: 512, alt: 'VanCart' },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'VanCart — Carte de fidélité digitale pour commerçants indépendants',
+    description: "Créez votre carte de fidélité en 5 minutes. Vos clients la reçoivent dans Google Wallet et Apple Wallet, sans télécharger d'app. Gratuit pour démarrer.",
+  },
   manifest: '/manifest.webmanifest',
   icons: {
     icon: [
@@ -63,6 +86,25 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-96.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-72.png" />
         <meta name="theme-color" content="#6C47FF" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'SoftwareApplication',
+              name: 'VanCart',
+              applicationCategory: 'BusinessApplication',
+              operatingSystem: 'Web',
+              description: "Créez votre carte de fidélité en 5 minutes. Vos clients la reçoivent dans Google Wallet et Apple Wallet, sans télécharger d'app.",
+              url: SITE_URL,
+              offers: {
+                '@type': 'Offer',
+                price: '0',
+                priceCurrency: 'EUR',
+              },
+            }),
+          }}
+        />
       </head>
       <body className="min-h-full flex flex-col">
         <ServiceWorkerManager>

@@ -13,7 +13,7 @@ webpush.setVapidDetails(
 const schema = z.object({
   merchant_id: z.string().uuid(),
   customer_id: z.string().uuid().optional(),
-  title: z.string().min(1).max(100),
+  title: z.string().min(1).max(100).optional(),
   body: z.string().min(1).max(200),
 })
 
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
   const parsed = schema.safeParse(body)
   if (!parsed.success) return NextResponse.json({ error: 'Invalid payload' }, { status: 400 })
 
-  const { merchant_id, customer_id, title, body: notifBody } = parsed.data
+  const { merchant_id, customer_id, body: notifBody } = parsed.data
   const service = createServiceClient()
 
   // Verify caller owns the merchant
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
 
   if (!merchant) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
-  const notifTitle = merchant.business_name ? `${merchant.business_name} · VanCart` : title
+  const notifTitle = merchant.business_name ?? 'VanCart'
 
   let query = service
     .from('push_subscriptions')

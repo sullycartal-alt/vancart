@@ -42,7 +42,7 @@ function getCookie(name: string): string | null {
   return match ? decodeURIComponent(match[1]) : null
 }
 
-function NotificationBanner({ merchantId }: { merchantId: string }) {
+function NotificationBanner({ merchantIds }: { merchantIds: string[] }) {
   const [visible, setVisible] = useState(false)
   const [status, setStatus] = useState<'idle' | 'loading' | 'success'>('idle')
 
@@ -69,11 +69,16 @@ function NotificationBanner({ merchantId }: { merchantId: string }) {
       })
       const customerId = getCookie('vancart_customer_id')
       if (!customerId) { setStatus('idle'); return }
-      await fetch('/api/push/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customer_id: customerId, merchant_id: merchantId, subscription: sub.toJSON() }),
-      })
+      const subJson = sub.toJSON()
+      await Promise.all(
+        merchantIds.map((merchantId) =>
+          fetch('/api/push/subscribe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ customer_id: customerId, merchant_id: merchantId, subscription: subJson }),
+          })
+        )
+      )
       setStatus('success')
       setTimeout(() => setVisible(false), 2000)
     } catch {
@@ -192,7 +197,7 @@ export default function WalletClient({ cards, error }: { cards: WalletCard[]; er
 
   return (
     <div>
-      <NotificationBanner merchantId={cards[0].merchants.id} />
+      <NotificationBanner merchantIds={[...new Set(cards.map((c) => c.merchants.id))]} />
       <div
         ref={containerRef}
         className="relative w-full"

@@ -43,14 +43,17 @@ function getCookie(name: string): string | null {
 }
 
 function PushButton({ merchantId }: { merchantId: string }) {
+  const [supported, setSupported] = useState<boolean | null>(null)
   const [permission, setPermission] = useState<NotificationPermission | null>(null)
   const [subscribed, setSubscribed] = useState(false)
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    if (!('Notification' in window) || !('PushManager' in window) || !('serviceWorker' in navigator)) return
-    setPermission(Notification.permission)
-    if (Notification.permission === 'granted') {
+    const hasNotification = 'Notification' in window
+    const hasPush = hasNotification && 'PushManager' in window && 'serviceWorker' in navigator
+    setSupported(hasPush)
+    if (hasNotification) setPermission(Notification.permission)
+    if (hasPush && Notification.permission === 'granted') {
       navigator.serviceWorker.ready.then(async (reg) => {
         const sub = await reg.pushManager.getSubscription()
         setSubscribed(!!sub)
@@ -85,7 +88,15 @@ function PushButton({ merchantId }: { merchantId: string }) {
     finally { setLoading(false) }
   }
 
-  if (permission === null) return null
+  if (supported === null) return null
+
+  if (!supported) {
+    return (
+      <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', textAlign: 'center', padding: '8px 16px', fontWeight: 600 }}>
+        Notifications non supportées sur ce navigateur
+      </p>
+    )
+  }
 
   if (permission === 'denied') {
     return (

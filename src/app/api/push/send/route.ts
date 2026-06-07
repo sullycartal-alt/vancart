@@ -32,12 +32,14 @@ export async function POST(request: Request) {
   // Verify caller owns the merchant
   const { data: merchant } = await service
     .from('merchants')
-    .select('id')
+    .select('id, business_name')
     .eq('id', merchant_id)
     .eq('user_id', user.id)
     .single()
 
   if (!merchant) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+
+  const notifTitle = merchant.business_name ? `${merchant.business_name} · VanCart` : title
 
   let query = service
     .from('push_subscriptions')
@@ -50,7 +52,7 @@ export async function POST(request: Request) {
 
   if (!subs?.length) return NextResponse.json({ sent: 0, total: 0 })
 
-  const payload = JSON.stringify({ title, body: notifBody, url: '/wallet' })
+  const payload = JSON.stringify({ title: notifTitle, body: notifBody, url: '/wallet' })
 
   const details = await Promise.all(
     subs.map(async ({ subscription }) => {

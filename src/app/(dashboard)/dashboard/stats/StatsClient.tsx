@@ -175,28 +175,32 @@ export default function StatsClient({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white border border-[#E8E8E3] rounded-xl p-5">
           <SectionTitle>Nouveaux clients par semaine</SectionTitle>
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={weeklyNewClients} barSize={28}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E8E8E3" vertical={false} />
-              <XAxis dataKey="week" tick={{ fontSize: 12, fill: '#6B6B6B' }} axisLine={false} tickLine={false} />
-              <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: '#6B6B6B' }} axisLine={false} tickLine={false} width={24} />
-              <Tooltip contentStyle={{ fontSize: 12, borderRadius: 10, border: '1px solid #E8E8E3' }} formatter={(v) => [v, 'Nouveaux clients']} />
-              <Bar dataKey="clients" fill={primaryColor} radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+          <div className="h-[250px] md:h-[350px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={weeklyNewClients} barSize={28}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#E8E8E3" vertical={false} />
+                <XAxis dataKey="week" tick={{ fontSize: 12, fill: '#6B6B6B' }} axisLine={false} tickLine={false} />
+                <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: '#6B6B6B' }} axisLine={false} tickLine={false} width={24} />
+                <Tooltip contentStyle={{ fontSize: 12, borderRadius: 10, border: '1px solid #E8E8E3' }} formatter={(v) => [v, 'Nouveaux clients']} />
+                <Bar dataKey="clients" fill={primaryColor} radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
 
         <div className="bg-white border border-[#E8E8E3] rounded-xl p-5">
           <SectionTitle>{activityLabel} sur la période</SectionTitle>
-          <ResponsiveContainer width="100%" height={200}>
-            <LineChart data={dailyStamps}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E8E8E3" vertical={false} />
-              <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#6B6B6B' }} axisLine={false} tickLine={false} interval={Math.max(0, Math.floor(dailyStamps.length / 6) - 1)} />
-              <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: '#6B6B6B' }} axisLine={false} tickLine={false} width={24} />
-              <Tooltip contentStyle={{ fontSize: 12, borderRadius: 10, border: '1px solid #E8E8E3' }} formatter={(v) => [v, activityLabel]} />
-              <Line type="monotone" dataKey="tampons" stroke={primaryColor} strokeWidth={2} dot={false} activeDot={{ r: 4, strokeWidth: 0 }} />
-            </LineChart>
-          </ResponsiveContainer>
+          <div className="h-[250px] md:h-[350px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={dailyStamps}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#E8E8E3" vertical={false} />
+                <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#6B6B6B' }} axisLine={false} tickLine={false} interval={Math.max(0, Math.floor(dailyStamps.length / 6) - 1)} />
+                <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: '#6B6B6B' }} axisLine={false} tickLine={false} width={24} />
+                <Tooltip contentStyle={{ fontSize: 12, borderRadius: 10, border: '1px solid #E8E8E3' }} formatter={(v) => [v, activityLabel]} />
+                <Line type="monotone" dataKey="tampons" stroke={primaryColor} strokeWidth={2} dot={false} activeDot={{ r: 4, strokeWidth: 0 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
 

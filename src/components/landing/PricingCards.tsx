@@ -191,6 +191,7 @@ function CardContent({ card }: { card: typeof cards[number] }) {
         <Link href={card.ctaHref} className={card.ctaClass}>
           {card.cta}
         </Link>
+        <p className="mt-3 text-center text-xs text-[#9CA3AF]">Une offre Sullivan &amp; Audrey</p>
       </div>
     </>
   )

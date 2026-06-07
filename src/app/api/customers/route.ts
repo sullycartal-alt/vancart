@@ -4,8 +4,8 @@ import { NextResponse } from 'next/server'
 import { z } from 'zod'
 
 const customerSchema = z.object({
-  phone: z.string().min(8),
-  first_name: z.string().min(1),
+  phone: z.string().min(8, 'Le numéro de téléphone est trop court.').max(20, 'Le numéro de téléphone est trop long.'),
+  first_name: z.string().min(1, 'Le prénom est requis.').max(50, 'Le prénom est trop long.'),
   merchant_id: z.string().uuid().optional(),
 })
 

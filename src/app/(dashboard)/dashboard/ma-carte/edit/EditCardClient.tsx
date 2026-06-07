@@ -324,7 +324,7 @@ export default function EditCardClient({ merchant }: { merchant: Merchant }) {
             currentStamps={5}
             currentPoints={Math.round((pointsRequired || 100) * 0.6)}
             cardId={merchant.id}
-            width={320}
+            width="min(320px, 100%)"
           />
           {saving && (
             <p className="text-xs text-[#6B6B6B]">Enregistrement…</p>

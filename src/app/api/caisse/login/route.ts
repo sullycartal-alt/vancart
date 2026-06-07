@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
 import { signCaisseToken, caisseCookieName } from '@/lib/caisse/session'
+import { checkRateLimit, getClientIp } from '@/lib/rate-limit'
 
 const schema = z.object({
   slug: z.string().min(1),
@@ -14,6 +15,15 @@ const schema = z.object({
 const SESSION_HOURS = 7
 
 export async function POST(request: Request) {
+  const ip = getClientIp(request)
+  const { allowed, retryAfter } = checkRateLimit(`caisse-login:${ip}`, 10, 15 * 60_000)
+  if (!allowed) {
+    return NextResponse.json(
+      { error: 'Trop de tentatives, veuillez réessayer plus tard.' },
+      { status: 429, headers: { 'Retry-After': String(retryAfter) } },
+    )
+  }
+
   const body = await request.json().catch(() => ({}))
   const parsed = schema.safeParse(body)
   if (!parsed.success) {

@@ -111,7 +111,7 @@ function NotificationBanner({ merchantIds }: { merchantIds: string[] }) {
         <span style={{ fontSize: 13, fontWeight: 600, color: '#22c55e' }}>Notifications activées ✓</span>
       ) : (
         <>
-          <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1A1A' }}>
+          <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1A1A', flex: '1 1 auto', minWidth: 0 }}>
             🔔 Recevez les offres de vos commerçants
           </span>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>

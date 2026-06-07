@@ -73,11 +73,13 @@ export default function LandingHero() {
             </div>
 
             <h1 className="text-5xl font-black text-gray-900 leading-tight">
-              La fidélité qui ne finit
+              La carte de fidélité digitale
               <br />
-              <span style={{ color: '#6C47FF', textDecoration: 'line-through', textDecorationColor: '#6C47FF' }}>
-                pas à la poubelle.
-              </span>
+              pensée pour les{' '}
+              <span style={{ color: '#6C47FF' }}>
+                commerçants
+              </span>{' '}
+              indépendants.
             </h1>
 
             <p className="text-gray-600 text-lg max-w-lg mx-auto lg:mx-0">
@@ -105,13 +107,17 @@ export default function LandingHero() {
                 href="/register"
                 className="bg-[#6C47FF] hover:bg-[#5835FF] text-white font-semibold px-8 py-4 rounded-xl text-base transition-colors text-center"
               >
-                Créer mon compte gratuit →
+                Créer ma carte gratuitement →
               </Link>
               <span className="text-gray-500 text-sm">
                 Déjà un compte ?{' '}
                 <Link href="/login" className="text-[#6C47FF] font-medium">Se connecter</Link>
               </span>
             </div>
+
+            <p className="text-sm text-gray-500 text-center lg:text-left">
+              ✓ Gratuit • ✓ Sans CB • ✓ Prêt en 5 minutes
+            </p>
 
             <a href="#comment-ca-marche" className="text-sm text-gray-500 hover:text-[#6C47FF] underline underline-offset-2 transition-colors text-center lg:text-left block">Voir comment ça marche →</a>
 

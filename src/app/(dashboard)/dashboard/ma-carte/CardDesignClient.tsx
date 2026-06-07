@@ -203,7 +203,7 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
       currentStamps={5}
       currentPoints={Math.round((pointsRequired || 100) * 0.6)}
       cardId={merchant.id}
-      width={320}
+      width="min(320px, 100%)"
     />
   )
 
@@ -230,7 +230,7 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
                 currentStamps={5}
                 currentPoints={Math.round((pointsRequired || 100) * 0.6)}
                 cardId={merchant.id}
-                width={340}
+                width="min(340px, 100%)"
               />
               <a
                 href="/dashboard/ma-carte/edit"

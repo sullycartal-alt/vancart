@@ -15,6 +15,7 @@ import StatsClient from './StatsClient'
 import StatsAnalyseClient from './StatsAnalyseClient'
 import StatsAdvancedClient, { type AdvancedMetrics } from './StatsAdvancedClient'
 import UpgradeGate from '@/components/UpgradeGate'
+import ServeurLeaderboardSection from './ServeurLeaderboardSection'
 import { effectivePlan, type Plan } from '@/lib/plan-features'
 
 const DAY_NAMES = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
@@ -474,6 +475,7 @@ export default async function StatsPage({ searchParams }: { searchParams: Promis
   }
 
   return (
+    <>
     <Suspense fallback={<div className="h-96 animate-pulse bg-[#F7F6F3] rounded-2xl" />}>
       {tab === 'advanced' ? (
         plan === 'free' ? (
@@ -535,5 +537,9 @@ export default async function StatsPage({ searchParams }: { searchParams: Promis
         />
       )}
     </Suspense>
+    {tab !== 'advanced' && tab !== 'analyse' && (
+      <ServeurLeaderboardSection plan={plan} primaryColor={merchant.primary_color} />
+    )}
+    </>
   )
 }

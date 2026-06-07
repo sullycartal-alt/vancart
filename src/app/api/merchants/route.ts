@@ -101,6 +101,23 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
+  // Génère le slug caisse dès la création si pas encore défini.
+  if (data && !data.caisse_slug && data.business_name) {
+    try {
+      const { ensureUniqueSlug } = await import('@/lib/caisse/slug')
+      const caisseSlug = await ensureUniqueSlug(data.business_name, data.id, supabase)
+      const { data: updated } = await supabase
+        .from('merchants')
+        .update({ caisse_slug: caisseSlug })
+        .eq('id', data.id)
+        .select()
+        .single()
+      if (updated) return NextResponse.json(updated, { status: 201 })
+    } catch (e) {
+      console.error('[POST /api/merchants] caisse_slug generation failed:', e)
+    }
+  }
+
   return NextResponse.json(data, { status: 201 })
 }
 

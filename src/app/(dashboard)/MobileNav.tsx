@@ -18,6 +18,7 @@ const links = [
   { href: '/dashboard', label: 'Accueil' },
   { href: '/dashboard/clients', label: 'Mes clients' },
   { href: '/dashboard/stats', label: 'Tableau de bord' },
+  { href: '/dashboard/caisse', label: 'Caisse' },
   { href: '/dashboard/accompagnement', label: 'Accompagnement' },
 ]
 

@@ -49,6 +49,7 @@ export default function CaisseClient({ slug, merchantName, pinConfigured }: Prop
   const [scanError, setScanError] = useState<string | null>(null)
   const [result, setResult] = useState<StampResult | null>(null)
   const [redeeming, setRedeeming] = useState(false)
+  const [isStandalone, setIsStandalone] = useState(false)
   const processingRef = useRef(false)
   const returnTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -68,6 +69,14 @@ export default function CaisseClient({ slug, merchantName, pinConfigured }: Prop
       })
       .catch(() => setView('login'))
   }, [slug, merchantName])
+
+  // ── Detect standalone (already installed) mode ───────────────────────────
+  useEffect(() => {
+    const standalone =
+      window.matchMedia('(display-mode: standalone)').matches ||
+      (window.navigator as Navigator & { standalone?: boolean }).standalone === true
+    setIsStandalone(standalone)
+  }, [])
 
   // ── Login ────────────────────────────────────────────────────────────────
   async function handleLogin() {
@@ -165,7 +174,7 @@ export default function CaisseClient({ slug, merchantName, pinConfigured }: Prop
   useEffect(() => {
     if (!result) return
     if (result.type === 'reward') return
-    const delay = result.type === 'error' ? 3000 : 4000
+    const delay = 10000
     returnTimerRef.current = setTimeout(() => backToScanner(), delay)
     return () => {
       if (returnTimerRef.current) clearTimeout(returnTimerRef.current)
@@ -318,7 +327,7 @@ export default function CaisseClient({ slug, merchantName, pinConfigured }: Prop
               <p className="text-lg mt-1 text-white/90">
                 Carte : {result.newCount}/{result.total} tampons
               </p>
-              <ProgressBar duration={4000} />
+              <ProgressBar duration={10000} />
               <button onClick={scanAnother} className="mt-6 px-6 py-3 bg-white/20 rounded-xl font-semibold">
                 Scanner un autre
               </button>
@@ -345,7 +354,7 @@ export default function CaisseClient({ slug, merchantName, pinConfigured }: Prop
             <>
               <X size={72} strokeWidth={2.2} />
               <p className="text-2xl font-bold mt-4">{result.message || 'QR code invalide'}</p>
-              <ProgressBar duration={3000} />
+              <ProgressBar duration={10000} />
               <button onClick={backToScanner} className="mt-6 px-6 py-3 bg-white/20 rounded-xl font-semibold">
                 Continuer
               </button>
@@ -395,7 +404,18 @@ export default function CaisseClient({ slug, merchantName, pinConfigured }: Prop
       </div>
 
       {/* Install tutorial */}
-      <InstallTutorial variant="onColor" />
+      {!isStandalone && (
+        <div className="space-y-3">
+          <div className="rounded-2xl border border-white/30 bg-white/10 px-4 py-3 text-sm text-white">
+            <p className="font-semibold">⚠️ Navigation privée</p>
+            <p className="mt-1 text-white/80">
+              L&apos;installation sur l&apos;écran d&apos;accueil n&apos;est pas disponible en navigation privée. Ouvre cette
+              page dans Safari (iOS) ou Chrome (Android) en mode normal.
+            </p>
+          </div>
+          <InstallTutorial variant="onColor" />
+        </div>
+      )}
     </div>
   )
 }

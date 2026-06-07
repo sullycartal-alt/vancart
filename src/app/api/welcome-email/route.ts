@@ -1,13 +1,22 @@
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
+import { z } from 'zod'
 
 const FROM = process.env.RESEND_FROM_EMAIL ?? 'VanCart <onboarding@resend.dev>'
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://vancart.fr'
 const BRAND_COLOR = '#6C47FF'
 
+const schema = z.object({
+  email: z.string().email("L'adresse email est invalide.").max(200, "L'adresse email est trop longue."),
+  businessName: z.string().max(100, 'Le nom du commerce est trop long.').optional(),
+  firstName: z.string().max(50, 'Le prénom est trop long.').optional(),
+})
+
 export async function POST(request: Request) {
-  const { email, businessName, firstName } = await request.json()
-  if (!email) return NextResponse.json({ error: 'email required' }, { status: 400 })
+  const body = await request.json().catch(() => null)
+  const parsed = schema.safeParse(body)
+  if (!parsed.success) return NextResponse.json({ error: 'Requête invalide.' }, { status: 400 })
+  const { email, businessName, firstName } = parsed.data
 
   if (!process.env.RESEND_API_KEY) {
     return NextResponse.json({ ok: true, skipped: true })

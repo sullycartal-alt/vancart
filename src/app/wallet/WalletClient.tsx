@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { TriangleAlert, WalletCards, Bell } from 'lucide-react'
+import { TriangleAlert, WalletCards } from 'lucide-react'
 import LoyaltyCardMockup from '@/components/loyalty/LoyaltyCardMockup'
 
 const PEEK = 72
@@ -89,16 +89,16 @@ function PushButton({ merchantId }: { merchantId: string }) {
 
   if (permission === 'denied') {
     return (
-      <p style={{ fontSize: 11, color: 'rgba(255,100,100,0.85)', textAlign: 'center', padding: '0 16px' }}>
-        Notifications bloquées — modifiez vos réglages
+      <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', textAlign: 'center', padding: '8px 16px', fontWeight: 600 }}>
+        Notifications bloquées — vérifiez vos réglages
       </p>
     )
   }
 
   if (permission === 'granted' && subscribed) {
     return (
-      <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', textAlign: 'center', padding: '0 16px' }}>
-        <Bell size={11} strokeWidth={1.9} style={{ display: 'inline-block', marginRight: 4, verticalAlign: 'middle' }} /> Notifications activées
+      <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', textAlign: 'center', padding: '8px 16px', fontWeight: 600 }}>
+        Notifications activées ✓
       </p>
     )
   }
@@ -112,7 +112,7 @@ function PushButton({ merchantId }: { merchantId: string }) {
           width: '100%',
           padding: '8px 12px',
           borderRadius: 10,
-          backgroundColor: 'rgba(255,255,255,0.15)',
+          backgroundColor: '#6C47FF',
           border: '1px solid rgba(255,255,255,0.25)',
           color: 'white',
           fontSize: 12,
@@ -121,7 +121,7 @@ function PushButton({ merchantId }: { merchantId: string }) {
           opacity: loading ? 0.7 : 1,
         }}
       >
-        {loading ? '…' : <><Bell size={12} strokeWidth={1.9} style={{ display: 'inline-block', marginRight: 4, verticalAlign: 'middle' }} /> Activer les notifications</>}
+        {loading ? '…' : '🔔 Activer les notifications'}
       </button>
     </div>
   )
@@ -220,8 +220,8 @@ export default function WalletClient({ cards, error }: { cards: WalletCard[]; er
               currentPoints={isPoints ? (card.points ?? 0) : 0}
             />
 
-            {/* Push notifications — Pro plan only, visible when expanded */}
-            {merchant.plan === 'pro' && isOpen && (
+            {/* Push notifications — feature client, dispo pour toutes les cartes, visible quand ouvert */}
+            {isOpen && (
               <div style={{ padding: '8px 16px 16px', backgroundColor: color }}>
                 <PushButton merchantId={merchant.id} />
               </div>

@@ -28,7 +28,7 @@ export async function generateMetadata({
   const title = merchant?.business_name ? `Caisse — ${merchant.business_name}` : 'Caisse — VanCart'
   return {
     title,
-    manifest: '/caisse-manifest.json',
+    manifest: `/caisse/${slug}/manifest.webmanifest`,
     appleWebApp: { capable: true, statusBarStyle: 'black-translucent', title: merchant?.business_name ?? 'Caisse' },
     other: { 'mobile-web-app-capable': 'yes' },
   }

@@ -229,7 +229,7 @@ function PinPad({
 }) {
   const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
   return (
-    <div className="max-w-[260px] space-y-4">
+    <div className="w-full max-w-xs mx-auto space-y-4">
       <div className="flex items-center justify-center gap-4">
         {[0, 1, 2, 3].map((i) => (
           <div

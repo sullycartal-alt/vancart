@@ -316,24 +316,26 @@ export default function StatsAdvancedClient({
         <Card>
           <SectionTitle>Clients actifs vs inactifs <span className="font-normal text-[#9CA3AF]">(à ce jour)</span></SectionTitle>
           {hasClients ? (
-            <div className="flex items-center gap-4">
-              <ResponsiveContainer width="50%" height={180}>
-                <PieChart>
-                  <Pie
-                    data={donutData}
-                    dataKey="value"
-                    nameKey="name"
-                    innerRadius={45}
-                    outerRadius={70}
-                    paddingAngle={2}
-                    stroke="none"
-                  >
-                    {donutData.map((entry, i) => <Cell key={i} fill={DONUT_COLORS[i]} />)}
-                  </Pie>
-                  <Tooltip contentStyle={{ fontSize: 12, borderRadius: 10, border: '1px solid #E8E8E3' }} />
-                  <Legend wrapperStyle={{ fontSize: 12 }} />
-                </PieChart>
-              </ResponsiveContainer>
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+              <div className="w-full sm:w-1/2 h-[180px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={donutData}
+                      dataKey="value"
+                      nameKey="name"
+                      innerRadius={45}
+                      outerRadius={70}
+                      paddingAngle={2}
+                      stroke="none"
+                    >
+                      {donutData.map((entry, i) => <Cell key={i} fill={DONUT_COLORS[i]} />)}
+                    </Pie>
+                    <Tooltip contentStyle={{ fontSize: 12, borderRadius: 10, border: '1px solid #E8E8E3' }} />
+                    <Legend wrapperStyle={{ fontSize: 12 }} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <span className="w-3 h-3 rounded-full" style={{ backgroundColor: primaryColor }} />
@@ -376,15 +378,17 @@ export default function StatsAdvancedClient({
           </span>
         </SectionTitle>
         {metrics.growth.length > 0 ? (
-          <ResponsiveContainer width="100%" height={240}>
-            <LineChart data={metrics.growth}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E8E8E3" vertical={false} />
-              <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#6B6B6B' }} axisLine={false} tickLine={false} interval={Math.max(0, Math.floor(metrics.growth.length / 8) - 1)} />
-              <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: '#6B6B6B' }} axisLine={false} tickLine={false} width={28} />
-              <Tooltip contentStyle={{ fontSize: 12, borderRadius: 10, border: '1px solid #E8E8E3' }} formatter={(v) => [v, 'Clients cumulés']} />
-              <Line type="monotone" dataKey="clients" stroke="#6C47FF" strokeWidth={2.5} dot={false} activeDot={{ r: 4, strokeWidth: 0 }} />
-            </LineChart>
-          </ResponsiveContainer>
+          <div className="h-[250px] md:h-[350px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={metrics.growth}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#E8E8E3" vertical={false} />
+                <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#6B6B6B' }} axisLine={false} tickLine={false} interval={Math.max(0, Math.floor(metrics.growth.length / 8) - 1)} />
+                <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: '#6B6B6B' }} axisLine={false} tickLine={false} width={28} />
+                <Tooltip contentStyle={{ fontSize: 12, borderRadius: 10, border: '1px solid #E8E8E3' }} formatter={(v) => [v, 'Clients cumulés']} />
+                <Line type="monotone" dataKey="clients" stroke="#6C47FF" strokeWidth={2.5} dot={false} activeDot={{ r: 4, strokeWidth: 0 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         ) : (
           <p className="text-sm text-[#6B6B6B] py-8 text-center">Aucun client enregistré pour l&apos;instant.</p>
         )}

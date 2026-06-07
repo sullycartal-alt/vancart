@@ -75,6 +75,7 @@ export default function LoyaltyCardMockup(props: LoyaltyCardMockupProps) {
     <div
       style={{
         width,
+        maxWidth: '100%',
         borderRadius: 20,
         overflow: 'hidden',
         boxShadow: '0 24px 60px rgba(0,0,0,0.2)',
@@ -104,7 +105,7 @@ export default function LoyaltyCardMockup(props: LoyaltyCardMockupProps) {
         )}
 
         {/* Business name */}
-        <div style={{ color: 'white', fontWeight: 700, fontSize: 15, textAlign: 'center', flex: 1, padding: '0 12px' }}>
+        <div style={{ color: 'white', fontWeight: 700, fontSize: 15, textAlign: 'center', flex: 1, padding: '0 12px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {businessName}
         </div>
 

@@ -24,6 +24,7 @@ export default function PushNotifySection({ merchantId }: { merchantId: string }
         }),
       })
       const data = await res.json()
+      console.log('PUSH DEBUG', JSON.stringify(data, null, 2))
       if (!res.ok) throw new Error(data.error ?? 'Erreur')
       setStatus(data)
     } catch (e) {

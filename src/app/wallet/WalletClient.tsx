@@ -42,34 +42,25 @@ function getCookie(name: string): string | null {
   return match ? decodeURIComponent(match[1]) : null
 }
 
-function PushButton({ merchantId }: { merchantId: string }) {
-  const [supported, setSupported] = useState<boolean | null>(null)
-  const [permission, setPermission] = useState<NotificationPermission | null>(null)
-  const [subscribed, setSubscribed] = useState(false)
-  const [loading, setLoading] = useState(false)
+function NotificationBanner({ merchantId }: { merchantId: string }) {
+  const [visible, setVisible] = useState(false)
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success'>('idle')
 
   useEffect(() => {
-    const hasNotification = 'Notification' in window
-    const hasPush = hasNotification && 'PushManager' in window && 'serviceWorker' in navigator
-    setSupported(hasPush)
-    if (hasNotification) setPermission(Notification.permission)
-    if (hasPush && Notification.permission === 'granted') {
-      navigator.serviceWorker.ready.then(async (reg) => {
-        const sub = await reg.pushManager.getSubscription()
-        setSubscribed(!!sub)
-      })
-    }
+    if (localStorage.getItem('push_dismissed')) return
+    const supported = 'Notification' in window && 'PushManager' in window && 'serviceWorker' in navigator
+    if (!supported || Notification.permission !== 'default') return
+    const id = requestAnimationFrame(() => setVisible(true))
+    return () => cancelAnimationFrame(id)
   }, [])
 
   async function activate() {
-    if (!('Notification' in window) || !('PushManager' in window)) return
-    setLoading(true)
+    setStatus('loading')
     try {
       const perm = await Notification.requestPermission()
-      setPermission(perm)
-      if (perm !== 'granted') return
+      if (perm !== 'granted') { setStatus('idle'); return }
       const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
-      if (!vapidKey) return
+      if (!vapidKey) { setStatus('idle'); return }
       const reg = await navigator.serviceWorker.ready
       const existing = await reg.pushManager.getSubscription()
       const sub = existing ?? await reg.pushManager.subscribe({
@@ -77,63 +68,75 @@ function PushButton({ merchantId }: { merchantId: string }) {
         applicationServerKey: urlBase64ToUint8Array(vapidKey),
       })
       const customerId = getCookie('vancart_customer_id')
-      if (!customerId) return
+      if (!customerId) { setStatus('idle'); return }
       await fetch('/api/push/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ customer_id: customerId, merchant_id: merchantId, subscription: sub.toJSON() }),
       })
-      setSubscribed(true)
-    } catch { /* silent */ }
-    finally { setLoading(false) }
+      setStatus('success')
+      setTimeout(() => setVisible(false), 2000)
+    } catch {
+      setStatus('idle')
+    }
   }
 
-  if (supported === null) return null
-
-  if (!supported) {
-    return (
-      <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', textAlign: 'center', padding: '8px 16px', fontWeight: 600 }}>
-        Notifications non supportées sur ce navigateur
-      </p>
-    )
+  function dismiss() {
+    localStorage.setItem('push_dismissed', 'true')
+    setVisible(false)
   }
 
-  if (permission === 'denied') {
-    return (
-      <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', textAlign: 'center', padding: '8px 16px', fontWeight: 600 }}>
-        Notifications bloquées — vérifiez vos réglages
-      </p>
-    )
-  }
-
-  if (permission === 'granted' && subscribed) {
-    return (
-      <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', textAlign: 'center', padding: '8px 16px', fontWeight: 600 }}>
-        Notifications activées ✓
-      </p>
-    )
-  }
+  if (!visible) return null
 
   return (
-    <div style={{ padding: '0 16px' }}>
-      <button
-        onClick={activate}
-        disabled={loading}
-        style={{
-          width: '100%',
-          padding: '8px 12px',
-          borderRadius: 10,
-          backgroundColor: '#6C47FF',
-          border: '1px solid rgba(255,255,255,0.25)',
-          color: 'white',
-          fontSize: 12,
-          fontWeight: 600,
-          cursor: loading ? 'wait' : 'pointer',
-          opacity: loading ? 0.7 : 1,
-        }}
-      >
-        {loading ? '…' : '🔔 Activer les notifications'}
-      </button>
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 12,
+        backgroundColor: 'white',
+        border: '1px solid #E8E8E3',
+        borderRadius: 12,
+        padding: '12px 16px',
+        marginBottom: 16,
+      }}
+    >
+      {status === 'success' ? (
+        <span style={{ fontSize: 13, fontWeight: 600, color: '#22c55e' }}>Notifications activées ✓</span>
+      ) : (
+        <>
+          <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1A1A' }}>
+            🔔 Recevez les offres de vos commerçants
+          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+            <button
+              onClick={activate}
+              disabled={status === 'loading'}
+              style={{
+                backgroundColor: '#6C47FF',
+                color: 'white',
+                fontSize: 12,
+                fontWeight: 600,
+                borderRadius: 8,
+                padding: '6px 12px',
+                border: 'none',
+                cursor: status === 'loading' ? 'wait' : 'pointer',
+                opacity: status === 'loading' ? 0.7 : 1,
+              }}
+            >
+              {status === 'loading' ? '…' : 'Activer'}
+            </button>
+            <button
+              onClick={dismiss}
+              aria-label="Fermer"
+              style={{ color: '#6B6B6B', background: 'none', border: 'none', fontSize: 14, cursor: 'pointer', padding: 4, lineHeight: 1 }}
+            >
+              ✕
+            </button>
+          </div>
+        </>
+      )}
     </div>
   )
 }
@@ -188,72 +191,68 @@ export default function WalletClient({ cards, error }: { cards: WalletCard[]; er
     openIdx === null ? cards.length * PEEK : cards.length * PEEK + (FULL - PEEK)
 
   return (
-    <div
-      ref={containerRef}
-      className="relative w-full"
-      style={{ height: containerHeight, transition: 'height 0.4s ease' }}
-    >
-      {cards.map((card, i) => {
-        const isOpen = openIdx === i
-        const merchant = card.merchants
-        const color = merchant.primary_color || '#6C47FF'
-        const isPoints = merchant.loyalty_type === 'points'
-        const top =
-          openIdx !== null && i > openIdx ? i * PEEK + (FULL - PEEK) : i * PEEK
+    <div>
+      <NotificationBanner merchantId={cards[0].merchants.id} />
+      <div
+        ref={containerRef}
+        className="relative w-full"
+        style={{ height: containerHeight, transition: 'height 0.4s ease' }}
+      >
+        {cards.map((card, i) => {
+          const isOpen = openIdx === i
+          const merchant = card.merchants
+          const color = merchant.primary_color || '#6C47FF'
+          const isPoints = merchant.loyalty_type === 'points'
+          const top =
+            openIdx !== null && i > openIdx ? i * PEEK + (FULL - PEEK) : i * PEEK
 
-        return (
-          <div
-            key={card.id}
-            className="absolute left-3 right-3 overflow-hidden"
-            style={{
-              top,
-              height: isOpen ? FULL : PEEK,
-              borderRadius: 18,
-              backgroundColor: color,
-              zIndex: isOpen ? 100 : cards.length - i,
-              transition: 'top 0.4s ease, height 0.4s ease',
-            }}
-          >
-            {/* Full mockup — clipped to PEEK height when collapsed */}
-            <LoyaltyCardMockup
-              cardId={card.id}
-              width="100%"
-              primaryColor={color}
-              businessName={merchant.business_name}
-              logoUrl={merchant.logo_url ?? undefined}
-              bannerUrl={merchant.banner_url ?? undefined}
-              loyaltyType={(merchant.loyalty_type ?? 'stamps') as 'stamps' | 'points'}
-              stampsRequired={merchant.stamps_required}
-              pointsRequired={merchant.points_required ?? 100}
-              loyaltyRule={merchant.loyalty_rule}
-              clientName={card.first_name}
-              currentStamps={isPoints ? 0 : card.stamps_count}
-              currentPoints={isPoints ? (card.points ?? 0) : 0}
-            />
-
-            {/* Push notifications — feature client, dispo pour toutes les cartes, visible quand ouvert */}
-            {isOpen && (
-              <div style={{ padding: '8px 16px 16px', backgroundColor: color }}>
-                <PushButton merchantId={merchant.id} />
-              </div>
-            )}
-
-            {/* Transparent click zone over Zone 1 (header) */}
+          return (
             <div
+              key={card.id}
+              className="absolute left-3 right-3 overflow-hidden"
               style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                height: PEEK,
-                cursor: 'pointer',
-                zIndex: 5,
+                top,
+                height: isOpen ? FULL : PEEK,
+                borderRadius: 18,
+                backgroundColor: color,
+                zIndex: isOpen ? 100 : cards.length - i,
+                transition: 'top 0.4s ease, height 0.4s ease',
               }}
-              onClick={() => setOpenIdx(isOpen ? null : i)}
-            />
-          </div>
-        )
-      })}
+            >
+              {/* Full mockup — clipped to PEEK height when collapsed */}
+              <LoyaltyCardMockup
+                cardId={card.id}
+                width="100%"
+                primaryColor={color}
+                businessName={merchant.business_name}
+                logoUrl={merchant.logo_url ?? undefined}
+                bannerUrl={merchant.banner_url ?? undefined}
+                loyaltyType={(merchant.loyalty_type ?? 'stamps') as 'stamps' | 'points'}
+                stampsRequired={merchant.stamps_required}
+                pointsRequired={merchant.points_required ?? 100}
+                loyaltyRule={merchant.loyalty_rule}
+                clientName={card.first_name}
+                currentStamps={isPoints ? 0 : card.stamps_count}
+                currentPoints={isPoints ? (card.points ?? 0) : 0}
+              />
+
+              {/* Transparent click zone over Zone 1 (header) */}
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: PEEK,
+                  cursor: 'pointer',
+                  zIndex: 5,
+                }}
+                onClick={() => setOpenIdx(isOpen ? null : i)}
+              />
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }

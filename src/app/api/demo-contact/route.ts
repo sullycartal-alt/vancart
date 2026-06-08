@@ -139,23 +139,27 @@ export async function POST(request: NextRequest) {
   }
 
   // Persist lead + increment campaign counter
-  try {
-    const service = createServiceClient()
-    await service.from('prospection_leads').insert({
-      nom: prenom,
-      commerce,
-      adresse_commerce,
-      email,
-      telephone: telephone ?? null,
-      logiciel_caisse: logiciel_caisse ?? null,
-      campaign_slug: campaign ?? null,
-      lu: false,
-    })
-    if (campaign) {
-      await service.rpc('increment_leads_count', { campaign_slug: campaign })
+  const service = createServiceClient()
+  const { error: insertError } = await service.from('prospection_leads').insert({
+    nom: prenom,
+    commerce,
+    adresse_commerce,
+    email,
+    telephone: telephone ?? null,
+    logiciel_caisse: logiciel_caisse ?? null,
+    campaign_slug: campaign ?? null,
+    lu: false,
+  })
+  if (insertError) {
+    console.error('[demo-contact] insert prospection_leads failed:', insertError)
+    return NextResponse.json({ error: "Erreur lors de l'enregistrement du lead" }, { status: 500 })
+  }
+
+  if (campaign) {
+    const { error: rpcError } = await service.rpc('increment_leads_count', { campaign_slug: campaign })
+    if (rpcError) {
+      console.error('[demo-contact] increment_leads_count failed:', rpcError)
     }
-  } catch {
-    // Silently ignore DB errors — email was already sent
   }
 
   return NextResponse.json({ ok: true })

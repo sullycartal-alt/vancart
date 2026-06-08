@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import QRCode from 'qrcode'
-import { Target, MapPin, Trash2, Link2, QrCode, Download, Bell, Phone, Check } from 'lucide-react'
+import { Target, MapPin, Trash2, Link2, QrCode, Download, Bell, Phone, Check, Monitor } from 'lucide-react'
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://vancart.vercel.app'
 
@@ -36,6 +36,7 @@ interface Lead {
   adresse_commerce: string | null
   email: string | null
   telephone: string | null
+  logiciel_caisse: string | null
   campaign_slug: string | null
   lu: boolean
 }
@@ -458,6 +459,10 @@ export default function AdminProspectionPage() {
                         {lead.adresse_commerce && (
                           <p className="text-xs text-[#6B6B6B] mt-0.5 flex items-center gap-1"><MapPin size={11} strokeWidth={1.9} className="flex-shrink-0" />{lead.adresse_commerce}</p>
                         )}
+                        <p className="text-xs text-[#6B6B6B] mt-0.5 flex items-center gap-1">
+                          <Monitor size={11} strokeWidth={1.9} className="flex-shrink-0" />
+                          Logiciel de caisse : {lead.logiciel_caisse || '—'}
+                        </p>
                         <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1">
                           {lead.email && (
                             <a href={`mailto:${lead.email}`} className="text-xs text-[#6C47FF] hover:underline">

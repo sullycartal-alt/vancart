@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { ImagePlus, ChevronLeft, Target, Star, Check, PartyPopper } from 'lucide-react'
 import LoyaltyCardMockup from '@/components/loyalty/LoyaltyCardMockup'
+import LogoDominantColors from '@/components/loyalty/LogoDominantColors'
 
 const PRESET_COLORS = ['#6C47FF', '#FF6B35', '#10B981', '#F59E0B', '#EF4444', '#1A1A2E']
 
@@ -38,8 +39,8 @@ interface Merchant {
 const STEPS = [
   { id: 1, title: 'Votre règle de fidélité', subtitle: 'Combien de tampons ou de points pour obtenir une récompense ?' },
   { id: 2, title: 'Votre récompense', subtitle: 'Quel avantage recevront vos clients fidèles ?' },
-  { id: 3, title: 'Couleur principale', subtitle: 'Choisissez la couleur qui représente votre commerce.' },
-  { id: 4, title: 'Logo de votre commerce', subtitle: 'Ajoutez votre logo pour une carte reconnaissable.' },
+  { id: 3, title: 'Logo de votre commerce', subtitle: 'Ajoutez votre logo pour une carte reconnaissable.' },
+  { id: 4, title: 'Couleur principale', subtitle: 'Choisissez la couleur qui représente votre commerce.' },
   { id: 5, title: 'Photo de votre commerce', subtitle: 'Une belle photo qui donne envie de revenir.' },
   { id: 6, title: 'Nom de votre commerce', subtitle: 'Le nom qui apparaîtra sur la carte de vos clients.' },
 ]
@@ -110,9 +111,9 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
       if (!loyaltyRule.trim()) return
       fields = { loyalty_rule: loyaltyRule }
     } else if (currentStep === 3) {
-      fields = { primary_color: color }
-    } else if (currentStep === 4) {
       if (!logoUrl) return
+    } else if (currentStep === 4) {
+      fields = { primary_color: color }
     } else if (currentStep === 5) {
       if (!bannerUrl) return
     } else if (currentStep === 6) {
@@ -181,8 +182,8 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
   function isStepValid(): boolean {
     if (currentStep === 1) return loyaltyType === 'stamps' ? stampsRequired > 0 : pointsRequired > 0
     if (currentStep === 2) return loyaltyRule.trim().length > 0
-    if (currentStep === 3) return !!color
-    if (currentStep === 4) return !!logoUrl
+    if (currentStep === 3) return !!logoUrl
+    if (currentStep === 4) return !!color
     if (currentStep === 5) return !!bannerUrl
     if (currentStep === 6) return businessName.trim().length >= 2
     return true
@@ -393,10 +394,42 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
               </div>
             )}
 
-            {/* Step 3 — Color */}
+            {/* Step 3 — Logo */}
             {currentStep === 3 && (
+              <div className="space-y-3">
+                <p className="text-xs text-[#6B6B6B]">Format carré recommandé, max 2 Mo</p>
+                <label className="block cursor-pointer">
+                  <div className="bg-[#F7F6F3] border-2 border-dashed border-[#E8E8E3] rounded-xl p-8 text-center hover:border-[#6C47FF] transition-colors">
+                    {logoUploading ? (
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="w-6 h-6 border-2 border-[#6C47FF] border-t-transparent rounded-full animate-spin" />
+                        <span className="text-sm text-[#6B6B6B]">Envoi en cours…</span>
+                      </div>
+                    ) : logoUrl ? (
+                      <div className="flex flex-col items-center gap-2">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={logoUrl} alt="" className="w-16 h-16 object-cover rounded-xl border border-[#E8E8E3]" />
+                        <span className="text-sm text-[#6C47FF] font-medium">Changer le logo</span>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center gap-2">
+                        <ImagePlus className="w-8 h-8 text-[#6B6B6B]" strokeWidth={1.5} />
+                        <span className="text-sm text-[#6B6B6B]">Cliquez pour uploader</span>
+                      </div>
+                    )}
+                  </div>
+                  <input ref={logoInputRef} type="file" accept="image/jpeg,image/png,image/webp" onChange={handleLogoUpload} className="hidden" />
+                </label>
+                {logoUrl && <p className="text-xs text-green-600 font-medium flex items-center gap-1"><Check className="size-3" strokeWidth={2} /> Logo enregistré</p>}
+              </div>
+            )}
+
+            {/* Step 4 — Color */}
+            {currentStep === 4 && (
               <div className="space-y-5">
-                {/* Preset grid 5×2 */}
+                <LogoDominantColors logoUrl={logoUrl} selectedColor={color} onSelect={setColor} />
+
+                {/* Preset grid */}
                 <div>
                   <label className="text-sm font-medium text-[#1A1A1A] block mb-3">Couleurs recommandées</label>
                   <div className="grid grid-cols-6 gap-3">
@@ -425,36 +458,6 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
                     </span>
                   </div>
                 </div>
-              </div>
-            )}
-
-            {/* Step 4 — Logo */}
-            {currentStep === 4 && (
-              <div className="space-y-3">
-                <p className="text-xs text-[#6B6B6B]">Format carré recommandé, max 2 Mo</p>
-                <label className="block cursor-pointer">
-                  <div className="bg-[#F7F6F3] border-2 border-dashed border-[#E8E8E3] rounded-xl p-8 text-center hover:border-[#6C47FF] transition-colors">
-                    {logoUploading ? (
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="w-6 h-6 border-2 border-[#6C47FF] border-t-transparent rounded-full animate-spin" />
-                        <span className="text-sm text-[#6B6B6B]">Envoi en cours…</span>
-                      </div>
-                    ) : logoUrl ? (
-                      <div className="flex flex-col items-center gap-2">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={logoUrl} alt="" className="w-16 h-16 object-cover rounded-xl border border-[#E8E8E3]" />
-                        <span className="text-sm text-[#6C47FF] font-medium">Changer le logo</span>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-center gap-2">
-                        <ImagePlus className="w-8 h-8 text-[#6B6B6B]" strokeWidth={1.5} />
-                        <span className="text-sm text-[#6B6B6B]">Cliquez pour uploader</span>
-                      </div>
-                    )}
-                  </div>
-                  <input ref={logoInputRef} type="file" accept="image/jpeg,image/png,image/webp" onChange={handleLogoUpload} className="hidden" />
-                </label>
-                {logoUrl && <p className="text-xs text-green-600 font-medium flex items-center gap-1"><Check className="size-3" strokeWidth={2} /> Logo enregistré</p>}
               </div>
             )}
 

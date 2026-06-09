@@ -94,7 +94,7 @@ export default async function ConfirmationPage() {
 
         {/* CTA */}
         <Link
-          href="/dashboard"
+          href="/dashboard?from=onboarding"
           className="inline-block w-full py-4 bg-[#6C47FF] hover:bg-[#5835e0] text-white font-bold text-base rounded-xl transition-colors"
         >
           Aller au tableau de bord →

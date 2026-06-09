@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 import Link from 'next/link'
 import { ImagePlus, Check, Target, Star } from 'lucide-react'
 import LoyaltyCardMockup from '@/components/loyalty/LoyaltyCardMockup'
+import LogoDominantColors from '@/components/loyalty/LogoDominantColors'
 
 const PRESET_COLORS = [
   { name: 'VanCart',     hex: '#6C47FF' },
@@ -148,6 +149,11 @@ export default function EditCardClient({ merchant }: { merchant: Merchant }) {
           {/* Color */}
           <div className="bg-white border border-[#E8E8E3] rounded-2xl p-5 space-y-4">
             <label className={labelClass}>Couleur principale</label>
+            <LogoDominantColors
+              logoUrl={logoUrl || null}
+              selectedColor={color}
+              onSelect={(hex) => { setColor(hex); triggerSave({ primary_color: hex }) }}
+            />
             <div>
               <p className="text-xs text-gray-500 mb-2">Couleurs suggérées</p>
               <div className="grid grid-cols-6 gap-2">

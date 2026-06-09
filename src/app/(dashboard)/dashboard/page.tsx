@@ -38,6 +38,11 @@ export default async function DashboardPage() {
     )
   }
 
+  // New merchant: card never configured (primary_color stays at DB default '#000000')
+  if (!merchant.primary_color || merchant.primary_color === '#000000') {
+    redirect('/dashboard/ma-carte')
+  }
+
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 

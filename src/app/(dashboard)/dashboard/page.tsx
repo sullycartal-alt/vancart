@@ -7,7 +7,12 @@ import AlertBanner from './AlertBanner'
 import PushNotifySection from './PushNotifySection'
 import { effectivePlan, type Plan } from '@/lib/plan-features'
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ from?: string }>
+}) {
+  const { from } = await searchParams
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -38,8 +43,10 @@ export default async function DashboardPage() {
     )
   }
 
-  // New merchant: card never configured (primary_color stays at DB default '#000000')
-  if (!merchant.primary_color || merchant.primary_color === '#000000') {
+  // New merchant: card never configured (primary_color stays at DB default '#000000').
+  // Skip when arriving straight from the onboarding confirmation to avoid any
+  // redirect loop if the freshly saved color hasn't propagated yet.
+  if (from !== 'onboarding' && (!merchant.primary_color || merchant.primary_color === '#000000')) {
     redirect('/dashboard/ma-carte')
   }
 

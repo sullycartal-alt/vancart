@@ -63,8 +63,12 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
   const [stampsRequired, setStampsRequired] = useState(merchant.stamps_required || 9)
   const [pointsRequired, setPointsRequired] = useState(merchant.points_required || 100)
   const [loyaltyRule, setLoyaltyRule] = useState(merchant.loyalty_rule || '')
-  const [color, setColor] = useState(merchant.primary_color || '#6C47FF')
-  const colorRef = useRef(merchant.primary_color || '#6C47FF')
+  const initialColor = (!merchant.primary_color || merchant.primary_color === '#000000')
+    ? '#6C47FF'
+    : merchant.primary_color
+
+  const [color, setColor] = useState(initialColor)
+  const colorRef = useRef(initialColor)
   const [logoUrl, setLogoUrl] = useState(merchant.logo_url || '')
   const [bannerUrl, setBannerUrl] = useState(merchant.banner_url || '')
   const [businessName, setBusinessName] = useState(merchant.business_name || '')
@@ -185,7 +189,7 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
     if (currentStep === 1) return loyaltyType === 'stamps' ? stampsRequired > 0 : pointsRequired > 0
     if (currentStep === 2) return loyaltyRule.trim().length > 0
     if (currentStep === 3) return !!logoUrl
-    if (currentStep === 4) return !!color
+    if (currentStep === 4) return !!color && color !== '#000000'
     if (currentStep === 5) return !!bannerUrl
     if (currentStep === 6) return businessName.trim().length >= 2
     return true

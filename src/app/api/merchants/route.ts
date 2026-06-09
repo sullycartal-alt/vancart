@@ -25,6 +25,7 @@ const merchantSchema = z.object({
   card_expiry_months: z.number().int().min(0).max(60).nullable().optional(),
   show_instagram_on_card: z.boolean().optional(),
   banner_url: z.string().nullable().optional(),
+  banner_pattern: z.enum(['none', 'hearts', 'confetti', 'waves', 'dots', 'stars']).nullable().optional(),
   allow_multiple_stamps: z.boolean().optional(),
   min_minutes_between_stamps: z.number().int().min(0).max(1440).optional(),
   stamps_per_visit: z.number().int().min(1).max(10).optional(),

@@ -3,6 +3,7 @@ import { checkRateLimit, getClientIp } from '@/lib/rate-limit'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { isConfigured, updateWalletPass } from '@/lib/google-wallet'
+import { triggerBannerRegen } from '@/lib/banner'
 
 const stampSchema = z.object({
   loyalty_card_id: z.string().uuid(),
@@ -26,7 +27,7 @@ export async function POST(request: Request) {
 
   const { data: merchant, error: merchantError } = await supabase
     .from('merchants')
-    .select('id, stamps_required, loyalty_type, points_per_euro, points_required, business_name, plan')
+    .select('id, stamps_required, loyalty_type, points_per_euro, points_required, business_name, plan, primary_color, banner_pattern')
     .eq('user_id', user.id)
     .single()
   if (merchantError || !merchant) return NextResponse.json({ error: 'Merchant not found' }, { status: 404 })
@@ -134,6 +135,15 @@ export async function POST(request: Request) {
   if (!isPoints && isConfigured()) {
     await updateWalletPass(card.id, updateData.stamps_count ?? 0, merchant.stamps_required).catch(() => {})
   }
+
+  // Refresh the interactive banner in the background (non-blocking).
+  triggerBannerRegen({
+    merchantId: merchant.id,
+    primaryColor: merchant.primary_color,
+    bannerPattern: merchant.banner_pattern,
+    stampsCount: updateData.stamps_count ?? 0,
+    stampsRequired: merchant.stamps_required,
+  })
 
   return NextResponse.json({
     card: updatedCard,

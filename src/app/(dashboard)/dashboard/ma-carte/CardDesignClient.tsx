@@ -6,6 +6,8 @@ import { ImagePlus, ChevronLeft, Target, Star, Check, PartyPopper } from 'lucide
 import LoyaltyCardMockup from '@/components/loyalty/LoyaltyCardMockup'
 import LogoDominantColors from '@/components/loyalty/LogoDominantColors'
 import WelcomeModal from '@/components/loyalty/WelcomeModal'
+import BannerPicker from '@/components/loyalty/BannerPicker'
+import type { BannerPattern } from '@/lib/banner-patterns'
 
 const PRESET_COLORS = ['#6C47FF', '#FF6B35', '#10B981', '#F59E0B', '#EF4444', '#1A1A2E']
 
@@ -35,6 +37,7 @@ interface Merchant {
   points_per_euro: number | null
   logo_url: string | null
   banner_url: string | null
+  banner_pattern: string | null
 }
 
 const STEPS = [
@@ -71,6 +74,8 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
   const colorRef = useRef(initialColor)
   const [logoUrl, setLogoUrl] = useState(merchant.logo_url || '')
   const [bannerUrl, setBannerUrl] = useState(merchant.banner_url || '')
+  const [bannerPattern, setBannerPattern] = useState<string | null>(merchant.banner_pattern || null)
+  const [bannerGenerating, setBannerGenerating] = useState(false)
   const [businessName, setBusinessName] = useState(merchant.business_name || '')
 
   const [logoUploading, setLogoUploading] = useState(false)
@@ -185,10 +190,37 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
     const data = await res.json()
     if (res.ok) {
       setBannerUrl(data.url)
-      await saveField({ banner_url: data.url })
+      setBannerPattern(null)
+      // Clearing banner_pattern switches back to photo mode so stamps no longer
+      // regenerate (and overwrite) the uploaded photo.
+      await saveField({ banner_url: data.url, banner_pattern: null })
     }
     setBannerUploading(false)
     if (bannerInputRef.current) bannerInputRef.current.value = ''
+  }
+
+  async function handleSelectPattern(pattern: BannerPattern) {
+    setBannerGenerating(true)
+    setSaveError(null)
+    setBannerPattern(pattern)
+    try {
+      const res = await fetch('/api/merchant/generate-banner', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ primaryColor: colorRef.current, bannerPattern: pattern }),
+      })
+      const data = await res.json()
+      if (res.ok && data.banner_url) {
+        setBannerUrl(data.banner_url)
+        await saveField({ banner_url: data.banner_url, banner_pattern: pattern })
+      } else {
+        setSaveError(data?.error ?? 'Génération de la bannière échouée')
+      }
+    } catch {
+      setSaveError('Erreur réseau. Veuillez réessayer.')
+    } finally {
+      setBannerGenerating(false)
+    }
   }
 
   function isStepValid(): boolean {
@@ -477,30 +509,40 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
             {/* Step 5 — Banner */}
             {currentStep === 5 && (
               <div className="space-y-3">
-                <p className="text-xs text-[#6B6B6B]">Photo de votre commerce (intérieur, vitrine, produits…)</p>
-                <label className="block cursor-pointer">
-                  <div className="bg-[#F7F6F3] border-2 border-dashed border-[#E8E8E3] rounded-xl p-8 text-center hover:border-[#6C47FF] transition-colors">
-                    {bannerUploading ? (
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="w-6 h-6 border-2 border-[#6C47FF] border-t-transparent rounded-full animate-spin" />
-                        <span className="text-sm text-[#6B6B6B]">Envoi en cours…</span>
-                      </div>
-                    ) : bannerUrl ? (
-                      <div className="flex flex-col items-center gap-2">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={bannerUrl} alt="" className="w-full max-w-xs h-20 object-cover rounded-xl border border-[#E8E8E3]" />
-                        <span className="text-sm text-[#6C47FF] font-medium">Changer la photo</span>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-center gap-2">
-                        <ImagePlus className="w-8 h-8 text-[#6B6B6B]" strokeWidth={1.5} />
-                        <span className="text-sm text-[#6B6B6B]">Cliquez pour uploader</span>
-                      </div>
-                    )}
-                  </div>
-                  <input ref={bannerInputRef} type="file" accept="image/*" onChange={handleBannerUpload} className="hidden" />
-                </label>
-                {bannerUrl && <p className="text-xs text-green-600 font-medium flex items-center gap-1"><Check className="size-3" strokeWidth={2} /> Photo enregistrée</p>}
+                <BannerPicker
+                  primaryColor={color}
+                  bannerPattern={bannerPattern}
+                  generating={bannerGenerating}
+                  onSelectPattern={handleSelectPattern}
+                  photoSlot={
+                    <div className="space-y-3">
+                      <p className="text-xs text-[#6B6B6B]">Photo de votre commerce (intérieur, vitrine, produits…)</p>
+                      <label className="block cursor-pointer">
+                        <div className="bg-[#F7F6F3] border-2 border-dashed border-[#E8E8E3] rounded-xl p-8 text-center hover:border-[#6C47FF] transition-colors">
+                          {bannerUploading ? (
+                            <div className="flex flex-col items-center gap-2">
+                              <div className="w-6 h-6 border-2 border-[#6C47FF] border-t-transparent rounded-full animate-spin" />
+                              <span className="text-sm text-[#6B6B6B]">Envoi en cours…</span>
+                            </div>
+                          ) : bannerUrl && !bannerPattern ? (
+                            <div className="flex flex-col items-center gap-2">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img src={bannerUrl} alt="" className="w-full max-w-xs h-20 object-cover rounded-xl border border-[#E8E8E3]" />
+                              <span className="text-sm text-[#6C47FF] font-medium">Changer la photo</span>
+                            </div>
+                          ) : (
+                            <div className="flex flex-col items-center gap-2">
+                              <ImagePlus className="w-8 h-8 text-[#6B6B6B]" strokeWidth={1.5} />
+                              <span className="text-sm text-[#6B6B6B]">Cliquez pour uploader</span>
+                            </div>
+                          )}
+                        </div>
+                        <input ref={bannerInputRef} type="file" accept="image/*" onChange={handleBannerUpload} className="hidden" />
+                      </label>
+                    </div>
+                  }
+                />
+                {bannerUrl && <p className="text-xs text-green-600 font-medium flex items-center gap-1"><Check className="size-3" strokeWidth={2} /> Bannière enregistrée</p>}
               </div>
             )}
 
@@ -524,7 +566,7 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
           <div className="flex justify-end">
             <button
               onClick={handleNextStep}
-              disabled={!isStepValid() || saving || logoUploading || bannerUploading}
+              disabled={!isStepValid() || saving || logoUploading || bannerUploading || bannerGenerating}
               className="px-8 py-3 bg-[#6C47FF] hover:bg-[#5835e0] text-white font-semibold rounded-xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {saving ? 'Enregistrement…' : currentStep === 6 ? 'Voir le récapitulatif →' : 'Étape suivante →'}

@@ -150,7 +150,13 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
       banner_url: bannerUrl,
       business_name: businessName,
     })
-    if (ok) router.push('/dashboard/ma-carte/confirmation')
+    if (ok) {
+      // Revalide les données serveur (primary_color en base) avant de naviguer,
+      // pour que la confirmation puis le dashboard lisent la couleur fraîchement
+      // sauvegardée et ne redéclenchent pas la redirection vers "Ma carte".
+      router.refresh()
+      router.push('/dashboard/ma-carte/confirmation')
+    }
   }
 
   async function handleLogoUpload(e: React.ChangeEvent<HTMLInputElement>) {

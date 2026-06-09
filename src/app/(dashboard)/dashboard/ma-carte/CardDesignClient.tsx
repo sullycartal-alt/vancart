@@ -64,6 +64,7 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
   const [pointsRequired, setPointsRequired] = useState(merchant.points_required || 100)
   const [loyaltyRule, setLoyaltyRule] = useState(merchant.loyalty_rule || '')
   const [color, setColor] = useState(merchant.primary_color || '#6C47FF')
+  const colorRef = useRef(merchant.primary_color || '#6C47FF')
   const [logoUrl, setLogoUrl] = useState(merchant.logo_url || '')
   const [bannerUrl, setBannerUrl] = useState(merchant.banner_url || '')
   const [businessName, setBusinessName] = useState(merchant.business_name || '')
@@ -114,7 +115,7 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
     } else if (currentStep === 3) {
       if (!logoUrl) return
     } else if (currentStep === 4) {
-      fields = { primary_color: color }
+      fields = { primary_color: colorRef.current }
     } else if (currentStep === 5) {
       if (!bannerUrl) return
     } else if (currentStep === 6) {
@@ -140,7 +141,7 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
       stamps_required: stampsRequired,
       points_required: pointsRequired,
       loyalty_rule: loyaltyRule,
-      primary_color: color,
+      primary_color: colorRef.current,
       logo_url: logoUrl,
       banner_url: bannerUrl,
       business_name: businessName,
@@ -429,7 +430,7 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
             {/* Step 4 — Color */}
             {currentStep === 4 && (
               <div className="space-y-5">
-                <LogoDominantColors logoUrl={logoUrl} selectedColor={color} onSelect={setColor} />
+                <LogoDominantColors logoUrl={logoUrl} selectedColor={color} onSelect={(hex) => { colorRef.current = hex; setColor(hex) }} />
 
                 {/* Preset grid */}
                 <div>
@@ -438,7 +439,7 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
                     {ONBOARDING_PRESETS.map(({ name, hex }) => (
                       <button
                         key={hex} type="button" title={name}
-                        onClick={() => setColor(hex)}
+                        onClick={() => { colorRef.current = hex; setColor(hex) }}
                         className={`w-9 h-9 rounded-full transition-all hover:scale-110 flex-shrink-0 ${color === hex ? 'ring-2 ring-offset-2 ring-[#6C47FF]' : ''}`}
                         style={{ backgroundColor: hex }}
                         aria-label={name}
@@ -452,7 +453,7 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
                   <label className="text-sm font-medium text-[#1A1A1A] block mb-2">Couleur personnalisée</label>
                   <div className="flex items-center gap-3">
                     <input
-                      type="color" value={color} onChange={e => setColor(e.target.value)}
+                      type="color" value={color} onChange={e => { colorRef.current = e.target.value; setColor(e.target.value) }}
                       className="w-10 h-10 rounded-xl border border-[#E8E8E3] cursor-pointer p-0.5"
                     />
                     <span className="text-sm text-[#6B6B6B]">

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { ImagePlus, ChevronLeft, Target, Star, Check, PartyPopper } from 'lucide-react'
 import LoyaltyCardMockup from '@/components/loyalty/LoyaltyCardMockup'
 import LogoDominantColors from '@/components/loyalty/LogoDominantColors'
+import WelcomeModal from '@/components/loyalty/WelcomeModal'
 
 const PRESET_COLORS = ['#6C47FF', '#FF6B35', '#10B981', '#F59E0B', '#EF4444', '#1A1A2E']
 
@@ -324,6 +325,7 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
 
   return (
     <div className="min-h-screen bg-[#F7F6F3] flex flex-col">
+      <WelcomeModal show={showOnboarding} onDismiss={() => {}} />
       <div className="flex-1 max-w-5xl mx-auto w-full px-4 py-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
 
         {/* Left column */}

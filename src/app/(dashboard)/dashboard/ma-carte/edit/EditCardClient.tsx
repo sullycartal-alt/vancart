@@ -36,6 +36,7 @@ interface Merchant {
 
 export default function EditCardClient({ merchant }: { merchant: Merchant }) {
   const [color, setColor] = useState(merchant.primary_color || '#6C47FF')
+  const colorRef = useRef(merchant.primary_color || '#6C47FF')
   const [businessName, setBusinessName] = useState(merchant.business_name || '')
   const [loyaltyType, setLoyaltyType] = useState<'stamps' | 'points'>(merchant.loyalty_type || 'stamps')
   const [stampsRequired, setStampsRequired] = useState(merchant.stamps_required || 9)
@@ -71,7 +72,7 @@ export default function EditCardClient({ merchant }: { merchant: Merchant }) {
           stamps_required: stampsRequired,
           points_required: pointsRequired,
           loyalty_rule: loyaltyRule,
-          primary_color: color,
+          primary_color: colorRef.current,
           logo_url: logoUrl || null,
           banner_url: bannerUrl || null,
           business_name: businessName,
@@ -152,7 +153,7 @@ export default function EditCardClient({ merchant }: { merchant: Merchant }) {
             <LogoDominantColors
               logoUrl={logoUrl || null}
               selectedColor={color}
-              onSelect={(hex) => { setColor(hex); triggerSave({ primary_color: hex }) }}
+              onSelect={(hex) => { colorRef.current = hex; setColor(hex); triggerSave({ primary_color: hex }) }}
             />
             <div>
               <p className="text-xs text-gray-500 mb-2">Couleurs suggérées</p>
@@ -160,7 +161,7 @@ export default function EditCardClient({ merchant }: { merchant: Merchant }) {
                 {PRESET_COLORS.map(({ name, hex }) => (
                   <button
                     key={hex} type="button" title={name}
-                    onClick={() => { setColor(hex); triggerSave({ primary_color: hex }) }}
+                    onClick={() => { colorRef.current = hex; setColor(hex); triggerSave({ primary_color: hex }) }}
                     className="w-9 h-9 flex-shrink-0 transition-all hover:scale-110"
                     style={{
                       backgroundColor: hex,
@@ -179,7 +180,7 @@ export default function EditCardClient({ merchant }: { merchant: Merchant }) {
               <div className="flex items-center gap-3">
                 <input
                   type="color" value={color}
-                  onChange={e => { setColor(e.target.value); triggerSave({ primary_color: e.target.value }) }}
+                  onChange={e => { colorRef.current = e.target.value; setColor(e.target.value); triggerSave({ primary_color: e.target.value }) }}
                   className="w-9 h-9 rounded-xl border border-[#E8E8E3] cursor-pointer p-0.5"
                 />
                 <span className="text-sm text-[#6B6B6B]">

@@ -71,6 +71,7 @@ export default async function ConfirmationPage() {
             bannerUrl={merchant.banner_url ?? undefined}
             currentStamps={5}
             currentPoints={Math.round((merchant.points_required ?? 100) * 0.6)}
+            cardId={merchant.id}
             width={280}
           />
         </div>

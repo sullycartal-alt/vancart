@@ -39,6 +39,7 @@ interface Merchant {
   banner_url: string | null
   banner_pattern: string | null
   stamp_color: string | null
+  stamp_icon: string | null
 }
 
 const STEPS = [
@@ -78,6 +79,7 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
   const [bannerPattern, setBannerPattern] = useState<string | null>(merchant.banner_pattern || null)
   const [bannerGenerating, setBannerGenerating] = useState(false)
   const [stampColor, setStampColor] = useState(merchant.stamp_color || '#FFFFFF')
+  const [stampIcon, setStampIcon] = useState<'check' | 'star'>(merchant.stamp_icon === 'star' ? 'star' : 'check')
   const [bannerRegenLoading, setBannerRegenLoading] = useState(false)
   const [businessName, setBusinessName] = useState(merchant.business_name || '')
 
@@ -237,12 +239,36 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
       const res = await fetch('/api/merchant/generate-banner', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ primaryColor: colorRef.current, bannerPattern, stampsCount: previewStamps, stampsRequired, stampColor: hex }),
+        body: JSON.stringify({ primaryColor: colorRef.current, bannerPattern, stampsCount: previewStamps, stampsRequired, stampColor: hex, stampIcon }),
       })
       const data = await res.json()
       if (res.ok && data.banner_url) {
         setBannerUrl(data.banner_url)
         await saveField({ banner_url: data.banner_url, stamp_color: hex })
+      } else {
+        setSaveError(data?.error ?? 'Génération de la bannière échouée')
+      }
+    } catch {
+      setSaveError('Erreur réseau. Veuillez réessayer.')
+    } finally {
+      setBannerGenerating(false)
+    }
+  }
+
+  async function handleSelectStampIcon(icon: 'check' | 'star') {
+    setStampIcon(icon)
+    setBannerGenerating(true)
+    setSaveError(null)
+    try {
+      const res = await fetch('/api/merchant/generate-banner', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ primaryColor: colorRef.current, bannerPattern, stampsCount: previewStamps, stampsRequired, stampColor, stampIcon: icon }),
+      })
+      const data = await res.json()
+      if (res.ok && data.banner_url) {
+        setBannerUrl(data.banner_url)
+        await saveField({ banner_url: data.banner_url, stamp_icon: icon })
       } else {
         setSaveError(data?.error ?? 'Génération de la bannière échouée')
       }
@@ -268,7 +294,7 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
         const res = await fetch('/api/merchant/generate-banner', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ primaryColor: colorRef.current, bannerPattern, stampsCount: previewStamps, stampsRequired, stampColor }),
+          body: JSON.stringify({ primaryColor: colorRef.current, bannerPattern, stampsCount: previewStamps, stampsRequired, stampColor, stampIcon }),
         })
         const data = await res.json()
         if (res.ok && data.banner_url) setBannerUrl(data.banner_url)
@@ -610,6 +636,8 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
                   onSelectPattern={handleSelectPattern}
                   stampColor={stampColor}
                   onSelectStampColor={handleSelectStampColor}
+                  stampIcon={stampIcon}
+                  onSelectStampIcon={handleSelectStampIcon}
                   photoSlot={
                     <div className="space-y-3">
                       <p className="text-xs text-[#6B6B6B]">Photo de votre commerce (intérieur, vitrine, produits…)</p>

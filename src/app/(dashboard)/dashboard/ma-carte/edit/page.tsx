@@ -11,7 +11,7 @@ export default async function EditCartePage() {
 
   const { data: merchant } = await supabase
     .from('merchants')
-    .select('id, slug, business_name, primary_color, loyalty_rule, stamps_required, loyalty_type, points_required, points_per_euro, logo_url, banner_url, banner_pattern, stamp_color')
+    .select('id, slug, business_name, primary_color, loyalty_rule, stamps_required, loyalty_type, points_required, points_per_euro, logo_url, banner_url, banner_pattern, stamp_color, stamp_icon')
     .eq('user_id', user.id)
     .single()
 
@@ -33,6 +33,7 @@ export default async function EditCartePage() {
         banner_url: merchant.banner_url ?? null,
         banner_pattern: merchant.banner_pattern ?? null,
         stamp_color: merchant.stamp_color ?? null,
+        stamp_icon: merchant.stamp_icon ?? null,
       }}
     />
   )

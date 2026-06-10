@@ -65,30 +65,62 @@ export function bannerSvg(primaryColor: string, pattern: BannerPattern): string 
     `<rect width="1000" height="400" fill="${primaryColor}"/>${tiles}</svg>`
 }
 
-const STAMP_DIAMETER = 65
-const STAMP_GAP = 20
-const STAMP_CY = 300
-const MAX_STAMPS = 12
+const STAMP_DIAMETER = 60
+const STAMP_GAP = 18
+const STAMP_INNER_DIAMETER = 36
+const CANVAS_W = 1000
+const CANVAS_H = 400
+const SIDE_MARGIN = 20
+const BOTTOM_MARGIN = 15
+const ONE_ROW_CY = 280
+const TOP_ROW_CY = 240
+const BOTTOM_ROW_CY = 310
 
-// Transparent 1000×400 SVG overlay drawing a centered horizontal row of stamp
-// circles (filled = active stamp, empty = remaining slot). Composited as a
-// separate layer over the background + pattern banner.
-export function stampsRowSvg(primaryColor: string, stampsCount: number, stampsRequired: number): string {
-  const total = Math.min(Math.max(stampsRequired, 1), MAX_STAMPS)
-  const filled = Math.min(Math.max(stampsCount, 0), total)
-  const r = STAMP_DIAMETER / 2
-  const rowWidth = total * STAMP_DIAMETER + (total - 1) * STAMP_GAP
-  const startX = (1000 - rowWidth) / 2
+// Renders a single horizontal row of `count` stamp circles centered
+// horizontally, shrinking the diameter if needed so the row fits within
+// CANVAS_W minus the side margins.
+function stampsRow(count: number, filled: number, cy: number, primaryColor: string, stampColor: string): string {
+  const maxWidth = CANVAS_W - 2 * SIDE_MARGIN
+  const naturalWidth = count * STAMP_DIAMETER + (count - 1) * STAMP_GAP
+  const diameter = naturalWidth > maxWidth
+    ? (maxWidth - (count - 1) * STAMP_GAP) / count
+    : STAMP_DIAMETER
+  const r = diameter / 2
+  const innerR = Math.min(STAMP_INNER_DIAMETER / 2, r * 0.6)
+  const rowWidth = count * diameter + (count - 1) * STAMP_GAP
+  const startX = (CANVAS_W - rowWidth) / 2
+  const safeCy = Math.min(cy, CANVAS_H - BOTTOM_MARGIN - r)
 
   let circles = ''
-  for (let i = 0; i < total; i++) {
-    const cx = startX + i * (STAMP_DIAMETER + STAMP_GAP) + r
+  for (let i = 0; i < count; i++) {
+    const cx = startX + i * (diameter + STAMP_GAP) + r
     if (i < filled) {
-      circles += `<circle cx="${cx}" cy="${STAMP_CY}" r="${r}" fill="#fff" fill-opacity="0.95"/>` +
-        `<circle cx="${cx}" cy="${STAMP_CY}" r="20" fill="${primaryColor}"/>`
+      circles += `<circle cx="${cx}" cy="${safeCy}" r="${r}" fill="${stampColor}" fill-opacity="0.95"/>` +
+        `<circle cx="${cx}" cy="${safeCy}" r="${innerR}" fill="${primaryColor}"/>`
     } else {
-      circles += `<circle cx="${cx}" cy="${STAMP_CY}" r="${r - 1}" fill="none" stroke="#fff" stroke-opacity="0.3" stroke-width="2"/>`
+      circles += `<circle cx="${cx}" cy="${safeCy}" r="${r - 1}" fill="none" stroke="${stampColor}" stroke-opacity="0.25" stroke-width="2"/>`
     }
+  }
+  return circles
+}
+
+// Transparent 1000×400 SVG overlay drawing the stamps as one or two centered
+// horizontal rows (filled = active stamp, empty = remaining slot). Composited
+// as a separate layer over the background + pattern banner.
+export function stampsRowSvg(primaryColor: string, stampColor: string, stampsCount: number, stampsRequired: number): string {
+  const total = Math.max(stampsRequired, 1)
+  const filled = Math.min(Math.max(stampsCount, 0), total)
+
+  let circles: string
+  if (total <= 5) {
+    circles = stampsRow(total, filled, ONE_ROW_CY, primaryColor, stampColor)
+  } else {
+    const topCount = Math.ceil(total / 2)
+    const bottomCount = Math.floor(total / 2)
+    const topFilled = Math.min(filled, topCount)
+    const bottomFilled = Math.max(0, filled - topCount)
+    circles = stampsRow(topCount, topFilled, TOP_ROW_CY, primaryColor, stampColor) +
+      stampsRow(bottomCount, bottomFilled, BOTTOM_ROW_CY, primaryColor, stampColor)
   }
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="400" viewBox="0 0 1000 400">${circles}</svg>`

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ImagePlus, ChevronLeft, Target, Star, Check, PartyPopper } from 'lucide-react'
 import LoyaltyCardMockup from '@/components/loyalty/LoyaltyCardMockup'
@@ -38,6 +38,7 @@ interface Merchant {
   logo_url: string | null
   banner_url: string | null
   banner_pattern: string | null
+  stamp_color: string | null
 }
 
 const STEPS = [
@@ -76,6 +77,8 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
   const [bannerUrl, setBannerUrl] = useState(merchant.banner_url || '')
   const [bannerPattern, setBannerPattern] = useState<string | null>(merchant.banner_pattern || null)
   const [bannerGenerating, setBannerGenerating] = useState(false)
+  const [stampColor, setStampColor] = useState(merchant.stamp_color || '#FFFFFF')
+  const [bannerRegenLoading, setBannerRegenLoading] = useState(false)
   const [businessName, setBusinessName] = useState(merchant.business_name || '')
 
   const [logoUploading, setLogoUploading] = useState(false)
@@ -90,6 +93,8 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
   const [previewStamps, setPreviewStamps] = useState(0)
+  const stampsRegenTimeout = useRef<NodeJS.Timeout | null>(null)
+  const isFirstStampsRender = useRef(true)
 
   async function saveField(fields: Record<string, unknown>): Promise<boolean> {
     setSaving(true)
@@ -224,6 +229,59 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
     }
   }
 
+  async function handleSelectStampColor(hex: string) {
+    setStampColor(hex)
+    setBannerGenerating(true)
+    setSaveError(null)
+    try {
+      const res = await fetch('/api/merchant/generate-banner', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ primaryColor: colorRef.current, bannerPattern, stampsCount: previewStamps, stampsRequired, stampColor: hex }),
+      })
+      const data = await res.json()
+      if (res.ok && data.banner_url) {
+        setBannerUrl(data.banner_url)
+        await saveField({ banner_url: data.banner_url, stamp_color: hex })
+      } else {
+        setSaveError(data?.error ?? 'Génération de la bannière échouée')
+      }
+    } catch {
+      setSaveError('Erreur réseau. Veuillez réessayer.')
+    } finally {
+      setBannerGenerating(false)
+    }
+  }
+
+  // Régénère la bannière avec le nouveau nombre de tampons à chaque changement
+  // du contrôle d'aperçu (debounced, désactivé tant qu'aucune bannière interactive).
+  useEffect(() => {
+    if (!bannerPattern) return
+    if (isFirstStampsRender.current) {
+      isFirstStampsRender.current = false
+      return
+    }
+    if (stampsRegenTimeout.current) clearTimeout(stampsRegenTimeout.current)
+    stampsRegenTimeout.current = setTimeout(async () => {
+      setBannerRegenLoading(true)
+      try {
+        const res = await fetch('/api/merchant/generate-banner', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ primaryColor: colorRef.current, bannerPattern, stampsCount: previewStamps, stampsRequired, stampColor }),
+        })
+        const data = await res.json()
+        if (res.ok && data.banner_url) setBannerUrl(data.banner_url)
+      } catch {
+        // l'aperçu reste sur l'image précédente
+      } finally {
+        setBannerRegenLoading(false)
+      }
+    }, 500)
+    return () => { if (stampsRegenTimeout.current) clearTimeout(stampsRegenTimeout.current) }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [previewStamps])
+
   function isStepValid(): boolean {
     if (currentStep === 1) return loyaltyType === 'stamps' ? stampsRequired > 0 : pointsRequired > 0
     if (currentStep === 2) return loyaltyRule.trim().length > 0
@@ -237,20 +295,27 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
   const inputClass = 'w-full border border-[#E8E8E3] rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#6C47FF]/20 focus:border-[#6C47FF] outline-none bg-white transition-all'
 
   const cardPreview = (
-    <LoyaltyCardMockup
-      primaryColor={color}
-      businessName={businessName || 'Mon Commerce'}
-      loyaltyType={loyaltyType}
-      stampsRequired={stampsRequired}
-      pointsRequired={pointsRequired || 100}
-      loyaltyRule={loyaltyRule || 'Votre récompense'}
-      logoUrl={logoUrl || undefined}
-      bannerUrl={bannerUrl || undefined}
-      currentStamps={previewStamps}
-      currentPoints={Math.round((pointsRequired || 100) * 0.6)}
-      cardId={merchant.id}
-      width="min(320px, 100%)"
-    />
+    <div className={`relative transition-opacity ${bannerRegenLoading ? 'opacity-60' : ''}`}>
+      <LoyaltyCardMockup
+        primaryColor={color}
+        businessName={businessName || 'Mon Commerce'}
+        loyaltyType={loyaltyType}
+        stampsRequired={stampsRequired}
+        pointsRequired={pointsRequired || 100}
+        loyaltyRule={loyaltyRule || 'Votre récompense'}
+        logoUrl={logoUrl || undefined}
+        bannerUrl={bannerUrl || undefined}
+        currentStamps={previewStamps}
+        currentPoints={Math.round((pointsRequired || 100) * 0.6)}
+        cardId={merchant.id}
+        width="min(320px, 100%)"
+      />
+      {bannerRegenLoading && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-6 h-6 border-2 border-[#6C47FF] border-t-transparent rounded-full animate-spin" />
+        </div>
+      )}
+    </div>
   )
 
   const stampsPreviewControl = (
@@ -543,6 +608,8 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
                   bannerPattern={bannerPattern}
                   generating={bannerGenerating}
                   onSelectPattern={handleSelectPattern}
+                  stampColor={stampColor}
+                  onSelectStampColor={handleSelectStampColor}
                   photoSlot={
                     <div className="space-y-3">
                       <p className="text-xs text-[#6B6B6B]">Photo de votre commerce (intérieur, vitrine, produits…)</p>

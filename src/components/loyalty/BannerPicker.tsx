@@ -4,11 +4,21 @@ import { useState } from 'react'
 import { ImageIcon, Sparkles } from 'lucide-react'
 import { BANNER_PATTERNS, patternTileDataUri, type BannerPattern } from '@/lib/banner-patterns'
 
+const STAMP_COLOR_PRESETS = [
+  { name: 'Blanc', hex: '#FFFFFF' },
+  { name: 'Noir', hex: '#1A1A1A' },
+  { name: 'Or', hex: '#F5C518' },
+  { name: 'Argent', hex: '#C0C0C0' },
+  { name: 'Rouge', hex: '#E63946' },
+]
+
 interface BannerPickerProps {
   primaryColor: string
   bannerPattern: string | null
   generating: boolean
   onSelectPattern: (pattern: BannerPattern) => void
+  stampColor: string
+  onSelectStampColor: (hex: string) => void
   /** Existing photo-upload UI, rendered as-is under the "Photo" tab. */
   photoSlot: React.ReactNode
 }
@@ -18,6 +28,8 @@ export default function BannerPicker({
   bannerPattern,
   generating,
   onSelectPattern,
+  stampColor,
+  onSelectStampColor,
   photoSlot,
 }: BannerPickerProps) {
   const [tab, setTab] = useState<'photo' | 'interactive'>(bannerPattern ? 'interactive' : 'photo')
@@ -74,6 +86,31 @@ export default function BannerPicker({
             })}
           </div>
           {generating && <p className="text-xs text-[#6B6B6B]">Génération de la bannière…</p>}
+
+          {bannerPattern && (
+            <div className="pt-3 border-t border-[#E8E8E3] space-y-2">
+              <p className="text-xs font-medium text-[#1A1A1A]">Couleur des tampons</p>
+              <div className="flex flex-wrap gap-2">
+                {[...STAMP_COLOR_PRESETS, { name: 'Couleur principale', hex: primaryColor }].map(({ name, hex }) => (
+                  <button
+                    key={name}
+                    type="button"
+                    title={name}
+                    onClick={() => onSelectStampColor(hex)}
+                    disabled={generating}
+                    className="w-8 h-8 rounded-full border border-[#E8E8E3] transition-all hover:scale-110 disabled:opacity-60 disabled:cursor-not-allowed"
+                    style={{
+                      backgroundColor: hex,
+                      outline: stampColor.toLowerCase() === hex.toLowerCase() ? '2px solid #6C47FF' : 'none',
+                      outlineOffset: '2px',
+                    }}
+                    aria-label={name}
+                    aria-pressed={stampColor.toLowerCase() === hex.toLowerCase()}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

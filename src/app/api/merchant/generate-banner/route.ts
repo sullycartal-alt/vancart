@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createServiceClient } from '@/lib/supabase/service'
 import { NextResponse } from 'next/server'
 import sharp from 'sharp'
-import { bannerSvg, isBannerPattern, type BannerPattern } from '@/lib/banner-patterns'
+import { bannerSvg, stampsRowSvg, isBannerPattern, type BannerPattern } from '@/lib/banner-patterns'
 
 const HEX = /^#[0-9a-fA-F]{6}$/
 
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
   // Authoritative merchant branding (used as fallback when not supplied in body).
   const { data: merchant } = await service
     .from('merchants')
-    .select('id, primary_color, banner_pattern')
+    .select('id, primary_color, banner_pattern, stamps_required')
     .eq('id', merchantId)
     .single()
   if (!merchant) return NextResponse.json({ error: 'Merchant not found' }, { status: 404 })
@@ -49,9 +49,16 @@ export async function POST(request: Request) {
   const rawPattern = body.bannerPattern ?? merchant.banner_pattern
   const pattern: BannerPattern = isBannerPattern(rawPattern) ? rawPattern : 'none'
 
+  const stampsCount = typeof body.stampsCount === 'number' && body.stampsCount >= 0 ? body.stampsCount : 0
+  const stampsRequired = typeof body.stampsRequired === 'number' && body.stampsRequired > 0
+    ? body.stampsRequired
+    : (merchant.stamps_required ?? 9)
+
   let png: Buffer
   try {
-    png = await sharp(Buffer.from(bannerSvg(primaryColor, pattern))).png().toBuffer()
+    const base = sharp(Buffer.from(bannerSvg(primaryColor, pattern)))
+    const stampsLayer = Buffer.from(stampsRowSvg(primaryColor, stampsCount, stampsRequired))
+    png = await base.composite([{ input: stampsLayer }]).png().toBuffer()
   } catch (e) {
     console.error('[generate-banner] render failed:', e)
     return NextResponse.json({ error: 'Génération de la bannière échouée' }, { status: 500 })

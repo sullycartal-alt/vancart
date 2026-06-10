@@ -42,7 +42,7 @@ export async function POST(request: Request) {
 
   const { data: merchant } = await service
     .from('merchants')
-    .select('id, stamps_required, loyalty_rule, primary_color, banner_pattern')
+    .select('id, stamps_required, loyalty_rule, primary_color, banner_pattern, stamp_color')
     .eq('id', session.merchantId)
     .single()
   const required = merchant?.stamps_required ?? 10
@@ -91,6 +91,7 @@ export async function POST(request: Request) {
     bannerPattern: merchant?.banner_pattern ?? null,
     stampsCount: newCount,
     stampsRequired: required,
+    stampColor: merchant?.stamp_color ?? null,
   })
 
   return NextResponse.json({

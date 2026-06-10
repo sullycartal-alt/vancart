@@ -27,7 +27,7 @@ export async function POST(request: Request) {
 
   const { data: merchant, error: merchantError } = await supabase
     .from('merchants')
-    .select('id, stamps_required, loyalty_type, points_per_euro, points_required, business_name, plan, primary_color, banner_pattern')
+    .select('id, stamps_required, loyalty_type, points_per_euro, points_required, business_name, plan, primary_color, banner_pattern, stamp_color')
     .eq('user_id', user.id)
     .single()
   if (merchantError || !merchant) return NextResponse.json({ error: 'Merchant not found' }, { status: 404 })
@@ -143,6 +143,7 @@ export async function POST(request: Request) {
     bannerPattern: merchant.banner_pattern,
     stampsCount: updateData.stamps_count ?? 0,
     stampsRequired: merchant.stamps_required,
+    stampColor: merchant.stamp_color,
   })
 
   return NextResponse.json({

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { ImagePlus, Check, Target, Star } from 'lucide-react'
 import LoyaltyCardMockup from '@/components/loyalty/LoyaltyCardMockup'
@@ -35,6 +35,7 @@ interface Merchant {
   logo_url: string | null
   banner_url: string | null
   banner_pattern: string | null
+  stamp_color: string | null
 }
 
 export default function EditCardClient({ merchant }: { merchant: Merchant }) {
@@ -49,6 +50,8 @@ export default function EditCardClient({ merchant }: { merchant: Merchant }) {
   const [bannerUrl, setBannerUrl] = useState(merchant.banner_url || '')
   const [bannerPattern, setBannerPattern] = useState<string | null>(merchant.banner_pattern || null)
   const [bannerGenerating, setBannerGenerating] = useState(false)
+  const [stampColor, setStampColor] = useState(merchant.stamp_color || '#FFFFFF')
+  const [bannerRegenLoading, setBannerRegenLoading] = useState(false)
 
   const [logoUploading, setLogoUploading] = useState(false)
   const [bannerUploading, setBannerUploading] = useState(false)
@@ -60,6 +63,8 @@ export default function EditCardClient({ merchant }: { merchant: Merchant }) {
   const [saveError, setSaveError] = useState<string | null>(null)
   const saveTimeout = useRef<NodeJS.Timeout | null>(null)
   const [previewStamps, setPreviewStamps] = useState(0)
+  const stampsRegenTimeout = useRef<NodeJS.Timeout | null>(null)
+  const isFirstStampsRender = useRef(true)
 
   function triggerSave(overrides?: Record<string, unknown>) {
     if (saveTimeout.current) clearTimeout(saveTimeout.current)
@@ -157,6 +162,59 @@ export default function EditCardClient({ merchant }: { merchant: Merchant }) {
       setBannerGenerating(false)
     }
   }
+
+  async function handleSelectStampColor(hex: string) {
+    setStampColor(hex)
+    setBannerGenerating(true)
+    setSaveError(null)
+    try {
+      const res = await fetch('/api/merchant/generate-banner', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ primaryColor: colorRef.current, bannerPattern, stampsCount: previewStamps, stampsRequired, stampColor: hex }),
+      })
+      const data = await res.json()
+      if (res.ok && data.banner_url) {
+        setBannerUrl(data.banner_url)
+        await performSave({ banner_url: data.banner_url, stamp_color: hex })
+      } else {
+        setSaveError(data?.error ?? 'Génération de la bannière échouée')
+      }
+    } catch {
+      setSaveError('Erreur réseau. Veuillez réessayer.')
+    } finally {
+      setBannerGenerating(false)
+    }
+  }
+
+  // Régénère la bannière avec le nouveau nombre de tampons à chaque changement
+  // du contrôle d'aperçu (debounced, désactivé tant qu'aucune bannière interactive).
+  useEffect(() => {
+    if (!bannerPattern) return
+    if (isFirstStampsRender.current) {
+      isFirstStampsRender.current = false
+      return
+    }
+    if (stampsRegenTimeout.current) clearTimeout(stampsRegenTimeout.current)
+    stampsRegenTimeout.current = setTimeout(async () => {
+      setBannerRegenLoading(true)
+      try {
+        const res = await fetch('/api/merchant/generate-banner', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ primaryColor: colorRef.current, bannerPattern, stampsCount: previewStamps, stampsRequired, stampColor }),
+        })
+        const data = await res.json()
+        if (res.ok && data.banner_url) setBannerUrl(data.banner_url)
+      } catch {
+        // l'aperçu reste sur l'image précédente
+      } finally {
+        setBannerRegenLoading(false)
+      }
+    }, 500)
+    return () => { if (stampsRegenTimeout.current) clearTimeout(stampsRegenTimeout.current) }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [previewStamps])
 
   const inputClass = 'w-full border border-[#E8E8E3] rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#6C47FF]/20 focus:border-[#6C47FF] outline-none bg-white transition-all'
   const labelClass = 'text-sm font-medium text-[#1A1A1A] block mb-1.5'
@@ -325,6 +383,8 @@ export default function EditCardClient({ merchant }: { merchant: Merchant }) {
               bannerPattern={bannerPattern}
               generating={bannerGenerating}
               onSelectPattern={handleSelectPattern}
+              stampColor={stampColor}
+              onSelectStampColor={handleSelectStampColor}
               photoSlot={
                 <label className="block cursor-pointer">
                   <div className="bg-[#F7F6F3] border-2 border-dashed border-[#E8E8E3] rounded-xl p-6 text-center hover:border-[#6C47FF] transition-colors">
@@ -360,20 +420,27 @@ export default function EditCardClient({ merchant }: { merchant: Merchant }) {
         {/* Right column: live preview */}
         <div className="order-first lg:order-last flex flex-col items-center gap-3 lg:sticky lg:top-6">
           <p className="text-xs font-semibold text-[#6B6B6B] uppercase tracking-wider">Aperçu en temps réel</p>
-          <LoyaltyCardMockup
-            primaryColor={color}
-            businessName={businessName || 'Mon Commerce'}
-            loyaltyType={loyaltyType}
-            stampsRequired={stampsRequired}
-            pointsRequired={pointsRequired || 100}
-            loyaltyRule={loyaltyRule || 'Votre récompense'}
-            logoUrl={logoUrl || undefined}
-            bannerUrl={bannerUrl || undefined}
-            currentStamps={previewStamps}
-            currentPoints={Math.round((pointsRequired || 100) * 0.6)}
-            cardId={merchant.id}
-            width="min(320px, 100%)"
-          />
+          <div className={`relative transition-opacity ${bannerRegenLoading ? 'opacity-60' : ''}`}>
+            <LoyaltyCardMockup
+              primaryColor={color}
+              businessName={businessName || 'Mon Commerce'}
+              loyaltyType={loyaltyType}
+              stampsRequired={stampsRequired}
+              pointsRequired={pointsRequired || 100}
+              loyaltyRule={loyaltyRule || 'Votre récompense'}
+              logoUrl={logoUrl || undefined}
+              bannerUrl={bannerUrl || undefined}
+              currentStamps={previewStamps}
+              currentPoints={Math.round((pointsRequired || 100) * 0.6)}
+              cardId={merchant.id}
+              width="min(320px, 100%)"
+            />
+            {bannerRegenLoading && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-6 h-6 border-2 border-[#6C47FF] border-t-transparent rounded-full animate-spin" />
+              </div>
+            )}
+          </div>
           <div className="flex items-center gap-3">
             <span className="text-xs text-[#6B6B6B]">Aperçu tampons</span>
             <button

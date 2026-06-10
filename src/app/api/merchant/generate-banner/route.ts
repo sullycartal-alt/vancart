@@ -38,7 +38,7 @@ export async function POST(request: Request) {
   // Authoritative merchant branding (used as fallback when not supplied in body).
   const { data: merchant } = await service
     .from('merchants')
-    .select('id, primary_color, banner_pattern, stamps_required')
+    .select('id, primary_color, banner_pattern, stamps_required, stamp_color')
     .eq('id', merchantId)
     .single()
   if (!merchant) return NextResponse.json({ error: 'Merchant not found' }, { status: 404 })
@@ -54,10 +54,13 @@ export async function POST(request: Request) {
     ? body.stampsRequired
     : (merchant.stamps_required ?? 9)
 
+  const rawStampColor = typeof body.stampColor === 'string' ? body.stampColor : merchant.stamp_color
+  const stampColor = HEX.test(rawStampColor ?? '') ? rawStampColor : '#FFFFFF'
+
   let png: Buffer
   try {
     const base = sharp(Buffer.from(bannerSvg(primaryColor, pattern)))
-    const stampsLayer = Buffer.from(stampsRowSvg(primaryColor, stampsCount, stampsRequired))
+    const stampsLayer = Buffer.from(stampsRowSvg(primaryColor, stampColor, stampsCount, stampsRequired))
     png = await base.composite([{ input: stampsLayer }]).png().toBuffer()
   } catch (e) {
     console.error('[generate-banner] render failed:', e)

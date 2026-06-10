@@ -10,8 +10,9 @@ export function triggerBannerRegen(params: {
   bannerPattern: string | null
   stampsCount?: number
   stampsRequired?: number | null
+  stampColor?: string | null
 }): void {
-  const { merchantId, primaryColor, bannerPattern, stampsCount, stampsRequired } = params
+  const { merchantId, primaryColor, bannerPattern, stampsCount, stampsRequired, stampColor } = params
   if (!bannerPattern) return
 
   const base = process.env.NEXT_PUBLIC_APP_URL
@@ -21,6 +22,6 @@ export function triggerBannerRegen(params: {
   fetch(`${base}/api/merchant/generate-banner`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'x-internal-key': internalKey },
-    body: JSON.stringify({ merchantId, primaryColor, bannerPattern, stampsCount, stampsRequired }),
+    body: JSON.stringify({ merchantId, primaryColor, bannerPattern, stampsCount, stampsRequired, stampColor }),
   }).catch(() => {})
 }

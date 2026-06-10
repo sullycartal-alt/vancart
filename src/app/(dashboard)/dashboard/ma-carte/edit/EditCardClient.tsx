@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { ImagePlus, Check, Target, Star } from 'lucide-react'
 import LoyaltyCardMockup from '@/components/loyalty/LoyaltyCardMockup'
 import LogoDominantColors from '@/components/loyalty/LogoDominantColors'
+import BannerPicker from '@/components/loyalty/BannerPicker'
+import type { BannerPattern } from '@/lib/banner-patterns'
 
 const PRESET_COLORS = [
   { name: 'VanCart',     hex: '#6C47FF' },
@@ -32,6 +34,7 @@ interface Merchant {
   points_per_euro: number | null
   logo_url: string | null
   banner_url: string | null
+  banner_pattern: string | null
 }
 
 export default function EditCardClient({ merchant }: { merchant: Merchant }) {
@@ -44,6 +47,8 @@ export default function EditCardClient({ merchant }: { merchant: Merchant }) {
   const [loyaltyRule, setLoyaltyRule] = useState(merchant.loyalty_rule || '')
   const [logoUrl, setLogoUrl] = useState(merchant.logo_url || '')
   const [bannerUrl, setBannerUrl] = useState(merchant.banner_url || '')
+  const [bannerPattern, setBannerPattern] = useState<string | null>(merchant.banner_pattern || null)
+  const [bannerGenerating, setBannerGenerating] = useState(false)
 
   const [logoUploading, setLogoUploading] = useState(false)
   const [bannerUploading, setBannerUploading] = useState(false)
@@ -119,10 +124,37 @@ export default function EditCardClient({ merchant }: { merchant: Merchant }) {
     const data = await res.json()
     if (res.ok) {
       setBannerUrl(data.url)
-      await performSave({ banner_url: data.url })
+      setBannerPattern(null)
+      // Clearing banner_pattern switches back to photo mode so stamps no longer
+      // regenerate (and overwrite) the uploaded photo.
+      await performSave({ banner_url: data.url, banner_pattern: null })
     }
     setBannerUploading(false)
     if (bannerInputRef.current) bannerInputRef.current.value = ''
+  }
+
+  async function handleSelectPattern(pattern: BannerPattern) {
+    setBannerGenerating(true)
+    setSaveError(null)
+    setBannerPattern(pattern)
+    try {
+      const res = await fetch('/api/merchant/generate-banner', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ primaryColor: colorRef.current, bannerPattern: pattern }),
+      })
+      const data = await res.json()
+      if (res.ok && data.banner_url) {
+        setBannerUrl(data.banner_url)
+        await performSave({ banner_url: data.banner_url, banner_pattern: pattern })
+      } else {
+        setSaveError(data?.error ?? 'Génération de la bannière échouée')
+      }
+    } catch {
+      setSaveError('Erreur réseau. Veuillez réessayer.')
+    } finally {
+      setBannerGenerating(false)
+    }
   }
 
   const inputClass = 'w-full border border-[#E8E8E3] rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#6C47FF]/20 focus:border-[#6C47FF] outline-none bg-white transition-all'
@@ -286,29 +318,37 @@ export default function EditCardClient({ merchant }: { merchant: Merchant }) {
 
           {/* Banner */}
           <div className="bg-white border border-[#E8E8E3] rounded-2xl p-5 space-y-3">
-            <label className={labelClass}>Photo bannière</label>
-            <label className="block cursor-pointer">
-              <div className="bg-[#F7F6F3] border-2 border-dashed border-[#E8E8E3] rounded-xl p-6 text-center hover:border-[#6C47FF] transition-colors">
-                {bannerUploading ? (
-                  <div className="flex flex-col items-center gap-2">
-                    <div className="w-6 h-6 border-2 border-[#6C47FF] border-t-transparent rounded-full animate-spin" />
-                    <span className="text-sm text-[#6B6B6B]">Envoi en cours…</span>
+            <label className={labelClass}>Bannière</label>
+            <BannerPicker
+              primaryColor={color}
+              bannerPattern={bannerPattern}
+              generating={bannerGenerating}
+              onSelectPattern={handleSelectPattern}
+              photoSlot={
+                <label className="block cursor-pointer">
+                  <div className="bg-[#F7F6F3] border-2 border-dashed border-[#E8E8E3] rounded-xl p-6 text-center hover:border-[#6C47FF] transition-colors">
+                    {bannerUploading ? (
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="w-6 h-6 border-2 border-[#6C47FF] border-t-transparent rounded-full animate-spin" />
+                        <span className="text-sm text-[#6B6B6B]">Envoi en cours…</span>
+                      </div>
+                    ) : bannerUrl && !bannerPattern ? (
+                      <div className="flex flex-col items-center gap-2">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={bannerUrl} alt="" className="w-full max-w-xs h-16 object-cover rounded-xl border border-[#E8E8E3]" />
+                        <span className="text-sm text-[#6C47FF] font-medium">Changer la photo</span>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center gap-2">
+                        <ImagePlus className="w-7 h-7 text-[#6B6B6B]" strokeWidth={1.5} />
+                        <span className="text-sm text-[#6B6B6B]">Cliquez pour uploader</span>
+                      </div>
+                    )}
                   </div>
-                ) : bannerUrl ? (
-                  <div className="flex flex-col items-center gap-2">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={bannerUrl} alt="" className="w-full max-w-xs h-16 object-cover rounded-xl border border-[#E8E8E3]" />
-                    <span className="text-sm text-[#6C47FF] font-medium">Changer la photo</span>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center gap-2">
-                    <ImagePlus className="w-7 h-7 text-[#6B6B6B]" strokeWidth={1.5} />
-                    <span className="text-sm text-[#6B6B6B]">Cliquez pour uploader</span>
-                  </div>
-                )}
-              </div>
-              <input ref={bannerInputRef} type="file" accept="image/*" onChange={handleBannerUpload} className="hidden" />
-            </label>
+                  <input ref={bannerInputRef} type="file" accept="image/*" onChange={handleBannerUpload} className="hidden" />
+                </label>
+              }
+            />
           </div>
 
           {saveError && (

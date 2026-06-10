@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { getCaisseSession } from '@/lib/caisse/session'
 import { createServiceClient } from '@/lib/supabase/service'
 import { isConfigured, updateWalletPass } from '@/lib/google-wallet'
+import { triggerBannerRegen } from '@/lib/banner'
 
 const schema = z.object({ qr_code: z.string().min(1), slug: z.string().min(1) })
 
@@ -41,7 +42,7 @@ export async function POST(request: Request) {
 
   const { data: merchant } = await service
     .from('merchants')
-    .select('stamps_required, loyalty_rule')
+    .select('id, stamps_required, loyalty_rule, primary_color, banner_pattern')
     .eq('id', session.merchantId)
     .single()
   const required = merchant?.stamps_required ?? 10
@@ -82,6 +83,15 @@ export async function POST(request: Request) {
       // ne jamais casser le flux de tampon
     }
   }
+
+  // Rafraîchit la bannière interactive en arrière-plan (non bloquant).
+  triggerBannerRegen({
+    merchantId: session.merchantId,
+    primaryColor: merchant?.primary_color ?? null,
+    bannerPattern: merchant?.banner_pattern ?? null,
+    stampsCount: newCount,
+    stampsRequired: required,
+  })
 
   return NextResponse.json({
     success: true,

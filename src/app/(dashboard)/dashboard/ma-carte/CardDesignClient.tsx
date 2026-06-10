@@ -89,6 +89,7 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
 
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
+  const [previewStamps, setPreviewStamps] = useState(0)
 
   async function saveField(fields: Record<string, unknown>): Promise<boolean> {
     setSaving(true)
@@ -245,11 +246,36 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
       loyaltyRule={loyaltyRule || 'Votre récompense'}
       logoUrl={logoUrl || undefined}
       bannerUrl={bannerUrl || undefined}
-      currentStamps={5}
+      currentStamps={previewStamps}
       currentPoints={Math.round((pointsRequired || 100) * 0.6)}
       cardId={merchant.id}
       width="min(320px, 100%)"
     />
+  )
+
+  const stampsPreviewControl = (
+    <div className="flex items-center gap-3">
+      <span className="text-xs text-[#6B6B6B]">Aperçu tampons</span>
+      <button
+        type="button"
+        onClick={() => setPreviewStamps(s => Math.max(0, s - 1))}
+        className="w-7 h-7 rounded-full bg-[#F0EFEC] text-[#6B6B6B] text-sm font-semibold flex items-center justify-center hover:bg-[#E8E8E3] transition-colors"
+        aria-label="Retirer un tampon"
+      >
+        −
+      </button>
+      <span className="text-sm font-medium text-[#6B6B6B] tabular-nums min-w-[3.5rem] text-center">
+        {previewStamps} / {stampsRequired}
+      </span>
+      <button
+        type="button"
+        onClick={() => setPreviewStamps(s => Math.min(stampsRequired, s + 1))}
+        className="w-7 h-7 rounded-full bg-[#F0EFEC] text-[#6B6B6B] text-sm font-semibold flex items-center justify-center hover:bg-[#E8E8E3] transition-colors"
+        aria-label="Ajouter un tampon"
+      >
+        +
+      </button>
+    </div>
   )
 
   // ── Completed card view ──────────────────────────────────────────────────
@@ -357,7 +383,10 @@ export default function CardDesignClient({ merchant }: { merchant: Merchant }) {
               {saving ? 'Enregistrement…' : <span className="inline-flex items-center gap-2">Enregistrer ma carte <PartyPopper className="size-4" strokeWidth={1.9} /></span>}
             </button>
           </div>
-          <div className="order-first lg:order-last flex justify-center">{cardPreview}</div>
+          <div className="order-first lg:order-last flex flex-col items-center gap-3">
+            {cardPreview}
+            {stampsPreviewControl}
+          </div>
         </div>
       </div>
     )

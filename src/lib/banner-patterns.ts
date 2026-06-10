@@ -65,6 +65,35 @@ export function bannerSvg(primaryColor: string, pattern: BannerPattern): string 
     `<rect width="1000" height="400" fill="${primaryColor}"/>${tiles}</svg>`
 }
 
+const STAMP_DIAMETER = 65
+const STAMP_GAP = 20
+const STAMP_CY = 300
+const MAX_STAMPS = 12
+
+// Transparent 1000×400 SVG overlay drawing a centered horizontal row of stamp
+// circles (filled = active stamp, empty = remaining slot). Composited as a
+// separate layer over the background + pattern banner.
+export function stampsRowSvg(primaryColor: string, stampsCount: number, stampsRequired: number): string {
+  const total = Math.min(Math.max(stampsRequired, 1), MAX_STAMPS)
+  const filled = Math.min(Math.max(stampsCount, 0), total)
+  const r = STAMP_DIAMETER / 2
+  const rowWidth = total * STAMP_DIAMETER + (total - 1) * STAMP_GAP
+  const startX = (1000 - rowWidth) / 2
+
+  let circles = ''
+  for (let i = 0; i < total; i++) {
+    const cx = startX + i * (STAMP_DIAMETER + STAMP_GAP) + r
+    if (i < filled) {
+      circles += `<circle cx="${cx}" cy="${STAMP_CY}" r="${r}" fill="#fff" fill-opacity="0.95"/>` +
+        `<circle cx="${cx}" cy="${STAMP_CY}" r="20" fill="${primaryColor}"/>`
+    } else {
+      circles += `<circle cx="${cx}" cy="${STAMP_CY}" r="${r - 1}" fill="none" stroke="#fff" stroke-opacity="0.3" stroke-width="2"/>`
+    }
+  }
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="400" viewBox="0 0 1000 400">${circles}</svg>`
+}
+
 // Transparent 80×80 motif tile as a data URI, used as a CSS background for the
 // client-side preview tiles (rendered over a primaryColor background).
 export function patternTileDataUri(pattern: BannerPattern): string {

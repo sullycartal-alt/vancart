@@ -36,6 +36,7 @@ interface Merchant {
   banner_url: string | null
   banner_pattern: string | null
   stamp_color: string | null
+  stamp_icon: string | null
 }
 
 export default function EditCardClient({ merchant }: { merchant: Merchant }) {
@@ -51,6 +52,7 @@ export default function EditCardClient({ merchant }: { merchant: Merchant }) {
   const [bannerPattern, setBannerPattern] = useState<string | null>(merchant.banner_pattern || null)
   const [bannerGenerating, setBannerGenerating] = useState(false)
   const [stampColor, setStampColor] = useState(merchant.stamp_color || '#FFFFFF')
+  const [stampIcon, setStampIcon] = useState<'check' | 'star'>(merchant.stamp_icon === 'star' ? 'star' : 'check')
   const [bannerRegenLoading, setBannerRegenLoading] = useState(false)
 
   const [logoUploading, setLogoUploading] = useState(false)
@@ -171,12 +173,36 @@ export default function EditCardClient({ merchant }: { merchant: Merchant }) {
       const res = await fetch('/api/merchant/generate-banner', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ primaryColor: colorRef.current, bannerPattern, stampsCount: previewStamps, stampsRequired, stampColor: hex }),
+        body: JSON.stringify({ primaryColor: colorRef.current, bannerPattern, stampsCount: previewStamps, stampsRequired, stampColor: hex, stampIcon }),
       })
       const data = await res.json()
       if (res.ok && data.banner_url) {
         setBannerUrl(data.banner_url)
         await performSave({ banner_url: data.banner_url, stamp_color: hex })
+      } else {
+        setSaveError(data?.error ?? 'Génération de la bannière échouée')
+      }
+    } catch {
+      setSaveError('Erreur réseau. Veuillez réessayer.')
+    } finally {
+      setBannerGenerating(false)
+    }
+  }
+
+  async function handleSelectStampIcon(icon: 'check' | 'star') {
+    setStampIcon(icon)
+    setBannerGenerating(true)
+    setSaveError(null)
+    try {
+      const res = await fetch('/api/merchant/generate-banner', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ primaryColor: colorRef.current, bannerPattern, stampsCount: previewStamps, stampsRequired, stampColor, stampIcon: icon }),
+      })
+      const data = await res.json()
+      if (res.ok && data.banner_url) {
+        setBannerUrl(data.banner_url)
+        await performSave({ banner_url: data.banner_url, stamp_icon: icon })
       } else {
         setSaveError(data?.error ?? 'Génération de la bannière échouée')
       }
@@ -202,7 +228,7 @@ export default function EditCardClient({ merchant }: { merchant: Merchant }) {
         const res = await fetch('/api/merchant/generate-banner', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ primaryColor: colorRef.current, bannerPattern, stampsCount: previewStamps, stampsRequired, stampColor }),
+          body: JSON.stringify({ primaryColor: colorRef.current, bannerPattern, stampsCount: previewStamps, stampsRequired, stampColor, stampIcon }),
         })
         const data = await res.json()
         if (res.ok && data.banner_url) setBannerUrl(data.banner_url)
@@ -385,6 +411,8 @@ export default function EditCardClient({ merchant }: { merchant: Merchant }) {
               onSelectPattern={handleSelectPattern}
               stampColor={stampColor}
               onSelectStampColor={handleSelectStampColor}
+              stampIcon={stampIcon}
+              onSelectStampIcon={handleSelectStampIcon}
               photoSlot={
                 <label className="block cursor-pointer">
                   <div className="bg-[#F7F6F3] border-2 border-dashed border-[#E8E8E3] rounded-xl p-6 text-center hover:border-[#6C47FF] transition-colors">

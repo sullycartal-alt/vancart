@@ -12,6 +12,11 @@ const STAMP_COLOR_PRESETS = [
   { name: 'Rouge', hex: '#E63946' },
 ]
 
+const STAMP_ICON_OPTIONS = [
+  { id: 'check' as const, label: '✓ Validation' },
+  { id: 'star' as const, label: '★ Étoile' },
+]
+
 interface BannerPickerProps {
   primaryColor: string
   bannerPattern: string | null
@@ -19,6 +24,8 @@ interface BannerPickerProps {
   onSelectPattern: (pattern: BannerPattern) => void
   stampColor: string
   onSelectStampColor: (hex: string) => void
+  stampIcon: 'check' | 'star'
+  onSelectStampIcon: (icon: 'check' | 'star') => void
   /** Existing photo-upload UI, rendered as-is under the "Photo" tab. */
   photoSlot: React.ReactNode
 }
@@ -30,6 +37,8 @@ export default function BannerPicker({
   onSelectPattern,
   stampColor,
   onSelectStampColor,
+  stampIcon,
+  onSelectStampIcon,
   photoSlot,
 }: BannerPickerProps) {
   const [tab, setTab] = useState<'photo' | 'interactive'>(bannerPattern ? 'interactive' : 'photo')
@@ -107,6 +116,28 @@ export default function BannerPicker({
                     aria-label={name}
                     aria-pressed={stampColor.toLowerCase() === hex.toLowerCase()}
                   />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {bannerPattern && (
+            <div className="pt-3 border-t border-[#E8E8E3] space-y-2">
+              <p className="text-xs font-medium text-[#1A1A1A]">Icône du tampon</p>
+              <div className="flex gap-2">
+                {STAMP_ICON_OPTIONS.map(({ id, label }) => (
+                  <button
+                    key={id}
+                    type="button"
+                    onClick={() => onSelectStampIcon(id)}
+                    disabled={generating}
+                    className={`flex-1 py-2 rounded-lg text-sm font-medium border transition-all disabled:opacity-60 disabled:cursor-not-allowed ${
+                      stampIcon === id ? 'border-[#6C47FF] bg-[#6C47FF]/5 text-[#6C47FF]' : 'border-[#E8E8E3] text-[#6B6B6B]'
+                    }`}
+                    aria-pressed={stampIcon === id}
+                  >
+                    {label}
+                  </button>
                 ))}
               </div>
             </div>

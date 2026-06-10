@@ -27,6 +27,7 @@ const merchantSchema = z.object({
   banner_url: z.string().nullable().optional(),
   banner_pattern: z.enum(['none', 'hearts', 'confetti', 'waves', 'dots', 'stars']).nullable().optional(),
   stamp_color: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Must be a valid hex color').nullable().optional(),
+  stamp_icon: z.enum(['check', 'star']).nullable().optional(),
   allow_multiple_stamps: z.boolean().optional(),
   min_minutes_between_stamps: z.number().int().min(0).max(1440).optional(),
   stamps_per_visit: z.number().int().min(1).max(10).optional(),

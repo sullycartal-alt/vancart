@@ -65,65 +65,106 @@ export function bannerSvg(primaryColor: string, pattern: BannerPattern): string 
     `<rect width="1000" height="400" fill="${primaryColor}"/>${tiles}</svg>`
 }
 
-const STAMP_DIAMETER = 60
-const STAMP_GAP = 18
-const STAMP_INNER_DIAMETER = 36
+export type StampIcon = 'check' | 'star'
+
 const CANVAS_W = 1000
 const CANVAS_H = 400
-const SIDE_MARGIN = 20
-const BOTTOM_MARGIN = 15
-const ONE_ROW_CY = 280
-const TOP_ROW_CY = 240
-const BOTTOM_ROW_CY = 310
+const MAX_DIAMETER = 140
+const ONE_ROW_CY = 220
+const TOP_ROW_CY = 175
+const ROW_GAP = 30
+const BOTTOM_MARGIN = 20
+const TWO_ROW_MAX_DIAMETER = (CANVAS_H - BOTTOM_MARGIN - TOP_ROW_CY - ROW_GAP) / 1.5
 
-// Renders a single horizontal row of `count` stamp circles centered
-// horizontally, shrinking the diameter if needed so the row fits within
-// CANVAS_W minus the side margins.
-function stampsRow(count: number, filled: number, cy: number, primaryColor: string, stampColor: string): string {
-  const maxWidth = CANVAS_W - 2 * SIDE_MARGIN
-  const naturalWidth = count * STAMP_DIAMETER + (count - 1) * STAMP_GAP
-  const diameter = naturalWidth > maxWidth
-    ? (maxWidth - (count - 1) * STAMP_GAP) / count
-    : STAMP_DIAMETER
+function computeDiameter(perRow: number): number {
+  return Math.min(MAX_DIAMETER, Math.floor((CANVAS_W - 80) / perRow) - 20)
+}
+
+// Checkmark centered at (cx, cy), sized to fit within `size`.
+function checkIconSvg(cx: number, cy: number, size: number, color: string): string {
+  const half = size / 2
+  const x1 = cx - half, y1 = cy + half * 0.05
+  const x2 = cx - half * 0.2, y2 = cy + half
+  const x3 = cx + half, y3 = cy - half * 0.7
+  return `<path d="M${x1.toFixed(2)} ${y1.toFixed(2)} L${x2.toFixed(2)} ${y2.toFixed(2)} L${x3.toFixed(2)} ${y3.toFixed(2)}" ` +
+    `fill="none" stroke="${color}" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>`
+}
+
+// 5-point star centered at (cx, cy), sized to fit within `size`.
+function starIconSvg(cx: number, cy: number, size: number, color: string): string {
+  const outerR = size / 2
+  const innerR = outerR * 0.45
+  const points: string[] = []
+  for (let i = 0; i < 10; i++) {
+    const r = i % 2 === 0 ? outerR : innerR
+    const angle = (Math.PI / 5) * i - Math.PI / 2
+    points.push(`${(cx + r * Math.cos(angle)).toFixed(2)},${(cy + r * Math.sin(angle)).toFixed(2)}`)
+  }
+  return `<polygon points="${points.join(' ')}" fill="${color}"/>`
+}
+
+// Picks a dark or light icon color so it stays visible against the filled
+// stamp circle (white icons disappear on light stamp colors like #FFFFFF).
+function iconColorFor(stampColor: string): string {
+  const m = /^#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$/.exec(stampColor)
+  if (!m) return '#fff'
+  const [r, g, b] = m.slice(1).map(h => parseInt(h, 16))
+  const luminance = 0.299 * r + 0.587 * g + 0.114 * b
+  return luminance > 180 ? '#1A1A1A' : '#fff'
+}
+
+function stampIconSvg(cx: number, cy: number, diameter: number, icon: StampIcon, stampColor: string): string {
+  const color = iconColorFor(stampColor)
+  return icon === 'star' ? starIconSvg(cx, cy, diameter * 0.5, color) : checkIconSvg(cx, cy, diameter * 0.45, color)
+}
+
+// Renders a single horizontal row of `count` stamp circles, evenly spaced and
+// centered horizontally, sized to use the full banner width.
+function stampsRow(count: number, filled: number, cy: number, diameter: number, stampColor: string, stampIcon: StampIcon): string {
+  const spacing = diameter * 0.25
+  const startX = (CANVAS_W - count * (diameter + spacing)) / 2 + diameter / 2
   const r = diameter / 2
-  const innerR = Math.min(STAMP_INNER_DIAMETER / 2, r * 0.6)
-  const rowWidth = count * diameter + (count - 1) * STAMP_GAP
-  const startX = (CANVAS_W - rowWidth) / 2
-  const safeCy = Math.min(cy, CANVAS_H - BOTTOM_MARGIN - r)
 
   let circles = ''
   for (let i = 0; i < count; i++) {
-    const cx = startX + i * (diameter + STAMP_GAP) + r
+    const cx = startX + i * (diameter + spacing)
     if (i < filled) {
-      circles += `<circle cx="${cx}" cy="${safeCy}" r="${r}" fill="${stampColor}" fill-opacity="0.95"/>` +
-        `<circle cx="${cx}" cy="${safeCy}" r="${innerR}" fill="${primaryColor}"/>`
+      circles += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${stampColor}" fill-opacity="1"/>` +
+        stampIconSvg(cx, cy, diameter, stampIcon, stampColor)
     } else {
-      circles += `<circle cx="${cx}" cy="${safeCy}" r="${r - 1}" fill="none" stroke="${stampColor}" stroke-opacity="0.25" stroke-width="2"/>`
+      circles += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${stampColor}" fill-opacity="0.35"/>`
     }
   }
   return circles
 }
 
 // Transparent 1000×400 SVG overlay drawing the stamps as one or two centered
-// horizontal rows (filled = active stamp, empty = remaining slot). Composited
-// as a separate layer over the background + pattern banner.
-export function stampsRowSvg(primaryColor: string, stampColor: string, stampsCount: number, stampsRequired: number): string {
+// horizontal rows (filled = active stamp with icon, empty = faded slot).
+// Composited as a separate layer over the background + pattern banner.
+export function stampsRowSvg(stampColor: string, stampIcon: StampIcon, stampsCount: number, stampsRequired: number): string {
   const total = Math.max(stampsRequired, 1)
   const filled = Math.min(Math.max(stampsCount, 0), total)
 
   let circles: string
   if (total <= 5) {
-    circles = stampsRow(total, filled, ONE_ROW_CY, primaryColor, stampColor)
+    const diameter = computeDiameter(total)
+    circles = stampsRow(total, filled, ONE_ROW_CY, diameter, stampColor, stampIcon)
   } else {
     const topCount = Math.ceil(total / 2)
     const bottomCount = Math.floor(total / 2)
     const topFilled = Math.min(filled, topCount)
     const bottomFilled = Math.max(0, filled - topCount)
-    circles = stampsRow(topCount, topFilled, TOP_ROW_CY, primaryColor, stampColor) +
-      stampsRow(bottomCount, bottomFilled, BOTTOM_ROW_CY, primaryColor, stampColor)
+    const diameter = Math.min(computeDiameter(topCount), TWO_ROW_MAX_DIAMETER)
+    const bottomCy = TOP_ROW_CY + diameter + ROW_GAP
+    circles = stampsRow(topCount, topFilled, TOP_ROW_CY, diameter, stampColor, stampIcon) +
+      stampsRow(bottomCount, bottomFilled, bottomCy, diameter, stampColor, stampIcon)
   }
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="400" viewBox="0 0 1000 400">${circles}</svg>`
+}
+
+export function isStampIcon(value: unknown): value is StampIcon {
+  return value === 'check' || value === 'star'
 }
 
 // Transparent 80×80 motif tile as a data URI, used as a CSS background for the

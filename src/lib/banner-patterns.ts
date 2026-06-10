@@ -70,11 +70,6 @@ export type StampIcon = 'check' | 'star'
 const CANVAS_W = 1000
 const CANVAS_H = 400
 const MAX_DIAMETER = 140
-const ONE_ROW_CY = 220
-const TOP_ROW_CY = 175
-const ROW_GAP = 30
-const BOTTOM_MARGIN = 20
-const TWO_ROW_MAX_DIAMETER = (CANVAS_H - BOTTOM_MARGIN - TOP_ROW_CY - ROW_GAP) / 1.5
 
 function computeDiameter(perRow: number): number {
   return Math.min(MAX_DIAMETER, Math.floor((CANVAS_W - 80) / perRow) - 20)
@@ -148,15 +143,18 @@ export function stampsRowSvg(stampColor: string, stampIcon: StampIcon, stampsCou
   let circles: string
   if (total <= 5) {
     const diameter = computeDiameter(total)
-    circles = stampsRow(total, filled, ONE_ROW_CY, diameter, stampColor, stampIcon)
+    circles = stampsRow(total, filled, CANVAS_H / 2, diameter, stampColor, stampIcon)
   } else {
     const topCount = Math.ceil(total / 2)
     const bottomCount = Math.floor(total / 2)
     const topFilled = Math.min(filled, topCount)
     const bottomFilled = Math.max(0, filled - topCount)
-    const diameter = Math.min(computeDiameter(topCount), TWO_ROW_MAX_DIAMETER)
-    const bottomCy = TOP_ROW_CY + diameter + ROW_GAP
-    circles = stampsRow(topCount, topFilled, TOP_ROW_CY, diameter, stampColor, stampIcon) +
+    const diameter = computeDiameter(topCount)
+    const rowSpacing = diameter * 0.4
+    const totalHeight = 2 * diameter + rowSpacing
+    const topCy = (CANVAS_H - totalHeight) / 2 + diameter / 2
+    const bottomCy = topCy + diameter + rowSpacing
+    circles = stampsRow(topCount, topFilled, topCy, diameter, stampColor, stampIcon) +
       stampsRow(bottomCount, bottomFilled, bottomCy, diameter, stampColor, stampIcon)
   }
 

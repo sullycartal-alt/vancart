@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import Link from 'next/link'
 import { canAccess, type Plan, PLAN_FEATURES } from '@/lib/plan-features'
+import { RESTRICTIONS_ENABLED } from '@/lib/plan-config'
 
 const PLAN_LABELS: Record<'essential' | 'pro', string> = {
   essential: 'Essentiel',
@@ -99,7 +100,7 @@ interface Props {
 }
 
 export default function UpgradeGate({ plan, feature, requiredPlan, children }: Props) {
-  const locked = !canAccess(plan, feature)
+  const locked = RESTRICTIONS_ENABLED && !canAccess(plan, feature)
 
   useEffect(() => {
     if (!locked) return

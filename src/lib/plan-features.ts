@@ -38,13 +38,17 @@ export const PLAN_FEATURES = {
   },
 }
 
-function normalizePlan(raw: string | null | undefined): Plan {
-  const lower = (raw ?? '').toLowerCase()
-  if (lower === 'pro') return 'pro'
-  if (lower === 'essential' || lower === 'essentiel') return 'essential'
-  // covers 'free', 'découverte', 'decouverte', '' and any unknown value
-  return 'free'
+// TEMP: all accounts set to pro during market validation phase
+function normalizePlan(_raw: string | null | undefined): Plan {
+  return 'pro'
 }
+// function normalizePlan(raw: string | null | undefined): Plan {
+//   const lower = (raw ?? '').toLowerCase()
+//   if (lower === 'pro') return 'pro'
+//   if (lower === 'essential' || lower === 'essentiel') return 'essential'
+//   // covers 'free', 'découverte', 'decouverte', '' and any unknown value
+//   return 'free'
+// }
 
 export function effectivePlan(storedPlan: string | null | undefined, userEmail?: string | null): Plan {
   if (userEmail === ADMIN_EMAIL) return 'pro'

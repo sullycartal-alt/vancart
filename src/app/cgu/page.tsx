@@ -52,8 +52,8 @@ export default function CGUPage() {
             <p>VanCart propose plusieurs plans tarifaires :</p>
             <ul className="list-disc list-inside space-y-1 ml-2">
               <li><strong className="text-[#1A1A1A]">Plan Découverte (gratuit) :</strong> 30 jours d'essai gratuit, jusqu'à 50 clients, fonctionnalités de base</li>
-              <li><strong className="text-[#1A1A1A]">Plan Essentiel (29€/mois) :</strong> jusqu'à 500 clients, statistiques avancées, conseiller IA</li>
-              <li><strong className="text-[#1A1A1A]">Plan Pro (49€/mois) :</strong> clients illimités, notifications SMS, fonctionnalités avancées</li>
+              <li><strong className="text-[#1A1A1A]">Plan Essentiel (tarif à définir) :</strong> jusqu'à 500 clients, statistiques avancées, conseiller IA</li>
+              <li><strong className="text-[#1A1A1A]">Plan Pro (tarif à définir) :</strong> clients illimités, notifications SMS, fonctionnalités avancées</li>
             </ul>
             <p>
               Les abonnements payants sont sans engagement mensuel. Vous pouvez résilier à tout moment depuis votre espace commerçant. Aucun remboursement n'est effectué pour les périodes en cours.

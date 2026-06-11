@@ -170,12 +170,10 @@ async function ensureClass(
   const getRes = await fetch(`${API}/loyaltyClass/${encodeURIComponent(cId)}`, {
     headers: { Authorization: `Bearer ${token}` },
   })
-  console.log('[google-wallet] ensureClass GET status:', getRes.status)
   if (getRes.ok) return
 
   // Class not found — create it
   const body = classBody(cId, p)
-  console.log('[google-wallet] creating loyaltyClass…', JSON.stringify({ id: cId, issuerName: p.merchantName }))
   const postRes = await fetch(`${API}/loyaltyClass`, {
     method: 'POST',
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
@@ -186,7 +184,6 @@ async function ensureClass(
     console.error('[google-wallet] loyaltyClass POST failed:', postRes.status, detail)
     throw new Error(`Failed to create LoyaltyClass (${postRes.status}): ${detail}`)
   }
-  console.log('[google-wallet] loyaltyClass created, status:', postRes.status)
 }
 
 async function upsertObject(
@@ -200,13 +197,11 @@ async function upsertObject(
   },
 ) {
   const body = objectBody(oId, cId, p)
-  console.log('[google-wallet] upsertObject:', oId, 'state:', body.state)
 
   // Try GET first to decide between POST (create) and PUT (update)
   const getRes = await fetch(`${API}/loyaltyObject/${encodeURIComponent(oId)}`, {
     headers: { Authorization: `Bearer ${token}` },
   })
-  console.log('[google-wallet] loyaltyObject GET status:', getRes.status)
 
   if (getRes.ok) {
     // Object exists — update it
@@ -220,7 +215,6 @@ async function upsertObject(
       console.error('[google-wallet] loyaltyObject PUT failed:', putRes.status, detail)
       throw new Error(`Failed to update LoyaltyObject (${putRes.status}): ${detail}`)
     }
-    console.log('[google-wallet] loyaltyObject updated, status:', putRes.status)
   } else {
     // Object does not exist — create it
     const postRes = await fetch(`${API}/loyaltyObject`, {
@@ -233,7 +227,6 @@ async function upsertObject(
       console.error('[google-wallet] loyaltyObject POST failed:', postRes.status, detail)
       throw new Error(`Failed to create LoyaltyObject (${postRes.status}): ${detail}`)
     }
-    console.log('[google-wallet] loyaltyObject created, status:', postRes.status)
   }
 }
 

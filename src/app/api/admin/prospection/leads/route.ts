@@ -1,13 +1,12 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createServiceClient } from '@/lib/supabase/service'
-
-const ADMIN_EMAILS = ['sullycartal@gmail.com', 'audrey@vancart.fr']
+import { isAdminEmail } from '@/lib/admin-config'
 
 export async function GET() {
   const authClient = await createClient()
   const { data: { user } } = await authClient.auth.getUser()
-  if (!user?.email || !ADMIN_EMAILS.includes(user.email)) {
+  if (!isAdminEmail(user?.email)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

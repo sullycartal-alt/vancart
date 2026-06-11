@@ -1,6 +1,6 @@
-export type Plan = 'free' | 'essential' | 'pro'
+import { isAdminEmail } from './admin-config'
 
-export const ADMIN_EMAIL = 'sullycartal@gmail.com'
+export type Plan = 'free' | 'essential' | 'pro'
 
 export const PLAN_FEATURES = {
   free: {
@@ -51,7 +51,7 @@ function normalizePlan(_raw: string | null | undefined): Plan {
 // }
 
 export function effectivePlan(storedPlan: string | null | undefined, userEmail?: string | null): Plan {
-  if (userEmail === ADMIN_EMAIL) return 'pro'
+  if (isAdminEmail(userEmail)) return 'pro'
   return normalizePlan(storedPlan)
 }
 

@@ -2,16 +2,16 @@ import { createClient } from '@/lib/supabase/server'
 import { createServiceClient } from '@/lib/supabase/service'
 import { redirect } from 'next/navigation'
 import AdminClient from './AdminClient'
+import { isAdminEmail } from '@/lib/admin-config'
 
 export const dynamic = 'force-dynamic'
-const ADMIN_EMAIL = 'sullycartal@gmail.com' // primary admin for data access
 
 export default async function AdminPage() {
   // Auth check (layout also does it, belt-and-suspenders)
   const authClient = await createClient()
   const { data: { user } } = await authClient.auth.getUser()
   if (!user) redirect('/login')
-  if (user.email !== ADMIN_EMAIL) redirect('/dashboard')
+  if (!isAdminEmail(user.email)) redirect('/dashboard')
 
   const service = createServiceClient()
 

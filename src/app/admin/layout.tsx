@@ -4,15 +4,14 @@ import Link from 'next/link'
 import { LogoLockup } from '@/components/brand/Logo'
 import { Settings, Target } from 'lucide-react'
 import AdminMobileNav from './AdminMobileNav'
-
-const ADMIN_EMAILS = ['sullycartal@gmail.com', 'audrey@vancart.fr']
+import { isAdminEmail } from '@/lib/admin-config'
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) redirect('/login')
-  if (!user.email || !ADMIN_EMAILS.includes(user.email)) redirect('/dashboard')
+  if (!isAdminEmail(user.email)) redirect('/dashboard')
 
   return (
     <div className="min-h-screen bg-[#F7F6F3]">

@@ -19,6 +19,17 @@ export async function POST(request: Request) {
   const { customer_id, merchant_id, subscription } = parsed.data
   const service = createServiceClient()
 
+  const { data: card } = await service
+    .from('loyalty_cards')
+    .select('id')
+    .eq('customer_id', customer_id)
+    .eq('merchant_id', merchant_id)
+    .single()
+
+  if (!card) {
+    return NextResponse.json({ error: 'Carte de fidélité introuvable.' }, { status: 404 })
+  }
+
   const { error } = await service.from('push_subscriptions').upsert(
     { customer_id, merchant_id, subscription },
     { onConflict: 'endpoint,merchant_id' }

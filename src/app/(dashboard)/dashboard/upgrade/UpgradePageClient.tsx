@@ -151,8 +151,8 @@ export default function UpgradePageClient({ currentPlan }: Props) {
             <div>
               <h2 className="text-xl font-bold text-[#1A1A1A]">Essentiel</h2>
               <div className="mt-1.5">
-                <span className="text-3xl font-bold text-[#1A1A1A]">29€</span>
-                <span className="text-[#6B6B6B] text-sm"> / mois · Sans engagement</span>
+                <span className="text-3xl font-bold text-[#1A1A1A]">À définir</span>
+                <span className="text-[#6B6B6B] text-sm"> · Sans engagement</span>
               </div>
             </div>
 
@@ -203,8 +203,8 @@ export default function UpgradePageClient({ currentPlan }: Props) {
             <div>
               <h2 className="text-xl font-bold text-[#1A1A1A]">Pro</h2>
               <div className="mt-1.5">
-                <span className="text-3xl font-bold text-[#1A1A1A]">49€</span>
-                <span className="text-[#6B6B6B] text-sm"> / mois · Sans engagement</span>
+                <span className="text-3xl font-bold text-[#1A1A1A]">À définir</span>
+                <span className="text-[#6B6B6B] text-sm"> · Sans engagement</span>
               </div>
             </div>
 

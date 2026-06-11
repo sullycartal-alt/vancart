@@ -11,6 +11,7 @@ import NavSettingsHint from './NavSettingsHint'
 import CommerceTabBar from './CommerceTabBar'
 import { createClient } from '@/lib/supabase/server'
 import { effectivePlan, type Plan } from '@/lib/plan-features'
+import { RESTRICTIONS_ENABLED } from '@/lib/plan-config'
 import { Suspense } from 'react'
 import { redirect } from 'next/navigation'
 
@@ -55,12 +56,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <div className="min-h-screen bg-[#F7F6F3] flex flex-col" style={{ '--merchant-color': merchantColor } as React.CSSProperties}>
       {/* Trial banner — free plan only */}
-      {plan === 'free' && trialDaysLeft !== null && (
+      {RESTRICTIONS_ENABLED && plan === 'free' && trialDaysLeft !== null && (
         <TrialBanner daysLeft={trialDaysLeft} endDate={trialEndDate} />
       )}
 
       {/* Upgrade nudge — free plan with no active trial */}
-      {plan === 'free' && trialDaysLeft === null && (
+      {RESTRICTIONS_ENABLED && plan === 'free' && trialDaysLeft === null && (
         <div className="border-b border-[#6C47FF]/20 bg-[#6C47FF]/8 py-2 px-4 text-center">
           <span className="text-sm text-[#6C47FF]">
             <Sparkles size={14} strokeWidth={1.9} className="inline-block mr-1 text-[#6C47FF]" />Passez à Essentiel pour débloquer Google Wallet et les stats avancées{' '}
@@ -100,7 +101,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
                     Admin
                   </Link>
                 )}
-                {plan === 'free' && (
+                {RESTRICTIONS_ENABLED && plan === 'free' && (
                   <Link
                     href="/dashboard/upgrade"
                     className="px-3 py-1.5 text-sm font-semibold text-[#6C47FF] bg-[#6C47FF]/10 rounded-xl hover:bg-[#6C47FF]/20 transition-colors"
@@ -139,7 +140,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       </main>
 
       {/* Footer — subtle upgrade link for essential plan */}
-      {plan === 'essential' && (
+      {RESTRICTIONS_ENABLED && plan === 'essential' && (
         <div className="border-t border-[#E8E8E3] py-3 text-center">
           <Link href="/dashboard/upgrade" className="text-xs text-[#6B6B6B] hover:text-[#6C47FF] transition-colors">
             Passer au plan Pro → Clients illimités, SMS, multi-boutique
@@ -148,7 +149,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       )}
 
       <GuideHelper />
-      {plan === 'essential' && <ProNudge />}
+      {RESTRICTIONS_ENABLED && plan === 'essential' && <ProNudge />}
       <Suspense><ToastListener /></Suspense>
     </div>
   )

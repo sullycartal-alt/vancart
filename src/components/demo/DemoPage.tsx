@@ -101,8 +101,8 @@ const PLANS = [
   },
   {
     name: 'Essentiel',
-    price: '29€',
-    period: '/mois',
+    price: 'À définir',
+    period: '',
     sub: 'Sans engagement',
     features: ['1 carte de fidélité', "Jusqu'à 500 clients", 'Stats avancées', 'Support prioritaire'],
     cta: 'Choisir Essentiel',
@@ -111,8 +111,8 @@ const PLANS = [
   },
   {
     name: 'Pro',
-    price: '49€',
-    period: '/mois',
+    price: 'À définir',
+    period: '',
     sub: 'Sans engagement',
     features: ['Clients illimités', 'Conseiller IA Mistral 🇫🇷', 'Notifications push', 'Export données'],
     cta: 'Choisir Pro',

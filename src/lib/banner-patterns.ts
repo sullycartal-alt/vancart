@@ -69,7 +69,9 @@ export type StampIcon = 'check' | 'star'
 
 const CANVAS_W = 1000
 const CANVAS_H = 400
-const MAX_DIAMETER = 140
+const MAX_DIAMETER = 80
+const STAMP_SPACING = 20
+const ROW_SPACING = 24
 
 function computeDiameter(perRow: number): number {
   return Math.min(MAX_DIAMETER, Math.floor((CANVAS_W - 80) / perRow) - 20)
@@ -116,7 +118,7 @@ function stampIconSvg(cx: number, cy: number, diameter: number, icon: StampIcon,
 // Renders a single horizontal row of `count` stamp circles, evenly spaced and
 // centered horizontally, sized to use the full banner width.
 function stampsRow(count: number, filled: number, cy: number, diameter: number, stampColor: string, stampIcon: StampIcon): string {
-  const spacing = diameter * 0.25
+  const spacing = STAMP_SPACING
   const startX = (CANVAS_W - count * (diameter + spacing)) / 2 + diameter / 2
   const r = diameter / 2
 
@@ -150,7 +152,7 @@ export function stampsRowSvg(stampColor: string, stampIcon: StampIcon, stampsCou
     const topFilled = Math.min(filled, topCount)
     const bottomFilled = Math.max(0, filled - topCount)
     const diameter = computeDiameter(topCount)
-    const rowSpacing = diameter * 0.4
+    const rowSpacing = ROW_SPACING
     const totalHeight = 2 * diameter + rowSpacing
     const topCy = (CANVAS_H - totalHeight) / 2 + diameter / 2
     const bottomCy = topCy + diameter + rowSpacing

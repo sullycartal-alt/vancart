@@ -1,7 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
-
-const ADMIN_EMAIL = 'sullycartal@gmail.com'
+import { isAdminEmail } from '@/lib/admin-config'
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -49,7 +48,7 @@ export async function proxy(request: NextRequest) {
       return NextResponse.redirect(url)
     }
 
-    if (pathname.startsWith('/admin') && user.email !== ADMIN_EMAIL) {
+    if (pathname.startsWith('/admin') && !isAdminEmail(user.email)) {
       const url = request.nextUrl.clone()
       url.pathname = '/dashboard'
       return NextResponse.redirect(url)

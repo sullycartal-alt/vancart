@@ -30,6 +30,18 @@ export async function POST(request: Request) {
 
   const { phone, first_name, merchant_id } = parsed.data
 
+  if (merchant_id) {
+    const { data: merchant } = await service
+      .from('merchants')
+      .select('id')
+      .eq('id', merchant_id)
+      .single()
+
+    if (!merchant) {
+      return NextResponse.json({ error: 'Commerçant introuvable.' }, { status: 404 })
+    }
+  }
+
   const { data: existing } = await service
     .from('customers')
     .select('id, phone, first_name')

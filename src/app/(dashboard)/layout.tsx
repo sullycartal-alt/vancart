@@ -14,8 +14,7 @@ import { effectivePlan, type Plan } from '@/lib/plan-features'
 import { RESTRICTIONS_ENABLED } from '@/lib/plan-config'
 import { Suspense } from 'react'
 import { redirect } from 'next/navigation'
-
-const ADMIN_EMAIL = 'sullycartal@gmail.com'
+import { isAdminEmail } from '@/lib/admin-config'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
@@ -23,7 +22,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   if (!user) redirect('/login')
 
-  const isAdmin = user.email === ADMIN_EMAIL
+  const isAdmin = isAdminEmail(user.email)
 
   const { data: merchant } = await supabase
     .from('merchants')

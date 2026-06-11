@@ -41,8 +41,6 @@ export async function GET(request: Request) {
     processed_first_line: lines[0] ?? '',
     processed_last_line: lines[lines.length - 1] ?? '',
   }
-  console.log('[wallet/google] env check:', JSON.stringify(envCheck))
-
   if (!cardId) {
     return NextResponse.json({ error: 'card_id is required', debug: { envCheck } }, { status: 400 })
   }
@@ -58,7 +56,6 @@ export async function GET(request: Request) {
   }
 
   // ── Step 1: fetch card from Supabase ────────────────────────────────────────
-  console.log('[wallet/google] fetching card:', cardId)
   const service = createServiceClient()
   const { data: card, error: cardError } = await service
     .from('loyalty_cards')
@@ -73,7 +70,6 @@ export async function GET(request: Request) {
       { status: 404 },
     )
   }
-  console.log('[wallet/google] card found, stamps_count:', card.stamps_count)
 
   const merchant = Array.isArray(card.merchants) ? card.merchants[0] : card.merchants as {
     id: string; business_name: string; primary_color: string; loyalty_rule: string; stamps_required: number; logo_url: string | null
@@ -84,11 +80,9 @@ export async function GET(request: Request) {
   if (!merchant) {
     return NextResponse.json({ error: 'Merchant not found', debug: { envCheck } }, { status: 404 })
   }
-  console.log('[wallet/google] merchant:', merchant.business_name)
 
   // ── Step 2: build wallet URL ─────────────────────────────────────────────────
   try {
-    console.log('[wallet/google] calling buildGoogleWalletURL…')
     const customer = Array.isArray(card.customers) ? card.customers[0] : card.customers as { first_name: string } | null
     const customerName = customer?.first_name ?? 'Client'
 
@@ -108,7 +102,6 @@ export async function GET(request: Request) {
       instagramHandle: merchant.instagram_handle,
       showInstagram: merchant.show_instagram_on_card,
     })
-    console.log('[wallet/google] success, redirecting to pay.google.com')
     return NextResponse.redirect(url)
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err)

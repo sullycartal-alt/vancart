@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createServiceClient } from '@/lib/supabase/service'
-
-const ADMIN_EMAILS = ['sullycartal@gmail.com', 'audrey@vancart.fr']
+import { isAdminEmail } from '@/lib/admin-config'
 
 async function getAdminUser() {
   const authClient = await createClient()
   const { data: { user } } = await authClient.auth.getUser()
-  if (!user?.email || !ADMIN_EMAILS.includes(user.email)) return null
+  if (!isAdminEmail(user?.email)) return null
   return user
 }
 

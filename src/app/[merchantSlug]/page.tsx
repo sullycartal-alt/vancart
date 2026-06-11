@@ -19,7 +19,5 @@ export default async function MerchantLandingPage({ params }: Props) {
 
   if (error || !merchant) notFound()
 
-  console.log('logo_url:', merchant.logo_url)
-
   return <QRLandingClient merchant={merchant} />
 }

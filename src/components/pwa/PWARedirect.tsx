@@ -17,11 +17,12 @@ export default function PWARedirect() {
 
     if (!standalone) return
 
-    const hasCustomer = document.cookie
-      .split(';')
-      .some((c) => c.trim().startsWith('vancart_customer_id='))
-
-    if (hasCustomer) router.replace('/wallet')
+    fetch('/api/get-customer-id')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.customerId) router.replace('/wallet')
+      })
+      .catch(() => {})
   }, [router])
 
   // Render a neutral loading screen whenever we don't know yet (null) or are

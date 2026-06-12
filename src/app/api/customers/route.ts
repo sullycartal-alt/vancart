@@ -7,6 +7,7 @@ const customerSchema = z.object({
   phone: z.string().min(8, 'Le numéro de téléphone est trop court.').max(20, 'Le numéro de téléphone est trop long.'),
   first_name: z.string().min(1, 'Le prénom est requis.').max(50, 'Le prénom est trop long.'),
   merchant_id: z.string().uuid().optional(),
+  email: z.string().email('Email invalide').max(255).optional().or(z.literal('')),
 })
 
 export async function POST(request: Request) {
@@ -28,7 +29,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
   }
 
-  const { phone, first_name, merchant_id } = parsed.data
+  const { phone, first_name, merchant_id, email } = parsed.data
 
   if (merchant_id) {
     const { data: merchant } = await service
@@ -49,6 +50,15 @@ export async function POST(request: Request) {
     .single()
 
   if (existing) {
+    // Backfill email only if provided and not already set
+    if (email) {
+      await service
+        .from('customers')
+        .update({ email })
+        .eq('id', existing.id)
+        .is('email', null)
+    }
+
     // If merchant_id provided, check for duplicate loyalty card
     if (merchant_id) {
       const { data: existingCard } = await service
@@ -70,7 +80,7 @@ export async function POST(request: Request) {
 
   const { data, error } = await service
     .from('customers')
-    .insert({ phone, first_name })
+    .insert({ phone, first_name, ...(email ? { email } : {}) })
     .select()
     .single()
 

@@ -109,9 +109,11 @@ export default function CardClient({ initialCard, customerId, merchantId }: {
   }, [])
 
   useEffect(() => {
-    const maxAge = 60 * 60 * 24 * 365
-    const secure = location.protocol === 'https:' ? '; Secure' : ''
-    document.cookie = `vancart_customer_id=${customerId}; max-age=${maxAge}; path=/; SameSite=Lax${secure}`
+    fetch('/api/set-customer-cookie', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ customerId }),
+    })
   }, [customerId])
 
   useEffect(() => {

@@ -9,6 +9,7 @@ import { Target, Bookmark, WalletCards } from 'lucide-react'
 const customerSchema = z.object({
   phone: z.string().min(8, 'Numéro de téléphone invalide'),
   first_name: z.string().min(1, 'Le prénom est requis'),
+  email: z.string().email('Email invalide').optional().or(z.literal('')),
 })
 
 type CustomerFormData = z.infer<typeof customerSchema>
@@ -155,7 +156,12 @@ export default function QRLandingClient({ merchant }: Props) {
       const customerRes = await fetch('/api/customers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: data.phone, first_name: data.first_name, merchant_id: merchant.id }),
+        body: JSON.stringify({
+          phone: data.phone,
+          first_name: data.first_name,
+          merchant_id: merchant.id,
+          ...(data.email ? { email: data.email } : {}),
+        }),
       })
 
       if (!customerRes.ok) {
@@ -400,6 +406,27 @@ export default function QRLandingClient({ merchant }: Props) {
               />
               {errors.first_name && (
                 <p className="mt-1.5 text-xs text-red-500">{errors.first_name.message}</p>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="email" className="block mb-1.5 text-sm text-gray-700">
+                Email <span className="text-gray-400">(optionnel)</span>
+              </label>
+              <input
+                {...register('email')}
+                type="email"
+                id="email"
+                placeholder="votre@email.com"
+                autoComplete="email"
+                className="block w-full px-4 py-3.5 text-base text-gray-900 rounded-xl border border-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all"
+                style={{
+                  background: '#F8F7FF',
+                  '--tw-ring-color': `${color}55`,
+                } as React.CSSProperties}
+              />
+              {errors.email && (
+                <p className="mt-1.5 text-xs text-red-500">{errors.email.message}</p>
               )}
             </div>
 

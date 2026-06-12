@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/service'
 import { checkRateLimit, getClientIp } from '@/lib/rate-limit'
 import { NextResponse } from 'next/server'
 import { Mistral } from '@mistralai/mistralai'
@@ -42,15 +43,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Mistral non configuré' }, { status: 501 })
   }
 
-  const { messages, merchantContext, systemPromptOverride } = await request.json() as {
+  const { messages, systemPromptOverride } = await request.json() as {
     messages: { role: 'user' | 'model'; content: string }[]
-    merchantContext?: {
-      business_name?: string
-      loyalty_rule?: string
-      stamps_required?: number
-      points_required?: number | null
-      loyalty_type?: string
-    }
     systemPromptOverride?: string
   }
 
@@ -58,16 +52,28 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'messages requis' }, { status: 400 })
   }
 
+  // Fetch merchant context server-side — never trust client-supplied data
+  const service = createServiceClient()
+  const { data: merchant } = await service
+    .from('merchants')
+    .select('business_name, loyalty_rule, stamps_required, points_required, loyalty_type')
+    .eq('user_id', user.id)
+    .single()
+
+  if (!merchant) {
+    return NextResponse.json({ error: 'Merchant introuvable' }, { status: 404 })
+  }
+
   // Build context-aware system prompt
   let systemPrompt = systemPromptOverride ?? SYSTEM_PROMPT
-  if (merchantContext?.business_name) {
-    const isPoints = merchantContext.loyalty_type === 'points'
+  if (merchant.business_name) {
+    const isPoints = merchant.loyalty_type === 'points'
     const requiredCount = isPoints
-      ? (merchantContext.points_required ?? 'non défini')
-      : (merchantContext.stamps_required ?? 'non défini')
+      ? (merchant.points_required ?? 'non défini')
+      : (merchant.stamps_required ?? 'non défini')
     systemPrompt += `\n\nInformations sur le commerce de cet utilisateur :
-- Nom : ${merchantContext.business_name}
-- Règle actuelle : ${merchantContext.loyalty_rule || 'non définie'}
+- Nom : ${merchant.business_name}
+- Règle actuelle : ${merchant.loyalty_rule || 'non définie'}
 - Type de programme : ${isPoints ? 'Points (le client accumule des points par euro dépensé)' : 'Tampons (le client reçoit un tampon par visite/achat)'}
 - ${isPoints ? 'Points requis pour une récompense' : 'Tampons requis pour une récompense'} : ${requiredCount}
 

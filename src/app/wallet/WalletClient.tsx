@@ -37,9 +37,14 @@ function urlBase64ToUint8Array(base64String: string) {
   return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)))
 }
 
-function getCookie(name: string): string | null {
-  const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`))
-  return match ? decodeURIComponent(match[1]) : null
+async function getCustomerId(): Promise<string | null> {
+  try {
+    const res = await fetch('/api/get-customer-id')
+    const data = await res.json()
+    return data.customerId ?? null
+  } catch {
+    return null
+  }
 }
 
 function NotificationBanner({ merchantIds }: { merchantIds: string[] }) {
@@ -67,7 +72,7 @@ function NotificationBanner({ merchantIds }: { merchantIds: string[] }) {
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(vapidKey),
       })
-      const customerId = getCookie('vancart_customer_id')
+      const customerId = await getCustomerId()
       if (!customerId) { setStatus('idle'); return }
       const subJson = sub.toJSON()
       await Promise.all(
